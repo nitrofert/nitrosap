@@ -9,14 +9,15 @@ import { BadgeModule } from 'primeng/badge';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { RippleModule } from 'primeng/ripple';
-import { AppMenuComponent } from './app.menu.component';
-import { AppMenuitemComponent } from './app.menuitem.component';
+
+import { AppMenuitemComponent } from './shared/menuitem/app.menuitem.component';
 import { RouterModule } from '@angular/router';
-import { AppTopBarComponent } from './app.topbar.component';
-import { AppFooterComponent } from './app.footer.component';
+import { AppTopBarComponent } from './shared/topbar/app.topbar.component';
+import { AppFooterComponent } from './shared/footer/app.footer.component';
 import { AppConfigModule } from './config/config.module';
-import { AppSidebarComponent } from "./app.sidebar.component";
+import { AppSidebarComponent } from "./shared/sidebar/app.sidebar.component";
 import { AppLayoutComponent } from './app.layout.component';
+import { AppMenuComponent } from './shared/menu/app.menu.component';
 
 
 @NgModule({

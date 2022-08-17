@@ -1,9 +1,12 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { InfoUsuario } from '../demo/api/responseloginws';
-import { Portalervice } from '../demo/service/portal.service';
-import { LayoutService } from './service/app.layout.service';
+import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { Portalervice } from 'src/app/demo/service/portal.service';
+import { LayoutService } from '../../service/app.layout.service';
+
+
+
 
 @Component({
     selector: 'app-menu',

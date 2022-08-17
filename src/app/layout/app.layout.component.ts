@@ -1,10 +1,11 @@
 import { Component, OnDestroy, Renderer2, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
-import { MenuService } from './app.menu.service';
+import { MenuService } from './shared/menu/app.menu.service';
 import { LayoutService } from "./service/app.layout.service";
-import { AppSidebarComponent } from "./app.sidebar.component";
-import { AppTopBarComponent } from './app.topbar.component';
+
+import { AppTopBarComponent } from './shared/topbar/app.topbar.component';
+import { AppSidebarComponent } from './shared/sidebar/app.sidebar.component';
 
 @Component({
     selector: 'app-layout',

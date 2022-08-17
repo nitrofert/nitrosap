@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { InfoUsuario } from '../demo/api/responseloginws';
-import { LayoutService } from "./service/app.layout.service";
+import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { LayoutService } from '../../service/app.layout.service';
+
+
 
 @Component({
     selector: 'app-topbar',
