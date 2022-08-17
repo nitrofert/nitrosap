@@ -1,0 +1,77 @@
+<div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
+        <div class="col-12 mt-5 xl:mt-0 text-center">
+            <!--<img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Sakai logo" class="mb-5" style="width:81px; height:60px;"> -->
+        </div>
+        <div class="col-12 xl:col-6" style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="h-full w-full m-0 py-7 px-4" style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
+                <div class="text-center mb-5">
+                    <!--<img src="assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">-->
+                    <!--Mensaje de bienvenida-->
+                    <p-messages [(value)]="messageForm"></p-messages>
+                    <!--Fin mensaje bienvenida-->
+                    <span class="text-600 font-medium">Inicie sesión para continuar</span>
+                </div>
+
+                <div class="w-full md:w-10 mx-auto">
+                    <form (ngSubmit)="onsubmit()" autocomplete="off">
+                        
+                        <label for="company" class="block text-900 text-xl font-medium mb-2">Empresa</label>
+                        <div class="p-inputgroup  mb-3">
+                        <span class="p-inputgroup-addon"><i class="pi pi-building"></i></span>
+                        <p-dropdown [options]="companies"
+                                    name="selectedCompany"
+                                    inputId="selectedCompany" 
+                                    [(ngModel)]="selectedCompany"
+                                    optionLabel="companyname" 
+                                    optionValue="id"
+                                    placeholder="Seleccione una empresa"
+                                    class="p-dropdown {{classErrorCompany}}"
+                                    (onBlur)="restoreClass('company')"></p-dropdown>
+                        </div>
+
+                        <label for="username" class="block text-900 text-xl font-medium mb-2">Usuario</label>
+                        <div class="p-inputgroup  mb-3">
+                        <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                        <input type="text" 
+                                           pInputText
+                                           id="username"
+                                           name="username"
+                                           [(ngModel)]="username"
+                                           (blur)="restoreClass('username')"
+                                           [class]="classErrorUser"
+                                           style="padding:1rem;"
+                                           placeholder="Ingrese su nomnbre de usuario">
+                        </div>
+
+                        <label for="password" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+                        <!--<p-password id="password" [(ngModel)]="password" placeholder="Ingrese su contraseña"  styleClass="w-full mb-3"></p-password>-->
+                        <div class="p-inputgroup  mb-3">
+                        <span class="p-inputgroup-addon"><i class="pi pi-unlock"></i></span>
+                        <input pPassword 
+                               type="password" 
+                               name="password" 
+                               toggleMask="true" 
+                               [(ngModel)]="password" 
+                               [feedback]="false" 
+                               class="w-full {{classErrorPassword}}" 
+                               style="padding:1rem;"
+                               placeholder="Ingresa su contraseña"
+                               (blur)="restoreClass('password')">
+                        </div>
+
+                        <!--<div class="flex align-items-center justify-content-between mb-5">
+                            <div class="flex align-items-center">
+                                <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
+                                <label for="rememberme1">Remember me</label>
+                            </div>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Forgot password?</a>
+                        </div>-->
+                        <button pButton pRipple type="submit" label="Iniciar sesión" class="w-full p-3 text-xl"></button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
