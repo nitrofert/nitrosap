@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   companies():Observable<CompanyInterface[]>{
-    const url:string = `${this.api_url}/api/companies/list`;
+    const url:string = `${this.api_url}/api/companies/listActive`;
     return this.http.get<CompanyInterface[]>(url);
   }
 }

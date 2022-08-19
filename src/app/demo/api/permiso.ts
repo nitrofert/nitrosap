@@ -2,31 +2,36 @@
 //
 //   import { Convert } from "./file";
 //
-//   const companyInterface = Convert.toCompanyInterface(json);
+//   const permisosInterface = Convert.toPermisosInterface(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface CompanyInterface {
-    id?:           number;
-    companyname:  string;
-    status:       string;
-    urlwsmysql:   string;
-    created_at?:   Date;
-    logoempresa:  string;
-    urlwssap:     null | string;
-    dbcompanysap: null | string;
+export interface PermisosInterface {
+    idPerfil:      number;
+    perfil:        Perfil;
+    idMenu:        number;
+    title:         string;
+    read_accion:   number;
+    create_accion: number;
+    update_accion: number;
+    delete_accion: number;
+}
+
+export enum Perfil {
+    Administrador = "Administrador",
+    AsitenteDeCompras = "Asitente de compras",
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-    public static toCompanyInterface(json: string): CompanyInterface[] {
-        return cast(JSON.parse(json), a(r("CompanyInterface")));
+    public static toPermisosInterface(json: string): PermisosInterface[] {
+        return cast(JSON.parse(json), a(r("PermisosInterface")));
     }
 
-    public static companyInterfaceToJson(value: CompanyInterface[]): string {
-        return JSON.stringify(uncast(value, a(r("CompanyInterface"))), null, 2);
+    public static permisosInterfaceToJson(value: PermisosInterface[]): string {
+        return JSON.stringify(uncast(value, a(r("PermisosInterface"))), null, 2);
     }
 }
 
@@ -163,14 +168,18 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    "CompanyInterface": o([
-        { json: "id", js: "id", typ: 0 },
-        { json: "companyname", js: "companyname", typ: "" },
-        { json: "status", js: "status", typ: "" },
-        { json: "urlwsmysql", js: "urlwsmysql", typ: "" },
-        { json: "created_at", js: "created_at", typ: Date },
-        { json: "logoempresa", js: "logoempresa", typ: "" },
-        { json: "urlwssap", js: "urlwssap", typ: null },
-        { json: "dbcompanysap", js: "dbcompanysap", typ: u(null, "") },
+    "PermisosInterface": o([
+        { json: "idPerfil", js: "idPerfil", typ: 0 },
+        { json: "perfil", js: "perfil", typ: r("Perfil") },
+        { json: "idMenu", js: "idMenu", typ: 0 },
+        { json: "title", js: "title", typ: "" },
+        { json: "read_accion", js: "read_accion", typ: 0 },
+        { json: "create_accion", js: "create_accion", typ: 0 },
+        { json: "update_accion", js: "update_accion", typ: 0 },
+        { json: "delete_accion", js: "delete_accion", typ: 0 },
     ], false),
+    "Perfil": [
+        "Administrador",
+        "Asitente de compras",
+    ],
 };

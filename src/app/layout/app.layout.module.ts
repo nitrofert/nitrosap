@@ -18,6 +18,7 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./shared/sidebar/app.sidebar.component";
 import { AppLayoutComponent } from './app.layout.component';
 import { AppMenuComponent } from './shared/menu/app.menu.component';
+import {MenuModule} from 'primeng/menu';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { AppMenuComponent } from './shared/menu/app.menu.component';
         InputSwitchModule,
         RippleModule,
         RouterModule,
-        AppConfigModule
+        AppConfigModule,
+        MenuModule
     ],
     exports: [AppLayoutComponent]
 })

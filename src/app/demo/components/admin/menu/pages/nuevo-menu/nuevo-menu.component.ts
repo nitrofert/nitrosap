@@ -131,6 +131,7 @@ export class NuevoMenuComponent implements OnInit {
   }
 
   clear(){
+    this.submitBotton = false;
     this.submitted = false;
     this.title ="";
     this.description="";
@@ -140,6 +141,6 @@ export class NuevoMenuComponent implements OnInit {
     this.icon  ="";
     this.ordernum="";
 
-    this.submitBotton = false;
+    
   }
 }

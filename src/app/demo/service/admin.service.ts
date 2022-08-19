@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CompanyInterface } from '../api/company';
 import { MenuInterface } from '../api/menu.interface';
+import { PerfilInterface } from '../api/perfil';
+import { PermisosInterface } from '../api/permiso';
 
 
 
@@ -98,6 +100,57 @@ export class AdminService {
     return this.http.put<any[]>(url,menu,requestOptions);
   }
 
+  //**************** Perfiles ********************************/
+
+  listPerfil(token:string):Observable<PerfilInterface[]>{
+    
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+ 
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/perfiles/list`;
+    return this.http.get<PerfilInterface[]>(url,requestOptions);
+  }
+
+  savePerfil(token:string, perfil:PerfilInterface):Observable<any[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/perfiles`;
+    return this.http.post<any[]>(url,perfil,requestOptions);
+  }
+
+  getPerfilById(token:string,idMenu:number):Observable<PerfilInterface[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/perfiles/${idMenu}`;
+    console.log(url);
+    return this.http.get<PerfilInterface[]>(url,requestOptions);
+  }
+
+  updatePerfil(token:string, perfil:PerfilInterface):Observable<any[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/perfiles`;
+    return this.http.put<any[]>(url,perfil,requestOptions);
+  }
+
+  /***********************************************************/
+  //**************** comapanies ********************************/
+
   listCompanies(token:string):Observable<CompanyInterface[]>{
 
     const headers = new HttpHeaders({
@@ -108,8 +161,60 @@ export class AdminService {
     const requestOptions = { headers: headers };
 
     const url:string = `${this.api_url}/api/companies/list`;
-    return this.http.get<CompanyInterface[]>(url);
+    return this.http.get<CompanyInterface[]>(url,requestOptions);
   }
+
+  saveCompany(token:string, company:CompanyInterface):Observable<any[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/companies`;
+    return this.http.post<any[]>(url,company,requestOptions);
+  }
+
+  getCompanyById(token:string,idCompany:number):Observable<CompanyInterface[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/companies/${idCompany}`;
+    console.log(url);
+    return this.http.get<CompanyInterface[]>(url,requestOptions);
+  }
+
+  updateCompany(token:string, company:CompanyInterface):Observable<any[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/companies`;
+    return this.http.put<any[]>(url,company,requestOptions);
+  }
+  /***********************************************************/
+
+//**************** Permisos ********************************/
+listPermisos(token:string):Observable<PermisosInterface[]>{
+
+  const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/permisos/list`;
+  return this.http.get<PermisosInterface[]>(url,requestOptions);
 }
+/***********************************************************/
 
 
+
+
+
+}

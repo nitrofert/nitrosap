@@ -21,7 +21,7 @@ import { EditarMenuComponent } from './pages/editar-menu/editar-menu.component';
 
 
 @NgModule({
-  declarations: [MenuComponent, NuevoMenuComponent, EditarMenuComponent],
+  declarations: [MenuComponent,NuevoMenuComponent,EditarMenuComponent],
   imports: [
         CommonModule,
         FormsModule,
@@ -39,6 +39,7 @@ import { EditarMenuComponent } from './pages/editar-menu/editar-menu.component';
         MenuRoutingModule,
         MessagesModule,
         MessageModule
+        
   ]
 })
 export class MenuModule { }
