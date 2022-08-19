@@ -8,16 +8,17 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface MenuInterface {
-    id:          number;
+    id?:          number;
     title:       string;
     description: string;
     ordernum:    string;
     hierarchy:   string;
     iddad:       number | null;
-    url:         string;
-    icon:        null | string;
-    estado:      string;
-    created_at:  Date;
+    url?:         string;
+    icon?:        string;
+    estado?:      string;
+    created_at?:  Date;
+    padre?:       null | string;
 }
 
 // Converts JSON strings to/from your types
@@ -173,8 +174,9 @@ const typeMap: any = {
         { json: "hierarchy", js: "hierarchy", typ: "" },
         { json: "iddad", js: "iddad", typ: u(0, null) },
         { json: "url", js: "url", typ: "" },
-        { json: "icon", js: "icon", typ: u(null, "") },
+        { json: "icon", js: "icon", typ: "" },
         { json: "estado", js: "estado", typ: "" },
         { json: "created_at", js: "created_at", typ: Date },
+        { json: "padre", js: "padre", typ: u(null, "") },
     ], false),
 };

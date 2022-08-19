@@ -7,7 +7,7 @@ import { LoginComponent } from './demo/components/auth/login/login.component';
 @NgModule({
     imports: [
         RouterModule.forRoot([
-            { path: '', component: LoginComponent, loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },{ path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
+            { path: '', component: LoginComponent, loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             {
                 path: 'portal', component: AppLayoutComponent,
                 children: [
@@ -17,6 +17,7 @@ import { LoginComponent } from './demo/components/auth/login/login.component';
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
+                    { path: 'admin', loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
                 ],
             },
             //{ path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

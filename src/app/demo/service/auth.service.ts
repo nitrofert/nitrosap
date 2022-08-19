@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CompanyInterface } from '../components/auth/interfaces/company.interface';
+import { CompanyInterface } from '../api/company';
 import { LoginFormInterface } from '../api/frmlogin';
 import { ResponsWsLoginInterface } from '../api/responseloginws';
 

@@ -8,13 +8,14 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface CompanyInterface {
-    id:          number;
-    companyname: string;
-    status:      string;
-    companybd:   string;
-    created_at:  Date;
-    logoempresa: string;
-    wscompanybd: null | string;
+    id:           number;
+    companyname:  string;
+    status:       string;
+    urlwsmysql:   string;
+    created_at:   Date;
+    logoempresa:  string;
+    urlwssap:     null;
+    dbcompanysap: null | string;
 }
 
 // Converts JSON strings to/from your types
@@ -166,9 +167,10 @@ const typeMap: any = {
         { json: "id", js: "id", typ: 0 },
         { json: "companyname", js: "companyname", typ: "" },
         { json: "status", js: "status", typ: "" },
-        { json: "companybd", js: "companybd", typ: "" },
+        { json: "urlwsmysql", js: "urlwsmysql", typ: "" },
         { json: "created_at", js: "created_at", typ: Date },
         { json: "logoempresa", js: "logoempresa", typ: "" },
-        { json: "wscompanybd", js: "wscompanybd", typ: u(null, "") },
+        { json: "urlwssap", js: "urlwssap", typ: null },
+        { json: "dbcompanysap", js: "dbcompanysap", typ: u(null, "") },
     ], false),
 };

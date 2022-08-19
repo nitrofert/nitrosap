@@ -15,6 +15,7 @@ import { PhotoService } from './demo/service/photo.service';
 import localeES_CO from '@angular/common/locales/es-CO';
 import {registerLocaleData} from '@angular/common';
 
+
 registerLocaleData(localeES_CO);
 
 @NgModule({

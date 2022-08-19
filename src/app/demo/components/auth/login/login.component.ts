@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import {Message} from 'primeng/api';
+import {Message, MessageService} from 'primeng/api';
 import { LoginFormInterface } from 'src/app/demo/api/frmlogin';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { CompanyInterface } from '../interfaces/company.interface';
+import { CompanyInterface } from '../../../api/company';
 
 
 
 @Component({
     selector: 'app-login',
+    providers: [MessageService],
     templateUrl: './login.component.html',
     styles: [`
         :host ::ng-deep .p-password input {
@@ -41,6 +42,7 @@ export class LoginComponent  {
     password: string = "";
     selectedCompany!: number;
     companies:CompanyInterface[]=[];
+    submitted: boolean = false;
 
     errorForm:boolean=false;
     messageForm:Message[]=[];
@@ -54,7 +56,8 @@ export class LoginComponent  {
     constructor(
             public layoutService: LayoutService,
             private authService:AuthService, 
-            private router: Router
+            private router: Router,
+            private messageService: MessageService
             ) 
             {
                 //importar al servicio de consulta de empresas
@@ -73,6 +76,8 @@ export class LoginComponent  {
             
 
     onsubmit(){
+
+        this.submitted = true;
         
         this.errorForm= false;
         this.messageForm=[];
@@ -105,6 +110,7 @@ export class LoginComponent  {
                   next:(response)=>{
                     console.log('Response',response);
                     //Obtener mensaje
+                    //this.messageService.add({ severity: 'success', summary: '!Hola¡', detail: response.message, life: 3000 });
                     this.messageForm = [{severity:'success', summary:'', detail:response.message}];
                     //Obtener token y guardarlo en local storage
                     localStorage.setItem('token',response.token!);
@@ -113,18 +119,22 @@ export class LoginComponent  {
                     setTimeout(() => {  
                       console.log("Redireccionar al portal"); 
                       this.router.navigate(['portal']);
-                    }, 5000);
+                    }, 3500);
                   },
                   error:(err)=>{
                     console.log('Error',err.error.message);
                     this.classMessageForm = ' text-red-800';
     
                     this.messageForm = [{severity:'error', summary:'Error:', detail:err.error.message}];
+                    //this.messageService.add({ severity: 'error', summary: '!Opps¡', detail: err.error.message, life: 3000 });
                   }
                 });
         }else{
           this.messageForm = [{severity:'error', summary:'Error:', detail:'Los campos en rojo son obligatorios'}];
+          //this.messageService.add({ severity: 'error', summary: '!Opps¡', detail: 'Los campos en rojo son obligatorios', life: 3000 });
         }
+
+        this.submitted=false;
         
     }
 
