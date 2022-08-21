@@ -2,38 +2,26 @@
 //
 //   import { Convert } from "./file";
 //
-//   const permisosInterface = Convert.toPermisosInterface(json);
+//   const companiesUser = Convert.toCompaniesUser(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export interface PermisosInterface {
-    idPerfil:      number;
-    perfil?:        Perfil;
-    idMenu:        number;
-    title?:         string;
-    read_accion?:   number;
-    create_accion?: number;
-    update_accion?: number;
-    delete_accion?: number;
-    accion?:string;
-    valor?:number;
-}
-
-export enum Perfil {
-    Administrador = "Administrador",
-    AsitenteDeCompras = "Asitente de compras",
+export interface CompaniesUser {
+    id:             number;
+    companyname:    string;
+    company_access: number;
 }
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-    public static toPermisosInterface(json: string): PermisosInterface[] {
-        return cast(JSON.parse(json), a(r("PermisosInterface")));
+    public static toCompaniesUser(json: string): CompaniesUser[] {
+        return cast(JSON.parse(json), a(r("CompaniesUser")));
     }
 
-    public static permisosInterfaceToJson(value: PermisosInterface[]): string {
-        return JSON.stringify(uncast(value, a(r("PermisosInterface"))), null, 2);
+    public static companiesUserToJson(value: CompaniesUser[]): string {
+        return JSON.stringify(uncast(value, a(r("CompaniesUser"))), null, 2);
     }
 }
 
@@ -170,18 +158,9 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-    "PermisosInterface": o([
-        { json: "idPerfil", js: "idPerfil", typ: 0 },
-        { json: "perfil", js: "perfil", typ: r("Perfil") },
-        { json: "idMenu", js: "idMenu", typ: 0 },
-        { json: "title", js: "title", typ: "" },
-        { json: "read_accion", js: "read_accion", typ: 0 },
-        { json: "create_accion", js: "create_accion", typ: 0 },
-        { json: "update_accion", js: "update_accion", typ: 0 },
-        { json: "delete_accion", js: "delete_accion", typ: 0 },
+    "CompaniesUser": o([
+        { json: "id", js: "id", typ: 0 },
+        { json: "companyname", js: "companyname", typ: "" },
+        { json: "company_access", js: "company_access", typ: 0 },
     ], false),
-    "Perfil": [
-        "Administrador",
-        "Asitente de compras",
-    ],
 };

@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CompaniesUser } from '../api/companiesUser';
 import { CompanyInterface } from '../api/company';
 import { MenuInterface } from '../api/menu.interface';
 import { PerfilInterface } from '../api/perfil';
 import { PermisosInterface } from '../api/permiso';
+import { UserInterface } from '../api/users';
 
 
 
@@ -211,10 +213,115 @@ listPermisos(token:string):Observable<PermisosInterface[]>{
   const url:string = `${this.api_url}/api/permisos/list`;
   return this.http.get<PermisosInterface[]>(url,requestOptions);
 }
+
+setPermiso(token:string, permiso:PermisosInterface):Observable<any[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/permisos`;
+  return this.http.post<any[]>(url,permiso,requestOptions);
+}
 /***********************************************************/
 
+//**************** Usuarios ********************************/
 
+listUsuarios(token:string):Observable<UserInterface[]>{
+    
+  const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
 
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/usuarios/list`;
+  return this.http.get<UserInterface[]>(url,requestOptions);
+}
+
+saveUser(token:string, usuario:UserInterface):Observable<any[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios`;
+  return this.http.post<any[]>(url,usuario,requestOptions);
+}
+
+getUserById(token:string,idusuario:number):Observable<UserInterface[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/usuarios/${idusuario}`;
+  console.log(url);
+  return this.http.get<UserInterface[]>(url,requestOptions);
+}
+
+updateUser(token:string, usuario:UserInterface):Observable<any[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios`;
+  return this.http.put<any[]>(url,usuario,requestOptions);
+}
+
+getCompaniesUser(token:string,idusuario:number):Observable<CompaniesUser[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/usuarios/companies/${idusuario}`;
+  console.log(url);
+  return this.http.get<CompaniesUser[]>(url,requestOptions);
+}
+
+setAccess(token:string,accessCompany:any): Observable<any>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/companies`;
+  console.log(url);
+  return this.http.post<any>(url,accessCompany,requestOptions);
+
+}
+
+getPerfilesUser(token:string,idusuario:number):Observable<CompaniesUser[]>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/usuarios/perfiles/${idusuario}`;
+  console.log(url);
+  return this.http.get<CompaniesUser[]>(url,requestOptions);
+}
+
+setPerfilUser(token:string,perfilUser:any): Observable<any>{
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/perfiles`;
+  console.log(url);
+  return this.http.post<any>(url,perfilUser,requestOptions);
+
+}
 
 
 }

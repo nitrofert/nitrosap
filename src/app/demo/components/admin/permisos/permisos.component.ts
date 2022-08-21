@@ -44,17 +44,23 @@ export class PermisosComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
+   //obtener datos del usuario logueado
+   infoSessionStr:string="";
+   infoSession:InfoUsuario[]=[];
+   token:string = "";
+
+
   constructor(private adminService:AdminService,
               private router:Router) { }
 
   ngOnInit(): void {
 
      //obtener datos del usuario logueado
-     let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
-     const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-     const token = localStorage.getItem('token') || '';
+     this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+     this.infoSession    =  JSON.parse(this.infoSessionStr);
+     this.token = localStorage.getItem('token') || '';
 
-    this.adminService.listPermisos(token)
+    this.adminService.listPermisos(this.token)
         .subscribe({
           next:(permisos =>{
             this.loading = false;
@@ -67,18 +73,27 @@ export class PermisosComponent implements OnInit {
         });
   }
 
-  setPermiso(idPerfil:number, ideMenu:number,valor:number,accion:string){
-
-  }
-
-  newPerfil(){
-  
-  }
-
-  editPerfil(){
+  setPermiso(idPerfil:number, idMenu:number,valor:number,accion:string){
     
-    
+    const permiso:PermisosInterface = {
+      idMenu,
+      idPerfil,
+      accion,
+      valor
+    }
+    console.log(permiso);
+    this.adminService.setPermiso(this.token,permiso)
+      .subscribe({
+        next:(permisos)=>{
+          console.log(permisos);
+        },
+        error:(err)=>{
+          console.log(err);
+        }
+      })
   }
+
+
 
   formatCurrency(value: number) {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });

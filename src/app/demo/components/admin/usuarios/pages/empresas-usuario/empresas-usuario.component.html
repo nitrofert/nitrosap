@@ -1,0 +1,76 @@
+<div class="grid">
+	<div class="col-12 md:col-8 col-offset-2">
+		<div class="card p-fluid">
+            <!--mensaje error o confirmación-->
+            <p-messages [(value)]="messageForm"></p-messages>
+            <!-- fin mensaje error o confirmacion -->
+
+            <div class="grid text-center">
+                <div class="col"><h5>Configuación de accesos a empresas</h5></div>
+                
+            </div>
+            <p-divider align="center">
+                <div class="inline-flex align-items-center">
+                    <i class="pi pi-user mr-2"></i>
+                    <b>{{fullnameUserSelected}}</b>
+                </div>
+            </p-divider>
+            <div class="grid text-center">
+                <div *ngFor="let company of companies" class="col-4">
+                    <div class="font-bold">{{company.companyname}}</div>
+                    <div>
+                        <p-selectButton [options]="estados" 
+                                            [(ngModel)]="company.company_access" 
+                                            optionLabel="label" 
+                                            optionValue="value"
+                                            (onChange)="setAccess(company.company_access,company.id)"></p-selectButton>
+                    </div>
+                </div>
+                
+            </div>
+
+
+			<!--<div class="field align-content-center text-center w-full"><h5>Configuación de accesos a empresas</h5></div>
+            <div class="field align-content-center text-center w-full"></div>
+            <p-divider align="center">
+                <div class="inline-flex align-items-center">
+                    <i class="pi pi-user mr-2"></i>
+                    <b>{{fullnameUserSelected}}</b>
+                </div>
+            </p-divider>
+            <div class="flex justify-content-center flex-wrap card-container w-full" >
+                <div class="flex align-items-center justify-content-center  font-bold  border-round m-2">
+                    <div *ngFor="let company of companies" class="col"> 
+                        <div class="align-content-center text-center">{{company.companyname}}</div> 
+                        <div class="align-content-center text-center">
+                            <p-selectButton [options]="estados" 
+                                            [(ngModel)]="company.company_access" 
+                                            optionLabel="label" 
+                                            optionValue="value"
+                                            (onChange)="setAccess(company.company_access,company.id)"></p-selectButton>
+                        </div>
+                    </div>
+
+                    
+                    
+                </div>
+                
+            </div>-->
+            <!--<form (ngSubmit)="submit()">>-->
+            <!--<ng-template pTemplate="content">-->
+    
+            
+            <!--</ng-template>-->
+            <!--<ng-template pTemplate="footer">-->
+                
+            <!--</ng-template>-->
+                
+            
+        <!--</form>-->
+
+		</div>
+    </div>
+</div>
+
+
+
