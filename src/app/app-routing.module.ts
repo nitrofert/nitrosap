@@ -3,13 +3,15 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { LoginComponent } from './demo/components/auth/login/login.component';
+import { AuthGuard } from './guard/auth.guard';
+import { LoggedInGuard } from './guard/logged-in.guard';
 
 @NgModule({
     imports: [
         RouterModule.forRoot([
-            { path: '', component: LoginComponent, loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
+            { path: '', component: LoginComponent, canActivate:[LoggedInGuard], loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             {
-                path: 'portal', component: AppLayoutComponent,
+                path: 'portal', component: AppLayoutComponent, canActivate:[AuthGuard],
                 children: [
                     { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
                     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UikitModule) },
@@ -17,7 +19,7 @@ import { LoginComponent } from './demo/components/auth/login/login.component';
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
-                    { path: 'admin', loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
+                    { path: 'admin',  loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
                 ],
             },
             //{ path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

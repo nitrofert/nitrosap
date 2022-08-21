@@ -15,6 +15,8 @@ import { PhotoService } from './demo/service/photo.service';
 import localeES_CO from '@angular/common/locales/es-CO';
 import {registerLocaleData} from '@angular/common';
 
+//Provider
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt'
 
 registerLocaleData(localeES_CO);
 
@@ -30,7 +32,9 @@ registerLocaleData(localeES_CO);
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: LOCALE_ID, useValue:'es-CO'},
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService,
+        {provide: JWT_OPTIONS, useValue: JWT_OPTIONS},
+        JwtHelperService
     ],
     bootstrap: [AppComponent]
 })

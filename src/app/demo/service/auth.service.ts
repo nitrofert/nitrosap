@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { CompanyInterface } from '../api/company';
 import { LoginFormInterface } from '../api/frmlogin';
 import { ResponsWsLoginInterface } from '../api/responseloginws';
+import { JwtHelperService } from '@auth0/angular-jwt'
 
 
 @Injectable({
@@ -15,7 +16,15 @@ export class AuthService {
 
   
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private jwtHelperService: JwtHelperService) { }
+
+  isAuth():boolean{
+    const token:string = localStorage.getItem('token') || '';
+    if(this.jwtHelperService.isTokenExpired(token) ||  !localStorage.getItem('token')){
+      return false; 
+    } 
+    return true;
+  }
 
   login(loginForm:LoginFormInterface):Observable<ResponsWsLoginInterface>{
     const url:string = `${this.api_url}/api/auth/login`;
