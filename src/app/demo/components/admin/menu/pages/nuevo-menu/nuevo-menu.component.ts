@@ -3,6 +3,7 @@ import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { MenuInterface } from 'src/app/demo/api/menu.interface';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-nuevo-menu',
@@ -34,7 +35,8 @@ export class NuevoMenuComponent implements OnInit {
        
     ];
   constructor(private messageService: MessageService,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
   }
@@ -47,9 +49,9 @@ export class NuevoMenuComponent implements OnInit {
     }else{
       this.submitBotton = true;
       //obtener datos del usuario logueado
-      let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+      /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
       const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-      const token = localStorage.getItem('token') || '';
+      const token = localStorage.getItem('token') || '';*/
       //Registrar menu
       const newMenu:MenuInterface = {
         title:this.title,
@@ -62,7 +64,7 @@ export class NuevoMenuComponent implements OnInit {
 
       }
       
-      this.adminService.saveMenuOpcion(token,newMenu)
+      this.adminService.saveMenuOpcion(this.authService.getToken(),newMenu)
       .subscribe({
         next:(menu =>{
             
@@ -86,11 +88,11 @@ export class NuevoMenuComponent implements OnInit {
     console.log(this.hierarchy);
     if(this.hierarchy=='H'){
        //obtener datos del usuario logueado
-      let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+      /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
       const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
 
-          const token = localStorage.getItem('token') || '';
-      this.adminService.loadMenuFather(token)
+          const token = localStorage.getItem('token') || '';*/
+      this.adminService.loadMenuFather(this.authService.getToken())
           .subscribe({
             next:(menu =>{
               
@@ -113,11 +115,11 @@ export class NuevoMenuComponent implements OnInit {
       console.log(this.hierarchy, this.padre);
 
        //obtener datos del usuario logueado
-       let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+       /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
        const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-       const token = localStorage.getItem('token') || '';
+       const token = localStorage.getItem('token') || '';*/
 
-      this.adminService.orderNum(token,this.hierarchy,this.padre)
+      this.adminService.orderNum(this.authService.getToken(),this.hierarchy,this.padre)
       .subscribe({
         next:(menu =>{
           

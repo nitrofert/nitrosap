@@ -6,6 +6,7 @@ import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { Router } from '@angular/router';
 import { PerfilInterface } from 'src/app/demo/api/perfil';
 import { PermisosInterface } from 'src/app/demo/api/permiso';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -44,23 +45,20 @@ export class PermisosComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
-   //obtener datos del usuario logueado
-   infoSessionStr:string="";
-   infoSession:InfoUsuario[]=[];
-   token:string = "";
-
+  
 
   constructor(private adminService:AdminService,
-              private router:Router) { }
+              private router:Router,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
 
      //obtener datos del usuario logueado
-     this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
      this.infoSession    =  JSON.parse(this.infoSessionStr);
-     this.token = localStorage.getItem('token') || '';
+     this.token = localStorage.getItem('token') || '';*/
 
-    this.adminService.listPermisos(this.token)
+    this.adminService.listPermisos(this.authService.getToken())
         .subscribe({
           next:(permisos =>{
             this.loading = false;
@@ -82,7 +80,7 @@ export class PermisosComponent implements OnInit {
       valor
     }
     console.log(permiso);
-    this.adminService.setPermiso(this.token,permiso)
+    this.adminService.setPermiso(this.authService.getToken(),permiso)
       .subscribe({
         next:(permisos)=>{
           console.log(permisos);

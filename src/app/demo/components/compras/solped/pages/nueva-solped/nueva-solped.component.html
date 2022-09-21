@@ -1,0 +1,765 @@
+<p-toast></p-toast>
+<!-- Cabecera solped -->
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            <div class="grid">
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="fullname">Nombre Solicitante</label>
+                        <input pInputText 
+                                [(ngModel)]="solped.fullname" 
+                                id="fullname" 
+                                name="fullname" 
+                                class="p-inputtext-sm"
+                                type="text"
+                            required readonly
+                                [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.fullname) || (requestLine && !solped.fullname)}" />
+                    </div>
+                    <div class="field">
+                        <label htmlFor="area">Area aprobación</label>
+                        <p-dropdown [options]="areasUser" 
+                                    optionLabel="area" 
+                                    optionValue="area"
+                                    [(ngModel)]="solped.u_nf_depen_solped" id="area" name="area" placeholder="Area"
+                                    [required]="true"
+                                    styleClass="p-dropdown-sm "
+                                    (onChange)="selectArea()"
+                                    [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.u_nf_depen_solped) || (requestLine && !solped.u_nf_depen_solped)}">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label htmlFor="doctype">Clase</label>
+                        <p-dropdown [options]="clasesSolped" 
+                                    optionLabel="name" 
+                                    optionValue="code"
+                                    [(ngModel)]="solped.doctype" 
+                                    id="doctype" 
+                                    name="doctype" 
+                                    placeholder="Clase solped"
+                                    styleClass="p-dropdown-sm "
+                                    [disabled]="solped.serie === 'SPB'" 
+                                    [required]="true" 
+                                    [readonly]="solpedDetLines.length > 0"
+                                    [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.doctype) || (requestLine && !solped.doctype)}">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="flex">
+                        <div class="field">
+                            <label htmlFor="serie">Tipo</label>
+                            <p-dropdown [options]="series" 
+                                        optionLabel="name" optionValue="code"
+                                        [(ngModel)]="solped.serie" 
+                                        [readonly]="solpedDetLines.length > 0" 
+                                        id="serie"
+                                        name="serie" 
+                                        placeholder="Tipo"
+                                        styleClass="w-full p-dropdown-sm p-inputtext-sm" 
+                                        [required]="true" 
+                                        
+                                        (onChange)="selectedSerie()"
+                                        [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.serie) || (requestLine && !solped.serie)}">
+                            </p-dropdown>
+                        </div>
+                        <div class="field">
+                            <label htmlFor="sapdocnum">Codigo SAP</label>
+                            <input pInputText 
+                                    [(ngModel)]="solped.sapdocnum" 
+                                    id="sapdocnum" 
+                                    name="sapdocnum"
+                                    class="p-inputtext-sm"
+                                    styleClass="w-full " 
+                                    type="text" required readonly />
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="field">
+                            <label for="docdate">Fecha Contable</label>
+                            <p-calendar [(ngModel)]="solped.docdate" 
+                                        (onSelect)="selectFechaCont()" 
+                                        [showIcon]="true"
+                                        inputId="docdate" 
+                                        [required]="true"
+                                        styleClass="p-calendar-sm p-inputtext-sm" 
+                                        [readonlyInput]="solpedDetLines.length > 0"
+                                        dateFormat="dd/mm/yy"
+                                        [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.docdate) || (requestLine && !solped.docdate)}">
+                            </p-calendar>
+                        </div>
+
+                        <div class="field">
+                            <label for="docduedate">Válido hasta</label>
+                            <p-calendar [(ngModel)]="solped.docduedate" 
+                                        [showIcon]="true" 
+                                        inputId="docduedate"
+                                        [required]="true"
+                                        styleClass="p-calendar-sm p-inputtext-sm"
+                                        dateFormat="dd/mm/yy"
+                                        [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.docduedate) || (requestLine && !solped.docduedate)}">
+                            </p-calendar>
+                        </div>
+
+                    </div>
+                    <div class="flex">
+                        <div class="field">
+                            <label for="taxdate">Fecha documento</label>
+                            <p-calendar [(ngModel)]="solped.taxdate" 
+                                        [showIcon]="true" 
+                                        inputId="taxdate"
+                                        [required]="true"
+                                        styleClass="p-calendar-sm p-inputtext-sm"
+                                        dateFormat="dd/mm/yy"
+                                        [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.taxdate) || (requestLine && !solped.taxdate)}">
+                            </p-calendar>
+                        </div>
+
+                        <div class="field">
+                            <label for="reqdate">Fecha necesaria</label>
+                            <p-calendar [(ngModel)]="solped.reqdate" 
+                                        [showIcon]="true" 
+                                        inputId="reqdate"
+                                        styleClass="p-calendar-sm p-inputtext-sm"
+                                        [required]="true"
+                                        dateFormat="dd/mm/yy"
+                                        [ngClass]="{'ng-invalid ng-dirty' : (submitted && !solped.reqdate) || (requestLine && !solped.reqdate)}">
+                            </p-calendar>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="comments">Comentarios</label>
+                        <textarea rows="3" 
+                                  pInputTextarea
+                                  [(ngModel)]="solped.comments"
+                                  class="w-full"
+                                  id="comments">
+                        </textarea>
+                        
+                    </div>
+                </div>
+            </div>
+            <p-divider></p-divider>
+            <div class="grid">
+                <div class="col">
+                    <div class="grid align-content-center">
+                        <div class="field col">
+                            <button pButton 
+                                    label="Nueva Línea" 
+                                    (click)="adicionarLinea()"
+                                    class="p-button-outlined mb-2 p-button-warning p-button-sm"
+                                    [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion" 
+                                    icon="pi pi-list">
+                            </button>
+                        </div>
+                        <div *ngIf="solpedDetLines.length>0" class="field col">
+                            <p-button label="Ver Detalle" 
+                                      icon="pi pi-search" 
+                                      (onClick)="showDetalle()"
+                                      [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].read_accion"
+                                      styleClass="p-button-outlined mb-2 p-button-secondary p-button-sm"
+                                      [badge]="solpedDetLines.length.toString()" 
+                                      badgeClass="p-badge-danger"></p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- fin cabecera solped -->
+<!--Footer solped-->
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            <div class="grid">
+                <div class="col">
+                    <button pButton 
+                            label="Guardar" 
+                            (click)="saveSolped()" 
+                            [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || submittedBotton" 
+                            class="p-button-outlined mb-2 p-button-success p-button-sm" 
+                            icon="pi pi-save">
+                    </button>
+                </div>
+                <div class="col">
+                    <button pButton 
+                            label="Nueva solped" 
+                            (click)="nuevaSolped()" 
+                            [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || submittedNuevaSolped"
+                            class="p-button-outlined mb-2 p-button-primary p-button-sm" 
+                            icon="pi pi-list"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--fin footer solped-->
+<!---Dilalog FORM detalle-->
+<p-dialog [header]="editForm ? 'Editar línea':'Adicionar Línea'" [(visible)]="formDetalle" [modal]="true"
+    [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}" [maximizable]="true"
+    [draggable]="false" (onHide)="submittedLine=false" [resizable]="false">
+    <ng-template pTemplate="content">
+        <!-- Grupo codigo item, descripción y fecha necesaria -->
+        <div class="grid">
+            <div class="field col">
+                <label for="reqdatedet">Fecha necesaria</label>
+                <p-calendar [(ngModel)]="solpedDet.reqdatedet" 
+                            [showIcon]="true" 
+                            inputId="reqdatedet" 
+                            [required]="true"
+                            styleClass="w-full" 
+                            [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.reqdatedet}">
+                </p-calendar>
+            </div>
+            <div class="field col">
+                <label for="linevendor">Proveedor</label>
+                <p-autoComplete [(ngModel)]="selectedBusinessPartners" 
+                                [showEmptyMessage]="true"
+                                [suggestions]="filteredProveedores" 
+                                (completeMethod)="filterProveedores($event)" 
+                                field="CardCode"
+                                [minLength]="1" 
+                                [delay]="1000" 
+                                (onSelect)="selectProveedor()" 
+                                panelStyleClass="text-sm sm:ml-2"
+                                inputStyleClass="w-full" styleClass="w-full" inputId="linevendor">
+
+                    <ng-template let-proveedor pTemplate="item">
+                        <div>{{proveedor.CardCode}} - {{proveedor.CardName}}</div>
+                    </ng-template>
+
+                </p-autoComplete>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="field col">
+                <label for="itemcode">Código ítem</label>
+                <p-autoComplete [(ngModel)]="selectedItemSAP" 
+                                [showEmptyMessage]="true" 
+                                [suggestions]="filteredItems"
+                                (completeMethod)="filterItems($event)" 
+                                field="ItemCode" 
+                                [minLength]="1" 
+                                [delay]="1000"
+                                (onSelect)="selectedItemCode()" 
+                                [showClear]="true" 
+                                (onClear)="clearItemCode()"
+                                inputStyleClass="w-full" 
+                                styleClass="w-full" 
+                                inputId="itemcode" [autofocus]="true"
+                                panelStyleClass="text-sm sm:ml-2" 
+                                [disabled]="solped.doctype === 'S'"
+                                [ngClass]="{'ng-invalid ng-dirty' : solped.doctype==='I' && submittedLine && !solpedDet.itemcode}">
+
+                    <ng-template let-item pTemplate="item">
+                        <div>{{item.ItemCode}} - {{item.ItemName}}</div>
+                    </ng-template>
+
+                </p-autoComplete>
+            </div>
+            <div class="field col">
+                <label for="dscription">Descripción</label>
+                <input  pInputText 
+                        [(ngModel)]="solpedDet.dscription" 
+                        id="dscription" 
+                        name="dscription" 
+                        type="text"
+                        required 
+                        [readonly]="solpedDet.itemcode || solped.doctype==='I'" class="w-full"
+                        [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.dscription}" />
+            </div>
+
+        </div>
+        
+        <!-- Grupo dependencias -->
+        <div class="grid">
+            <div class="field col">
+                <label for="ocrcode3">Vicepresidencia</label>
+                <p-dropdown [options]="vicepresidencies" [(ngModel)]="selectedVicepresidency"
+                    optionLabel="vicepresidency" [filter]="true" filterBy="vicepresidency" [showClear]="true"
+                    placeholder="Seleccione una vicepresidencia" styleClass="w-full" inputId="ocrcode3"
+                    [ngClass]="{'ng-invalid ng-dirty' :  submittedLine && !solpedDet.ocrcode3}"
+                    (onChange)="selectedOcrcode3()" #ocrcode3>
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="selectedVicepresidency">
+
+                            <div>{{selectedVicepresidency.vicepresidency}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-viceprecidency pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{viceprecidency.vicepresidency}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field col">
+                <label for="ocrcode2">Dependencia</label>
+                <p-dropdown [options]="dependencies" [(ngModel)]="selectedDependencie" optionLabel="dependence"
+                    placeholder="Seleccione una dependencia" [filter]="true" filterBy="dependence" [showClear]="true"
+                    styleClass="w-full" [ngClass]="{'ng-invalid ng-dirty' :  submittedLine && !solpedDet.ocrcode2}"
+                    inputId="ocrcode2" (onChange)="selectedOcrcode2()" #ocrcode2>
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="selectedDependencie">
+
+                            <div>{{selectedDependencie.dependence}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-dependence pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{dependence.dependence}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field col">
+                <label for="ocrcode">Localidad</label>
+                <p-dropdown [options]="locations" [(ngModel)]="selectedLocation" optionLabel="location"
+                    placeholder="Seleccione una localidad" [filter]="true" filterBy="location" [showClear]="true"
+                    (onChange)="selectedOcrcode()" styleClass="w-full"
+                    [ngClass]="{'ng-invalid ng-dirty' :  submittedLine && !solpedDet.ocrcode}" inputId="ocrcode"
+                    #ocrcode>
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="selectedLocation">
+
+                            <div>{{selectedLocation.location}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-location pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{location.location}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <!--Almacen-->
+        <div class="grid">
+            <div class="field col">
+                <label for="whscode">Almacen</label>
+                <p-dropdown [options]="stores" 
+                            [(ngModel)]="selectedStore" 
+                            optionLabel="store"
+                            placeholder="Seleccione una almacen" 
+                            [filter]="true" 
+                            filterBy="store" 
+                            [showClear]="true"
+                            (onChange)="selectStore()"
+                            styleClass="w-full" inputId="whscode">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="selectedStore">
+
+                            <div>{{selectedStore.store}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-store pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{store.store}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <!-- Grupo cuenta mayor -->
+        <div class="grid">
+
+            <div class="field col">
+                <label for="acctcode">Cuenta Mayor</label>
+                <p-autoComplete [(ngModel)]="selectedCuentaSAP" 
+                                [showEmptyMessage]="true"
+                                [suggestions]="filteredCuentas" 
+                                (completeMethod)="filterCuentas($event)" 
+                                field="Code"
+                                [minLength]="1" 
+                                [delay]="1000" 
+                                (onSelect)="selectedCuenta()" 
+                                inputStyleClass="w-full"
+                                styleClass="w-full" 
+                                inputId="acctcode" 
+                                panelStyleClass="text-sm sm:ml-2"
+                                [disabled]="solpedDet.itemcode!='' || solped.doctype ==='I'"
+                                [ngClass]="{'ng-invalid ng-dirty' : !solpedDet.itemcode && submittedLine && !solpedDet.acctcode}">
+
+                    <ng-template let-cuenta pTemplate="item">
+                        <div>{{cuenta.Code}} - {{cuenta.Name}}</div>
+                    </ng-template>
+
+                </p-autoComplete>
+            </div>
+            <div class="field col">
+                <label for="acctcodename">Nombre cuenta</label>
+                <input type="text" 
+                        pInputText 
+                        [(ngModel)]="solpedDet.acctcodename" 
+                        id="acctcodename" 
+                        disabled
+                        class="w-full"
+                        [ngClass]="{'ng-invalid ng-dirty' : !solpedDet.itemcode && submittedLine && !solpedDet.acctcode}">
+
+            </div>
+        </div>
+        
+        <!-- Grupo cantidad , precio y subtotal linea -->
+        <div class="grid">
+
+            <div class="field col">
+                <label for="quantity">Cantidad</label>
+                <input pInputText [(ngModel)]="solpedDet.quantity" type="number" id="quantity" placeholder="Cantidad"
+                    required (change)="subtotalLinea()" class="w-full"
+                    [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.quantity}">
+            </div>
+            <div class="field col">
+                <label for="price">Precio</label>
+                <div class="flex">
+
+                    <p-dropdown [options]="monedas" optionLabel="Currency" optionValue="Currency"
+                        [(ngModel)]="solpedDet.moneda" id="moneda" name="moneda" [required]="true"
+                        (onChange)="selectMoneda()"></p-dropdown>
+                    <p-inputNumber [(ngModel)]="solpedDet.price" inputId="price" mode="currency" currency="COP"
+                        locale="es-CO" placeholder="Precio" (ngModelChange)="subtotalLinea()"
+                        [ngStyle]="{width: '100%' }" styleClass="w-full"
+                        [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.price}">
+                    </p-inputNumber>
+                </div>
+
+            </div>
+            <div class="field col">
+                <label for="linetotal">Subtotal linea</label>
+                <p-inputNumber [(ngModel)]="solpedDet.linetotal" inputId="linetotal" mode="currency" currency="COP"
+                    locale="es-CO" placeholder="" [ngStyle]="{width: '100%' }" styleClass="w-full" [readonly]="true"
+                    [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.linetotal}">
+                </p-inputNumber>
+
+            </div>
+        </div>
+
+        <div class="grid">
+
+            <div class="field col">
+                <label for="tax">Impuesto</label>
+                <div class="flex">
+                    <p-dropdown [options]="taxes" 
+                                [(ngModel)]="selectedTax" 
+                                optionLabel="Code"
+                                placeholder="Seleccione un impuesto" 
+                                [filter]="true" 
+                                filterBy="Code" [showClear]="true"
+                                class="w-full" styleClass="w-full"
+                                [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.tax}" inputId="tax"
+                                (onChange)="selectedImpuesto()">
+
+                        <ng-template pTemplate="selectedItem">
+                            <div class="country-item country-item-value" *ngIf="selectedTax">
+
+                                <div>{{selectedTax.Code}}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template let-tax pTemplate="item">
+                            <div class="country-item">
+
+                                <div>{{tax.Code}} - {{tax.Name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <p-inputNumber [(ngModel)]="taxprc" suffix="%" [readonly]="true" inputStyleClass="text-center w-6"
+                        styleClass="text-center" [disabled]="true"
+                        [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.tax}">
+                    </p-inputNumber>
+
+                </div>
+
+            </div>
+
+            <div class="field col">
+                <label for="valortax">Valor impuesto</label>
+                <p-inputNumber [(ngModel)]="solpedDet.taxvalor" inputId="valortax" mode="currency" currency="COP"
+                    locale="es-CO" placeholder="" class="w-full" [ngStyle]="{width: '100%' }" styleClass="w-full"
+                    [readonly]="true" [disabled]="true"
+                    [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.tax}">
+                </p-inputNumber>
+
+            </div>
+
+            <div class="field col">
+                <label for="linegtotal">Total linea</label>
+                <p-inputNumber [(ngModel)]="solpedDet.linegtotal" inputId="linegtotal" mode="currency" currency="COP"
+                    locale="es-CO" placeholder="" [disabled]="true" class="w-full" styleClass="w-full" [readonly]="true"
+                    [ngClass]="{'ng-invalid ng-dirty' : submittedLine && !solpedDet.linegtotal}">
+                </p-inputNumber>
+
+            </div>
+
+        </div>
+
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (click)="registrarLinea()"                     
+                    [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || submittedBottonLine" 
+                    label="Ok"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->
+
+<!---Dialog lista detalle Solped-->
+
+<p-dialog header="Detalle de la solicitud de pedido" [(visible)]="listDetalle" [modal]="true" [style]="{width: '50vw'}"
+    [maximizable]="true" [draggable]="false" [resizable]="false">
+
+
+    <p-table #dt1 [value]="solpedDetLines" dataKey="linenum" [rows]="10" [loading]="loading" [rowHover]="true"
+        styleClass="p-datatable-gridlines p-datatable-sm" [paginator]="true"
+        [globalFilterFields]="['itemcode','dscription','linevendor','acctcodename','acctcode','ocrcode','ocrcode2','ocrcode3']"
+        selectionMode="multiple" [(selection)]="selectedLineSolped" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+            <div class="flex justify-content-between flex-column sm:flex-row">
+                <div>
+                    <button pButton 
+                            label="Limpiar" 
+                            class="p-button-outlined mb-2 mr-2 p-button-sm" 
+                            icon="pi pi-filter-slash"
+                            (click)="clear(dt1)">
+                    </button>
+                    <button pButton 
+                            label="Nueva Línea" 
+                            (click)="adicionarLinea()"
+                            [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion" 
+                            class="p-button-outlined mb-2  mr-2 p-button-warning p-button-sm" 
+                            icon="pi pi-list">
+                    </button>
+                    <button pButton 
+                            [label]="permisosUsuarioPagina.length>0 && permisosUsuarioPagina[0].create_accion?'Editar':'Consultar'" 
+                            class="p-button-outlined mb-2 mr-2 p-button-secondary p-button-sm"
+                            icon="pi pi-pencil" 
+                            (click)="editarLinea()"
+                            [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !selectedLineSolped || selectedLineSolped.length!=1">
+                    </button>
+                    <button pButton 
+                            label="Borrar linea" 
+                            class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm"
+                            icon="pi pi-trash"
+                            [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !selectedLineSolped || selectedLineSolped.length==0"  
+                            (click)="borrarLineas()">
+                    </button>
+                </div>
+
+
+
+                <span class="p-input-icon-left mb-2">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)"
+                        placeholder="Buscar por palabra clave" class="w-full p-inputtext-sm" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <!--<p-tableHeaderCheckbox></p-tableHeaderCheckbox>-->
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Linea detalle
+                        <p-columnFilter type="text" field="linenum" display="menu"
+                            placeholder="Buscar por linea detalle"></p-columnFilter>
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Código Item
+                        <p-columnFilter type="text" field="itemcode" display="menu"
+                            placeholder="Buscar por código item"></p-columnFilter>
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Descripción
+                        <p-columnFilter type="text" field="dscription" display="menu"
+                            placeholder="Buscar por descripción"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Fecha requerida
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Proveedor
+                        <p-columnFilter type="text" field="linevendor" display="menu"
+                            placeholder="Buscar por proveedor"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Cuenta Mayor
+                        <p-columnFilter type="text" field="acctcode" display="menu" placeholder="Buscar por cuenta">
+                        </p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Vicepresidencia
+                        <p-columnFilter type="text" field="ocrcode3" display="menu"
+                            placeholder="Buscar por vicepresidencia"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Dependencia
+                        <p-columnFilter type="text" field="orecode2" display="menu"
+                            placeholder="Buscar por dependencia"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Localidad
+                        <p-columnFilter type="text" field="location" display="menu" placeholder="Buscar por localidad">
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Cantidad
+
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Precio
+
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Impuesto
+
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Valor Impuesto
+
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Subtotal línea
+
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Total línea
+
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-solpeditem>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="solpeditem" (onClick)="selectLine()"></p-tableCheckbox>
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.linenum }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.itemcode }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.dscription }}
+                </td>
+
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.reqdatedet | date}}
+                </td>
+
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.linevendor }}
+                </td>
+
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.acctcode }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.ocrcode3}}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.ocrcode2 }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.ocrcode }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.quantity }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.price | currency: solpeditem.moneda }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.tax }} {{ (solpeditem.linegtotal/solpeditem.linetotal)-1 |percent }}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.taxvalor | currency :'COP'}}
+                </td>
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.linetotal | currency :'COP'}}
+                </td>
+
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.linegtotal | currency: 'COP' }}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td colspan="13" class="text-right">Total</td>
+                <td>{{totalimpuestos | currency: 'COP'}}</td>
+                <td>{{subtotal | currency: 'COP'}}</td>
+
+                <td>{{grantotal | currency: 'COP'}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="16" class="text-center">No se econtraron lineas asociadas a la solped.</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="16" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="listDetalle=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin Lista detalle Solped -->

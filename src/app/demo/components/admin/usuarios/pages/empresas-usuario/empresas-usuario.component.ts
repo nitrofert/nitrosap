@@ -4,6 +4,7 @@ import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { ActivatedRoute } from '@angular/router';
 import { UserInterface } from 'src/app/demo/api/users';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-empresas-usuario',
@@ -23,12 +24,13 @@ export class EmpresasUsuarioComponent implements OnInit {
   estado:number = 0;
   estados:any[] = [];
 
-  infoSessionStr:string = "";
+  /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
-  token:string = "";
+  token:string = "";*/
 
   constructor(private rutaActiva: ActivatedRoute,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
 
@@ -37,11 +39,11 @@ export class EmpresasUsuarioComponent implements OnInit {
     this.userSelected = this.rutaActiva.snapshot.params;
     console.log((this.userSelected.user));
 
-    this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
     
-    this.adminService.getUserById(this.token,this.userSelected.user)
+    this.adminService.getUserById(this.authService.getToken(),this.userSelected.user)
         .subscribe({
           next: (user) => {
             console.log(user);
@@ -52,7 +54,7 @@ export class EmpresasUsuarioComponent implements OnInit {
           }
         })
 
-    this.adminService.getCompaniesUser(this.token,this.userSelected.user)
+    this.adminService.getCompaniesUser(this.authService.getToken(),this.userSelected.user)
     .subscribe({
       next:(companiesUser =>{
           
@@ -76,7 +78,7 @@ export class EmpresasUsuarioComponent implements OnInit {
       id_user:this.userSelected.user,
       valor
     }
-    this.adminService.setAccess(this.token,accessCompany)
+    this.adminService.setAccess(this.authService.getToken(),accessCompany)
         .subscribe({
           next: (acces) => {
             console.log(acces);

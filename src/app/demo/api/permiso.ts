@@ -16,6 +16,7 @@ export interface PermisosInterface {
     create_accion?: number;
     update_accion?: number;
     delete_accion?: number;
+    aproved_accion?: number;
     accion?:string;
     valor?:number;
 }

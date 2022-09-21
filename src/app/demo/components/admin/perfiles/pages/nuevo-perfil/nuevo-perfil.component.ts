@@ -3,6 +3,7 @@ import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { PerfilInterface } from 'src/app/demo/api/perfil';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-nuevo-perfil',
@@ -25,18 +26,19 @@ export class NuevoPerfilComponent implements OnInit {
 
   ];
 
-  infoSessionStr: string = "";
+  /*infoSessionStr: string = "";
   infoSession: InfoUsuario[] = [];
-  token: string = "";
+  token: string = "";*/
 
   constructor(private messageService: MessageService,
-    private adminService: AdminService) { }
+    private adminService: AdminService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
 
-    this.infoSessionStr = localStorage.getItem('infoSession') || '';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') || '';
     this.infoSession = JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
   }
 
@@ -56,7 +58,7 @@ export class NuevoPerfilComponent implements OnInit {
 
       }
 
-      this.adminService.savePerfil(this.token, newPerfil)
+      this.adminService.savePerfil(this.authService.getToken(), newPerfil)
         .subscribe({
           next: (perfil => {
 

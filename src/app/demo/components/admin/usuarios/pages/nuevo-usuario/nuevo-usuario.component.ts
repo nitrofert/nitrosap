@@ -5,6 +5,7 @@ import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { UserInterface } from 'src/app/demo/api/users';
 import { AdminService } from 'src/app/demo/service/admin.service';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-nuevo-usuario',
@@ -37,18 +38,19 @@ export class NuevoUsuarioComponent implements OnInit {
 
   ];
 
-  infoSessionStr: string = "";
+  /*infoSessionStr: string = "";
   infoSession: InfoUsuario[] = [];
-  token: string = "";
+  token: string = "";*/
 
   constructor(private messageService: MessageService,
-    private adminService: AdminService) { }
+    private adminService: AdminService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
 
-    this.infoSessionStr = localStorage.getItem('infoSession') || '';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') || '';
     this.infoSession = JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
   }
 
@@ -73,7 +75,7 @@ export class NuevoUsuarioComponent implements OnInit {
 
       }
 
-      this.adminService.saveUser(this.token, newUser)
+      this.adminService.saveUser(this.authService.getToken(), newUser)
         .subscribe({
           next: (user => {
 

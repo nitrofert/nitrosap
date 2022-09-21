@@ -1,5 +1,5 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { CommonModule, HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -12,11 +12,15 @@ import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
 
+
+
 import localeES_CO from '@angular/common/locales/es-CO';
 import {registerLocaleData} from '@angular/common';
 
 //Provider
-import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt'
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+
+
 
 registerLocaleData(localeES_CO);
 
@@ -26,7 +30,9 @@ registerLocaleData(localeES_CO);
     ],
     imports: [
         AppRoutingModule,
-        AppLayoutModule
+        AppLayoutModule,
+     
+
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

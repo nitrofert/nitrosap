@@ -1,0 +1,7 @@
+{
+    "/b1s/v1/*": {
+    "target": "https://nitrofert-hbt.heinsohncloud.com.co:50000",
+    "secure": false,
+    "logLevel":"debug"
+    }
+}

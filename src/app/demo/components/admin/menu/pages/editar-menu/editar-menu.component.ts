@@ -4,6 +4,7 @@ import { MenuInterface } from 'src/app/demo/api/menu.interface';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-editar-menu',
@@ -35,23 +36,24 @@ export class EditarMenuComponent implements OnInit {
        
     ];
 
-  infoSessionStr:string = "";
+  /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
-  token:string = "";
+  token:string = "";*/
 
   constructor(private rutaActiva: ActivatedRoute,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
     
     this.menuSelected = this.rutaActiva.snapshot.params;
     console.log((this.menuSelected.menu));
 
-    this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
-    this.adminService.getMuenuById(this.token,this.menuSelected.menu)
+    this.adminService.getMuenuById(this.authService.getToken(),this.menuSelected.menu)
     .subscribe({
       next:(menu =>{
           
@@ -105,7 +107,7 @@ export class EditarMenuComponent implements OnInit {
 
       }
       
-      this.adminService.updateMenuOpcion(this.token,newMenu)
+      this.adminService.updateMenuOpcion(this.authService.getToken(),newMenu)
       .subscribe({
         next:(menu =>{
             
@@ -130,7 +132,7 @@ export class EditarMenuComponent implements OnInit {
       //let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
       //const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
       //const token = localStorage.getItem('token') || '';
-      this.adminService.loadMenuFather(this.token)
+      this.adminService.loadMenuFather(this.authService.getToken())
           .subscribe({
             next:(menu =>{
               
@@ -157,7 +159,7 @@ export class EditarMenuComponent implements OnInit {
        const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
        const token = localStorage.getItem('token') || '';*/
 
-      this.adminService.orderNum(this.token,this.hierarchy,this.padre)
+      this.adminService.orderNum(this.authService.getToken(),this.hierarchy,this.padre)
       .subscribe({
         next:(menu =>{
           

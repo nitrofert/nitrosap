@@ -4,6 +4,7 @@ import { CompanyInterface } from 'src/app/demo/api/company';
 
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-nueva-empresa',
@@ -30,18 +31,19 @@ export class NuevaEmpresaComponent implements OnInit {
 
   ];
 
-  infoSessionStr: string = "";
+  /*infoSessionStr: string = "";
   infoSession: InfoUsuario[] = [];
-  token: string = "";
+  token: string = "";*/
 
   constructor(private messageService: MessageService,
-    private adminService: AdminService) { }
+    private adminService: AdminService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
 
-    this.infoSessionStr = localStorage.getItem('infoSession') || '';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') || '';
     this.infoSession = JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
   }
 
@@ -63,7 +65,7 @@ export class NuevaEmpresaComponent implements OnInit {
         dbcompanysap:this.dbcompanysap
       }
 
-      this.adminService.saveCompany(this.token, newCompany)
+      this.adminService.saveCompany(this.authService.getToken(), newCompany)
         .subscribe({
           next: (company => {
 

@@ -5,6 +5,7 @@ import { AdminService } from 'src/app/demo/service/admin.service';
 import { ActivatedRoute } from '@angular/router';
 import { PerfilInterface } from 'src/app/demo/api/perfil';
 import { CompanyInterface } from 'src/app/demo/api/company';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 
 @Component({
@@ -38,23 +39,24 @@ export class EditarEmpresaComponent implements OnInit {
        
     ];
 
-  infoSessionStr:string = "";
+  /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
-  token:string = "";
+  token:string = "";*/
 
   constructor(private rutaActiva: ActivatedRoute,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
     
     this.companySelected = this.rutaActiva.snapshot.params;
     console.log((this.companySelected.company));
 
-    this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+    /*his.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
-    this.adminService.getCompanyById(this.token,this.companySelected.company)
+    this.adminService.getCompanyById(this.authService.getToken(),this.companySelected.company)
     .subscribe({
       next:(company =>{
           
@@ -94,7 +96,7 @@ export class EditarEmpresaComponent implements OnInit {
         dbcompanysap:this.dbcompanysap
       }
       
-      this.adminService.updateCompany(this.token,newCompany)
+      this.adminService.updateCompany(this.authService.getToken(),newCompany)
       .subscribe({
         next:(company =>{
             

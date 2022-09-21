@@ -1,7 +1,9 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { MenuInterface } from 'src/app/demo/api/menu.interface';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { AuthService } from 'src/app/demo/service/auth.service';
 import { Portalervice } from 'src/app/demo/service/portal.service';
 import { LayoutService } from '../../service/app.layout.service';
 
@@ -18,18 +20,49 @@ export class AppMenuComponent implements OnInit {
 
     constructor(public layoutService: LayoutService,
                 private portalervice:Portalervice,
-                private router: Router
+                private router: Router,
+                private authService: AuthService
                 ) { }
 
    async ngOnInit() {
 
         //obtener datos del usuario logueado
-        let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+        /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
         const infoSession:InfoUsuario[]    = await JSON.parse(infoSessionStr);
         const token = localStorage.getItem('token') || '';
-        console.log(infoSession[0].id);
+        console.log(infoSession[0].id);*/
 
-        this.portalervice.opcionesMenu(infoSession[0].id,token)
+        const token = this.authService.getToken();
+        const infoSession = this.authService.getInfoToken(token);
+
+        console.log(infoSession.menuUsuario);
+
+        let menupadres:MenuInterface[] = infoSession.menuUsuario.opcionesMenu;
+        let menuhijos:MenuInterface[] = infoSession.menuUsuario.opcionesSubMenu;
+        let menuportal:any[]=[{
+            label: 'Inicio',
+            items: [
+                { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/portal'] }
+            ]
+        }];
+        let items:any[];
+
+       for(let opcionMenuPadre of menupadres ){
+            items=[];
+            for(let opcionMenuHijo of menuhijos ){
+                if(opcionMenuPadre.id == opcionMenuHijo.iddad){
+                    items.push({label: opcionMenuHijo.title, icon:opcionMenuHijo.icon, routerLink: [opcionMenuHijo.url]});
+                }
+            }
+            menuportal.push({
+                label: opcionMenuPadre.title,
+                items:items
+            });
+       }
+
+       this.model = menuportal;
+
+        /*this.portalervice.opcionesMenu(infoSession.infoUsuario.id,token)
             .subscribe({
                 next:(response)=>{
                     console.log(response);
@@ -39,7 +72,7 @@ export class AppMenuComponent implements OnInit {
                     console.log(err);
                     this.router.navigate(['/']);
                 }
-            });
+            });*/
         /*    
         this.model = [
             {

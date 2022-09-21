@@ -5,6 +5,7 @@ import { AdminService } from 'src/app/demo/service/admin.service';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { Router } from '@angular/router';
 import { CompanyInterface } from 'src/app/demo/api/company';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -39,16 +40,17 @@ export class EmpresasComponent implements OnInit {
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(private adminService:AdminService,
-              private router:Router) { }
+              private router:Router,
+              private authService: AuthService) { }
 
   ngOnInit(): void {
 
      //obtener datos del usuario logueado
-     let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+     /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
      const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-     const token = localStorage.getItem('token') || '';
+     const token = localStorage.getItem('token') || '';*/
 
-    this.adminService.listCompanies(token)
+    this.adminService.listCompanies(this.authService.getToken())
         .subscribe({
           next:(company =>{
             this.loading = false;

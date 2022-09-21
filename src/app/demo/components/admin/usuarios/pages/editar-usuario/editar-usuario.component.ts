@@ -4,6 +4,7 @@ import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { ActivatedRoute } from '@angular/router';
 import { UserInterface } from 'src/app/demo/api/users';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 
 
@@ -39,23 +40,24 @@ export class EditarUsuarioComponent implements OnInit {
        
     ];
 
-  infoSessionStr:string = "";
+  /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
-  token:string = "";
+  token:string = "";*/
 
   constructor(private rutaActiva: ActivatedRoute,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
     
     this.userSelected = this.rutaActiva.snapshot.params;
     console.log((this.userSelected.user));
 
-    this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
-    this.adminService.getUserById(this.token,this.userSelected.user)
+    this.adminService.getUserById(this.authService.getToken(),this.userSelected.user)
     .subscribe({
       next:(user =>{
           
@@ -96,7 +98,12 @@ export class EditarUsuarioComponent implements OnInit {
         codusersap:this.codusersap
       }
       
-      this.adminService.updateUser(this.token,newUser)
+      if(this.password !== ''){
+        console.log(this.password);
+        newUser.password = this.password;
+      }
+      
+      this.adminService.updateUser(this.authService.getToken(),newUser)
       .subscribe({
         next:(user =>{
             

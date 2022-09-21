@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { AuthService } from 'src/app/demo/service/auth.service';
 import { LayoutService } from '../../service/app.layout.service';
 
 
@@ -14,18 +15,28 @@ export class AppTopBarComponent implements OnInit {
 
     logo:string = "";
     companyname:string ="";
+    fullnameUser:string=";"
 
     items!: MenuItem[];
     itemsPerfil!: MenuItem[];
 
     constructor(public layoutService: LayoutService,
-                private router:Router) {
+                private router:Router,
+                private authService:AuthService) {
         //obtener datos del usuario logueado
-        let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
+       
+        
+        /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
         const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-        const token = localStorage.getItem('token') || '';
-        this.logo= infoSession[0].logoempresa;
-        this.companyname = infoSession[0].companyname;
+        const token = localStorage.getItem('token') || '';*/
+
+        const token = this.authService.getToken();
+        const infoSession = this.authService.getInfoToken(token);
+        
+        this.logo= infoSession.infoUsuario.logoempresa;
+        this.companyname = infoSession.infoUsuario.companyname;
+        this.fullnameUser = infoSession.infoUsuario.fullname;
+
      }
 
      

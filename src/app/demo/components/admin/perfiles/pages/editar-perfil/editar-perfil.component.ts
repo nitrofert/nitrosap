@@ -4,6 +4,7 @@ import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { ActivatedRoute } from '@angular/router';
 import { PerfilInterface } from 'src/app/demo/api/perfil';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -33,23 +34,24 @@ export class EditarPerfilComponent implements OnInit {
        
     ];
 
-  infoSessionStr:string = "";
+  /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
-  token:string = "";
+  token:string = "";*/
 
   constructor(private rutaActiva: ActivatedRoute,
-              private adminService:AdminService) { }
+              private adminService:AdminService,
+              private authService:AuthService) { }
 
   ngOnInit(): void {
     
     this.perfilSelected = this.rutaActiva.snapshot.params;
     console.log((this.perfilSelected.perfil));
 
-    this.infoSessionStr = localStorage.getItem('infoSession') ||'';
+    /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
-    this.token = localStorage.getItem('token') || '';
+    this.token = localStorage.getItem('token') || '';*/
 
-    this.adminService.getPerfilById(this.token,this.perfilSelected.perfil)
+    this.adminService.getPerfilById(this.authService.getToken(),this.perfilSelected.perfil)
     .subscribe({
       next:(perfil =>{
           
@@ -87,7 +89,7 @@ export class EditarPerfilComponent implements OnInit {
 
       }
       
-      this.adminService.updatePerfil(this.token,newPerfil)
+      this.adminService.updatePerfil(this.authService.getToken(),newPerfil)
       .subscribe({
         next:(perfil =>{
             
