@@ -1,9 +1,16 @@
+/***** Modulos angular *************/
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule, HashLocationStrategy, LocationStrategy } from '@angular/common';
+import localeES_CO from '@angular/common/locales/es-CO';
+import {registerLocaleData} from '@angular/common';
+
+/**********Componentes ********************/
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
+
+/********** Servicios ********************/
 import { ProductService } from './demo/service/product.service';
 import { CountryService } from './demo/service/country.service';
 import { CustomerService } from './demo/service/customer.service';
@@ -14,8 +21,6 @@ import { PhotoService } from './demo/service/photo.service';
 
 
 
-import localeES_CO from '@angular/common/locales/es-CO';
-import {registerLocaleData} from '@angular/common';
 
 //Provider
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';

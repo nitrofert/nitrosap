@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PermisosComponent } from './permisos.component';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
+
+import { PermisosComponent } from './permisos.component';
+
+import { PermisosRoutingModule } from './permisos-routing.module';
+
+/*import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
@@ -15,9 +19,10 @@ import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import { MenuRoutingModule } from '../menu/menu-routing.module';
-import {SelectButtonModule} from 'primeng/selectbutton';
-import { PermisosRoutingModule } from './permisos-routing.module';
+import {SelectButtonModule} from 'primeng/selectbutton';*/
+
+import { PrimengModule } from 'src/app/layout/shared/primeng/primeng.module';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +33,7 @@ import { PermisosRoutingModule } from './permisos-routing.module';
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
+    /*TableModule,
     RatingModule,
     ButtonModule,
     SliderModule,
@@ -41,8 +46,9 @@ import { PermisosRoutingModule } from './permisos-routing.module';
     ToastModule,
     MessagesModule,
     MessageModule,
-    SelectButtonModule,
-    PermisosRoutingModule
+    SelectButtonModule,*/
+    PermisosRoutingModule,
+    PrimengModule
   ]
 })
 export class PermisosModule { }
