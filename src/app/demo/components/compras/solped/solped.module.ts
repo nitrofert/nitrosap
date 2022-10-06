@@ -13,30 +13,13 @@ import { ResponseApprovedComponent } from './pages/response-approved/response-ap
 
 import { EstadosPipe } from 'src/app/demo/pipes/estados.pipe';
 import { PrimengModule } from 'src/app/layout/shared/primeng/primeng.module';
+import { FormSolpedComponent } from './pages/form-solped/form-solped.component';
+import { NewSolpedComponent } from './pages/new-solped/new-solped.component';
+import { EditSolpedComponent } from './pages/edit-solped/edit-solped.component';
+import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
+import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 
-/*import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { MessagesModule } from 'primeng/messages';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { RatingModule } from 'primeng/rating';
-import { RippleModule } from 'primeng/ripple';
-import { SliderModule } from 'primeng/slider';
-import { ToastModule } from 'primeng/toast';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import {CalendarModule} from 'primeng/calendar';
-import {DialogModule} from 'primeng/dialog';
-import {DividerModule} from 'primeng/divider';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputNumberModule} from 'primeng/inputnumber';
-import {SplitButtonModule} from 'primeng/splitbutton';
-import {BadgeModule} from 'primeng/badge';
-import {InputTextareaModule} from 'primeng/inputtextarea';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {TooltipModule} from 'primeng/tooltip';*/
+
 
 
 
@@ -46,40 +29,22 @@ import {TooltipModule} from 'primeng/tooltip';*/
     SolpedComponent,
     NuevaSolpedComponent,
     EditarSolpedComponent,
-    EstadosPipe,
+    //EstadosPipe,
     RechazoSolpedComponent,
     TestMailComponent,
-    ResponseApprovedComponent
+    ResponseApprovedComponent,
+    FormSolpedComponent,
+    NewSolpedComponent,
+    EditSolpedComponent
   ],
   imports: [
     CommonModule,
     SolpedRoutingModule,
     FormsModule,
-    /*TableModule,
-    RatingModule,
-        ButtonModule,
-        SliderModule,
-        InputTextModule,
-        ToggleButtonModule,
-        RippleModule,
-        MultiSelectModule,
-        DropdownModule,
-        ProgressBarModule,
-        ToastModule,
-        MessagesModule,
-        MessageModule,
-        CalendarModule,
-        DialogModule,
-        DividerModule,
-        AutoCompleteModule,*/
-        ReactiveFormsModule,
-        /*InputNumberModule,
-        SplitButtonModule,
-        BadgeModule,
-        InputTextareaModule,
-        ConfirmDialogModule,
-        TooltipModule*/
-        PrimengModule
+    ReactiveFormsModule,
+    PrimengModule,
+    ApplicationPipesModule,
+    BreadCrumbModule
   ]
 })
 export class SolpedModule { }

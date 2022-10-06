@@ -22,6 +22,35 @@ export class EstadosPipe implements PipeTransform {
           }
       break;
 
+      case 'entrada':
+          switch(value){
+              case 'bost_Open':
+                return 'Abierta';
+              break;
+
+              case 'bost_Close':
+                return 'Cerrada';
+              break;
+
+              default: return value
+          }
+      break;
+
+      case 'pedido':
+          switch (value) {
+            case 'O':
+                return 'Abierta'
+            break;
+
+            case 'C':
+                return 'Cerrada'
+            break;
+
+            default: return value
+            
+          }
+      break;
+
       case 'aprobacion':
           switch (value) {
             case 'N':
@@ -38,6 +67,10 @@ export class EstadosPipe implements PipeTransform {
 
             case 'R':
                 return 'Rechazada'
+            break;
+
+            case 'C':
+                return 'Cancelada'
             break;
 
             default: return value

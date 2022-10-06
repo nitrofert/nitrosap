@@ -18,15 +18,7 @@ import { AppMenuComponent } from './shared/menu/app.menu.component';
 import { AppConfigModule } from './config/config.module';
 import { PrimengModule } from './shared/primeng/primeng.module';
 
-/********* PrimeNG ***********************************/
-/*import {MenuModule} from 'primeng/menu';
-import {TooltipModule} from 'primeng/tooltip';
-import { InputTextModule } from 'primeng/inputtext';
-import { SidebarModule } from 'primeng/sidebar';
-import { BadgeModule } from 'primeng/badge';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { RippleModule } from 'primeng/ripple';*/
+
 
 
 @NgModule({
@@ -37,6 +29,7 @@ import { RippleModule } from 'primeng/ripple';*/
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
+        
     ],
     imports: [
         BrowserModule,

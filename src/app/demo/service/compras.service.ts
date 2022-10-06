@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CompaniesUser } from '../api/companiesUser';
 import { CompanyInterface } from '../api/company';
+import { ListadoPedidos } from '../api/listadoPedidos';
 import { MenuInterface } from '../api/menu.interface';
 import { PerfilInterface } from '../api/perfil';
 import { PermisosInterface } from '../api/permiso';
@@ -155,6 +156,96 @@ export class ComprasService {
     const url:string = `${this.api_url}/api/compras/solped/rechazar`;
     return this.http.put<any[]>(url,infoSolped);
 
+  }
+
+  cancelacionSolped(token:string,idsSolped:number[]):Observable<any>{
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    let data = JSON.stringify(idsSolped);
+
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/compras/solped/cancelacion`;
+    return this.http.post<any[]>(url,data,requestOptions);
+
+  }
+
+  ordenesAbiertasUsuarioXE(token:string):Observable<any[]>{
+   
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/wssap/Xengine/ordenes-open-usuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  ordenesAbiertasUsuarioSL(token:string):Observable<any[]>{
+   
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/wssap/Xengine/ordenes-open-usuario-sl`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  pedidoByIdSL(token:string,pedido:string):Observable<any[]>{
+   
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/wssap/Xengine/pedido/${pedido}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  saveEntrada(token:string,data:any):Observable<any>{
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/compras/entrada/`;
+    return this.http.post<any[]>(url,data,requestOptions);
+
+  }
+
+  listEntrada(token:string):Observable<any[]>{
+    
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+ 
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/compras/entrada/list`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  entradaById(token:string,id:number):Observable<any>{
+    
+    console.log(id);
+    const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+ 
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/compras/entrada/${id}`;
+    return this.http.get<any>(url,requestOptions);
   }
 
   

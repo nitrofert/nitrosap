@@ -31,6 +31,7 @@ export interface Solped {
     updated_at?:        string;
     comments?: string;
     trm:number;
+    currency?:string;
 
 }
 

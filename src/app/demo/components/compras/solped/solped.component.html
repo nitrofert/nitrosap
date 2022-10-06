@@ -1,3 +1,4 @@
+<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
 <div class="grid">
 	<div class="col-12">
 		<div class="card">
@@ -24,7 +25,8 @@
 									icon="pi pi-filter-slash"
 									(click)="clear(dt1)">
 							</button>
-							<button pButton 
+							<button pButton
+									*ngIf="permisosUsuarioPagina[0].create_accion" 
 									pTooltip="Nuevo" tooltipPosition="bottom" placeholder="Bottom"  
 									class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
 									icon="pi pi-plus"
@@ -32,7 +34,7 @@
 									(click)="newSolped()">
 							</button>
 							<button pButton 
-									
+									*ngIf="permisosUsuarioPagina[0].update_accion"
 									[pTooltip]="permisosUsuarioPagina[0].update_accion?'Editar':'Consultar'" tooltipPosition="bottom" placeholder="Bottom"   
 									class="p-button-outlined mb-2 mr-2 p-button-secondary p-button-sm" 
 									[icon]="permisosUsuarioPagina[0].update_accion?'pi pi-pencil':'pi pi-search'" 
@@ -40,7 +42,7 @@
 									[disabled]="!permisosUsuarioPagina[0].read_accion || (!selectedSolped || selectedSolped.length!=1)">
 							</button>
 							<button pButton 
-									
+									*ngIf="permisosUsuarioPagina[0].update_accion"
 									pTooltip="Enviar a aprobación" tooltipPosition="bottom" placeholder="Bottom"   
 									class="p-button-outlined mb-2 mr-2 p-button-warning p-button-sm" 
 									icon="pi pi-send" 
@@ -48,6 +50,15 @@
 									[disabled]="!permisosUsuarioPagina[0].update_accion || !selectedSolped || selectedSolped.length==0">
 							</button>
 							<button pButton 
+									*ngIf="permisosUsuarioPagina[0].update_accion" 
+									pTooltip="Cancelar" tooltipPosition="bottom" placeholder="Bottom"   
+									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
+									icon="pi pi-trash" 
+									(click)="cancelarSolped()" 
+									[disabled]="!permisosUsuarioPagina[0].update_accion || !selectedSolped || selectedSolped.length==0">
+							</button>
+							<button pButton
+									*ngIf="permisosUsuarioPagina[0].aproved_accion" 
 									pTooltip="Aprobar" tooltipPosition="bottom" placeholder="Bottom" 
 									class="p-button-outlined mb-2 mr-2 p-button-help p-button-sm" 
 									icon="pi pi-check-circle" 
@@ -55,6 +66,7 @@
 									[disabled]="!permisosUsuarioPagina[0].aproved_accion || !selectedSolped || selectedSolped.length==0">
 							</button>
 							<button pButton 
+									*ngIf="permisosUsuarioPagina[0].aproved_accion"
 									pTooltip="Rechazar" tooltipPosition="bottom" placeholder="Bottom" 
 									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
 									icon="pi pi-times-circle" 
@@ -173,7 +185,7 @@
                         <th>
 							<div class="flex justify-content-between align-items-center">
 								Número solped SAP
-								<p-columnFilter type="text" field="fullname" display="menu" placeholder="Buscar por usuario"></p-columnFilter>
+								<p-columnFilter type="text" field="sapsocnum" display="menu" placeholder="Buscar por código SAP"></p-columnFilter>
 							</div>
 						</th>
 					</tr>
@@ -287,6 +299,26 @@
                 </div>
                 <div class="col-6">
                     <button type="button" pButton (click)="onRejectRap()" label="No" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast key="cdel" (onClose)="onRejectCancel()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirmCancel()" label="Yes" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onRejectCancel()" label="No" class="p-button-secondary"></button>
                 </div>
             </div>
         </div>

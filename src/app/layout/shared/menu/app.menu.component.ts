@@ -35,7 +35,7 @@ export class AppMenuComponent implements OnInit {
         const token = this.authService.getToken();
         const infoSession = this.authService.getInfoToken(token);
 
-        console.log(infoSession.menuUsuario);
+        //console.log(infoSession.menuUsuario);
 
         let menupadres:MenuInterface[] = infoSession.menuUsuario.opcionesMenu;
         let menuhijos:MenuInterface[] = infoSession.menuUsuario.opcionesSubMenu;

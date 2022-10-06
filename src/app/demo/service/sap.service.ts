@@ -73,44 +73,7 @@ export class SAPService {
     })
   }
 
-  /*
-
-
-
-  getProveedores():Observable<any[]>{
-    //Set headers    
-    const headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Cookie': `B1SESSION=${this.tokenSAP}; ROUTEID=.node2`
-      });
-    //const requestOptions = { headers: headers };
-    //Set params
-    const httpParams = new HttpParams()
-                       .set('$select','CardCode,CardName')
-                       .set('$filter',"startswith(CardCode,'P'), CardType eq 'cSupplier'");            
-
-    //const url:string = `${this.api_url}/BusinessPartners?$filter=startswith(CardCode,'P'), CardType eq 'cSupplier'&$select=CardCode,CardName`;
-    const url:string = `${this.api_url}/BusinessPartners`;
-    return this.http.get<any[]>(url,{params: httpParams, headers});
-  }
-
-
-  login2(token:string):Observable<any[]>{
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    const requestOptions = { headers: headers };
-
-    const infoToken = this.authService.getInfoToken(token);
-    const infoUsuario = infoToken.infoUsuario
-    const jsonLog = {"CompanyDB": infoUsuario.dbcompanysap, "UserName": "ABALLESTEROS", "Password": "1234"}
-    console.log(JSON.stringify(jsonLog));
-
-    const url:string = `${this.api_url3}/api/wssap/Login`;
-    return this.http.post<any[]>(url,jsonLog,requestOptions);
-  }
-*/
+  
   BusinessPartners(token:string):Observable<any[]>{
     const headers = new HttpHeaders({
         'Content-Type': 'application/json',
@@ -141,8 +104,18 @@ export class SAPService {
       return this.http.get<any[]>(url,requestOptions);
   }
 
+  CuentasSAPXE(token:string):Observable<any[]>{
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/wssap/Xengine/cuentas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
 
-  consultaXEngineSAP(token:string):Observable<any[]>{
+
+  itemsSAPXE(token:string):Observable<any[]>{
    
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -152,6 +125,21 @@ export class SAPService {
     const url:string = `${this.api_url3}/api/wssap/Xengine/items`;
     return this.http.get<any[]>(url,requestOptions);
   }
+
+  seriesDocXEngineSAP(token:string,objType?:string):Observable<any[]>{
+   
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    let paramObjType = "";
+    if(objType) paramObjType =`/${objType}`;
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/wssap/Xengine/series${paramObjType}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+
 
   monedasXEngineSAP(token:string, date:string):Observable<any[]>{
    
@@ -213,7 +201,6 @@ export class SAPService {
 
 
   
-
 
   
 

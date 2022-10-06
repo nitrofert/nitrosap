@@ -10,6 +10,7 @@ import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 
 
 
+
 interface expandedRows {
   [key: string]: boolean;
 }
@@ -58,6 +59,9 @@ export class SolpedComponent implements OnInit {
   errorSolpedEnviada:boolean = false;
   arrayErrorSolpedEnviada:any[] = [];
 
+  errorSolpedCancelada:boolean = false;
+  arrayErrorSolpedCancelada:any[] = [];
+
   errorSopledARechazada:boolean = false;
   arraySolpedRechazadas:any[]  =[];
  
@@ -70,6 +74,8 @@ export class SolpedComponent implements OnInit {
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
+
+  urlBreadCrumb:string ="";
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -100,6 +106,7 @@ export class SolpedComponent implements OnInit {
      this.permisosUsuario = this.authService.getPermisosUsuario();
      console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     this.urlBreadCrumb = this.router.url;
 
      this.statuses = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
      this.approves = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
@@ -143,17 +150,119 @@ export class SolpedComponent implements OnInit {
     });
 }
 
+cancelarSolped(){
+
+  let arrayIdSolped:number[] = [];
+    let fechaActual: Date = new Date();
+    
+    this.errorSolpedCancelada = false;
+    this.arrayErrorSolpedCancelada =[];
+   
+    this.errorSolpedEnviada = false;
+    this.arrayErrorSolpedEnviada = []; 
+
+    this.errorSopledAprobada = false;
+    this.arraySolpedAprobadas = [];
+
+    for(let item of this.selectedSolped){
+
+      if(item.approved==='C'){
+        this.errorSolpedCancelada = true;
+        this.arrayErrorSolpedCancelada.push(item.id);
+      }  
+      
+      if(item.approved==='P'){
+        this.errorSolpedEnviada = true;
+        this.arrayErrorSolpedEnviada.push(item.id);
+      }
+
+      if(item.approved==='A'){
+        this.errorSopledAprobada = true;
+        this.arraySolpedAprobadas.push(item.id);
+      }
+
+      arrayIdSolped.push(item.id);
+  }
+
+  this.arrayIdSolped = arrayIdSolped;
+  let message = "";
+  if(this.errorSolpedCancelada){
+    //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
+    if(this.arrayErrorSolpedCancelada.length > 1){
+
+        message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya han sido canceladas.`;
+    }else{
+      message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya ha sido cancelada`;
+    }
+
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+    this.errorSolpedCancelada = false;
+  }else if(this.errorSopledAprobada){
+    //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
+    if(this.arraySolpedAprobadas.length > 1){
+
+        message = `Las solicitudes ${JSON.stringify(this.arraySolpedAprobadas)} ya han sido aprobadas.`;
+    }else{
+      message = `La solicitud ${JSON.stringify(this.arraySolpedAprobadas)} ya ha sido aprobada`;
+    }
+
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+    this.errorSopledAprobada = false;
+  }else if(this.errorSolpedEnviada){
+    //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
+    if(this.arrayErrorSolpedEnviada.length > 1){
+        message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya han sido enviadas a aprobación.`;
+    }else{
+      message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya ha sido enviada a aprobación`;
+    }
+
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+    this.errorSolpedEnviada = false;
+  }else{
+
+    
+      
+        if(arrayIdSolped.length >1){
+          message =`¿Desea Continuar con la cancelación de las solicitudes seleccionadas?`;
+        }else{
+          message = `¿Desea Continuar con la cancelación de la solicitud seleccionada?`;
+        }
+      
+
+      this.messageService.clear();
+      this.messageService.add({key: 'cdel', sticky: true, severity:'warn', summary:'Confirmación', detail:message});
+    
+  }
+
+}
+
   solicitudAprobacion(){
     //console.log(this.selectedSolped);
     let arrayIdSolped:number[] = [];
     let fechaActual: Date = new Date();
     let fechaContSolped:Date;
+    this.errorFechaAprobacion = false;
     this.arrayErrorFecha =[];
+
+    this.errorSolpedCancelada = false;
+    this.arrayErrorSolpedCancelada =[];
+
+    this.errorTrmAprobacion = false;
     this.arraryErrorTrm = [];
+
+    this.errorSolpedEnviada = false;
     this.arrayErrorSolpedEnviada = []; 
+
+    this.errorSopledAprobada = false;
+    this.arraySolpedAprobadas = [];
     for(let item of this.selectedSolped){
         console.log(item);
         fechaContSolped = new Date(item.docdate);
+
+        if(item.approved==='C'){
+          this.errorSolpedCancelada = true;
+          this.arrayErrorSolpedCancelada.push(item.id);
+        }  
         
         if(fechaContSolped.toDateString()!==fechaActual.toDateString()){
           this.errorFechaAprobacion = true;
@@ -162,6 +271,11 @@ export class SolpedComponent implements OnInit {
         if(item.approved==='P'){
           this.errorSolpedEnviada = true;
           this.arrayErrorSolpedEnviada.push(item.id);
+        }
+
+        if(item.approved==='A'){
+          this.errorSopledAprobada = true;
+          this.arraySolpedAprobadas.push(item.id);
         }
 
         if(item.trm ===0){
@@ -173,32 +287,52 @@ export class SolpedComponent implements OnInit {
     console.log(arrayIdSolped);
     this.arrayIdSolped = arrayIdSolped;
     let message = "";
-    if(this.errorTrmAprobacion){
-      //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
+    if(this.errorSolpedCancelada){
+      
+      if(this.arrayErrorSolpedCancelada.length > 1){
+  
+          message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya han sido canceladas.`;
+      }else{
+        message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya ha sido cancelada`;
+      }
+  
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+      this.errorSolpedCancelada = false;
+    }else if(this.errorTrmAprobacion){
+      
       if(this.arraryErrorTrm.length > 1){
           message = `Las solicitudes ${JSON.stringify(this.arraryErrorTrm)} no poseen TRM, por favor acutalice la TRM en las sulicitudes`;
       }else{
         message = `La solicitud ${JSON.stringify(this.arraryErrorTrm)} no posee TRM, por favor acutalice la TRM de la sulicitud`;
       }
 
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorTrmAprobacion = false;
+    }else if(this.errorSopledAprobada){
+      
+      if(this.arraySolpedAprobadas.length > 1){
+
+          message = `Las solicitudes ${JSON.stringify(this.arraySolpedAprobadas)} ya han sido aprobadas.`;
+      }else{
+        message = `La solicitud ${JSON.stringify(this.arraySolpedAprobadas)} ya ha fue aprobada`;
+      }
+
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+      this.errorSopledAprobada = false;
+    }else if(this.errorSolpedEnviada){
+      
+      if(this.arrayErrorSolpedEnviada.length > 1){
+          message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya han sido enviadas a aprobación.`;
+      }else{
+        message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya ha fue enviada a aprobación`;
+      }
+
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+      this.errorSolpedEnviada = false;
     }else{
 
       
-      if(this.errorSolpedEnviada){
-        //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
-        if(this.arrayErrorSolpedEnviada.length > 1){
-            message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya han sido enviadas a aprobación.`;
-        }else{
-          message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya han sido enviada a aprobación`;
-        }
-  
-        this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
-        this.errorSolpedEnviada = false;
-      }else{
-
-          //Verificar si la fecha de la o las solicitudes seleccionadas, corresponden a la fecha actual
+        //Verificar si la fecha de la o las solicitudes seleccionadas, corresponden a la fecha actual
         if(this.errorFechaAprobacion){
           if(this.arrayErrorFecha.length >1){
             message = `Las solicitudes ${JSON.stringify(this.arrayErrorFecha)} tienen fechas de contabilización diferentes a la fecha actual. 
@@ -219,21 +353,13 @@ export class SolpedComponent implements OnInit {
 
         this.messageService.clear();
         this.messageService.add({key: 'c', sticky: true, severity:'warn', summary:'Confirmación', detail:message});
-      }
+      
     }
-    /*this.comprasService.envioAprobacionSolped(this.authService.getToken(), arrayIdSolped)
-        .subscribe({
-          next: (aprobaciones) => {
-            console.log(aprobaciones);
-          },
-          error: (err) => {
-            console.log(err);
-          }
-        });*/
+
   }
 
   onConfirm() {
-
+    this.loading = true;
     let message = "";
     this.messageService.clear('c');
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
@@ -247,13 +373,14 @@ export class SolpedComponent implements OnInit {
               }else{
                 message = "Las solicitud seleccionada, ha sido enviada a aprobación";
               }
-              this.messageService.add({key: 'tl',severity:'success', summary: '!Genial', detail: message});
+              this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
               this.getListado();
             }
           },
           error: (err) => {
             console.log(err);
-            this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: err});
+            this.loading = false;
+            this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
           }
         });
 }
@@ -304,7 +431,7 @@ rechazar(){
     }else{
       message = `La solicitud ${JSON.stringify(this.arraySolpedRechazadas)} ya fue rechazada.`;
     }
-    this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
     this.errorSopledARechazada= false;
   }else if(this.errorSopledAprobada){
       if(this.arraySolpedAprobadas.length>1){
@@ -312,7 +439,7 @@ rechazar(){
       }else{
         message = `La solicitud ${JSON.stringify(this.arraySolpedAprobadas)} ya ha sido aprobada.`;
       }
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorSopledAprobada= false;
   }else if(this.errorUsuarioAprobador){
       if(this.arrayErrorUsuarioAprobador.length>1){
@@ -320,7 +447,7 @@ rechazar(){
       }else{
         message = `La solicitud ${JSON.stringify(this.arrayErrorUsuarioAprobador)} no puede ser rechazada por el usuario por ahora.`;
       }
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorUsuarioAprobador = false;
   }else{
     console.log("Aprobar");
@@ -337,6 +464,7 @@ rechazar(){
 
 aprobar(){
   console.log('Aprobar solcitudes');
+  
   this.arrayIdSolped = [];
   let arrayIdSolped:number[] = [];
   this.arraySolpedRechazadas = [];
@@ -345,6 +473,8 @@ aprobar(){
   this.errorSopledARechazada = false;
   this.errorSopledAprobada = false;
   this.errorUsuarioAprobador = false;
+  this.errorSolpedCancelada = false;
+  this.arrayErrorSolpedCancelada =[];
   for(let item of this.selectedSolped){
       console.log(item);
     
@@ -353,7 +483,10 @@ aprobar(){
         this.arraySolpedRechazadas.push(item.id);
       }
 
-      
+      if(item.approved==='C'){
+        this.errorSolpedCancelada = true;
+        this.arrayErrorSolpedCancelada.push(item.id);
+      }  
       
       if(item.approved==='A'){
         this.errorSopledAprobada = true;
@@ -371,30 +504,45 @@ aprobar(){
   this.arrayIdSolped = arrayIdSolped;
   let message = "";
 
-  if(this.errorSopledARechazada){
+  if(this.errorSolpedCancelada){
+      
+    if(this.arrayErrorSolpedCancelada.length > 1){
+
+        message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya han sido canceladas.`;
+    }else{
+      message = `La solicitud ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya ha sido cancelada`;
+    }
+
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+    this.errorSolpedCancelada = false;
+
+  }else if(this.errorSopledARechazada){
     if(this.arraySolpedRechazadas.length>1){
       message = `Las solicitudes ${JSON.stringify(this.arraySolpedRechazadas)} ya fueron rechazadas.`;
     }else{
       message = `La solicitud ${JSON.stringify(this.arraySolpedRechazadas)} ya fue rechazada.`;
     }
-    this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
     this.errorSopledARechazada= false;
+   
   }else if(this.errorSopledAprobada){
       if(this.arraySolpedAprobadas.length>1){
         message = `Las solicitudes ${JSON.stringify(this.arraySolpedAprobadas)} ya han sido aprobadas.`;
       }else{
         message = `La solicitud ${JSON.stringify(this.arraySolpedAprobadas)} ya ha sido aprobada.`;
       }
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorSopledAprobada= false;
+     
   }else if(this.errorUsuarioAprobador){
       if(this.arrayErrorUsuarioAprobador.length>1){
         message = `Las solicitudes ${JSON.stringify(this.arrayErrorUsuarioAprobador)} no pueden ser aprobadas por el usuario por ahora.`;
       }else{
         message = `La solicitud ${JSON.stringify(this.arrayErrorUsuarioAprobador)} no puede ser aprobada por el usuario por ahora.`;
       }
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: message});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorUsuarioAprobador = false;
+   
   }else{
     console.log("Aprobar");
     if(arrayIdSolped.length >1){
@@ -426,6 +574,39 @@ onRejectRap(){
   console.log(this.arrayIdSolped);
 }
 
+onRejectCancel(){
+  this.messageService.clear('cdel');
+  console.log(this.arrayIdSolped);
+}
+
+onConfirmCancel(){
+  this.loading = true;
+  let message = "";
+  this.messageService.clear('cdel');
+  this.comprasService.cancelacionSolped(this.authService.getToken(), this.arrayIdSolped)
+      .subscribe({
+        next:(solpedCanceladas)=>{
+          if(solpedCanceladas.status=="ok"){
+            if(this.arrayIdSolped.length >1){
+              message =`La cancelación de las solicitudes seleccionadas fueron realizadas correctamente`;
+            }else{
+              message = `La cancelación de la solicitud seleccionada fue realizada correctamente`;
+            }
+            this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
+            this.getListado();
+          }else{
+            this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: solpedCanceladas.message});
+            this.loading = false;
+          }
+        },
+        error:(err)=>{
+          console.log(err);
+          this.loading = false
+          this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
+        }
+      });
+}
+
 onConfirmRap(){
   //Llamar al form de rechazo
   this.messageService.clear('rj');
@@ -437,7 +618,7 @@ rechazarSolped(){
     this.submitRechazo = true;
     
     if(!this.motivoRechazo){
-      this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: 'Debe diligenciar el motivo por el cual desea rechazar la solicitud seleccionada'});
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: 'Debe diligenciar el motivo por el cual desea rechazar la solicitud seleccionada'});
     }else{
       //Obtener aprobaciones de la solped seleccionada
       this.comprasService.aprobacionesSolped(this.authService.getToken(),this.selectedSolped[0].id)
@@ -476,10 +657,11 @@ rechazarSolped(){
                             if(result[0].status==='ok'){
                                 
                                 this.getListado();
-                                this.messageService.add({key: 'tl',severity:'success', summary: '!Genial', detail: result[0].message});
+                                this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: result[0].message});
                                 this.frmRechazo = false;
+                                
                             }else{
-                              this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: result[0].message});
+                              this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: result[0].message});
                             }
                         },
                         error: (err)=>{
@@ -497,7 +679,7 @@ rechazarSolped(){
 }
 
 onConfirmAp() {
-
+  this.loading = true;
   let message = "";
   this.messageService.clear('ap');
   this.comprasService.aprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
@@ -509,8 +691,8 @@ onConfirmAp() {
 
           if(aprobaciones.arrayErrors.length>0){
             for(let item of aprobaciones.arrayErrors){
-              messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Opps', detail: item.messageSolped,life:5000});
-              //this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: item.messageSolped});
+              messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped,life:5000});
+              //this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped});
             }
             if(aprobaciones.arrayAproved.length>0){
               //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.'});
@@ -524,8 +706,8 @@ onConfirmAp() {
             if(aprobaciones.arrayAproved.length>0){
               
               for(let item of aprobaciones.arrayAproved){
-                //this.messageService.add({key: 'tl',severity:'success', summary: '!Genial', detail: item.messageSolped});
-                messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Genial', detail: item.messageSolped,life:5000});
+                //this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped});
+                messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped,life:5000});
               }
             }
           }
@@ -541,13 +723,14 @@ onConfirmAp() {
             }else{
               message = "Las solicitud seleccionada, ha sido enviada a aprobación";
             }
-            this.messageService.add({key: 'tl',severity:'success', summary: '!Genial', detail: message});
+            this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
             this.getListado();
           }*/
         },
         error: (err) => {
           console.log(err);
-          this.messageService.add({key: 'tl',severity:'error', summary: '!Opps', detail: err});
+          this.loading = false;
+          this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
         }
       });
 }
@@ -576,6 +759,7 @@ clearToast() {
         this.loading = false;
           console.log(solped);
           this.solped = solped;
+          this.loading = false;
       }),
       error:(err =>{
         console.log(err);

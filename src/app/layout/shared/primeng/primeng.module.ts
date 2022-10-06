@@ -32,6 +32,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import {BreadcrumbModule} from 'primeng/breadcrumb';
 
 
 
@@ -40,6 +41,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     AutoCompleteModule,
     BadgeModule,
     ButtonModule,
+    BreadcrumbModule,
     CalendarModule,
     ChartModule,
     CheckboxModule,

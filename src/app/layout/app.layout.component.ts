@@ -17,6 +17,8 @@ export class AppLayoutComponent implements OnDestroy {
 
     menuOutsideClickListener: any;
 
+
+
     @ViewChild(AppSidebarComponent) appSidebar!: AppSidebarComponent;
 
     constructor(private menuService: MenuService, public layoutService: LayoutService, public renderer: Renderer2, public router: Router) {

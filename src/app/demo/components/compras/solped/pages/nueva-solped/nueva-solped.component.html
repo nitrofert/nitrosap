@@ -425,9 +425,16 @@
                 <label for="price">Precio</label>
                 <div class="flex">
 
-                    <p-dropdown [options]="monedas" optionLabel="Currency" optionValue="Currency"
-                        [(ngModel)]="solpedDet.moneda" id="moneda" name="moneda" [required]="true"
-                        (onChange)="selectMoneda()"></p-dropdown>
+                    <p-dropdown [options]="monedas" 
+                                optionLabel="Currency" 
+                                optionValue="Currency"
+                                [(ngModel)]="solpedDet.moneda" 
+                                id="moneda" 
+                                name="moneda" 
+                                [required]="true"
+                                [readonly]="solpedDetLines.length>0"
+                                (onChange)="selectMoneda()">
+                    </p-dropdown>
                     <p-inputNumber [(ngModel)]="solpedDet.price" inputId="price" mode="currency" currency="COP"
                         locale="es-CO" placeholder="Precio" (ngModelChange)="subtotalLinea()"
                         [ngStyle]="{width: '100%' }" styleClass="w-full"

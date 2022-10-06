@@ -27,6 +27,8 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 
 
 
+
+
 registerLocaleData(localeES_CO);
 
 @NgModule({
@@ -36,7 +38,7 @@ registerLocaleData(localeES_CO);
     imports: [
         AppRoutingModule,
         AppLayoutModule,
-     
+        
 
     ],
     providers: [

@@ -312,7 +312,7 @@ export class NuevaSolpedComponent implements OnInit {
       this.clearFormDetalle();
       this.showFormDetalle();
     }else{
-      this.messageService.add({severity:'error', summary: '!Opps', detail: 'Debe diligenciar los campos resaltados en rojo'});
+      this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
     }
   }
 
@@ -582,7 +582,7 @@ export class NuevaSolpedComponent implements OnInit {
       
                 this.solpedDetLines.splice(this.indexSolpedLineEdit,1,this.solpedDet);
                 console.log(this.solpedDetLines);
-                this.messageService.add({severity:'success', summary: '!Genial¡', detail: 'Se realizo correctamente la actualización de la línea'});
+                this.messageService.add({severity:'success', summary: '!Ok¡', detail: 'Se realizo correctamente la actualización de la línea'});
                 this.editForm = false;
               }else{
                 this.solpedDet.id_user = this.infoUsuario.id;
@@ -591,20 +591,23 @@ export class NuevaSolpedComponent implements OnInit {
                 this.solpedDetLines.push(this.solpedDet);
                 this.lineaDetalle++;
                 console.log(this.solpedDetLines);
-                this.messageService.add({severity:'success', summary: '!Genial¡', detail: 'Se realizo correctamente el registro de la línea'});
+                this.messageService.add({severity:'success', summary: '!Ok¡', detail: 'Se realizo correctamente el registro de la línea'});
               }
               //realizar el proceso de registro de linea
               this.calculatTotales();
               this.submittedLine =false;
               //this.formDetalle=false;
               this.clearFormDetalle();
+              setTimeout(()=>{
+                this.formDetalle =false;
+              },2000);
               
               //this.submittedBottonLine = false;
         }
 
         
     }else{
-      this.messageService.add({severity:'error', summary: '!Opps', detail: 'Debe diligenciar los campos resaltados en rojo'});
+      this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
     }
 
     this.submittedBottonLine = false;
@@ -758,11 +761,15 @@ export class NuevaSolpedComponent implements OnInit {
                     console.log(result);
                     //this.submittedBotton = true;
                     if(result.status===501){
-                      this.messageService.add({severity:'error', summary: '!Opps', detail: JSON.stringify(result.err)});
+                      this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
                       this.submittedBotton = false;
                     }else{
-                      this.messageService.add({severity:'success', summary: '!Genial¡', detail: result.message});
+                      this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                       this.submittedNuevaSolped = false;
+
+                      setTimeout(()=>{
+                        this.router.navigate(['portal/compras/solped']);
+                      },2000);
                       
                     }
                 },
@@ -774,11 +781,11 @@ export class NuevaSolpedComponent implements OnInit {
 
         this.submitted = false;
       }else{
-        this.messageService.add({severity:'error', summary: '!Opps', detail: 'Debe diligenciar al menos una línea en la solped'});
+        this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar al menos una línea en la solped'});
       }
       
     }else{
-      this.messageService.add({severity:'error', summary: '!Opps', detail: 'Debe diligenciar los campos resaltados en rojo'});
+      this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
     }
     
   }
@@ -815,7 +822,7 @@ export class NuevaSolpedComponent implements OnInit {
       acctcodename: "",
       quantity:     1,
       price:        0,
-      moneda: "COP",
+      moneda: this.solpedDetLines.length==0?"COP":this.solpedDetLines[0].moneda,
       trm:          1,
       linetotal:    0,
       tax:         0,
