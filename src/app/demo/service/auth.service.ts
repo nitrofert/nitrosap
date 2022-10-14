@@ -7,22 +7,26 @@ import { InfoUsuario, ResponsWsLoginInterface } from '../api/responseloginws';
 import { JwtHelperService } from '@auth0/angular-jwt'
 import decode from 'jwt-decode';
 import { DecodeTokenInterface, DependenciasUsuario } from '../api/decodeToken';
+import { UrlApiService } from './urlapi.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService  {
 
   private api_url:string = "http://localhost:3000";
+  //private api_url:string = "http://backend.nitrofert.com.co";
 
-  
-
-  constructor(private http: HttpClient, private jwtHelperService: JwtHelperService) { }
+  constructor(private http: HttpClient,
+              private urlApiService:UrlApiService,
+              private jwtHelperService: JwtHelperService) { 
+                  this.api_url = this.urlApiService.getUrlAPI();
+              }
 
   isAuth():boolean{
-    const token:string = localStorage.getItem('token') || '';
-    if(this.jwtHelperService.isTokenExpired(token) ||  !localStorage.getItem('token')){
+    const token:string = localStorage.getItem('tokenid') || '';
+    if(this.jwtHelperService.isTokenExpired(token) ||  !localStorage.getItem('tokenid')){
       return false; 
     } 
     return true;
@@ -39,40 +43,78 @@ export class AuthService {
   }
 
   getToken():string{
-    let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
-    const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
-    const token = localStorage.getItem('token') || '';
+    const token = localStorage.getItem('tokenid') || '';
+    return token
+  }
+  
+  getTokenid():string{
+
+    const token = localStorage.getItem('tokenid') || '';
     return token
   }
 
-  getInfoToken(token:string){
+  getInfoToken1(token:string){
     const infoToken:DecodeTokenInterface = decode(token);
     return infoToken;
   }
 
+  loadInfoUsuario(tokenid:string):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/infoUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  loadMenuUsuario(tokenid:string):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid); 
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/menuUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  loadPerfilesUsuario(tokenid:string):Observable<any>{
+
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/perfilesUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  loadPemisosUsuario(tokenid:string):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/permisosUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getMenuUsuario(){
+    const menuUsuario = JSON.parse(localStorage.getItem('menuUsuario') || '');
+    return menuUsuario;
+  }
+
   getInfoUsuario(){
-    const infoToken = this.getInfoToken(this.getToken());
-    return infoToken.infoUsuario;
+    const infoUsuario = JSON.parse(localStorage.getItem('infoUsuario') || '');
+    return infoUsuario[0];
   }
 
   getPermisosUsuario(){
-    const infoToken = this.getInfoToken(this.getToken());
-    return infoToken.permisosUsuario;
+    const permisosUsuario = JSON.parse(localStorage.getItem('permisosUsuario') || '');
+    return permisosUsuario;
   }
 
   getPerfilesUsuario(){
-    const infoToken = this.getInfoToken(this.getToken());
-    return infoToken.perfilesUsuario;
+    const perfilesUsuario = JSON.parse(localStorage.getItem('perfilesUsuario') || '');
+    return perfilesUsuario;
   }
-
-
 
   getDependeciasUsuario():Observable<DependenciasUsuario[]>{
 
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
-    });
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
 
   const requestOptions = { headers: headers };
 
@@ -82,10 +124,12 @@ export class AuthService {
 
   getAlmacenesUsuario():Observable<any[]>{
 
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
-    });
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
 
   const requestOptions = { headers: headers };
 
@@ -95,10 +139,12 @@ export class AuthService {
 
   getAlmacenesUsuarioXE():Observable<any[]>{
 
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
-    });
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
 
   const requestOptions = { headers: headers };
 
@@ -108,10 +154,12 @@ export class AuthService {
 
   getDependeciasUsuarioXE():Observable<DependenciasUsuario[]>{
 
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
-    });
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
 
   const requestOptions = { headers: headers };
 
@@ -121,10 +169,12 @@ export class AuthService {
 
   getAreasUsuarioXE():Observable<any[]>{
 
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
-    });
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
 
   const requestOptions = { headers: headers };
 

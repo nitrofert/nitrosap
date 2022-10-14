@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import {Message, MessageService} from 'primeng/api';
 import { LoginFormInterface } from 'src/app/demo/api/frmlogin';
 import { AuthService } from 'src/app/demo/service/auth.service';
+import { SAPService } from 'src/app/demo/service/sap.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { CompanyInterface } from '../../../api/company';
 
@@ -57,7 +58,8 @@ export class LoginComponent  {
             public layoutService: LayoutService,
             private authService:AuthService, 
             private router: Router,
-            private messageService: MessageService
+            private messageService: MessageService,
+            private sapService:SAPService
             ) 
             {
                 //importar al servicio de consulta de empresas
@@ -71,6 +73,8 @@ export class LoginComponent  {
                     console.log(err);
                 }
                 });
+
+                
             }
   
             
@@ -108,13 +112,63 @@ export class LoginComponent  {
             this.authService.login(loginForm)
                 .subscribe({
                   next:(response)=>{
-                    console.log('Response',response);
+                    //console.log('Response',response);
                     //Obtener mensaje
                     //this.messageService.add({ severity: 'success', summary: '!Hola¡', detail: response.message, life: 3000 });
                     this.messageForm = [{severity:'success', summary:'', detail:response.message}];
                     //Obtener token y guardarlo en local storage
-                    localStorage.setItem('token',response.token!);
-                    localStorage.setItem('infoSession',JSON.stringify(response.infoUsuario)); 
+                    //localStorage.setItem('token',response.token!);
+                    
+                    localStorage.setItem('tokenid',response.tokenid!); 
+                    
+                    //Obtener infoUsuario
+                    this.authService.loadInfoUsuario(response.tokenid!)
+                        .subscribe({
+                            next: (infoUsuario)=>{
+                                console.log(infoUsuario);
+                                localStorage.setItem('infoUsuario',JSON.stringify(infoUsuario)); 
+                            },
+                            error: (err)=>{
+                                console.log(err);
+                            }
+                        })
+                    
+                    //Obtener menuUsuario
+                    this.authService.loadMenuUsuario(response.tokenid!)
+                        .subscribe({
+                            next: (menuUsuario)=>{
+                                console.log(menuUsuario);
+                                localStorage.setItem('menuUsuario',JSON.stringify(menuUsuario)); 
+                            },
+                            error: (err)=>{
+                                console.log(err);
+                            }
+                        });
+
+                    //Obtener perfilesUsuario
+                    this.authService.loadPerfilesUsuario(response.tokenid!)
+                        .subscribe({
+                            next: (perfilesUsuario)=>{
+                                console.log(perfilesUsuario);
+                                localStorage.setItem('perfilesUsuario',JSON.stringify(perfilesUsuario)); 
+                            },
+                            error: (err)=>{
+                                console.log(err);
+                            }
+                        })
+                    
+                    //Obtener permisosUsuario
+                    this.authService.loadPemisosUsuario(response.tokenid!)
+                        .subscribe({
+                            next: (permisosUsuario)=>{
+                                console.log(permisosUsuario);
+                                localStorage.setItem('permisosUsuario',JSON.stringify(permisosUsuario)); 
+                            },
+                            error: (err)=>{
+                                console.log(err);
+                            }
+                        })
+
                     //redireccionar al main del portal
                     setTimeout(() => {  
                       console.log("Redireccionar al portal"); 

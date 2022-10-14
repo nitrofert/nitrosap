@@ -49,11 +49,11 @@ export class MenuComponent implements OnInit {
      const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
      const token = localStorage.getItem('token') || '';*/
 
-    this.adminService.listMenu(this.authService.getToken())
+    this.adminService.listMenu(this.authService.getTokenid())
         .subscribe({
           next:(menu =>{
             this.loading = false;
-              console.log(menu);
+              //console.log(menu);
               this.menu = menu;
           }),
           error:(err =>{

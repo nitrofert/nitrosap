@@ -9,6 +9,7 @@ import { PermisosInterface } from '../api/permiso';
 import { ResponseLogSAP } from '../api/responseWsSAP';
 import { UserInterface } from '../api/users';
 import { AuthService } from './auth.service';
+import { UrlApiService } from './urlapi.service';
 
 
 
@@ -18,7 +19,8 @@ import { AuthService } from './auth.service';
 export class SAPService {
 
   private api_url:string = "/b1s/v1/";
-  private api_url3:string = "http://localhost:3000";
+  private api_url3:string = "";
+  //private api_url3:string = "http://backend.nitrofert.com.co";
   private api_url2:string = "https://nitrofert-hbt.heinsohncloud.com.co:50000/b1s/v1/";
   private tokenSAP:string = "";
   /*private headers: HttpHeaders = new HttpHeaders()
@@ -26,23 +28,22 @@ export class SAPService {
 
 
   constructor(private http: HttpClient,
-              private authService: AuthService) { }
+              private authService: AuthService,
+              private urlApiService:UrlApiService) { 
+                this.api_url3 = this.urlApiService.getUrlAPI();
+              }
 
   wsLoginCompany(token:string):Observable<ResponseLogSAP>{
     
-    const infoToken = this.authService.getInfoToken(token);
-    const infoUsuario = infoToken.infoUsuario
+    //const infoToken = this.authService.getInfoToken(token);
+    const infoUsuario = this.authService.getInfoUsuario();
+    
     const jsonLog = {"CompanyDB": infoUsuario.dbcompanysap, "UserName": "ABALLESTEROS", "Password": "1234"}
     //console.log(JSON.stringify(jsonLog));
     const url:string = `${this.api_url2}/Login`;
 
-    const headers = new HttpHeaders({
-        'CorsEnable': 'true',
-        'CorsAllowedOrigins':'http://localhost:4200',
-        "CorsAllowedHeaders":"content-type, accept, B1S-CaseInsensitive"
-        
-      });
-      const requestOptions = { headers: headers };
+    const headers = this.urlApiService.getHeadersAPI();
+    const requestOptions = { headers: headers };
 
     
     //console.log(url);
@@ -75,40 +76,46 @@ export class SAPService {
 
   
   BusinessPartners(token:string):Observable<any[]>{
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      });
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
       const requestOptions = { headers: headers };
       const url:string = `${this.api_url3}/api/wssap/BusinessPartners`;
       return this.http.get<any[]>(url,requestOptions);
   }
 
-  ItemsSAP(token:string):Observable<any[]>{
-    const headers = new HttpHeaders({
+
+
+  ItemsSAPSL(token:string):Observable<any[]>{
+    /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      });
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
       const requestOptions = { headers: headers };
       const url:string = `${this.api_url3}/api/wssap/Items`;
       return this.http.get<any[]>(url,requestOptions);
   }
 
-  CuentasSAP(token:string):Observable<any[]>{
-    const headers = new HttpHeaders({
+  CuentasSAPSL(token:string):Observable<any[]>{
+    /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-      });
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
       const requestOptions = { headers: headers };
       const url:string = `${this.api_url3}/api/wssap/Cuentas`;
       return this.http.get<any[]>(url,requestOptions);
   }
 
   CuentasSAPXE(token:string):Observable<any[]>{
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/cuentas`;
     return this.http.get<any[]>(url,requestOptions);
@@ -117,10 +124,11 @@ export class SAPService {
 
   itemsSAPXE(token:string):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/items`;
     return this.http.get<any[]>(url,requestOptions);
@@ -128,10 +136,11 @@ export class SAPService {
 
   seriesDocXEngineSAP(token:string,objType?:string):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     let paramObjType = "";
     if(objType) paramObjType =`/${objType}`;
     const requestOptions = { headers: headers };
@@ -143,10 +152,11 @@ export class SAPService {
 
   monedasXEngineSAP(token:string, date:string):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/monedas/${date}`;
     return this.http.get<any[]>(url,requestOptions);
@@ -155,10 +165,11 @@ export class SAPService {
 
   BusinessPartnersXE(token:string, proveedorId:string=''):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     let proveedorParam:string ="";
     if(proveedorId!=''){
       proveedorParam = `/${proveedorId}`;
@@ -170,10 +181,11 @@ export class SAPService {
 
   cuentasPorDependenciaXE(token:string, dependencia:string=''):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     let dependenciaParam:string ="";
     if(dependencia!=''){
       dependenciaParam = `/${dependencia}`;
@@ -185,10 +197,11 @@ export class SAPService {
 
   aprobacionesXE(token:string, dependencia:string=''):Observable<any[]>{
    
-    const headers = new HttpHeaders({
+    /*const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
-    });
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
     let dependenciaParam:string ="";
     if(dependencia!=''){
       dependenciaParam = `/${dependencia}`;

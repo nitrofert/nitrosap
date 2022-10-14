@@ -30,12 +30,15 @@ export class AppTopBarComponent implements OnInit {
         const infoSession:InfoUsuario[]    =  JSON.parse(infoSessionStr);
         const token = localStorage.getItem('token') || '';*/
 
-        const token = this.authService.getToken();
-        const infoSession = this.authService.getInfoToken(token);
+        //const token = this.authService.getToken();
+        //const infoSession = this.authService.getInfoToken(token);
+
+        const infoSession = this.authService.getInfoUsuario();
+        //console.log(infoSession);
         
-        this.logo= infoSession.infoUsuario.logoempresa;
-        this.companyname = infoSession.infoUsuario.companyname;
-        this.fullnameUser = infoSession.infoUsuario.fullname;
+        this.logo= infoSession.logoempresa;
+        this.companyname = infoSession.companyname;
+        this.fullnameUser = infoSession.fullname;
 
      }
 
@@ -52,17 +55,18 @@ export class AppTopBarComponent implements OnInit {
              {label: 'Salir', 
               icon: 'pi pi-fw pi-power-off',
               command: () => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('infoSession');
-                this.router.navigate(['/']);
+                this.salir();
               }
             }
          ];
      }
 
      salir(){
-        localStorage.removeItem('token');
-        localStorage.removeItem('infoSession');
+        localStorage.removeItem('tokenid');
+        localStorage.removeItem('infoUsuario');
+        localStorage.removeItem('perfilesUsuario');
+        localStorage.removeItem('menuUsuario');
+        localStorage.removeItem('permisosUsuario');
         this.router.navigate(['/']);
      }
 }

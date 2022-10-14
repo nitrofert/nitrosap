@@ -239,7 +239,7 @@ export class EditarSolpedComponent implements OnInit {
 
   getCuentasSAP(){
      //Cargar cuentas SAP
-     this.sapService.CuentasSAP(this.authService.getToken())
+     this.sapService.CuentasSAPSL(this.authService.getToken())
      .subscribe({
        next: (cuentasSAP) => {
          //console.log(cuentasSAP);
@@ -271,7 +271,7 @@ export class EditarSolpedComponent implements OnInit {
 
   getItemsSAP(){
       //Cargar Items SAP
-      this.sapService.ItemsSAP(this.authService.getToken())
+      this.sapService.ItemsSAPSL(this.authService.getToken())
       .subscribe({
         next: (itemsSAP) => {
           //console.log(itemsSAP);

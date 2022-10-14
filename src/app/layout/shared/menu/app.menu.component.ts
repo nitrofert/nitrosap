@@ -32,13 +32,13 @@ export class AppMenuComponent implements OnInit {
         const token = localStorage.getItem('token') || '';
         console.log(infoSession[0].id);*/
 
-        const token = this.authService.getToken();
-        const infoSession = this.authService.getInfoToken(token);
+        //const token = this.authService.getToken();
+        //const infoSession = this.authService.getInfoToken(token);
+        const menuUsuario:any = this.authService.getMenuUsuario();
+        //console.log(menuUsuario);
 
-        //console.log(infoSession.menuUsuario);
-
-        let menupadres:MenuInterface[] = infoSession.menuUsuario.opcionesMenu;
-        let menuhijos:MenuInterface[] = infoSession.menuUsuario.opcionesSubMenu;
+        let menupadres:MenuInterface[] = menuUsuario.opcionesMenu;
+        let menuhijos:MenuInterface[] = menuUsuario.opcionesSubMenu;
         let menuportal:any[]=[{
             label: 'Inicio',
             items: [

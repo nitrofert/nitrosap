@@ -47,7 +47,7 @@ export class EditarMenuComponent implements OnInit {
   ngOnInit(): void {
     
     this.menuSelected = this.rutaActiva.snapshot.params;
-    console.log((this.menuSelected.menu));
+    //console.log((this.menuSelected.menu));
 
     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
@@ -57,7 +57,7 @@ export class EditarMenuComponent implements OnInit {
     .subscribe({
       next:(menu =>{
           
-          console.log(menu);
+          //console.log(menu);
           this.title = menu[0].title;
           this.description = menu[0].description;
           this.hierarchy = menu[0].hierarchy;
@@ -106,12 +106,14 @@ export class EditarMenuComponent implements OnInit {
         icon:this.icon
 
       }
+
+      //console.log(newMenu);
       
       this.adminService.updateMenuOpcion(this.authService.getToken(),newMenu)
       .subscribe({
         next:(menu =>{
             
-            console.log(menu);
+           console.log(menu);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha actualizado la opción del menú ${this.title}` , life: 3000}];
         }),
         error:(err =>{
@@ -126,7 +128,7 @@ export class EditarMenuComponent implements OnInit {
 
   loadPadres(){
     this.ordernum = "";
-    console.log(this.hierarchy);
+    //console.log(this.hierarchy);
     if(this.hierarchy=='H'){
        //obtener datos del usuario logueado
       //let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
@@ -136,7 +138,7 @@ export class EditarMenuComponent implements OnInit {
           .subscribe({
             next:(menu =>{
               
-                console.log(menu);
+                //console.log(menu);
                 this.padres = menu;
             }),
             error:(err =>{
@@ -152,7 +154,7 @@ export class EditarMenuComponent implements OnInit {
   }
 
   loadOrederNum(){
-      console.log(this.hierarchy, this.padre);
+      //console.log(this.hierarchy, this.padre);
 
        //obtener datos del usuario logueado
        /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
@@ -163,7 +165,7 @@ export class EditarMenuComponent implements OnInit {
       .subscribe({
         next:(menu =>{
           
-            console.log(menu[0].ordernum);
+            //console.log(menu[0].ordernum);
             this.ordernum = menu[0].ordernum;
         }),
         error:(err =>{

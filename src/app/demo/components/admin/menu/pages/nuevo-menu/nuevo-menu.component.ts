@@ -63,6 +63,8 @@ export class NuevoMenuComponent implements OnInit {
         icon:this.icon
 
       }
+
+     
       
       this.adminService.saveMenuOpcion(this.authService.getToken(),newMenu)
       .subscribe({

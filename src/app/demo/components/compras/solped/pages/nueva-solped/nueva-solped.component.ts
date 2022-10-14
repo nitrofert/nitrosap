@@ -190,7 +190,7 @@ export class NuevaSolpedComponent implements OnInit {
 
     
     //Cargar Items SAP
-    this.sapService.ItemsSAP(this.authService.getToken())
+    this.sapService.ItemsSAPSL(this.authService.getToken())
         .subscribe({
           next: (itemsSAP) => {
             //console.log(itemsSAP);
@@ -202,7 +202,7 @@ export class NuevaSolpedComponent implements OnInit {
         });
     
     //Cargar cuentas SAP
-    this.sapService.CuentasSAP(this.authService.getToken())
+    this.sapService.CuentasSAPSL(this.authService.getToken())
         .subscribe({
           next: (cuentasSAP) => {
             //console.log(cuentasSAP);

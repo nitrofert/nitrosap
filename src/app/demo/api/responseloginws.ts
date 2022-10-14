@@ -12,6 +12,7 @@ export interface ResponsWsLoginInterface {
     status:      number;
     infoUsuario?: InfoUsuario[];
     token?:       string;
+    tokenid?: string;
 }
 
 export interface InfoUsuario {

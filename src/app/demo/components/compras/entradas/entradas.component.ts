@@ -6,6 +6,7 @@ import { InfoUsuario, PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/
 
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
+import { SAPService } from 'src/app/demo/service/sap.service';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -40,7 +41,8 @@ export class EntradasComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private sapService:SAPService) { }
 
   ngOnInit(): void {
 
@@ -55,6 +57,8 @@ export class EntradasComponent implements OnInit {
         this.getPermisosUsuarioPagina();
         //Cargar listado de entradas registradas
         this.getEntradas();
+
+        //this.sapService.getLoginSAP();
   }
 
   getInfoUsuario(){

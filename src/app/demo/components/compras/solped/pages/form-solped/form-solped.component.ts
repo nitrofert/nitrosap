@@ -180,9 +180,6 @@ export class FormSolpedComponent implements OnInit {
         this.getImpuestos();
         setTimeout(()=>{this.getInformacionSolped();},500);
         
-   
-       
-
         this.resetearFormularioLinea();
         
 
@@ -919,7 +916,13 @@ calculatTotales(){
     }
 
     if(this.lineaSolped.whscode){
-      this.almacen = this.almacenes.filter(item => item.store === this.lineaSolped.whscode)[0];
+      if(this.almacenes.filter(item => item.store === this.lineaSolped.whscode).length>0){
+        this.almacen = this.almacenes.filter(item => item.store === this.lineaSolped.whscode)[0];
+      }else{
+        this.almacen ="";
+      }
+      
+      
     }
 
 
