@@ -30,9 +30,11 @@ import { SliderModule } from 'primeng/slider';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { StyleClassModule } from 'primeng/styleclass';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
+import {FileUploadModule} from 'primeng/fileupload';
 
 
 
@@ -49,6 +51,7 @@ import {BreadcrumbModule} from 'primeng/breadcrumb';
     DialogModule,
     DividerModule,
     DropdownModule,
+    FileUploadModule,
     InputNumberModule,
     InputSwitchModule,
     InputTextareaModule,
@@ -69,6 +72,7 @@ import {BreadcrumbModule} from 'primeng/breadcrumb';
     SplitButtonModule,
     StyleClassModule,
     TableModule,
+    TagModule,
     ToastModule,
     ToggleButtonModule,
     TooltipModule

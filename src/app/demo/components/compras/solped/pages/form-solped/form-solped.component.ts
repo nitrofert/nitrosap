@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { FormControl, FormGroup } from '@angular/forms';
 import { MessageService } from 'primeng/api'
 import { Table } from 'primeng/table';
 import { CuentasSAP } from 'src/app/demo/api/accountsSAP';
@@ -42,6 +42,7 @@ export class FormSolpedComponent implements OnInit {
 
 
   @Input() solpedEditar:any;
+  @Input() registroSolped:any;
   @Output() onNewSolped: EventEmitter<SolpedInterface> = new EventEmitter();
 
   @ViewChild('filter') filter!: ElementRef;
@@ -116,15 +117,27 @@ export class FormSolpedComponent implements OnInit {
   lineaSolped!:SolpedDet; //Linea para registrar o actualizar
   lineaSeleccionada:SolpedDet[] = []; //array de lineas seleccionadas del listado de lineas de la solped
 
+  anexosSolped:any[] = [];
+  lineaAnexoSeleccionada:any[]=[];
+
   envioFormulario:boolean =false;  //Controla el envio del formulario
   nuevaLinea:boolean = false; //Controla el llenado de los campos del encabezado
   editarLinea:boolean = false; //Controla la accion "Edita o Adicionar" del fromulario de linea solped
   formularioLinea:boolean = false;  // Controla la visibilidad del formulario de linea solped
+  formularioAnexo:boolean = false; // Controla la visibilidad del formulario de cargue de anexos
   envioLinea:boolean = false; // Controla el llenado de los campos del formulario de linea solped
   listadoLineas:boolean = false; //Controla la visibilidad del listado de lineas de la solped
+  listadoAnexos:boolean = false; //Controla la visibilidad del listado de anexos
+  uploadedFiles: any[] = [];
+  tiposanexo:any[] = [{name:"Revisión presupuestal"},{name:"Especificación técnica"},{name:"Otro"}];
+  tipoanexo!:any ; 
+
   loading:boolean = false; // Controla el spiner de cargue del listado de lineas de la solped
   solpedAprobada: string = "N";
   urlBreadCrumb:string ="";
+
+  file!: any ;
+  private fileTmp:any;
 
   /******************* */
 
@@ -133,6 +146,9 @@ export class FormSolpedComponent implements OnInit {
   proveedoresFiltrados:BusinessPartners[] = [];
   itemsFiltrados:ItemsSAP[] = [];
   cuentasFiltradas:CuentasSAP[] = [];
+
+
+  
 
 
   /*********************************** */
@@ -387,6 +403,14 @@ export class FormSolpedComponent implements OnInit {
                   //console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
+                  console.log(this.infoSolpedEditar.anexos);
+                  //this.anexosSolped = this.infoSolpedEditar.anexos;
+
+                  for(let anexo of this.infoSolpedEditar.anexos){
+                    
+                    this.anexosSolped.push({tipo:anexo.tipo, file:{name:anexo.nombre, size:anexo.size}, url:anexo.ruta, idanexo:anexo.id});
+                  }
+          
                   //console.log(this.infoSolpedEditar.solped.serie, this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie));
                   this.serie = this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie)[0].code;
                   
@@ -712,6 +736,163 @@ calculatTotales(){
 
   /***** Funciones buttons */
 
+  verAnexos(){
+    this.listadoAnexos = true;
+  }
+
+  adicionarlineaAnexo(){
+    this.formularioAnexo = false;
+
+    
+    if(this.solpedEditar){
+      let anexo = {tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'};
+      this.loadFile(this.solpedEditar,anexo);
+    }else{
+      this.anexosSolped.push({tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'});
+    }
+  }
+
+  loadFile(solpedID:number,anexo:any ){
+    
+    let body:any; 
+
+      //console.log(anexo.file, anexo.file.name);
+      body = new FormData();
+      body.append('myFile', anexo.file, anexo.file.name);
+      body.append('anexotipo',anexo.tipo);
+      body.append('solpedID',solpedID);
+
+      this.comprasService.uploadAnexo(this.authService.getToken(),body)
+        .subscribe({
+           next:(result)=>{
+              
+              console.log(result);
+              //this.anexosSolped.push({tipo:anexo.tipo, file: anexo.file,url:'#'});
+              this.anexosSolped.push({tipo:anexo.tipo, file:anexo.file, url:result.ruta, idanexo:result.idanexo});
+              this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+              
+           },
+           error:(err)=>{
+              console.log(err);
+              this.messageService.add({severity:'error', summary: '!Error¡', detail: err});
+           }
+        });
+      
+    
+    
+  }
+
+  AdicionarAnexo(){
+    this.formularioAnexo = true;
+    let tiposAnexosTMP =[];
+    if(this.anexosSolped.length>0){
+
+        //Recorrer el arreglo de tipos de anexo
+        for(let tipo of this.tiposanexo){
+          //validar tipo.name en el array de anexos
+          //console.log(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name));
+          if(tipo.name!='Otro'){
+            if(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name).length==0){
+              tiposAnexosTMP.push({name:tipo.name});
+            }
+          }else{
+            tiposAnexosTMP.push({name:tipo.name});
+          }
+        }
+        this.tiposanexo = tiposAnexosTMP;
+      
+    }
+  }
+
+  BorrarAnexo(){
+    let lineasAnexoMP=[];
+    let existe = false;
+    for(let linea of this.anexosSolped){
+      existe = false;
+      for(let lineaSelect of this.lineaAnexoSeleccionada){
+          if(linea === lineaSelect){
+            existe = true;
+    
+          }
+      }
+      if(!existe){
+        lineasAnexoMP.push(linea);
+      }
+    }
+    //console.log(this.anexosSolped,lineasAnexoMP);
+    this.anexosSolped = lineasAnexoMP;
+
+    if(this.solpedEditar){
+      
+      for(let anexo of this.lineaAnexoSeleccionada){
+        console.log();
+        let fileInfo = {ruta: anexo.url, name: anexo.file.name, tipo:anexo.tipo, idsolped:this.infoSolpedEditar.solped.id, idanexo:anexo.idanexo}
+        this.comprasService.borrarAnexo(this.authService.getToken(),fileInfo)
+            .subscribe({
+                next:(result)=>{
+                    console.log(result);
+                    this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                },
+                error:(err)=>{
+                  console.log(err);
+                  this.messageService.add({severity:'error', summary: '!Error', detail: err});
+                }
+                
+            });
+      }
+    }
+  }
+
+  seleccionarTipoAnexo(){
+
+  }
+
+  loadFiles(){
+    
+    let body:any; 
+    for(let anexo of this.anexosSolped){
+      console.log=(anexo.file, anexo.file.name);
+      body = new FormData();
+      body.append('myFile', anexo.file, anexo.file.name);
+      body.append('anexotipo',anexo.tipo);
+
+      this.comprasService.uploadAnexo(this.authService.getToken(),body)
+        .subscribe({
+           next:(result)=>{
+            console.log('upload service');
+              console.log(result)
+           },
+           error:(err)=>{
+              console.log(err);
+           }
+        });
+      
+    }
+  }
+
+ 
+
+  onLoad($event:any){
+
+    const [ file ] = $event.currentFiles;
+    console.log(file);
+    this.fileTmp = {
+      fileRaw:file,
+      fileName:file.name
+    }
+
+   
+  }
+
+  consultarAnexo(url:string){
+      console.log(url);
+      let urlFile= this.comprasService.downloadAnexo(url);
+      console.log(urlFile);
+      window.open(urlFile,'blank');
+
+  }
+  
+
   AdicionarLinea(){
     this.nuevaLinea =true;
 
@@ -737,46 +918,66 @@ calculatTotales(){
   }
 
   GuardarSolped(){
-   
+
+               
 
                 this.envioFormulario = true;
                 if( this.clase &&  this.serie &&  this.area && this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
                   if(this.lineasSolped.length > 0){
-                    //this.submittedBotton = true;
-                    //console.log(this.solped, this.solpedDetLines);
-            
-                    const data:any = {
-                      solped:  {
-                        id_user: this.infoUsuario.id,
-                        usersap: this.infoUsuario.codusersap,
-                        fullname: this.infoUsuario.fullname,
-                        serie:this.serie,
-                        doctype: this.clase,
-                        docdate:this.fechaContable,
-                        docduedate: this.fechaCaducidad,
-                        taxdate:this.fechaDocumento,
-                        reqdate:this.fechaNecesidad,
-                        sapdocnum:"0",
-                        u_nf_depen_solped:this.area,
-                        comments:this.comentarios,
-                        trm:this.trm,
-                        currency:this.currency
-                      },
-                      solpedDet:this.lineasSolped
-                    }
 
-                    if(this.solpedEditar) data.solped.id = this.solpedEditar;
-            
-                    //console.log(data);      
-                    this.onNewSolped.emit(data);              
-            
-                    this.envioFormulario = false;
+                    if(this.anexosSolped.length > 0){
+                        if(this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0){
+
+                          //this.submittedBotton = true;
+                        //console.log(this.solped, this.solpedDetLines);
+                
+                        const data:any = {
+                          solped:  {
+                            id_user: this.infoUsuario.id,
+                            usersap: this.infoUsuario.codusersap,
+                            fullname: this.infoUsuario.fullname,
+                            serie:this.serie,
+                            doctype: this.clase,
+                            docdate:this.fechaContable,
+                            docduedate: this.fechaCaducidad,
+                            taxdate:this.fechaDocumento,
+                            reqdate:this.fechaNecesidad,
+                            sapdocnum:"0",
+                            u_nf_depen_solped:this.area,
+                            comments:this.comentarios,
+                            trm:this.trm,
+                            currency:this.currency
+                          },
+                          solpedDet:this.lineasSolped,
+                          anexos:this.anexosSolped
+                        }
+
+                        if(this.solpedEditar) data.solped.id = this.solpedEditar;
+                
+                        //console.log(data);      
+                        this.onNewSolped.emit(data);              
+                
+                        this.registroSolped = true;
+                        this.envioFormulario = false;
+
+                        }else{
+                          this.messageService.add({severity:'error', summary: '!Error', detail: 'Los anexos de revisión presupuestal y revisión técnica son obligatorios'});
+                          
+                        }
+
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe adjuntar los anexos requeridos'});
+                     
+                    }
+                    
                   }else{
                     this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar al menos una línea en la solped'});
+                   
                   }
                   
                 }else{
                   this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
+                  
                 }
   }
 

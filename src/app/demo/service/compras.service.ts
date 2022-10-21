@@ -64,12 +64,50 @@ export class ComprasService {
 
   }
 
+  uploadAnexo(token:string,body:FormData):Observable<any>{
+    //console.log(body);
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    //headers=headers.append('content-type','multipart/form-data;');
+    //headers = headers.append('enctype', 'multipart/form-data');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/upload`;
+    return this.http.post<any[]>(url,body,requestOptions);
+    //return this.http.post<any[]>(url,body);
+
+  }
+
+  downloadAnexo(ruta:string):string{
+    
+    //let headers = this.urlApiService.getHeadersAPI(token);
+    
+    //const requestOptions = { headers: headers };
+    //const url:string = `${this.api_url}/api/compras/solped/upload`;
+    const url:string = `${this.api_url}/${ruta}`;
+    return url;
+    //return this.http.get<any[]>(url,requestOptions);
+    //return this.http.post<any[]>(url,body);
+
+  }
+
+  borrarAnexo(token:string,fileInfo:any):Observable<any>{
+    //console.log(body);
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/borraranexo`;
+    return this.http.post<any[]>(url,fileInfo,requestOptions);
+  }
+
   updateSolped(token:string,data:any):Observable<any>{
-    const headers = this.urlApiService.getHeadersAPI(token);
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/solped/`;
     return this.http.put<any[]>(url,data,requestOptions);
   }
+
+ 
 
   envioAprobacionSolped(token:string,idsSolped:number[]):Observable<any>{
     let data = JSON.stringify(idsSolped);

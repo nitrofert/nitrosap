@@ -32,7 +32,7 @@ export class UrlApiService {
             headers=headers.append('Authorization','Bearer ' + tokenid) 
         }
         
-        console.log(headers) 
+        //console.log(headers) 
        
         return headers;
     }

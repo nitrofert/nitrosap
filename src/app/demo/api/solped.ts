@@ -10,6 +10,7 @@
 export interface SolpedInterface {
     solped:    Solped;
     solpedDet: SolpedDet[];
+    anexos:    Anexos[];
 }
 
 export interface Solped {
@@ -60,6 +61,15 @@ export interface SolpedDet {
     id_user:      number;
     created_at?:   string;
     updated_at?:   string;
+}
+
+export interface Anexos {
+    id:          number;   
+    id_solped:   number;
+    tipo:        string;
+    ruta:        string;
+    nombre:      string;
+    size:        string;
 }
 
 // Converts JSON strings to/from your types
