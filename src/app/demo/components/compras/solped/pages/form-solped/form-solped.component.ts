@@ -126,6 +126,7 @@ export class FormSolpedComponent implements OnInit {
   formularioLinea:boolean = false;  // Controla la visibilidad del formulario de linea solped
   formularioAnexo:boolean = false; // Controla la visibilidad del formulario de cargue de anexos
   envioLinea:boolean = false; // Controla el llenado de los campos del formulario de linea solped
+  envioLineaanexo:boolean = false; // Controla el llenado de los campos del formulario de linea solped 
   listadoLineas:boolean = false; //Controla la visibilidad del listado de lineas de la solped
   listadoAnexos:boolean = false; //Controla la visibilidad del listado de anexos
   uploadedFiles: any[] = [];
@@ -137,7 +138,7 @@ export class FormSolpedComponent implements OnInit {
   urlBreadCrumb:string ="";
 
   file!: any ;
-  private fileTmp:any;
+  fileTmp:any;
 
   /******************* */
 
@@ -263,7 +264,10 @@ export class FormSolpedComponent implements OnInit {
             next: (series)=>{
                 
                 for(let item in series){
-                  this.series.push(series[item]);
+                  if(series[item].name!='SPMP'){
+                    this.series.push(series[item]);
+                  }
+                  
               }
                 //this.series = series.filter(item => item.)
                 this.serie = this.series[0].code;
@@ -741,15 +745,25 @@ calculatTotales(){
   }
 
   adicionarlineaAnexo(){
-    this.formularioAnexo = false;
-
+    console.log(this.tipoanexo,this.fileTmp);
+    this.envioLineaanexo = true;
+    if(this.tipoanexo && this.tipoanexo!="" &&  this.fileTmp && this.fileTmp!=""){
     
-    if(this.solpedEditar){
-      let anexo = {tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'};
-      this.loadFile(this.solpedEditar,anexo);
+      if(this.solpedEditar){
+        let anexo = {tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'};
+        this.loadFile(this.solpedEditar,anexo);
+      }else{
+        this.anexosSolped.push({tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'});
+      }
+      this.tipoanexo = "";
+      this.fileTmp ="";
+      this.formularioAnexo = false;
     }else{
-      this.anexosSolped.push({tipo:this.tipoanexo.name, file:this.fileTmp.fileRaw,url:'#'});
+      this.messageService.add({severity:'error', summary: '!Error¡', detail: 'Debe seleccionar el tipo y el archivo a anexar a la solped'});
     }
+    
+
+
   }
 
   loadFile(solpedID:number,anexo:any ){

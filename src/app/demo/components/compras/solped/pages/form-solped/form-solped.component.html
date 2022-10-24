@@ -1033,7 +1033,7 @@
                             placeholder="Seleccione el tipo del anexo" 
                             styleClass="w-full" 
                             inputId="tipoanexo"
-                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && !tipoanexo.name}"
+                            [ngClass]="{'ng-invalid ng-dirty' :  (envioLineaanexo && !tipoanexo ) || (envioLineaanexo && tipoanexo=='')}"
                             (onChange)="seleccionarTipoAnexo()" #ocrcode3>
 
                     <ng-template pTemplate="selectedItem">
@@ -1063,6 +1063,7 @@
                                 [maxFileSize]="1000000"
                                 styleClass="w-full"
                                 class="w-full"
+                                [ngClass]="{'ng-invalid ng-dirty' :  (envioLineaanexo && !fileTmp ) || (envioLineaanexo && fileTmp=='')}"
                                 [disabled]="!tipoanexo">
                                 <ng-template pTemplate="content">
                                     <ul *ngIf="uploadedFiles.length">
