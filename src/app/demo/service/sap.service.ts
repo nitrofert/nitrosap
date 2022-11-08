@@ -64,7 +64,7 @@ export class SAPService {
             //this.sapService.setTokenSAP(res.SessionId);
             this.tokenSAP = res.SessionId;
             
-            console.log(this.tokenSAP);
+            //console.log(this.tokenSAP);
         },
         error: (err) => {
             console.log(err);
@@ -208,9 +208,12 @@ export class SAPService {
     }
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/aprobaciones`;
-    console.log(url);
+    //console.log(url);
     return this.http.get<any[]>(url,requestOptions);
   }
+
+
+
 
 
   

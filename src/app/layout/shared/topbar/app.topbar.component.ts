@@ -49,7 +49,7 @@ export class AppTopBarComponent implements OnInit {
              {label: 'Perfil', 
               icon: 'pi pi-fw pi-id-card',
               command: () => {
-                  console.log("Mostrar info del usuario logueado");
+                  //console.log("Mostrar info del usuario logueado");
               }
             },
              {label: 'Salir', 
@@ -68,5 +68,9 @@ export class AppTopBarComponent implements OnInit {
         localStorage.removeItem('menuUsuario');
         localStorage.removeItem('permisosUsuario');
         this.router.navigate(['/']);
+     }
+
+     print(){
+      window.print();
      }
 }

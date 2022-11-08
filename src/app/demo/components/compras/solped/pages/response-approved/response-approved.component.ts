@@ -21,13 +21,13 @@ export class ResponseApprovedComponent implements OnInit {
   ngOnInit(): void {
 
 
-    console.log(this.rutaActiva.snapshot.params);
+    //console.log(this.rutaActiva.snapshot.params);
      // Obtener id de la solped seleccionada
      this.parametros = this.rutaActiva.snapshot.params;
-     console.log((this.parametros));
+     //console.log((this.parametros));
      this.infoTokenAprovedLine = decode(this.parametros.crypt);
      this.message = this.parametros.message;
-     console.log(this.message,this.infoTokenAprovedLine);
+     //console.log(this.message,this.infoTokenAprovedLine);
   }
 
 }

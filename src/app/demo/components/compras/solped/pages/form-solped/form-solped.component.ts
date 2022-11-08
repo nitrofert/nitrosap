@@ -199,7 +199,7 @@ export class FormSolpedComponent implements OnInit {
         
         this.resetearFormularioLinea();
         
-
+        console.log(this.authService.getInfoUsuario().companyname.toLowerCase());
 
   }
 
@@ -251,7 +251,7 @@ export class FormSolpedComponent implements OnInit {
         }
       },
       error: (error) => {
-        //console.log(error);
+        console.log(error);
       }
     });
   }
@@ -273,7 +273,7 @@ export class FormSolpedComponent implements OnInit {
                 this.serie = this.series[0].code;
                 this.serieName =this.series[0].name;
                 this.clase ='I';
-                console.log(this.series);
+                //console.log(this.series);
             },
             error: (err)=>{
               console.log(err);
@@ -351,7 +351,7 @@ export class FormSolpedComponent implements OnInit {
     this.authService.getAlmacenesUsuarioXE()
     .subscribe({
       next: (stores) => {
-        ////console.log(stores);
+        console.log(stores);
         for(let item in stores){
           this.almacenes.push(stores[item]);
        }
@@ -399,7 +399,7 @@ export class FormSolpedComponent implements OnInit {
   getInformacionSolped(){
 
     if(this.solpedEditar){
-      console.log('Informacion solped',this.solpedEditar);
+      //console.log('Informacion solped',this.solpedEditar);
       //Cargar datos de la solped por el id
       this.comprasService.solpedById(this.authService.getToken(),this.solpedEditar)
           .subscribe({
@@ -407,7 +407,7 @@ export class FormSolpedComponent implements OnInit {
                   //console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
-                  console.log(this.infoSolpedEditar.anexos);
+                  //console.log(this.infoSolpedEditar.anexos);
                   //this.anexosSolped = this.infoSolpedEditar.anexos;
 
                   for(let anexo of this.infoSolpedEditar.anexos){
@@ -430,9 +430,9 @@ export class FormSolpedComponent implements OnInit {
                   this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';
                   this.iteradorLinea = (this.lineasSolped[this.lineasSolped.length-1].linenum)+1;
                   this.solpedAprobada = this.infoSolpedEditar.solped.approved || 'N';
-                  console.log( this.areas);
+                  //console.log( this.areas);
                   this.area = this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped )[0].area;
-                  console.log(this.iteradorLinea);
+                  //console.log(this.iteradorLinea);
                   
                 }, 
                 error: (error)  => {
@@ -462,10 +462,10 @@ export class FormSolpedComponent implements OnInit {
   }
 
   SeleccionarSerie(){
-    console.log(this.serie,this.series);
+    //console.log(this.serie,this.series);
 
     this.serieName = this.series.filter(item => item.code===this.serie)[0].name;
-    console.log(this.serieName);
+    //console.log(this.serieName);
     if(this.serieName=='SPB'){
       this.clase ='I';
     }else{
@@ -642,7 +642,7 @@ cuentasxDependencia(){
 filtrarCuentas(event:any){
   let filtered : any[] = [];
   let query = event.query;
-
+   //console.log(this.cuentasDependencia);
 
   for(let i = 0; i < this.cuentasDependencia.length; i++) {
     let cuentaDependencia = this.cuentasDependencia[i];
@@ -661,9 +661,9 @@ filtrarCuentas(event:any){
 }
 
 calcularSubtotalLinea(){
-  console.log(this.cantidad,this.precio,this.monedas, this.trm);
+  //console.log(this.cantidad,this.precio,this.monedas, this.trm);
   let tasaMoneda = this.monedas.filter(item=>item.Currency === this.moneda)[0].TRM;
-  console.log(tasaMoneda);
+  //console.log(tasaMoneda);
   if(!this.cantidad || !this.precio){
     this.subtotalLinea =0;
   }else{
@@ -745,7 +745,7 @@ calculatTotales(){
   }
 
   adicionarlineaAnexo(){
-    console.log(this.tipoanexo,this.fileTmp);
+    //console.log(this.tipoanexo,this.fileTmp);
     this.envioLineaanexo = true;
     if(this.tipoanexo && this.tipoanexo!="" &&  this.fileTmp && this.fileTmp!=""){
     
@@ -780,7 +780,7 @@ calculatTotales(){
         .subscribe({
            next:(result)=>{
               
-              console.log(result);
+              //console.log(result);
               //this.anexosSolped.push({tipo:anexo.tipo, file: anexo.file,url:'#'});
               this.anexosSolped.push({tipo:anexo.tipo, file:anexo.file, url:result.ruta, idanexo:result.idanexo});
               this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
@@ -839,12 +839,12 @@ calculatTotales(){
     if(this.solpedEditar){
       
       for(let anexo of this.lineaAnexoSeleccionada){
-        console.log();
+        //console.log();
         let fileInfo = {ruta: anexo.url, name: anexo.file.name, tipo:anexo.tipo, idsolped:this.infoSolpedEditar.solped.id, idanexo:anexo.idanexo}
         this.comprasService.borrarAnexo(this.authService.getToken(),fileInfo)
             .subscribe({
                 next:(result)=>{
-                    console.log(result);
+                    //console.log(result);
                     this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                 },
                 error:(err)=>{
@@ -865,7 +865,7 @@ calculatTotales(){
     
     let body:any; 
     for(let anexo of this.anexosSolped){
-      console.log=(anexo.file, anexo.file.name);
+      //console.log=(anexo.file, anexo.file.name);
       body = new FormData();
       body.append('myFile', anexo.file, anexo.file.name);
       body.append('anexotipo',anexo.tipo);
@@ -873,7 +873,7 @@ calculatTotales(){
       this.comprasService.uploadAnexo(this.authService.getToken(),body)
         .subscribe({
            next:(result)=>{
-            console.log('upload service');
+            //console.log('upload service');
               console.log(result)
            },
            error:(err)=>{
@@ -889,7 +889,7 @@ calculatTotales(){
   onLoad($event:any){
 
     const [ file ] = $event.currentFiles;
-    console.log(file);
+    //console.log(file);
     this.fileTmp = {
       fileRaw:file,
       fileName:file.name
@@ -899,12 +899,44 @@ calculatTotales(){
   }
 
   consultarAnexo(url:string){
-      console.log(url);
+      //console.log(url);
       let urlFile= this.comprasService.downloadAnexo(url);
-      console.log(urlFile);
+      //console.log(urlFile);
       window.open(urlFile,'blank');
 
   }
+
+  consultarAnexo3(url:string){
+
+    this.comprasService.downloadAnexo3(this.authService.getToken(),url)
+        .subscribe({
+            next:(result)=>{
+
+            },
+            error:(err)=>{
+                console.log(err);
+            }
+        });
+
+}
+
+  consultarAnexo2(file:any){
+    console.log(file);
+    let fileInfo = {ruta: file.url, name: file.file.name, tipo:file.tipo, idsolped:this.infoSolpedEditar.solped.id, idanexo:file.idanexo};
+    this.comprasService.downloadAnexo2(this.authService.getToken(),fileInfo)
+            .subscribe({
+                next:(result)=>{
+                    //console.log(result);
+                    //this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                },
+                error:(err)=>{
+                  console.log(err);
+                  //this.messageService.add({severity:'error', summary: '!Error', detail: err});
+                }
+                
+            });
+
+}
   
 
   AdicionarLinea(){
@@ -940,7 +972,8 @@ calculatTotales(){
                   if(this.lineasSolped.length > 0){
 
                     if(this.anexosSolped.length > 0){
-                        if(this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0){
+                        if((this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0) ||
+                           (this.authService.getInfoUsuario().companyname.toLowerCase()!='nitrofert'  && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0)){
 
                           //this.submittedBotton = true;
                         //console.log(this.solped, this.solpedDetLines);
@@ -975,7 +1008,12 @@ calculatTotales(){
                         this.envioFormulario = false;
 
                         }else{
-                          this.messageService.add({severity:'error', summary: '!Error', detail: 'Los anexos de revisión presupuestal y revisión técnica son obligatorios'});
+                          if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert'){
+                            this.messageService.add({severity:'error', summary: '!Error', detail: 'Los anexos de revisión presupuestal y revisión técnica son obligatorios'});
+                          }
+                          if(this.authService.getInfoUsuario().companyname.toLowerCase()=='intefert'){
+                            this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión técnica es obligatorio'});
+                          }
                           
                         }
 
@@ -1003,7 +1041,7 @@ calculatTotales(){
 
   RegistrarLinea(){
     this.envioLinea = true;
-    console.log(this.numeroLinea, this.iteradorLinea);
+    //console.log(this.numeroLinea, this.iteradorLinea);
     if(this.descripcion && 
       this.fechaRequerida && 
       this.viceprecidencia.vicepresidency && 
@@ -1042,7 +1080,7 @@ calculatTotales(){
             this.asignarCamposLinea(this.numeroLinea);
             this.lineasSolped.push(this.lineaSolped);
             this.iteradorLinea++;
-            console.log(this.lineasSolped);
+            //console.log(this.lineasSolped);
             this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});
           }
           //realizar el proceso de registro de linea
@@ -1182,7 +1220,7 @@ calculatTotales(){
         lineasSolpedTMP.push(linea);
       }
     }
-    console.log(this.lineasSolped,lineasSolpedTMP);
+    //console.log(this.lineasSolped,lineasSolpedTMP);
     this.lineasSolped = lineasSolpedTMP;
   }
 

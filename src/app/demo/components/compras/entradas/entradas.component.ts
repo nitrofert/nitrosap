@@ -82,14 +82,14 @@ export class EntradasComponent implements OnInit {
       if(this.router.url.indexOf("/"+entradaSeleccionada['entrada'])>=0){
         url = this.router.url.substring(0,this.router.url.indexOf("/"+entradaSeleccionada['entrada']));
       }
-      console.log("URL con parametros: ",url);
+      //console.log("URL con parametros: ",url);
     }else{
       url= this.router.url;
-      console.log("URL sin parametros: ",url);
+      //console.log("URL sin parametros: ",url);
     }
     this.urlBreadCrumb = url;
     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-    console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+    //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
   getEntradas(){
@@ -97,7 +97,7 @@ export class EntradasComponent implements OnInit {
     .subscribe({
       next:(entradas =>{
         this.loading = false;
-          console.log(entradas);
+          //console.log(entradas);
           this.entradas = entradas;
           this.loading = false;
       }),
@@ -112,8 +112,14 @@ export class EntradasComponent implements OnInit {
   }
 
   VerEntrada(){
-    console.log(this.entradaSeleccionada[0].id);
+    //console.log(this.entradaSeleccionada[0].id);
     this.router.navigate(['portal/compras/entradas/consultar/'+this.entradaSeleccionada[0].id]);
+  }
+
+  impresion(id:number){
+    console.log(id);
+    //window.open('portal/compras/entradas/impresion/'+id,'_blank')
+    this.router.navigate(['portal/compras/entradas/impresion/'+id]);
   }
 
   formatCurrency(value: number) {

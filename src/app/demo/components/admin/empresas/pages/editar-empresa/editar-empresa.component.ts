@@ -50,7 +50,7 @@ export class EditarEmpresaComponent implements OnInit {
   ngOnInit(): void {
     
     this.companySelected = this.rutaActiva.snapshot.params;
-    console.log((this.companySelected.company));
+    //console.log((this.companySelected.company));
 
     /*his.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
@@ -60,7 +60,7 @@ export class EditarEmpresaComponent implements OnInit {
     .subscribe({
       next:(company =>{
           
-          console.log(company);
+          //console.log(company);
           this.companyname = company[0].companyname;
           this.status = company[0].status;
           this.logoempresa = company[0].logoempresa;
@@ -71,7 +71,7 @@ export class EditarEmpresaComponent implements OnInit {
       }),
       error:(err =>{
         this.submitBotton = false;
-        console.log(err);
+        console.error(err);
       })
     });
 
@@ -100,12 +100,12 @@ export class EditarEmpresaComponent implements OnInit {
       .subscribe({
         next:(company =>{
             
-            console.log(company);
+            //console.log(company);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha actualizado la empresa ${this.companyname}` , life: 3000}];
         }),
         error:(err =>{
           this.submitBotton = false;
-          console.log(err);
+          console.error(err);
         })
       });
       

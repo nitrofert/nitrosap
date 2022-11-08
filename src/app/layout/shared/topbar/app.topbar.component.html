@@ -15,7 +15,7 @@
 
     <div class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button">
-            <i class="pi pi-calendar"></i>
+            <i class="pi pi-calendar" ></i>
             <span>Calendar</span>
         </button>
         
@@ -24,12 +24,17 @@
             <span>Settings</span>
         </button>
 
+        <button class="p-link layout-topbar-button">
+            <i class="pi pi-print"  (click)="print()"></i>
+            <span>Imprimir</span>
+        </button>
+
         <button class="p-link layout-topbar-button" pTooltip="{{fullnameUser}}" tooltipPosition="bottom">
             <i class="pi pi-user"></i>
             <span>Profile</span>
         </button>
 
-        <button class="p-link layout-topbar-button" title="Salir" (click)="salir()">
+        <button class="p-link layout-topbar-button" pTooltip="Salir" tooltipPosition="bottom" (click)="salir()">
             <i class="pi pi-power-off"></i>
             <span>Salir</span>
         </button>

@@ -55,17 +55,17 @@ export class PerfilesComponent implements OnInit {
         .subscribe({
           next:(perfil =>{
             this.loading = false;
-              console.log(perfil);
+              //console.log(perfil);
               this.perfil = perfil;
           }),
           error:(err =>{
-            console.log(err);
+            console.error(err);
           })
         });
   }
 
   newPerfil(){
-    console.log('Nuevo perfil');
+    //console.log('Nuevo perfil');
     this.router.navigate(['/portal/admin/perfiles/nuevo']);
   }
 

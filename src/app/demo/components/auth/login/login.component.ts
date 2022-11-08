@@ -66,11 +66,11 @@ export class LoginComponent  {
                 this.authService.companies()
                 .subscribe({
                 next:(companies)=>{
-                    console.log(companies);
+                    //console.log(companies);
                     this.companies = companies;
                 },
                 error:(err)=>{
-                    console.log(err);
+                    console.error(err);
                 }
                 });
 
@@ -86,8 +86,8 @@ export class LoginComponent  {
         this.errorForm= false;
         this.messageForm=[];
         this.classMessageForm="";
-        console.log(this.username, this.password, this.selectedCompany);
-        console.log(this.companies.find(company => company.id==this.selectedCompany));
+        //console.log(this.username, this.password, this.selectedCompany);
+        //console.log(this.companies.find(company => company.id==this.selectedCompany));
         
         if(typeof this.selectedCompany === "undefined"){
             this.classErrorCompany ='ng-invalid ng-dirty';
@@ -125,11 +125,11 @@ export class LoginComponent  {
                     this.authService.loadInfoUsuario(response.tokenid!)
                         .subscribe({
                             next: (infoUsuario)=>{
-                                console.log(infoUsuario);
+                                //console.log(infoUsuario);
                                 localStorage.setItem('infoUsuario',JSON.stringify(infoUsuario)); 
                             },
                             error: (err)=>{
-                                console.log(err);
+                                console.error(err);
                             }
                         })
                     
@@ -137,11 +137,11 @@ export class LoginComponent  {
                     this.authService.loadMenuUsuario(response.tokenid!)
                         .subscribe({
                             next: (menuUsuario)=>{
-                                console.log(menuUsuario);
+                                //console.log(menuUsuario);
                                 localStorage.setItem('menuUsuario',JSON.stringify(menuUsuario)); 
                             },
                             error: (err)=>{
-                                console.log(err);
+                                console.error(err);
                             }
                         });
 
@@ -149,11 +149,11 @@ export class LoginComponent  {
                     this.authService.loadPerfilesUsuario(response.tokenid!)
                         .subscribe({
                             next: (perfilesUsuario)=>{
-                                console.log(perfilesUsuario);
+                                //console.log(perfilesUsuario);
                                 localStorage.setItem('perfilesUsuario',JSON.stringify(perfilesUsuario)); 
                             },
                             error: (err)=>{
-                                console.log(err);
+                                console.error(err);
                             }
                         })
                     
@@ -161,22 +161,22 @@ export class LoginComponent  {
                     this.authService.loadPemisosUsuario(response.tokenid!)
                         .subscribe({
                             next: (permisosUsuario)=>{
-                                console.log(permisosUsuario);
+                                //console.log(permisosUsuario);
                                 localStorage.setItem('permisosUsuario',JSON.stringify(permisosUsuario)); 
                             },
                             error: (err)=>{
-                                console.log(err);
+                                console.error(err);
                             }
                         })
 
                     //redireccionar al main del portal
                     setTimeout(() => {  
-                      console.log("Redireccionar al portal"); 
+                      //console.log("Redireccionar al portal"); 
                       this.router.navigate(['portal']);
                     }, 3500);
                   },
                   error:(err)=>{
-                    console.log('Error',err.error.message);
+                    console.error('Error',err.error.message);
                     this.classMessageForm = ' text-red-800';
     
                     this.messageForm = [{severity:'error', summary:'Error:', detail:err.error.message}];
@@ -193,7 +193,7 @@ export class LoginComponent  {
     }
 
     restoreClass(idControl:any):void{
-        console.log(idControl, this.username.length, this.password.length);
+        //console.log(idControl, this.username.length, this.password.length);
         this.messageForm =[];
         if(idControl=='password' && this.password.length!=0) this.classErrorPassword='';
         if(idControl=='username' && this.username.length!=0) this.classErrorUser='';

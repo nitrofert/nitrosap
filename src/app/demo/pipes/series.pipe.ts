@@ -35,7 +35,7 @@ export class SeriesPipe implements PipeTransform {
                   return serie;
               },
               error:(err)=>{
-                  console.log(err);
+                  console.error(err);
                   return value;
               }
           });
@@ -54,11 +54,11 @@ export class SeriesPipe implements PipeTransform {
                       serie = series[item].name;  
                     }
                   }
-                  console.log(serie);
+                  //console.log(serie);
                   return serie;
               },
               error:(err)=>{
-                  console.log(err);
+                  console.error(err);
                   return value;
               }
           });
@@ -81,7 +81,7 @@ export class SeriesPipe implements PipeTransform {
                   return serie;
               },
               error:(err)=>{
-                  console.log(err);
+                  console.error(err);
                   return value;
               }
           });

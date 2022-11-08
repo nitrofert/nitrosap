@@ -34,12 +34,12 @@ export class EditSolpedComponent implements OnInit {
  
 
   actualizarSolped(dataSolped:any){
-    console.log(dataSolped);
+   // console.log(dataSolped);
 
     this.comprasService.updateSolped(this.authService.getToken(),dataSolped)
             .subscribe({
                 next: (result) =>{
-                    console.log(result);
+                    //console.log(result);
                     //this.submittedBotton = true;
                     if(result.status===501){
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});

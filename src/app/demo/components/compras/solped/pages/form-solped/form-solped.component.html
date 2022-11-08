@@ -51,7 +51,7 @@
                 <div class="col">
                     <div class="flex">
                         <div class="field">
-                            <label htmlFor="serie">Tipo2</label>
+                            <label htmlFor="serie">Tipo</label>
                             <p-dropdown [options]="series" 
                                         optionLabel="name" optionValue="code"
                                         [(ngModel)]="serie" 
@@ -297,7 +297,8 @@
                         name="descripcion" 
                         type="text"
                         required 
-                        [readonly]="item.ItemCode!='' || clase==='I'" class="w-full"
+                        
+                        class="w-full"
                         [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !descripcion}" />
             </div>
 
@@ -984,7 +985,7 @@
                 </td>
                 <td *ngIf="solpedEditar" style="min-width: 1rem;" class="flex justify-content-center flex-wrap">
                     <!--<i class="pi {{anexossolped.file.icon}} p-1" (click)="consultarAnexo(anexossolped.url)"></i>-->
-                    <p-button icon="pi pi-download" label=""  pTooltip="Descargar" class="w-full" (click)="consultarAnexo(anexossolped.url)"></p-button>
+                    <p-button icon="pi pi-download" label=""  pTooltip="Descargar" class="w-full" (click)="consultarAnexo3(anexossolped.url)"></p-button>
                 </td>
                 
             </tr>

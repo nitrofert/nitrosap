@@ -62,11 +62,11 @@ export class PermisosComponent implements OnInit {
         .subscribe({
           next:(permisos =>{
             this.loading = false;
-              console.log(permisos);
+              //console.log(permisos);
               this.permisos = permisos;
           }),
           error:(err =>{
-            console.log(err);
+            console.error(err);
           })
         });
   }
@@ -79,14 +79,14 @@ export class PermisosComponent implements OnInit {
       accion,
       valor
     }
-    console.log(permiso);
+    //console.log(permiso);
     this.adminService.setPermiso(this.authService.getToken(),permiso)
       .subscribe({
         next:(permisos)=>{
-          console.log(permisos);
+          //console.log(permisos);
         },
         error:(err)=>{
-          console.log(err);
+          console.error(err);
         }
       })
   }

@@ -37,10 +37,10 @@ export class RechazoSolpedComponent implements OnInit {
 
         // Obtener id de la solped seleccionada
         this.tokenAprovedLine = this.rutaActiva.snapshot.params;
-        console.log((this.tokenAprovedLine));
+        //console.log((this.tokenAprovedLine));
         
         this.infoTokenAprovedLine = decode(this.tokenAprovedLine.crypt);
-        console.log(this.infoTokenAprovedLine);
+        //console.log(this.infoTokenAprovedLine);
 
       
 
@@ -54,14 +54,14 @@ export class RechazoSolpedComponent implements OnInit {
   rechazar(){
       this.submitted = true;
       if(this.justificacion){
-          console.log(this.justificacion);
+          //console.log(this.justificacion);
 
           this.infoTokenAprovedLine.infoSolped.comments = this.justificacion;
 
           this.comprasService.rechazoSolped(this.infoTokenAprovedLine)
               .subscribe({
                   next: (result) =>{
-                      console.log(result);
+                      //console.log(result);
                       if(result[0].status==='error'){
                         this.messageService.add({severity:'error', summary: '!Ops', detail: result[0].message});
                       }else{

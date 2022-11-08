@@ -37,7 +37,7 @@ export class EmpresasUsuarioComponent implements OnInit {
     this.estados = [{label: 'No', value: 0}, {label: 'Si', value: 1}];
     
     this.userSelected = this.rutaActiva.snapshot.params;
-    console.log((this.userSelected.user));
+    //console.log((this.userSelected.user));
 
     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
@@ -46,11 +46,11 @@ export class EmpresasUsuarioComponent implements OnInit {
     this.adminService.getUserById(this.authService.getToken(),this.userSelected.user)
         .subscribe({
           next: (user) => {
-            console.log(user);
+            //console.log(user);
             this.fullnameUserSelected = user[0].fullname;
           },
           error: (error) => {
-            console.log(error);
+            console.error(error);
           }
         })
 
@@ -58,21 +58,21 @@ export class EmpresasUsuarioComponent implements OnInit {
     .subscribe({
       next:(companiesUser =>{
           
-          console.log(companiesUser);
+          //console.log(companiesUser);
           this.companies = companiesUser;
           
           //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
       }),
       error:( err =>{
         this.submitBotton = false;
-        console.log(err);
+        console.error(err);
       })
     }); 
 
   }
 
   setAccess(valor:number,idCompany:number){
-    console.log(valor,idCompany);
+    //console.log(valor,idCompany);
     let accessCompany = {
       id_company:idCompany,
       id_user:this.userSelected.user,
@@ -81,10 +81,10 @@ export class EmpresasUsuarioComponent implements OnInit {
     this.adminService.setAccess(this.authService.getToken(),accessCompany)
         .subscribe({
           next: (acces) => {
-            console.log(acces);
+            //console.log(acces);
           },
           error: (err) => {
-            console.log(err);
+            console.error(err);
           }
         });
   }

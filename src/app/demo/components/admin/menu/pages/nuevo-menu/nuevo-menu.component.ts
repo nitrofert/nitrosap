@@ -70,12 +70,12 @@ export class NuevoMenuComponent implements OnInit {
       .subscribe({
         next:(menu =>{
             
-            console.log(menu);
+            //console.log(menu);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
         }),
         error:(err =>{
           this.submitBotton = false;
-          console.log(err);
+          console.error(err);
         })
       });
       
@@ -87,7 +87,7 @@ export class NuevoMenuComponent implements OnInit {
 
   loadPadres(){
     this.ordernum = "";
-    console.log(this.hierarchy);
+    //console.log(this.hierarchy);
     if(this.hierarchy=='H'){
        //obtener datos del usuario logueado
       /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
@@ -98,11 +98,11 @@ export class NuevoMenuComponent implements OnInit {
           .subscribe({
             next:(menu =>{
               
-                console.log(menu);
+                //console.log(menu);
                 this.padres = menu;
             }),
             error:(err =>{
-              console.log(err);
+              console.error(err);
             })
           });
     }else{
@@ -114,7 +114,7 @@ export class NuevoMenuComponent implements OnInit {
   }
 
   loadOrederNum(){
-      console.log(this.hierarchy, this.padre);
+      //console.log(this.hierarchy, this.padre);
 
        //obtener datos del usuario logueado
        /*let infoSessionStr:string = localStorage.getItem('infoSession') ||'';
@@ -125,11 +125,11 @@ export class NuevoMenuComponent implements OnInit {
       .subscribe({
         next:(menu =>{
           
-            console.log(menu[0].ordernum);
+            //console.log(menu[0].ordernum);
             this.ordernum = menu[0].ordernum;
         }),
         error:(err =>{
-          console.log(err);
+          console.error(err);
         })
       });
   }

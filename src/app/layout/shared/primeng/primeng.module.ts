@@ -7,6 +7,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
+import {FieldsetModule} from 'primeng/fieldset';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -52,6 +53,7 @@ import {FileUploadModule} from 'primeng/fileupload';
     DividerModule,
     DropdownModule,
     FileUploadModule,
+    FieldsetModule,
     InputNumberModule,
     InputSwitchModule,
     InputTextareaModule,

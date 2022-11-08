@@ -45,7 +45,7 @@ export class EditarPerfilComponent implements OnInit {
   ngOnInit(): void {
     
     this.perfilSelected = this.rutaActiva.snapshot.params;
-    console.log((this.perfilSelected.perfil));
+    //console.log((this.perfilSelected.perfil));
 
     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
@@ -55,7 +55,7 @@ export class EditarPerfilComponent implements OnInit {
     .subscribe({
       next:(perfil =>{
           
-          console.log(perfil);
+          //console.log(perfil);
           this.perfil = perfil[0].perfil;
           this.description = perfil[0].description ||'';
           this.estado = perfil[0].estado || '';
@@ -66,7 +66,7 @@ export class EditarPerfilComponent implements OnInit {
       }),
       error:(err =>{
         this.submitBotton = false;
-        console.log(err);
+        console.error(err);
       })
     });
 
@@ -93,12 +93,12 @@ export class EditarPerfilComponent implements OnInit {
       .subscribe({
         next:(perfil =>{
             
-            console.log(perfil);
+            //console.log(perfil);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha actualizado el perfil ${this.perfil}` , life: 3000}];
         }),
         error:(err =>{
           this.submitBotton = false;
-          console.log(err);
+          console.error(err);
         })
       });
       

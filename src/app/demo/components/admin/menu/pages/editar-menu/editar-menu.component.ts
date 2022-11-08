@@ -113,12 +113,12 @@ export class EditarMenuComponent implements OnInit {
       .subscribe({
         next:(menu =>{
             
-           console.log(menu);
+           //console.log(menu);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha actualizado la opción del menú ${this.title}` , life: 3000}];
         }),
         error:(err =>{
           this.submitBotton = false;
-          console.log(err);
+          console.error(err);
         })
       });
       
@@ -142,7 +142,7 @@ export class EditarMenuComponent implements OnInit {
                 this.padres = menu;
             }),
             error:(err =>{
-              console.log(err);
+              console.error(err);
             })
           });
     }else{
@@ -169,7 +169,7 @@ export class EditarMenuComponent implements OnInit {
             this.ordernum = menu[0].ordernum;
         }),
         error:(err =>{
-          console.log(err);
+          console.error(err);
         })
       });
   }

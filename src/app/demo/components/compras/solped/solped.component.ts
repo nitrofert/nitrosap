@@ -75,6 +75,11 @@ export class SolpedComponent implements OnInit {
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
 
+  dialogAprobaciones:boolean = false;
+
+  listaAprobaciones!:any[];
+  loadingAp:boolean = true;
+
   urlBreadCrumb:string ="";
 
   @ViewChild('filter') filter!: ElementRef;
@@ -96,20 +101,20 @@ export class SolpedComponent implements OnInit {
      const token = localStorage.getItem('token') || '';*/
 
      this.infoUsuario = this.authService.getInfoUsuario();
-    console.log(this.infoUsuario);
+    //console.log(this.infoUsuario);
      
-     console.log(this.authService.getPerfilesUsuario());
+     //console.log(this.authService.getPerfilesUsuario());
      this.perfilesUsuario = this.authService.getPerfilesUsuario();
 
-     console.log(this.router.url);
-     console.log(this.authService.getPermisosUsuario());
+     //console.log(this.router.url);
+     //console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
-     console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+     //console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
      this.urlBreadCrumb = this.router.url;
 
      this.statuses = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
-     this.approves = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
+     this.approves = [{label:'No aprobada',value:'N'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
 
 
     this.getListado();
@@ -148,6 +153,23 @@ export class SolpedComponent implements OnInit {
             }
         }
     });
+}
+
+mostrarAprobaciones(idSolped:any){
+  this.dialogAprobaciones = true;
+  
+  this.comprasService.aprobacionesSolped(this.authService.getToken(),idSolped)
+      .subscribe({
+        next:(aprobaciones)=>{
+            //console.log(aprobaciones);
+            this.listaAprobaciones = aprobaciones;
+            this.loadingAp = false;
+        },
+        error:(err)=>{
+            console.log(err);
+        }
+
+      });
 }
 
 cancelarSolped(){
@@ -256,7 +278,7 @@ cancelarSolped(){
     this.errorSopledAprobada = false;
     this.arraySolpedAprobadas = [];
     for(let item of this.selectedSolped){
-        console.log(item);
+        //console.log(item);
         fechaContSolped = new Date(item.docdate);
 
         if(item.approved==='C'){
@@ -284,7 +306,7 @@ cancelarSolped(){
         }
         arrayIdSolped.push(item.id);
     }
-    console.log(arrayIdSolped);
+    //console.log(arrayIdSolped);
     this.arrayIdSolped = arrayIdSolped;
     let message = "";
     if(this.errorSolpedCancelada){
@@ -365,7 +387,7 @@ cancelarSolped(){
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
         .subscribe({
           next: (aprobaciones) => {
-            console.log(aprobaciones);
+            //console.log(aprobaciones);
             if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
 
               if(this.selectedSolped.length>1){
@@ -386,7 +408,7 @@ cancelarSolped(){
 }
 
 rechazar(){
-  console.log('Rechazar solcitud');
+  //console.log('Rechazar solcitud');
   this.arrayIdSolped = [];
   let arrayIdSolped:number[] = [];
   this.arraySolpedRechazadas = [];
@@ -397,7 +419,7 @@ rechazar(){
   this.errorUsuarioAprobador = false;
 
   for(let item of this.selectedSolped){
-      console.log(item);
+      //console.log(item);
     
       if(item.approved==='R'){
         this.errorSopledARechazada = true;
@@ -419,11 +441,11 @@ rechazar(){
       arrayIdSolped.push(item.id);
   }
 
-  console.log(arrayIdSolped);
+  //console.log(arrayIdSolped);
   this.arrayIdSolped = arrayIdSolped;
   let message = "";
 
-  console.log('Rechazada',this.errorSopledARechazada,'Aprobada',this.errorSopledAprobada,'Usuario',this.errorUsuarioAprobador);
+  //console.log('Rechazada',this.errorSopledARechazada,'Aprobada',this.errorSopledAprobada,'Usuario',this.errorUsuarioAprobador);
 
   if(this.errorSopledARechazada){
     if(this.arraySolpedRechazadas.length>1){
@@ -450,7 +472,7 @@ rechazar(){
       this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorUsuarioAprobador = false;
   }else{
-    console.log("Aprobar");
+    //console.log("Aprobar");
     if(arrayIdSolped.length >1){
       message =`¿Desea Continuar con el rechazo de las solicitudes seleccionadas?`;
     }else{
@@ -463,7 +485,7 @@ rechazar(){
 }
 
 aprobar(){
-  console.log('Aprobar solcitudes');
+  //console.log('Aprobar solcitudes');
   
   this.arrayIdSolped = [];
   let arrayIdSolped:number[] = [];
@@ -476,7 +498,7 @@ aprobar(){
   this.errorSolpedCancelada = false;
   this.arrayErrorSolpedCancelada =[];
   for(let item of this.selectedSolped){
-      console.log(item);
+      //console.log(item);
     
       if(item.approved==='R'){
         this.errorSopledARechazada = true;
@@ -500,7 +522,7 @@ aprobar(){
       arrayIdSolped.push(item.id);
   }
 
-  console.log(arrayIdSolped);
+  //console.log(arrayIdSolped);
   this.arrayIdSolped = arrayIdSolped;
   let message = "";
 
@@ -544,7 +566,7 @@ aprobar(){
       this.errorUsuarioAprobador = false;
    
   }else{
-    console.log("Aprobar");
+    //console.log("Aprobar");
     if(arrayIdSolped.length >1){
       message =`¿Desea Continuar con la aprobación de las solicitudes seleccionadas?`;
     }else{
@@ -561,7 +583,7 @@ aprobar(){
 onReject() {
     this.messageService.clear('c');
     this.errorFechaAprobacion = false;
-    console.log(this.arrayIdSolped);
+    //console.log(this.arrayIdSolped);
 }
 
 onRejectAp() {
@@ -571,12 +593,12 @@ onRejectAp() {
 
 onRejectRap(){
   this.messageService.clear('rj');
-  console.log(this.arrayIdSolped);
+  //console.log(this.arrayIdSolped);
 }
 
 onRejectCancel(){
   this.messageService.clear('cdel');
-  console.log(this.arrayIdSolped);
+  //console.log(this.arrayIdSolped);
 }
 
 onConfirmCancel(){
@@ -624,10 +646,10 @@ rechazarSolped(){
       this.comprasService.aprobacionesSolped(this.authService.getToken(),this.selectedSolped[0].id)
           .subscribe({
             next: (aprobaciones)=>{
-                console.log(aprobaciones);
+                //console.log(aprobaciones);
                 //Filtrar el array de aprobaciones asociados a la solped seleccionada donde el aprobador, estadoap y estadoseccion de la liena === al usuario aprobador, estadoseccion activo y estado de aprobacion line a en P
                 let lineaAprobacionUsuario = aprobaciones.filter(item => item.usersapaprobador === this.infoUsuario.codusersap && item.estadoseccion==='A' && item.estadoap==='P');
-                console.log(lineaAprobacionUsuario);
+                //console.log(lineaAprobacionUsuario);
                 //Rechazar la solped y enviar notificación
                 let infoSolped:any = {
                     autor: {
@@ -653,7 +675,7 @@ rechazarSolped(){
                 this.comprasService.rechazoSolped(infoSolped)
                     .subscribe({
                         next: (result)=>{
-                            console.log(result);
+                            //console.log(result);
                             if(result[0].status==='ok'){
                                 
                                 this.getListado();
@@ -685,7 +707,7 @@ onConfirmAp() {
   this.comprasService.aprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
       .subscribe({
         next: (aprobaciones) => {
-          console.log(aprobaciones);
+          //console.log(aprobaciones);
 
           let messageServiceTmp:any[] = [];
 
@@ -728,7 +750,7 @@ onConfirmAp() {
           }*/
         },
         error: (err) => {
-          console.log(err);
+          //console.log(err);
           this.loading = false;
           this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
         }
@@ -757,7 +779,7 @@ clearToast() {
     .subscribe({
       next:(solped =>{
         this.loading = false;
-          console.log(solped);
+          //console.log(solped);
           this.solped = solped;
           this.loading = false;
       }),

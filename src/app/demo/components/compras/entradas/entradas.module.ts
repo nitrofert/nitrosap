@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
 import { ConsultaEntradaComponent } from './pages/consulta-entrada/consulta-entrada.component';
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
+import { ImpresionComponent } from './pages/impresion/impresion.component';
 
 
 
@@ -18,7 +19,8 @@ import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.mo
     EntradasComponent,
     FormEntradaComponent,
     NuevaEntradaComponent,
-    ConsultaEntradaComponent
+    ConsultaEntradaComponent,
+    ImpresionComponent
     
   ],
   imports: [

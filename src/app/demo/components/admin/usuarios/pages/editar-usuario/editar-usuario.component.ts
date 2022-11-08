@@ -51,7 +51,7 @@ export class EditarUsuarioComponent implements OnInit {
   ngOnInit(): void {
     
     this.userSelected = this.rutaActiva.snapshot.params;
-    console.log((this.userSelected.user));
+    //console.log((this.userSelected.user));
 
     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
@@ -61,7 +61,7 @@ export class EditarUsuarioComponent implements OnInit {
     .subscribe({
       next:(user =>{
           
-          console.log(user);
+          //console.log(user);
           this.fullname = user[0].fullname;
           this.email = user[0].email;
           this.codusersap = user[0].codusersap;
@@ -72,7 +72,7 @@ export class EditarUsuarioComponent implements OnInit {
       }),
       error:(err =>{
         this.submitBotton = false;
-        console.log(err);
+        console.error(err);
       })
     }); 
 
@@ -99,7 +99,7 @@ export class EditarUsuarioComponent implements OnInit {
       }
       
       if(this.password !== ''){
-        console.log(this.password);
+        //console.log(this.password);
         newUser.password = this.password;
       }
       
@@ -107,12 +107,12 @@ export class EditarUsuarioComponent implements OnInit {
       .subscribe({
         next:(user =>{
             
-            console.log(user);
+            //console.log(user);
             this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha actualizado el usuario ${this.fullname}` , life: 3000}];
         }),
         error:(err =>{
           this.submitBotton = false;
-          console.log(err);
+          console.error(err);
         })
       });
       

@@ -77,9 +77,25 @@ export class ComprasService {
 
   }
 
+  downloadAnexo3(token:string,ruta:string):Observable<any>{
+    
+    let headers = this.urlApiService.getHeadersAPI();
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    //const url:string = `${this.api_url}/api/compras/solped/upload`;
+    const url:string = `${this.api_url}/${ruta}`;
+    //return url;
+    return this.http.get<any[]>(url,requestOptions);
+    //return this.http.post<any[]>(url,body);
+
+  }
+
+
   downloadAnexo(ruta:string):string{
     
     //let headers = this.urlApiService.getHeadersAPI(token);
+
+    let file =  fetch(`${this.api_url}/${ruta}`);
     
     //const requestOptions = { headers: headers };
     //const url:string = `${this.api_url}/api/compras/solped/upload`;
@@ -88,6 +104,15 @@ export class ComprasService {
     //return this.http.get<any[]>(url,requestOptions);
     //return this.http.post<any[]>(url,body);
 
+  }
+
+  downloadAnexo2(token:string,fileInfo:any):Observable<any>{
+    //console.log(body);
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/download`;
+    return this.http.post<any[]>(url,fileInfo,requestOptions);
   }
 
   borrarAnexo(token:string,fileInfo:any):Observable<any>{
@@ -183,11 +208,75 @@ export class ComprasService {
   }
 
   entradaById(token:string,id:number):Observable<any>{
-    console.log(id);
+    //console.log(id);
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/entrada/${id}`;
     return this.http.get<any>(url,requestOptions);
+  }
+
+  impresionEntradaByIdSL(token:string,id:number):Observable<any>{
+    //console.log(id);
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/entrada/impresion/${id}`;
+    return this.http.get<any>(url,requestOptions);
+  }
+
+  SolpedMP(token:string,status:string):Observable<any[]>{
+    /*const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url}/api/compras/solped/list/mps/${status}`;
+      return this.http.get<any[]>(url,requestOptions);
+  }
+
+  SolpedMPSL(token:string):Observable<any[]>{
+    /*const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url}/api/compras/solped/list/mp`;
+      return this.http.get<any[]>(url,requestOptions);
+  }
+
+
+  saveSolpedMP(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/mp`;
+    return this.http.post<any[]>(url,data,requestOptions);
+
+  }
+
+  updateSolpedMP(token:string,data:any):Observable<any>{
+    //console.log('data service',data);
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/mp`;
+    return this.http.put<any[]>(url,data,requestOptions);
+  }
+
+  enviarSolpedSAP(token:string,idSolped:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/enviar-sap`;
+    return this.http.post<any[]>(url,idSolped,requestOptions);
+
+  }
+
+  actualizarSolpedSAP(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/enviar-sap`;
+    return this.http.put<any[]>(url,data,requestOptions);
+
   }
 
 

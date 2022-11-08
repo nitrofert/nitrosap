@@ -55,11 +55,11 @@ export class UsuariosComponent implements OnInit {
         .subscribe({
           next:(users =>{
             this.loading = false;
-              console.log(users);
+              //console.log(users);
               this.users = users;
           }),
           error:(err =>{
-            console.log(err);
+            console.error(err);
           })
         });
   }
@@ -70,16 +70,16 @@ export class UsuariosComponent implements OnInit {
   }
 
   editUser(){
-    console.log(this.selectedUser[0].id);
+    //console.log(this.selectedUser[0].id);
     this.router.navigate(['/portal/admin/usuarios/editar',this.selectedUser[0].id]);
   }
   companyUser(){
-    console.log(this.selectedUser[0].id);
+    //console.log(this.selectedUser[0].id);
     this.router.navigate(['/portal/admin/usuarios/empresas',this.selectedUser[0].id]);
   }
 
   perfilUser(){
-    console.log(this.selectedUser[0].id);
+    //console.log(this.selectedUser[0].id);
     this.router.navigate(['/portal/admin/usuarios/perfiles',this.selectedUser[0].id]);
   }
   formatCurrency(value: number) {

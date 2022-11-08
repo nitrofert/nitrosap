@@ -33,6 +33,14 @@ export interface Solped {
     comments?: string;
     trm:number;
     currency?:string;
+    u_nf_status?:string;
+    nf_lastshippping?:Date;
+    nf_dateofshipping?:Date;
+    nf_agente?:string;
+    nf_pago?:string;
+    nf_tipocarga?:string;
+    nf_puertosalida?:string;
+    nf_motonave?:string;
 
 }
 

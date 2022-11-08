@@ -69,12 +69,12 @@ export class NuevaEmpresaComponent implements OnInit {
         .subscribe({
           next: (company => {
 
-            console.log(company);
+            //console.log(company);
             this.messageForm = [{ severity: 'success', summary: '!Genial¡', detail: `Ha registrado en el perfil ${this.companyname}`, life: 3000 }];
           }),
           error: (err => {
             this.submitBotton = false;
-            console.log(err);
+            console.error(err);
           })
         });
 

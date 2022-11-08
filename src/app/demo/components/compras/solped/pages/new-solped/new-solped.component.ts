@@ -23,11 +23,11 @@ export class NewSolpedComponent implements OnInit {
   }
 
   registrarSolped(dataSolped:any){
-    console.log(dataSolped);
+    //console.log(dataSolped);
     this.comprasService.saveSolped(this.authService.getToken(),dataSolped)
             .subscribe({
                 next: (result) =>{
-                    console.log(result);
+                    //console.log(result);
                     //this.submittedBotton = true;
                     if(result.status===501){
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
@@ -53,7 +53,7 @@ export class NewSolpedComponent implements OnInit {
     
     let body:any; 
     for(let anexo of anexosSolped){
-      console.log(anexo.file, anexo.file.name);
+      //console.log(anexo.file, anexo.file.name);
       body = new FormData();
       body.append('myFile', anexo.file, anexo.file.name);
       body.append('anexotipo',anexo.tipo);
@@ -63,12 +63,12 @@ export class NewSolpedComponent implements OnInit {
         .subscribe({
            next:(result)=>{
               
-              console.log(result);
+              //console.log(result);
               this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
               
            },
            error:(err)=>{
-              console.log(err);
+              //console.log(err);
               this.messageService.add({severity:'error', summary: '!Error¡', detail: err});
            }
         });

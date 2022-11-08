@@ -26,17 +26,17 @@ export class NuevaEntradaComponent implements OnInit {
 
   ngOnInit(): void {
     this.pedido = JSON.parse(localStorage.getItem("pedidoSeleccionado") ||'');
-    console.log(this.pedido);
+    //console.log(this.pedido);
     
   }
 
   registrarEntrada(dataEntrada:any){
-    console.log(dataEntrada);
+    //console.log(dataEntrada);
     this.envioForm = true;
     this.comprasService.saveEntrada(this.authService.getToken(),dataEntrada)
             .subscribe({
                 next: (result) =>{
-                    console.log(result);
+                    //console.log(result);
                     //this.submittedBotton = true;
                     this.envioForm = false;
                     if(result.status===501){

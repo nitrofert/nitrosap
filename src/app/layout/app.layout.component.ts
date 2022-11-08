@@ -9,7 +9,15 @@ import { AppSidebarComponent } from './shared/sidebar/app.sidebar.component';
 
 @Component({
     selector: 'app-layout',
-    templateUrl: './app.layout.component.html'
+    templateUrl: './app.layout.component.html',
+    styles:[`@media print {
+            #app-topbar {display:none;}
+            #layout-sidebar {display:none;}
+            #app-footer {display:none;}
+            #layout-mask {display:none;}
+            
+
+    }`]
 })
 export class AppLayoutComponent implements OnDestroy {
 

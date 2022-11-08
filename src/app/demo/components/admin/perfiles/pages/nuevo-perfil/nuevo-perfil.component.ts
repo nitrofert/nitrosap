@@ -62,12 +62,12 @@ export class NuevoPerfilComponent implements OnInit {
         .subscribe({
           next: (perfil => {
 
-            console.log(perfil);
+            //console.log(perfil);
             this.messageForm = [{ severity: 'success', summary: '!Genial¡', detail: `Ha registrado en el perfil ${this.perfil}`, life: 3000 }];
           }),
           error: (err => {
             this.submitBotton = false;
-            console.log(err);
+            console.error(err);
           })
         });
 

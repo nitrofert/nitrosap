@@ -71,8 +71,10 @@ export class FormEntradaComponent implements OnInit {
   pedidonumsap:number = 0;
 
   /*** Detalle  entrada */
-  item!:ItemsSAP;
-  itemsFiltrados:ItemsSAP[] = [];
+  //item!:ItemsSAP;
+  //itemsFiltrados:ItemsSAP[] = [];
+  item!:any;
+  itemsFiltrados:any[] = [];
   iteradorLinea:number =0;
   numeroLinea:number=-1;
   fechaRequerida:Date = new Date();
@@ -180,21 +182,21 @@ export class FormEntradaComponent implements OnInit {
   
     getPermisosUsuarioPagina(){
       let url ="";
-      console.log("URL origen",this.router.url);
+      //console.log("URL origen",this.router.url);
       //console.log("URL params",this.rutaActiva.snapshot.params['solped']);
       if(this.rutaActiva.snapshot.params['entrada']){
         let entradaSeleccionada = this.rutaActiva.snapshot.params;
         if(this.router.url.indexOf("/"+entradaSeleccionada['entrada'])>=0){
           url = this.router.url.substring(0,this.router.url.indexOf("/"+entradaSeleccionada['entrada']));
         }
-        console.log("URL con parametros: ",url);
+        //console.log("URL con parametros: ",url);
       }else{
         url= this.router.url;
-        console.log("URL sin parametros: ",url);
+        //console.log("URL sin parametros: ",url);
       }
       this.urlBreadCrumb = url;
       this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-      console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+      //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
     }
 
     getDependenciasUsuario(){
@@ -270,7 +272,7 @@ export class FormEntradaComponent implements OnInit {
                 this.items.push(items[item]);
              }
              ////console.log(cuentas);
-             ////console.log(this.items);
+             //console.log(this.items);
             },
             error: (error) => {
                 //console.log(error);      
@@ -305,7 +307,7 @@ export class FormEntradaComponent implements OnInit {
          ////console.log(this.stores);
         },
         error: (error) => {
-            //console.log(error);      
+            console.log(error);      
         }
       });
     }
@@ -322,7 +324,7 @@ export class FormEntradaComponent implements OnInit {
              //this.setearTRMSolped('USD');
            },
            error: (error) => {
-               //console.log(error);      
+               console.log(error);      
            }
          });
     }
@@ -338,7 +340,7 @@ export class FormEntradaComponent implements OnInit {
               //console.log(this.impuestos);
             },
             error: (error) => {
-                //console.log(error);      
+                console.log(error);      
             }
           });
     }
@@ -362,7 +364,7 @@ export class FormEntradaComponent implements OnInit {
         
       }else{
           //Obtener info entrada de una entrada registrada en MySQL
-          console.log(this.entradaEditar);
+          //console.log(this.entradaEditar);
           this.getInfoEntrada();
       }
     }
@@ -371,7 +373,7 @@ export class FormEntradaComponent implements OnInit {
       this.comprasService.entradaById(this.authService.getToken(),this.entradaEditar.entrada)
           .subscribe({
               next: (entrada)=>{
-                console.log(entrada);  
+                //console.log(entrada);  
                 this.asignarValores(entrada);
               },
               error: (err)=>{
@@ -394,7 +396,7 @@ export class FormEntradaComponent implements OnInit {
 
         if(!this.entradaEditar){
             //Obtener nombre serie de pedido
-          console.log(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name);
+          //console.log(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name);
           //Obtener nombre serie de entrada segun serie pedido
 
           switch(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name){
@@ -414,11 +416,17 @@ export class FormEntradaComponent implements OnInit {
           }
 
           //Obtener codigo de serie entrada
-          this.serie = this.series.filter(item=>item.name === this.serieName)[0].code;
+          console.log(this.series,this.serieName);  
+
+          if(this.series.filter(item=>item.name === this.serieName).length>0){
+            this.serie = this.series.filter(item=>item.name === this.serieName)[0].code;
+          }
+
+          
 
         }else{
           //Obtener serie de entradas
-          console.log(this.series, pedido.Series,this.series.filter(item=>item.code == pedido.Series));
+          //console.log(this.series, pedido.Series,this.series.filter(item=>item.code == pedido.Series));
           this.serieName = this.series.filter(item=>item.code == pedido.Series)[0].name;
           this.serie = this.series.filter(item=>item.code == pedido.Series)[0].code;
           this.codigoSap = pedido.sapdocnum;
@@ -432,14 +440,17 @@ export class FormEntradaComponent implements OnInit {
         this.lineasEntrada = [];
         this.lineaEntrada = [];
         for(let lineaPedido of pedido.DocumentLines){
+          console.log(lineaPedido);
             this.lineasEntrada.push({
                 linenum:lineaPedido.LineNum,
                 LineStatus:lineaPedido.LineStatus,
                 itemcode : lineaPedido.ItemCode,
                 dscription:lineaPedido.ItemDescription,
-                cantidad_pedido:lineaPedido.BaseOpenQuantity,
-                cantidad_pendiente:lineaPedido.RemainingOpenQuantity,
-                cantidad:!this.entradaEditar?pedido.DocType==='dDocument_Service'?1:0:lineaPedido.cantidad,
+                //cantidad_pedido:lineaPedido.BaseOpenQuantity,
+                //cantidad_pendiente:lineaPedido.RemainingOpenQuantity,
+                cantidad_pedido: !this.entradaEditar?pedido.DocType==='dDocument_Service'?1:0:lineaPedido.BaseOpenQuantity,
+                cantidad_pendiente:!this.entradaEditar?pedido.DocType==='dDocument_Service'?1:0:lineaPedido.RemainingOpenQuantity,
+                cantidad:!this.entradaEditar?pedido.DocType==='dDocument_Service'?0:lineaPedido.Quantity:lineaPedido.cantidad,
                 precio:lineaPedido.Price,
                 moneda:lineaPedido.Currency==='$'?'COP':lineaPedido.Currency,
                 tax:lineaPedido.TaxCode,
@@ -718,24 +729,25 @@ export class FormEntradaComponent implements OnInit {
     NuevaEntrada(){}
 
     EditarLinea(){
-      //console.log(this.lineaSeleccionada[0]);
+      //console.log(this.lineaSeleccionada[0]); 
       this.lineaEntrada = this.lineaSeleccionada[0];
-      //console.log(this.lineaEntrada);
+      console.log(this.lineaEntrada);
       this.editarLinea = true;
       this.MostrarFormularioLinea();
       this.numeroLinea = this.lineaEntrada.linenum;
       
-     
-      if(this.lineaEntrada.itemcode){
-        
+      this.item = "";
+      if(this.lineaEntrada.itemcode && this.lineaEntrada.itemcode!=null){
+        //console.log(this.lineaEntrada.itemcode);
         this.item = this.items.filter(item => item.ItemCode ===this.lineaEntrada.itemcode)[0];
-        
       }
+      
       this.descripcion = this.lineaEntrada.dscription;
   
       
       if(this.lineaEntrada.acctcode){
         this.cuenta = this.cuentas.filter(item =>item.Code === this.lineaEntrada.acctcode)[0];
+        //console.log(this.cuenta);
       }
   
       if(this.lineaEntrada.ocrcode3){
@@ -769,8 +781,9 @@ export class FormEntradaComponent implements OnInit {
         this.cuenta = this.cuentas.filter(item =>item.Code === this.lineaEntrada.acctcode)[0];
         this.nombreCuenta = this.cuenta.Name;
       }
+      console.log(this.entradaEditar,this.clase,this.lineaEntrada.cantidad);
+      this.cantidad = !this.entradaEditar?this.clase=='S'?1:(this.lineaEntrada.cantidad || 0):(this.lineaEntrada.cantidad || 0);
       
-      this.cantidad = this.lineaEntrada.cantidad || 0;
       this.cantidad_pendiente = this.lineaEntrada.cantidad_pendiente || 0;
       this.cantidad_pedido = this.lineaEntrada.cantidad_pedido || 1;
       this.moneda = this.monedas.filter(item =>item.Currency === this.lineaEntrada.moneda)[0].Currency;

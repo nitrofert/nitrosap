@@ -18,6 +18,12 @@ import { NewSolpedComponent } from './pages/new-solped/new-solped.component';
 import { EditSolpedComponent } from './pages/edit-solped/edit-solped.component';
 import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
+import { TrackingMPComponent } from './pages/tracking-mp/tracking-mp.component';
+import { TableSolpedMPComponent } from './pages/table-solped-mp/table-solped-mp.component';
+import { FormSolpedMPComponent } from './pages/form-solped-mp/form-solped-mp.component';
+import { NewSolpedMpComponent } from './pages/new-solped-mp/new-solped-mp.component';
+import { EditSolpedMpComponent } from './pages/edit-solped-mp/edit-solped-mp.component';
+
 
 
 
@@ -35,7 +41,12 @@ import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.mo
     ResponseApprovedComponent,
     FormSolpedComponent,
     NewSolpedComponent,
-    EditSolpedComponent
+    EditSolpedComponent,
+    TrackingMPComponent,
+    TableSolpedMPComponent,
+    FormSolpedMPComponent,
+    NewSolpedMpComponent,
+    EditSolpedMpComponent
   ],
   imports: [
     CommonModule,

@@ -79,12 +79,12 @@ export class NuevoUsuarioComponent implements OnInit {
         .subscribe({
           next: (user => {
 
-            console.log(user);
+            //console.log(user);
             this.messageForm = [{ severity: 'success', summary: '!Genial¡', detail: `Ha registrado el usuario ${this.fullname}`, life: 3000 }];
           }),
           error: (err => {
             this.submitBotton = false;
-            console.log(err);
+            console.error(err);
           })
         });
 

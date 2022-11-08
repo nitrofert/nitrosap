@@ -54,11 +54,11 @@ export class EmpresasComponent implements OnInit {
         .subscribe({
           next:(company =>{
             this.loading = false;
-              console.log(company);
+              //console.log(company);
               this.company = company;
           }),
           error:(err =>{
-            console.log(err);
+            console.error(err);
           })
         });
   }

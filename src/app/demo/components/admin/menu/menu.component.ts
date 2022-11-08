@@ -57,13 +57,13 @@ export class MenuComponent implements OnInit {
               this.menu = menu;
           }),
           error:(err =>{
-            console.log(err);
+            console.error(err);
           })
         });
   }
 
   newMenu(){
-    console.log('Nuevo menú');
+    //console.log('Nuevo menú');
     this.router.navigate(['/portal/admin/menu/nuevo']);
   }
 

@@ -27,7 +27,7 @@ export class AdminService {
   listMenu(token:string):Observable<MenuInterface[]>{
     
       const headers = this.urlApiService.getHeadersAPI(token);
-      console.log(headers);
+      //console.log(headers);
  
     const requestOptions = { headers: headers };
 
@@ -64,15 +64,15 @@ export class AdminService {
 
     let params:string ="";
 
-    console.log(hierarchy,padre);
+    //console.log(hierarchy,padre);
     
     if(hierarchy) params = params+'/'+hierarchy;
     if(padre === undefined){console.log('padre undefined')}else{params = params+`/${padre}`;} 
 
-    console.log(params);
+    //console.log(params);
   
     const url:string = `${this.api_url}/api/menu/orderNum${params}`;
-    console.log(url);
+    ////console.log(url);
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -96,7 +96,7 @@ export class AdminService {
     const requestOptions = { headers: headers };
 
     const url:string = `${this.api_url}/api/menu/${idMenu}`;
-    //console.log(url);
+    ////console.log(url);
     return this.http.get<MenuInterface[]>(url,requestOptions);
   }
 
@@ -134,7 +134,7 @@ export class AdminService {
     const requestOptions = { headers: headers };
 
     const url:string = `${this.api_url}/api/perfiles/${idMenu}`;
-    //console.log(url);
+    ////console.log(url);
     return this.http.get<PerfilInterface[]>(url,requestOptions);
   }
 
@@ -174,7 +174,7 @@ export class AdminService {
     const requestOptions = { headers: headers };
 
     const url:string = `${this.api_url}/api/companies/${idCompany}`;
-    //console.log(url);
+    ////console.log(url);
     return this.http.get<CompanyInterface[]>(url,requestOptions);
   }
 
@@ -235,7 +235,7 @@ getUserById(token:string,idusuario:number):Observable<UserInterface[]>{
   const headers = this.urlApiService.getHeadersAPI(token);
   const requestOptions = { headers: headers };
   const url:string = `${this.api_url}/api/usuarios/${idusuario}`;
-  console.log(url);
+  //console.log(url);
   return this.http.get<UserInterface[]>(url,requestOptions);
 }
 
@@ -258,7 +258,7 @@ getCompaniesUser(token:string,idusuario:number):Observable<CompaniesUser[]>{
   const headers = this.urlApiService.getHeadersAPI(token);
   const requestOptions = { headers: headers };
   const url:string = `${this.api_url}/api/usuarios/companies/${idusuario}`;
-  console.log(url);
+  //console.log(url);
   return this.http.get<CompaniesUser[]>(url,requestOptions);
 }
 
@@ -270,7 +270,7 @@ setAccess(token:string,accessCompany:any): Observable<any>{
   const headers = this.urlApiService.getHeadersAPI(token);
   const requestOptions = { headers: headers };
   const url:string = `${this.api_url}/api/usuarios/companies`;
-  //console.log(url);
+  ////console.log(url);
   return this.http.post<any>(url,accessCompany,requestOptions);
 
 }
@@ -284,7 +284,7 @@ getPerfilesUser(token:string,idusuario:number):Observable<CompaniesUser[]>{
   const requestOptions = { headers: headers };
 
   const url:string = `${this.api_url}/api/usuarios/perfiles/${idusuario}`;
-  //console.log(url);
+  ////console.log(url);
   return this.http.get<CompaniesUser[]>(url,requestOptions);
 }
 
@@ -296,7 +296,7 @@ setPerfilUser(token:string,perfilUser:any): Observable<any>{
   const headers = this.urlApiService.getHeadersAPI(token);
   const requestOptions = { headers: headers };
   const url:string = `${this.api_url}/api/usuarios/perfiles`;
-  //console.log(url);
+  ////console.log(url);
   return this.http.post<any>(url,perfilUser,requestOptions);
 
 }

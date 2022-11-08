@@ -18,7 +18,7 @@ home:any;
     if(this.urlBreadCrumb!=''){
       let tmpBreadCrumb = this.urlBreadCrumb.split("/",);
       for(let item of tmpBreadCrumb){
-          console.log(item);
+          //console.log(item);
           this.breadcrumb.push({label:item});
       }
        this.breadcrumb.shift();

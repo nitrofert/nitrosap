@@ -1,0 +1,158 @@
+<table style="width: 792px; height: 650px; ">
+    <tr>
+        <td style="padding: 6px;">
+             <table style="width: 100%; margin-bottom: 3px;">
+                <tr>
+                    <td align="center" width="45%">
+                        <img [src]="logo" width="50%" alt="" >
+                    </td>
+                    <td align="center" class="text-sm text-900 font-semibold">
+                        <div>{{ nombreEmpresa }}</div>
+                        <div>Nit: {{ nitEmpresa }}</div>
+                        <div>{{ direccionEmpresa }}</div>
+                        <div>Tel.: {{ telefonoEmpresa }}</div>
+                    </td>
+                    <td>
+                        <table>
+                            <tr style="margin-bottom: 10px;">
+                                <td align="center">
+                                    <div class="text-2xl font-bold text-600">
+                                        {{ labelTipoDoc }}
+                                    </div>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td align="center">
+                                    <table class="border-round border-2 border-900 text-sm text-900 font-semibold w-full">
+                                        <tr>
+                                            <td align="center" width="15%">No.</td>
+                                            <td align="center" >{{ idEntrada.entrada }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                               
+                            </tr>
+                        </table>
+                    </td>
+
+                </tr>
+             </table>
+             <p-fieldset legend="Proveedor" styleClass="w-full border-solid border-900">
+                <table>
+                    <tr>
+                        <td class="text-sm text-900 font-semibold" width="10%">NIT</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td width="40%" class="text-sm">{{ nit }}</td>
+                        <td class="text-sm text-900 font-semibold" width="10%">CIUDAD</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td width="10%" class="text-sm">{{ ciudad }}</td>
+                        <td width="10%"></td>
+                        <td ></td>
+                        <td width="10%" class="text-sm"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-sm text-900 font-semibold">SEÑORES</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ nombreProveedor }}</td>
+                        <td class="text-sm text-900 font-semibold">F.DOCUMENTO</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ fechaDoc | date }}</td>
+                        <td class="text-sm text-900 font-semibold">No. REF</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ noRef }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-sm text-900 font-semibold">ATTN</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ attn }}</td>
+                        <td class="text-sm text-900 font-semibold">TELEFONO</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ telefono }}</td>
+                        <td class="text-sm text-900 font-semibold">BODEGA</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-sm text-900 font-semibold">DIRECCION</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ direccion }}</td>
+                        <td class="text-sm text-900 font-semibold">EMAIL</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm" colspan="4">{{ email }}</td>
+                        
+                    </tr>
+                </table>
+            </p-fieldset>
+            <table style="width: 100%; margin-bottom: 3px;" class="border-round border-2 border-900 text-sm text-900 font-semibold surface-400">
+                <tr >
+                        <td align="center"  width="5%" class="p-2">IT</td>
+                        <td align="center" width="10%" class="p-2">Código</td>
+                        <td align="left" width="30%" class="p-2">Descripción</td>
+                        <td align="right" width="15%" class="p-2">Cant.</td>
+                        <td align="right" width="20%" class="p-2">Precio Unitario</td>
+                        <td align="right" width="20%" class="p-2">Total</td>
+                </tr>
+            </table>
+            <table *ngFor="let linea of detalle; let i = index"  style="width: 100%; margin-bottom: 3px;" class="border-round border-2 border-900 text-sm text-900  bg-white">
+                <tr >
+                        <td align="center"  width="5%" class="p-2 border-right-2 border-900">{{i}}</td>
+                        <td align="center" width="10%" class="p-2 border-right-2 border-900">{{linea.ItemCode}}</td>
+                        <td align="left" width="30%" class="p-2 border-right-2 border-900">{{linea.ItemDescription}}</td>
+                        <td align="right" width="15%" class="p-2 border-right-2 border-900">{{linea.Quantity}}</td>
+                        <td align="right" width="20%" class="p-2 border-right-2 border-900">{{linea.Price}}</td>
+                        <td align="right" width="20%" class="p-2">{{linea.LineTotal}}</td>
+                </tr>
+            </table>
+            <p-fieldset legend="Observaciones" styleClass="w-full border-solid border-900">
+                <table>
+                    <tr>
+                        <td rowspan="3" width="60%">{{ comentario }}</td>
+                        <td align="right" class="text-sm text-900 font-semibold">SUBTOTAL:</td>
+                        <td align="right" >$ {{ total - impuesto}}</td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="text-sm text-900 font-semibold">IVA:</td>
+                        <td align="right" class="border-bottom-2">$ {{ impuesto }}</td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="text-sm text-900 font-semibold">TOTAL:</td>
+                        <td align="right" class="text-sm text-900 font-semibold">$ {{ total }}</td>
+                    </tr>
+                </table>
+            </p-fieldset>
+            <div id="espacio"  [style]="'height:' +espacio+'px;'">
+
+            </div>
+            <div *ngIf="tipodoc=='S'" class="w-full text-justify text-xs">
+                El día de hoy se reunieron en Nitrofert S.A.S. el representante de la empresa Nitrofert S.A.S. y el representante de la empresa {{ proveedor.CardName }} quienes tienen bajo su responsabilidad la ejecución de la presente obra y/o servicio, para hacer entrega y recibo de la obra y/o servicio 
+descrito en la presente hoja de entrada.
+El proveedor declara que durante el servicio u obra prestada cumplió a cabalidad con el pago de las obligaciones laborales y prestaciones a su cargo, y por lo 
+tanto se obliga a mantener indemne a Nitrofert S.A.S. de cualquier reclamación judicial o extrajudicial que hicieren sus trabajadores o extrabajadores 
+directamente al proveedor como empleador o exempleador o las entidades de seguridad social o por el pago de aportes parafiscales y por consiguiente asume 
+todas las costas judiciales y extrajudiciales que demanden su defensa, incluyendo los honorarios de abogados, así como la totalidad del valor de la condena que 
+eventualmente pudiere proferirse en su contra.
+
+            </div>
+            <p-fieldset legend="Firmas" styleClass="w-full border-solid border-900">
+                <table style="width: 100%;" class="pt-4">
+                    <tr>
+                        <td align="center" width="32%" class="border-bottom-2">{{ usuario }}</td>
+                        <td width="2%"></td>
+                        <td align="center" width="32%" class="border-bottom-2"></td>
+                        <td width="2%"></td>
+                        <td align="center" width="32%" class="border-bottom-2"></td>
+                    </tr>
+                    <tr>
+                        <td align="center" class="text-sm text-900 font-semibold">DEPARTAMENTO DE COMPRAS</td>
+                        <td></td>
+                        <td align="center" class="text-sm text-900 font-semibold">RECIBE</td>
+                        <td></td>
+                        <td align="center" class="text-sm text-900 font-semibold">PROVEEDOR</td>
+                    </tr>
+                </table>
+            </p-fieldset>
+        </td>
+    </tr>
+</table>
