@@ -212,8 +212,27 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  getUnidadItemSL(token:string,ItemCode:string):Observable<any>{
+   
 
+    const headers = this.urlApiService.getHeadersAPI(token);
+  
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/wssap/UnidadItem/${ItemCode}`;
+    return this.http.get<any>(url,requestOptions);
+  }
 
+  
+
+  getAlmacenesMPSL(token:string):Observable<any>{
+   
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+  
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/wssap/almacenesmp`;
+    return this.http.get<any>(url,requestOptions);
+  }
 
 
   

@@ -31,20 +31,20 @@
                         </p-dropdown>
                     </div>
                     <div class="field">
-                        <label htmlFor="clase">Clase</label>
-                        <p-dropdown [options]="clases" 
-                                    optionLabel="name" 
-                                    optionValue="code"
-                                    [(ngModel)]="clase" 
-                                    id="clase" 
-                                    name="clase"
-                                    (onChange)="SeleccionarClase()" 
-                                    placeholder="Clase solped"
+                        <label htmlFor="nf_pedmp"> Materia prima importada</label>
+                        <p-dropdown [options]="materiaprima" 
+                                    optionLabel="option" 
+                                    optionValue="value"
+                                    [(ngModel)]="nf_pedmp" 
+                                    id="nf_pedmp" 
+                                    name="nf_pedmp"
+                                    
+                                    
                                     styleClass="p-dropdown-sm "
-                                    [disabled]="serieName === 'SPB'" 
+                                    
                                     [required]="true" 
-                                    [readonly]="true"
-                                    [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !clase) || (nuevaLinea && !clase)}">
+                               
+                                    [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !nf_pedmp) || (nuevaLinea && !nf_pedmp)}">
                         </p-dropdown>
                     </div>
                     <div class="field">
@@ -67,7 +67,17 @@
                                 styleClass="w-full " 
                                 type="text" required />
                     </div>
-                    <div class="field" *ngIf="solpedEditar">
+                    <div class="field">
+                        <label htmlFor="nf_pago">Incoterms</label>
+                        <input pInputText 
+                                [(ngModel)]="nf_Incoterms" 
+                                id="nf_pago" 
+                                name="nf_pago"
+                                class="p-inputtext-sm"
+                                styleClass="w-full " 
+                                type="text" required />
+                    </div>
+                    <!--<div class="field" *ngIf="solpedEditar">
                         <label htmlFor="u_nf_status">Estado</label>
                         <p-dropdown [options]="estados" 
                                     optionLabel="name" 
@@ -83,7 +93,7 @@
                             
                                     [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !u_nf_status) || (nuevaLinea && !u_nf_status)}">
                         </p-dropdown>
-                    </div>
+                    </div>-->
                     
                 </div>
                 <div class="col">
@@ -116,7 +126,7 @@
                     </div>
                     <div class="flex">
                         <div class="field">
-                            <label for="fechaContable">Fecha Contable</label>
+                            <label for="fechaContable">Fecha Documento</label>
                             <p-calendar [(ngModel)]="fechaContable" 
                                         (onSelect)="SeleccionarFechaContable()" 
                                         [showIcon]="true"
@@ -172,13 +182,14 @@
                     </div>
                     <div class="field">
                         <label htmlFor="nf_tipocarga">Tipo carga</label>
-                        <input pInputText 
-                                [(ngModel)]="nf_tipocarga" 
-                                id="nf_tipocarga" 
-                                name="nf_tipocarga"
-                                class="p-inputtext-sm"
-                                styleClass="w-full " 
-                                type="text" required />
+                        
+                        <p-dropdown [options]="tiposdecarga" 
+                                optionLabel="tipo" 
+                                optionValue="tipo"
+                                [(ngModel)]="nf_tipocarga" id="nf_tipocarga" name="nf_tipocarga" placeholder="Tipo de carga"
+                                [required]="true"
+                                styleClass="p-dropdown-sm ">
+                        </p-dropdown>
                     </div>
 
                     <div class="field">
@@ -461,10 +472,11 @@
                 <label for="almacen">Almacen</label>
                 <p-dropdown [options]="almacenes" 
                             [(ngModel)]="almacen" 
-                            optionLabel="store"
+                            optionLabel="storename"
+                            
                             placeholder="Seleccione una almacen" 
                             [filter]="true" 
-                            filterBy="store" 
+                            filterBy="storename" 
                             [showClear]="true"
                             (onChange)="SeleccionarAlmacen()"
                             styleClass="w-full" inputId="almacen"
@@ -473,20 +485,20 @@
                     <ng-template pTemplate="selectedItem">
                         <div class="country-item country-item-value" *ngIf="almacen">
 
-                            <div>{{almacen.store}}</div>
+                            <div>{{almacen.storename}}</div>
                         </div>
                     </ng-template>
                     <ng-template let-almacen pTemplate="item">
                         <div class="country-item">
 
-                            <div>{{almacen.store}}</div>
+                            <div>{{almacen.storename}}</div>
                         </div>
                     </ng-template>
                 </p-dropdown>
             </div>
         </div>
         <!-- Grupo cuenta mayor -->
-        <div class="grid">
+        <!--<div class="grid">
 
             <div class="field col">
                 <label for="cuenta">Cuenta Mayor</label>
@@ -522,7 +534,7 @@
                         [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && !nombreCuenta}">
 
             </div>
-        </div>
+        </div>-->
         
         <!-- Grupo cantidad , precio y subtotal linea -->
         <div class="grid">

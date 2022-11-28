@@ -27,7 +27,7 @@ export class NewSolpedMpComponent implements OnInit {
     this.comprasService.saveSolpedMP(this.authService.getToken(),dataSolped)
             .subscribe({
                 next: (result) =>{
-                    //console.log(result);
+                    console.log(result);
                     //this.submittedBotton = true;
                     if(result.status===501){
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});

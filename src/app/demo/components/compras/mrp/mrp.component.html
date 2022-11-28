@@ -1,0 +1,799 @@
+
+<p-toast></p-toast>
+<p-toast key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+             
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirm()" label="Yes" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onReject()" label="No" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            <div class="grid">
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="nombreusuario">Nombre Usuario</label>
+                        <input pInputText 
+                                [(ngModel)]="infoUsuario.fullname" 
+                                id="nombreusuario" 
+                                name="nombreusuario" 
+                                class="p-inputtext-sm"
+                                type="text"
+                                required 
+                                readonly/>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="fechaactual">Fecha</label>
+                        <input pInputText 
+                                [(ngModel)]="fechaactualstr" 
+                                id="fechaactual" 
+                                name="fechaactual" 
+                                class="p-inputtext-sm text-center"
+                                type="text"
+                                required 
+                                readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="field col">
+                    <label for="itemCode">Código ítem</label>
+                    <p-autoComplete [(ngModel)]="item" 
+                                    [showEmptyMessage]="true" 
+                                    [suggestions]="itemsFiltrados"
+                                    (completeMethod)="filtrarItems($event)" 
+                                    field="ItemCode" 
+                                    [minLength]="1" 
+                                    [delay]="1000"
+                                    (onSelect)="SeleccionarItemCode()"
+                                    (onClear)="clearItem()" 
+                                    [showClear]="true" 
+                                    (onClear)="clearItemCode()"
+                                    inputStyleClass="w-full" 
+                                    styleClass="w-full" 
+                                    inputId="itemCode" [autofocus]="true"
+                                    panelStyleClass="text-sm sm:ml-2" 
+                                    placeholder="Escriba el codigo ó nombre del item para buscar"
+                                    [disabled]="envioForm"
+                                    
+                                    [ngClass]="{'ng-invalid ng-dirty' :  busqueda && descripcion==''}">
+    
+                        <ng-template let-item pTemplate="item">
+                            <div>{{item.ItemCode}} - {{item.ItemName}}</div>
+                        </ng-template>
+    
+                    </p-autoComplete>
+                </div>
+                <div class="field col">
+                    <label for="descripcion">Descripción</label>
+                    <input  pInputText 
+                            [(ngModel)]="descripcion" 
+                            id="descripcion" 
+                            name="descripcion" 
+                            type="text"
+                            required 
+                            disabled="true"
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty' : busqueda && descripcion==''}" />
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="field col">
+                    <label htmlFor="zona">Zona </label>
+                    
+
+                    <p-dropdown [options]="zonas" 
+                            [(ngModel)]="zona"
+                            optionLabel="PENTRADA"
+                            
+                            [filter]="true" 
+                            filterBy="zona" 
+                            [showClear]="true"
+                            placeholder="Seleccione la zona" 
+                            styleClass="w-full" 
+                            inputId="zona"
+                            (onChange)="SeleccionarZona()"
+                            [disabled]="envioForm"
+                            [ngClass]="{'ng-invalid ng-dirty' :  (busqueda && !zona ) }">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="zona">
+
+                            <div>{{zona.PENTRADA}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-zona pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{zona.PENTRADA}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+                </div>
+                <div class="field col">
+                    <label for="fechaProyeccion">Fecha fin proyección</label>
+                    <p-calendar [(ngModel)]="fechaProyeccion" 
+                                [showIcon]="true"
+                                inputId="fechaProyeccion" 
+                                [required]="true"
+                                styleClass="p-calendar-sm p-inputtext-sm "
+                                inputStyleClass="text-center"
+                                dateFormat="dd/mm/yy"
+                                [disabled]="envioForm"
+                                (onSelect)="validarFP()"
+                                [ngClass]="{'ng-invalid ng-dirty' : (busqueda && !fechaProyeccion) ||   errorFP }">
+                    </p-calendar>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="field col">
+                    <p-button label="Simular" 
+                              icon="pi pi-list" 
+                              (onClick)="simular()"
+                              [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || envioForm"
+                              styleClass="p-button-outlined mb-2 p-button-primary p-button-sm"></p-button>
+                </div>
+                <!--<div class="field col">
+                    <p-button label="Restaurar" 
+                              icon="pi pi-list" 
+                              (onClick)="reset()"
+                              [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !envioForm"
+                              styleClass="p-button-outlined mb-2 p-button-secondary p-button-sm"></p-button>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---Dialog Simulacion calculadora-->
+
+<p-dialog header="Simulación calculadora" 
+          [(visible)]="calculadora" 
+          [modal]="true" 
+          [style]="{width: '50vw'}"
+          [maximizable]="true" 
+          [draggable]="false" 
+          [resizable]="false">
+
+          <div class="card p-fluid">
+            <div class="grid">
+            
+            
+                <div class="field col">
+                    <label htmlFor="itemseleccionado">Item MP</label>
+                    <input pInputText 
+                            [(ngModel)]="itemSeleccionado" 
+                            id="itemseleccionado" 
+                            name="itemseleccionado" 
+                            class="p-inputtext-sm"
+                            type="text"
+                            required 
+                            readonly/>
+                </div>
+            
+            
+               
+            
+            
+                <div class="field col">
+                    <label htmlFor="fechaactual">Fecha actual</label>
+                    <input pInputText 
+                            [(ngModel)]="fechaactualstr" 
+                            id="fechaactual" 
+                            name="fechaactual" 
+                            class="p-inputtext-sm text-center"
+                            type="text"
+                            required 
+                            readonly/>
+                </div>
+
+                <div class="field col">
+                    <label htmlFor="fechaProyeccion">Fecha Proyectada</label>
+                    <input pInputText 
+                            [(ngModel)]="fechaProyeccionstr" 
+                            id="fechaProyeccion" 
+                            name="fechaProyeccion" 
+                            class="p-inputtext-sm text-center"
+                            type="text"
+                            required 
+                            readonly/>
+                </div>
+            
+            </div>
+
+            <div class="grid">
+            <div class="field col">
+                <label htmlFor="zonaseleccionada">Zona</label>
+                <input pInputText 
+                        [(ngModel)]="zonaSeleccionada" 
+                        id="zonaseleccionada" 
+                        name="zonaseleccionada" 
+                        class="p-inputtext-sm"
+                        type="text"
+                        
+                        required 
+                        readonly/>
+            </div>
+
+            
+
+            <div class="field col">
+                <label htmlFor="minMpZona">Inv. Minimo x MP - Zona</label>
+                <input pInputText 
+                        [(ngModel)]="minMpZona" 
+                        id="minMpZona" 
+                        name="minMpZona" 
+                        class="p-inputtext-sm"
+                        type="text"
+                        required 
+                        readonly/>
+            </div>
+
+            <div class="field col">
+                <label htmlFor="maxMpZona">Inv. Maximo x MP - Zona</label>
+                <input pInputText 
+                        [(ngModel)]="maxMpZona" 
+                        id="maxMpZona" 
+                        name="maxMpZona" 
+                        class="p-inputtext-sm"
+                        type="text"
+                        required 
+                        readonly/>
+            </div>
+            </div>
+
+            <div class="grid">
+                <div class="field col">
+                    <label htmlFor="zonaseleccionada">Tolerancia {{tolerancia}} %</label>
+                    <p-slider [(ngModel)]="tolerancia" 
+                              [min]="-100" 
+                              [max]="100"
+                              (onSlideEnd)="cambioTolerancia($event)"></p-slider>
+                </div>
+            </div>
+
+        </div>
+
+    <p-table #dt1 
+            [value]="lineasCalculadora" 
+            dataKey="semana" 
+            [rows]="lienas" 
+            [loading]="loading" 
+            [rowHover]="true"
+            styleClass="p-datatable-gridlines p-datatable-sm" 
+            
+            selectionMode="single" 
+            [(selection)]="lineaSeleccionada" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+            
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Semana
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Fecha inicio semana
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario MP
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario MP - PT
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario MP - ZF
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario en transito
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Compras Solicitadas
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Compra proyectada
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Presupuesto de venta MP
+                   
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario final MP
+                       
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Necesidad de compra?
+                       
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Cantidad sugerida
+                       
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Inventario final sugerido
+                       
+                    </div>
+                </th>
+                
+
+               
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-lineaCalculadora>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="lineaCalculadora" (onClick)="SeleccionarLinea()"></p-tableCheckbox>
+                </td>
+                <td style="min-width: 2rem;">
+                    {{ lineaCalculadora.semana }}
+                </td>
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.fechasemana  | date}}
+                </td>
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.inventarioSemanaMP | number:'1.0-0'}}
+                </td>
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.inventarioSemanaPT | number:'1.0-0'}}
+                </td>
+
+                <td style="min-width: 7rem;">
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.inventarioSemanaMPZF | number:'1.0-0'}}
+                        <div (click)="verpedidoszf(lineaCalculadora.semana)">
+                            <i *ngIf="lineaCalculadora.inventarioSemanaMPZF>0" 
+                                class="pi pi-search pt-2  p-text-secondary"  
+                                style="font-size: 1rem; cursor:pointer;"  
+                                pTooltip="Ver pedido Zona franca"></i>
+                        </div>
+                        
+                    </div>
+                </td>
+
+                <td style="min-width: 10rem;">
+                    <div class="flex justify-content-between">
+                        <div class=" pt-2">{{ lineaCalculadora.inventarioSemanaMPTR | number:'1.0-0'}}</div>
+                        <div (click)="verpedidostransito(lineaCalculadora.semana)">
+                            <i *ngIf="lineaCalculadora.inventarioSemanaMPTR>0" 
+                                class="pi pi-search pt-2  p-text-secondary"  
+                                style="font-size: 1rem; cursor:pointer;"  
+                                pTooltip="Ver pedido"></i>
+                        </div>
+                        
+                    </div>
+                </td>
+
+                <td id="solicitud" style="min-width: 10rem;"  >
+                    <div class="flex justify-content-between">
+                        <div class=" pt-2">{{ lineaCalculadora.compraSolicitadaMP | number:'1.0-0'}}</div>
+                        <div (click)="versolicitudes(lineaCalculadora.semana)">
+                            <i *ngIf="lineaCalculadora.compraSolicitadaMP>0" 
+                                class="pi pi-search pt-2  p-text-secondary"  
+                                style="font-size: 1rem; cursor:pointer;"  
+                                pTooltip="Ver solicitudes"></i>
+                        </div>
+                            
+                    </div>
+                </td>
+
+                <td id="proyectadotrue" *ngIf="lineaCalculadora.estadoCompra; else elseBlock"  style="min-width: 12rem;">
+                    <div class="flex justify-content-between">
+                        <div class=" pt-2">{{ lineaCalculadora.compraProyectadaMP | number:'1.0-0'}}</div>
+                        <div (click)="verproyecciones(lineaCalculadora.semana)"><i *ngIf="lineaCalculadora.compraProyectadaMP>0" 
+                            class="pi pi-search pt-2  p-text-secondary"  
+                            style="font-size: 1rem; cursor:pointer;"  
+                            pTooltip="Ver proyecciones"></i>
+                        </div>
+                    </div>
+                    
+                </td>
+
+                <ng-template #elseBlock>
+                    <td id="proyectadofalse" style="min-width: 10rem;" pEditableColumn>
+                        <p-cellEditor>
+                            <ng-template  pTemplate="input">
+                                <input pInputText type="number" 
+                                        [(ngModel)]="lineaCalculadora.compraProyectadaMP" 
+                                        
+                                        (keydown.enter)="PresionaEnter($event)"
+                                        (blur)="cambio($event)"
+                                        >
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{lineaCalculadora.compraProyectadaMP | number:'1.0-0'}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                </ng-template>
+                
+               
+
+                
+
+
+
+                <td id="presupuesto" style="min-width: 7rem;">
+                    {{ lineaCalculadora.presupuestoVentaMP | number:'1.0-0'}}
+                </td>
+                
+                <td style="min-width: 7rem;" [class]="lineaCalculadora.classCantidad" >
+                    {{ lineaCalculadora.inventarioFinalSemanaMP | number:'1.0-0'}}
+                </td>
+                <!--<td style="min-width: 7rem;" [ngStyle]="{'color' :  lineaCalculadora.inventarioFinalSemanaMP < minMpZona?'red':lineaCalculadora.inventarioFinalSemanaMP > maxMpZona?'green':''}" >
+                    {{ lineaCalculadora.inventarioFinalSemanaMP | number}}
+                </td>-->
+
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.necesidadCompra }}
+                </td>
+
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.cantidadCompraSugerida | number:'1.0-0'}}
+                </td>
+
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.inventarioFinalSemanaSugerido | number:'1.0-0'}}
+                </td>
+                
+            </tr>
+        </ng-template>
+       
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="12" class="text-center">No se econtraron lineas asociadas a la solped.</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="12" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+   
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-close" (click)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-save" (click)="GuardarProyecciones()" label="Grabar proyecciones de compra" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin Lista detalle Solped -->
+
+<!---Dialog docuementos calculadora-->
+
+<p-dialog [header]="tituloDocumentos" 
+          [(visible)]="verdocumentos" 
+          [modal]="true" 
+          [style]="{width: '50vw'}"
+          [maximizable]="true" 
+          [draggable]="false" 
+          [resizable]="false">
+
+          <div *ngFor="let documento of listDocumentos" calss="grid">
+            <div class="card p-fluid col-6">
+                <div class="grid">
+                    <div class="col">Número documento:</div>
+                    <div class="col">{{documento.docnum}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Proveedor:</div>
+                    <div class="col">{{documento.proveedor}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Fecha docuemnto:</div>
+                    <div class="col">{{documento.fechadoc | date}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">ETA:</div>
+                    <div class="col">{{documento.eta | date}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Item MP:</div>
+                    <div class="col">{{documento.item}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Cantidad:</div>
+                    <div class="col">{{documento.cantidad}}</div>
+                </div>
+            </div>
+          </div>
+
+          
+
+
+   
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="verdocumentos=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin Lista detalle Solped -->
+
+
+<!---Dilalog FORM detalle-->
+<p-dialog header="Información adicional para generar proyección" 
+          [(visible)]="formularioLinea" 
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+          [style]="{width: '50vw'}" 
+          [maximizable]="true"
+          [draggable]="false" 
+          (onHide)="envioLinea= false" 
+          [resizable]="false">
+
+    <ng-template pTemplate="content">
+        <!-- Grupo proveedor -->
+        <div class="grid">
+            
+            <div class="field col">
+                <label for="proveedor">Proveedor</label>
+                <p-autoComplete [(ngModel)]="proveedor" 
+                                [showEmptyMessage]="true"
+                                [suggestions]="proveedoresFiltrados" 
+                                (completeMethod)="filtrarProveedores($event)" 
+                                field="CardCode"
+                                [minLength]="1" 
+                                [delay]="1000"
+                                
+                                
+                                panelStyleClass="text-sm sm:ml-2"
+                                inputStyleClass="w-full" styleClass="w-full" inputId="proveedor2">
+
+                    <ng-template let-proveedor pTemplate="item">
+                        <div>{{proveedor.CardCode}} - {{proveedor.CardName}}</div>
+                    </ng-template>
+
+                </p-autoComplete>
+            </div>
+        </div>
+        <!-- Grupo item -->
+        <div class="grid">
+            <div class="field col">
+                <label for="itemseleccionado">ítem</label>
+                <input pInputText 
+                            [(ngModel)]="itemSeleccionado" 
+                            id="itemseleccionado" 
+                            name="itemseleccionado" 
+                            class="p-inputtext-sm w-full"
+                            type="text"
+                            required 
+                            readonly/>
+            </div>
+           
+
+        </div>
+        
+        <div class="grid">
+            <div class="field col">
+                <label htmlFor="nf_pedmp"> Materia prima importada</label>
+                <p-dropdown [options]="materiaprima" 
+                            optionLabel="option" 
+                            optionValue="value"
+                            [(ngModel)]="nf_pedmp" 
+                            id="nf_pedmp" 
+                            name="nf_pedmp"
+                            
+                            
+                            styleClass="p-dropdown-sm "
+                            
+                            [required]="true" 
+                            styleClass="p-dropdown-sm w-full"
+                            [ngClass]="{'ng-invalid ng-dirty' : (envioLinea && !nf_pedmp) }">
+                </p-dropdown>
+            </div>
+            <div class="field col">
+                <label htmlFor="nf_tipocarga">Tipo carga</label>
+                
+                <p-dropdown [options]="tiposdecarga" 
+                        optionLabel="tipo" 
+                        optionValue="tipo"
+                        [(ngModel)]="nf_tipocarga" id="nf_tipocarga" name="nf_tipocarga" placeholder="Tipo de carga"
+                        [required]="true"
+                        styleClass="p-dropdown-sm w-full">
+                </p-dropdown>
+            </div>
+        </div>
+        <!-- Grupo dependencias -->
+        <div class="grid">
+            <div class="field col">
+                <label for="viceprecidencia">Vicepresidencia</label>
+                <input pInputText 
+                            [(ngModel)]="viceprecidencia" 
+                            id="viceprecidencia" 
+                            name="viceprecidencia" 
+                            class="p-inputtext-sm w-full"
+                            type="text"
+                            required 
+                            readonly/>
+            </div>
+            <div class="field col">
+                <label for="dependencia">Dependencia</label>
+                <input pInputText 
+                            [(ngModel)]="dependencia" 
+                            id="dependencia" 
+                            name="viceprecidependenciadencia" 
+                            class="p-inputtext-sm w-full"
+                            type="text"
+                            required 
+                            readonly/>
+            </div>
+            <div class="field col">
+                <label for="localidad">Localidad</label>
+                <p-dropdown [options]="localidades" 
+                            [(ngModel)]="localidad" 
+                            optionLabel="location"
+                            placeholder="Seleccione una localidad" 
+                            [filter]="true" 
+                            filterBy="location" 
+                            [showClear]="true"
+                            
+                            styleClass="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && !localidad.location}" 
+                            inputId="localidad"
+                            #ocrcode>
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="localidad">
+
+                            <div>{{localidad.location}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-localidad pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{localidad.location}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <!--Almacen-->
+        <div class="grid">
+            <div class="field col">
+                <label for="almacen">Almacen</label>
+                <p-dropdown [options]="almacenes" 
+                            [(ngModel)]="almacen" 
+                            optionLabel="storename"
+                            
+                            placeholder="Seleccione una almacen" 
+                            [filter]="true" 
+                            filterBy="storename" 
+                            [showClear]="true"
+                            
+                            styleClass="w-full" inputId="almacen"
+                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && !almacen.store}" >
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="almacen">
+
+                            <div>{{almacen.storename}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-almacen pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{almacen.storename}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        
+        
+        <!-- Grupo cantidad y fechas proyectadas -->
+        <div class="grid">
+            
+            <div class="field col">
+                <label for="fechasycantidades"><h4>Fechas y cantidades proyectadas</h4></label>
+                <div *ngFor="let item of fechasycantidades" id="fechasycantidades" class="grid">
+                
+            
+                    
+                        <div class="col">
+                            <label for="fechaRequerida">Fecha necesaria</label>
+                            <input pInputText 
+                                    [ngModel]="item.fechasemana | date" 
+                                    id="fechaRequerida" 
+                                    name="fechaRequerida" 
+                                    class="p-inputtext-sm text-center w-full"
+                                    type="text"
+                                    required 
+                                    readonly/>
+                        </div>
+            
+                        <div class="col">
+                            <label for="cantidad">Cantidad</label>
+                            <input  pInputText 
+                                    [(ngModel)]="item.compraProyectadaMP" 
+                                    type="number" 
+                                    id="cantidad" 
+                                    placeholder="Cantidad"
+                                    readonly
+                                    class="p-inputtext-sm text-center w-full"/>
+                        </div>
+                    
+                
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf=" loadingSave===true"class="field col">
+            <p-divider></p-divider>   
+            <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+            <p-divider></p-divider>
+        </div>
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (click)="RegistrarLinea()"                     
+                    [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
+                    label="Ok"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->

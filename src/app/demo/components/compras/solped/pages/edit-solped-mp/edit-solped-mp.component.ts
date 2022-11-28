@@ -43,7 +43,7 @@ export class EditSolpedMpComponent implements OnInit {
                     if(result.status===501){
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
                     }else{
-                      
+                        console.log(dataSolped.solped.approved);
                         if(dataSolped.solped.approved=='A'){
                           //Actualizar info de solped en SAP
                           //console.log('Update info en SAp');
@@ -54,12 +54,18 @@ export class EditSolpedMpComponent implements OnInit {
                                   this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                                   setTimeout(()=>{
                                     this.router.navigate(['portal/compras/solped/tracking']);
+                                    
                                   },2000);
                                 },
                                 error: (err)=>{
                                   console.log(err);
                                 }
                               });
+                        }else{
+                          this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                                  setTimeout(()=>{
+                                    this.router.navigate(['portal/compras/solped/tracking']);
+                                  },2000);
                         }
 
                       

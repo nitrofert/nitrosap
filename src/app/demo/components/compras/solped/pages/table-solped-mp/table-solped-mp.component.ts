@@ -1,10 +1,11 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { PermisosUsuario, PerfilesUsuario } from 'src/app/demo/api/decodeToken';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { SolpedInterface } from 'src/app/demo/api/solped';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
@@ -18,11 +19,20 @@ import { SAPService } from 'src/app/demo/service/sap.service';
 })
 export class TableSolpedMPComponent implements OnInit, OnChanges {
 
-  @Input() solpedList!:any;
+  @Input() documentList!:any;
   @Input() color!:any;
   @Input() showNuevo!:any;
   @Input() showEditar!:any;
   @Input() showEnvioSAP!:any;
+  @Input() titulo!:any;
+  @Input() nombreLista!:any;
+  @Input() loading!:boolean;
+
+  @Input() documento!:any;
+
+  @Output() onChangeTabla: EventEmitter<any> = new EventEmitter();
+  @Output() onChangeLoading: EventEmitter<any> = new EventEmitter();
+
 
   
 
@@ -35,15 +45,15 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
  
   
-  loading:boolean = true;
-  selectedSolped:any[] = [];
+  //loading:boolean = true;
+  selectedItem:any[] = [];
 
 
   formulario:boolean = false;
   envioFormulario:boolean = false;
 
-  estados:any[] = [{name:'Request'},{name:'Ordered'},{name:'Shipped'},{name:'Discharge'}];
-  u_nf_status!:any;
+  estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Documentación lista'},{name:'Descargado'}];
+  u_nf_status:string= "";
 
   u_nf_lastshippping!:any;
   u_nf_dateofshipping!:any;
@@ -51,6 +61,13 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   cantidad!:any;
   cantidadkl!:any;
   comentarios:any;
+  nf_tipocarga:string="";
+  nf_agente:string="";
+  nf_motonave:string="";
+  nf_puertosalida:string ="";
+  nf_pago:string ="";
+  nf_Incoterms:string ="";
+  loadingSave:boolean = false;
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
   approves:any[] = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
@@ -88,7 +105,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     //console.log(changes['solpedList'].currentValue);
-    if(changes['solpedList'].currentValue.length>0){
+    if(changes['documentList'].currentValue.length>0){
       this.getSolpedList();
     }else{
       setTimeout(()=>{this.getSolpedList();},5000)
@@ -100,7 +117,8 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     //this.solpedList = this.solpedListestado;
 
     this.loading = false;
-    //console.log(this.solpedList[0].DocumentLines);
+    //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
+    //console.log(this.solpedList);
   }
  
 
@@ -113,61 +131,129 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     //console.log(this.selectedSolped); 
     /*this.formulario = true;
     this.asignarCampos();*/
+    if(this.documento=='Solped'){
+      this.router.navigate(['/portal/compras/solped/editar-mp',this.selectedItem[0].id]);
+    }
 
-    this.router.navigate(['/portal/compras/solped/editar-mp',this.selectedSolped[0].id]);
+    if(this.documento=='Pedido'){
+        this.formulario= true;
+        this.loadingSave = false;
+        this.asignarCampos();
+    }
+
+    if(this.documento=='Entrada'){
+
+    }
+    
   }
 
-  asignarCampos(){
-    //console.log();
-    this.u_nf_status = this.estados.filter(estado=>estado.name.toLowerCase() == this.selectedSolped[0].U_NF_STATUS.toLowerCase());
-    this.u_nf_lastshippping = new Date(this.selectedSolped[0].U_NF_LASTSHIPPPING);
-    this.u_nf_dateofshipping = new Date(this.selectedSolped[0].U_NF_DATEOFSHIPPING);
-    this.RequriedDate = new Date(this.selectedSolped[0].RequriedDate);
-    this.cantidad = this.selectedSolped[0].Quantity;
-    this.cantidadkl = this.selectedSolped[0].Quantity*1000;
-    this.comentarios = this.selectedSolped[0].Comments;
+  asignarCampos(){ 
+    console.log(this.selectedItem[0]);
+    let hora = 60 * 60000;
+    
+    //this.u_nf_status = this.estados.filter(estado=>estado.name.toLowerCase() === this.selectedItem[0].U_NF_STATUS.toLowerCase())[0].name;
+    this.u_nf_status=this.selectedItem[0].U_NF_STATUS=='Solicitado'?'Por cargar':this.selectedItem[0].U_NF_STATUS;
+    console.log(this.u_nf_status);
+    this.u_nf_lastshippping = new Date (new Date(this.selectedItem[0].U_NF_LASTSHIPPPING).getTime()+(hora*5));
+    this.u_nf_dateofshipping = new Date(new Date(this.selectedItem[0].U_NF_DATEOFSHIPPING).getTime()+(hora*5));
+    this.RequriedDate = new Date(new Date(this.selectedItem[0].RequriedDate).getTime()+(hora*5));
+    this.cantidad = this.selectedItem[0].Quantity;
+    this.cantidadkl = this.selectedItem[0].Quantity*1000;
+    this.comentarios = this.selectedItem[0].Comments;
+    this.nf_tipocarga = this.selectedItem[0].U_NF_TIPOCARGA;
+    this.nf_agente = this.selectedItem[0].U_NF_AGENTE;
+    this.nf_motonave  = this.selectedItem[0].U_NF_MOTONAVE;
+    this.nf_puertosalida = this.selectedItem[0].U_NF_PUERTOSALIDA;
+    this.nf_pago = this.selectedItem[0].U_NF_PAGO;
+    this.nf_Incoterms = this.selectedItem[0].U_NT_Incoterms;
+
   }
 
   calcularCantidadKL(){}
 
-  ActualizarSolped(){
-    let infoSolpedUpdate:any = {
-      solped:{
-          DocEntry:this.selectedSolped[0].DocEntry,
-          DocNum:this.selectedSolped[0].DocNum,
-          U_NF_STATUS:this.u_nf_status,
-          U_NF_LASTSHIPPPING:this.u_nf_lastshippping,
-          U_NF_DATEOFSHIPPING:this.u_nf_dateofshipping,
-          RequriedDate:this.RequriedDate,
-          
-      },
-      solpedDet:{
-        LineNum:this.selectedSolped[0].LineNum,
-        Quantity:this.cantidad,
-        Comments: this.comentarios
-      }
-    }
+  ActualizarPedido(){
 
+    this.envioFormulario = true;
+
+    if(this.u_nf_status!='' && this.u_nf_dateofshipping!='' && this.u_nf_lastshippping!='' && this.RequriedDate!=''){
+
+      this.loadingSave= true;
+
+      let infoPedidoUpdate:any = {
+        DocEntry:this.selectedItem[0].DocEntry,
+        DocNum:this.selectedItem[0].DocNum,
+        pedidoData:{
+            
+            
+            U_NF_STATUS:this.u_nf_status=='Por cargar'?'Solicitado':this.u_nf_status,
+            U_NF_LASTSHIPPPING:this.u_nf_lastshippping,
+            U_NF_DATEOFSHIPPING:this.u_nf_dateofshipping,
+            DocDueDate:this.RequriedDate,
+            Comments:this.comentarios,
+            U_NF_TIPOCARGA:this.nf_tipocarga,
+            U_NF_PAGO:this.nf_pago,
+            U_NF_AGENTE:this.nf_agente,
+            U_NF_MOTONAVE:this.nf_motonave,
+            U_NF_PUERTOSALIDA:this.nf_puertosalida,
+            U_NT_Incoterms:this.nf_Incoterms
+            
+        }
+        
+      }
+      console.log(infoPedidoUpdate);
+  
+      this.comprasService.actualizarPedidoSAP(this.authService.getToken(),infoPedidoUpdate)
+          .subscribe({
+              next: (result)=>{
+                console.log(result);
+                this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                this.onChangeTabla.emit(this.nombreLista);
+
+                this.loading = true;
+                //this.onChangeLoading.emit({lista:this.nombreLista,estado:true});
+                this.formulario = false;
+              },
+              error: (err)=>{
+                console.log(err);
+                this.messageService.add({severity:'error', summary: '!Error', detail: err});
+              }
+          });
+    }else{
+      this.messageService.add({severity:'error', summary: '!Error', detail:'Debe diligenciar los campos resaltados en rojo'});
+    }
 
   }
 
   envairSAP(){
       //console.log('Envio a SAP',this.selectedSolped);
-      if(this.selectedSolped[0].approved=='N'){
-        this.comprasService.enviarSolpedSAP(this.authService.getToken(),{id:this.selectedSolped[0].id})
+      this.loading = true;
+      //this.onChangeLoading.emit({lista:this.nombreLista,estado:true});
+      if(this.selectedItem[0].approved=='N'){
+        this.comprasService.enviarSolpedSAP(this.authService.getToken(),{id:this.selectedItem[0].id})
             .subscribe({
                 next:(result)=>{
                     //console.log(result);
                     this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                    this.loading = false;
+                    this.onChangeTabla.emit(this.nombreLista);
+
+                    //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
                 },
                 error:(err)=>{
                   console.log(err);
+                  this.loading = false;
+                  //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
                 }
             });
       }else{
         this.messageService.add({severity:'error', summary: '!Error', detail: 'La solped seleccionada fue ya fue enviada a SAP'});
+        this.loading = false;
+        //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
       }
+      
   }
+
+ 
 
   formatCurrency(value: number) {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });

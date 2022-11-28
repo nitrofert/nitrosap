@@ -234,6 +234,28 @@ export class ComprasService {
       return this.http.get<any[]>(url,requestOptions);
   }
 
+  PedidosdMP(token:string,status:string):Observable<any>{
+    /*const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url}/api/compras/solped/list/ocmp/${status}`;
+      return this.http.get<any>(url,requestOptions);
+  }
+
+  EntradasMP(token:string):Observable<any>{
+    /*const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url}/api/compras/solped/list/inmp`;
+      return this.http.get<any>(url,requestOptions);
+  }
+
   SolpedMPSL(token:string):Observable<any[]>{
     /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
@@ -277,6 +299,59 @@ export class ComprasService {
     const url:string = `${this.api_url}/api/compras/solped/enviar-sap`;
     return this.http.put<any[]>(url,data,requestOptions);
 
+  }
+
+  actualizarPedidoSAP(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/enviar-sap-pedido`;
+    return this.http.put<any[]>(url,data,requestOptions);
+
+  }
+
+  getInventariosMpXE(token:string,data:any):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/inventarios`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  getInventariosTracking(token:string,data:any):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/inventariosTracking`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  getPresupuestosVenta(token:string,data:any):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/presupuestosVenta`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  getZonas(token:string):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/zonas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getMaxMinItemZona(token:string,data:any):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/maxminitemzona`;
+    return this.http.post<any[]>(url,data,requestOptions);
   }
 
 

@@ -114,6 +114,7 @@ export class FormSolpedComponent implements OnInit {
 
   /*** Validadores ****/
   lineasSolped:SolpedDet[] = []; // Array para guardar temporalmente las lineas de la solped que se van a guardar o editar
+  lineasSolpedCVS:any[] = []; // Array
   lineaSolped!:SolpedDet; //Linea para registrar o actualizar
   lineaSeleccionada:SolpedDet[] = []; //array de lineas seleccionadas del listado de lineas de la solped
 
@@ -126,10 +127,15 @@ export class FormSolpedComponent implements OnInit {
   formularioLinea:boolean = false;  // Controla la visibilidad del formulario de linea solped
   formularioAnexo:boolean = false; // Controla la visibilidad del formulario de cargue de anexos
   envioLinea:boolean = false; // Controla el llenado de los campos del formulario de linea solped
+  formularioCSV:boolean = false; //Controla el formulario de cargue CSV detalle solped
+ 
+  
   envioLineaanexo:boolean = false; // Controla el llenado de los campos del formulario de linea solped 
   listadoLineas:boolean = false; //Controla la visibilidad del listado de lineas de la solped
   listadoAnexos:boolean = false; //Controla la visibilidad del listado de anexos
+
   uploadedFiles: any[] = [];
+  uploadedFiles2: any[] = [];
   tiposanexo:any[] = [{name:"Revisión presupuestal"},{name:"Especificación técnica"},{name:"Otro"}];
   tipoanexo!:any ; 
 
@@ -140,6 +146,9 @@ export class FormSolpedComponent implements OnInit {
   file!: any ;
   fileTmp:any;
 
+  file2!: any ;
+  fileTmp2:any;
+
   /******************* */
 
   /******* Filtros autocompetar ********/
@@ -148,7 +157,8 @@ export class FormSolpedComponent implements OnInit {
   itemsFiltrados:ItemsSAP[] = [];
   cuentasFiltradas:CuentasSAP[] = [];
 
-
+  cargueValido:boolean = false;
+  loadingCargueCSV:boolean =false;
   
 
 
@@ -290,6 +300,7 @@ export class FormSolpedComponent implements OnInit {
           for(let item in areas){
              this.areas.push(areas[item]);
          }
+         //console.log(this.areas);
        },
        error: (error) => {
          //console.log(error);
@@ -338,7 +349,7 @@ export class FormSolpedComponent implements OnInit {
             for(let item in cuentas){
               this.cuentas.push(cuentas[item]);
            }
-           ////console.log(cuentas);
+           //console.log(cuentas);
            ////console.log(this.cuentas);
           },
           error: (error) => {
@@ -351,11 +362,11 @@ export class FormSolpedComponent implements OnInit {
     this.authService.getAlmacenesUsuarioXE()
     .subscribe({
       next: (stores) => {
-        console.log(stores);
+        //console.log(stores);
         for(let item in stores){
           this.almacenes.push(stores[item]);
        }
-       ////console.log(this.stores);
+       console.log(this.almacenes);
       },
       error: (error) => {
           //console.log(error);      
@@ -388,7 +399,7 @@ export class FormSolpedComponent implements OnInit {
             for(let item in taxes){
               this.impuestos.push(taxes[item]);  
             }
-            ////console.log(this.taxes);
+           //console.log(this.impuestos);
           },
           error: (error) => {
               //console.log(error);      
@@ -407,7 +418,7 @@ export class FormSolpedComponent implements OnInit {
                   //console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
-                  //console.log(this.infoSolpedEditar.anexos);
+                  console.log(this.lineasSolped);
                   //this.anexosSolped = this.infoSolpedEditar.anexos;
 
                   for(let anexo of this.infoSolpedEditar.anexos){
@@ -415,7 +426,7 @@ export class FormSolpedComponent implements OnInit {
                     this.anexosSolped.push({tipo:anexo.tipo, file:{name:anexo.nombre, size:anexo.size}, url:anexo.ruta, idanexo:anexo.id});
                   }
           
-                  //console.log(this.infoSolpedEditar.solped.serie, this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie));
+                 
                   this.serie = this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie)[0].code;
                   
                   this.codigoSap = this.infoSolpedEditar.solped.sapdocnum || '0';
@@ -514,7 +525,7 @@ export class FormSolpedComponent implements OnInit {
   }
 
   SeleccionarDependencia(){
-    //console.log(this.dependencia);
+    console.log(this.dependencia);
     if(this.dependencia){
       
       let dependenciesTMP = this.dependenciasUsuario.filter((data => (data.dependence === this.dependencia.dependence && data.vicepresidency === this.dependencia.vicepresidency)));
@@ -527,7 +538,7 @@ export class FormSolpedComponent implements OnInit {
       }
       //Llenar cuentas segun  dependencia seleccionada
       //Obtener cuentas asociadas a la dependencia
-      this.cuentasxDependencia();
+       this.cuentasxDependencia();
     }
 
   }
@@ -610,6 +621,7 @@ clearItemCode(){
 }
 
 cuentasxDependencia(){
+  
   this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
       .subscribe({
           next: (cuentas) => {
@@ -631,12 +643,15 @@ cuentasxDependencia(){
               }
             }
             //console.log(filtered);
-            this.cuentasDependencia = filtered;
+             this.cuentasDependencia = filtered;
+             //console.log(this.cuentasDependencia);
           },
           error: (err) => {
             //console.log(err);
           }
       });
+
+      console.log(this.dependencia.dependence);
 }
 
 filtrarCuentas(event:any){
@@ -898,6 +913,11 @@ calculatTotales(){
    
   }
 
+  
+
+
+  
+
   consultarAnexo(url:string){
       //console.log(url);
       let urlFile= this.comprasService.downloadAnexo(url);
@@ -960,7 +980,295 @@ calculatTotales(){
 
   MostrarDetalle(){
     this.listadoLineas =  true;
+    
     this.calculatTotales();
+  }
+
+  importarCSV(){
+
+    this.nuevaLinea =true;
+
+    if( this.clase &&  this.serie &&  this.area && this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
+      
+      this.formularioCSV = true;
+
+    }else{
+      this.messageService.add({severity:'error', summary: '!Opps', detail: 'Debe diligenciar los campos resaltados en rojo'});
+    }
+    
+  }
+
+  onLoad2($event:any){
+
+  
+    this.loadingCargueCSV = true;
+    const [ file ] = $event.currentFiles;
+    this.fileTmp2 = {
+      fileRaw:file,
+      fileName:file.name
+    }
+    this.readDocument(file);
+  
+  }
+
+  readDocument(file:Blob) {
+    let fileReader = new FileReader();
+    let arrayTexto:any[] =[];
+    fileReader.onload = (e) => {
+      let text:any =fileReader.result ;
+      var lines = text.split('\n') ;
+      for(let line of lines){
+        arrayTexto.push(this.reemplazarCaracteresEspeciales(line));
+      }
+      this.validarArchivoDetalle(arrayTexto);
+    }
+    fileReader.readAsText(file);
+}
+
+reemplazarCaracteresEspeciales(texto:string){
+  return texto.replace('\r','').replace('\t','');
+}
+
+
+async validarArchivoDetalle(lienasArchivo:any){
+  //console.log(lienasArchivo.length);
+  if(this.validarEncabezado(lienasArchivo[0].split(","))){
+    //validar contenido 
+    this.cargueValido = await this.validarContenidoCSV(lienasArchivo,',');
+    if(this.cargueValido){
+      
+      this.messageService.add({severity:'success', summary: '!Ok', detail: 'El archivo cargado cumple con la estructura básica requerida'});
+    }
+
+  }else if(this.validarEncabezado(lienasArchivo[0].split(";"))){
+    //validar contenido
+    this.cargueValido = await this.validarContenidoCSV(lienasArchivo,';');
+    if(this.cargueValido){
+      
+      this.messageService.add({severity:'success', summary: '!Ok', detail: 'El archivo cargado cumple con la estructura básica requerida'});
+    }
+  }else{
+    this.messageService.add({severity:'error', summary: '!Error', detail: 'El archivo cargado no cumple con la estructura básica requerida'});
+  }
+
+
+  
+  this.loadingCargueCSV = false;
+}
+
+validarEncabezado(arrayLineaEncabezado:any[]){
+  let camposEncabezado:any =['CODITEM',	'DESCITEM',	'FECHAREQ',	'IDPROVEEDOR',	'CANTIDAD',	'MONEDA',	'PRECIO',	'IMPUESTO',	'VICEPRESIDENCIA',	'DEPENDENCIA',	'LOCALIDAD',	'ALMACEN',	'CODCUENTA'];
+  let valido = true;
+  if(arrayLineaEncabezado.length != camposEncabezado.length){
+    //this.messageService.add({severity:'error', summary: '!Error', detail: 'El archivo cargado no cumple con la estructura básica requerida'});
+    valido = false;
+  }else if(!this.encabezadosValidos(camposEncabezado,arrayLineaEncabezado)){
+    //this.messageService.add({severity:'error', summary: '!Error', detail: 'El archivo cargado no cumple con la estructura básica requerida'});    
+    valido = false;
+  }
+
+  return valido;
+}
+
+encabezadosValidos(camposEncabezado:any[], arrayLineaEncabezado:any[]){
+    let valido = true;
+    for(let encabezado of arrayLineaEncabezado){
+        if(!camposEncabezado.includes(encabezado)){
+          valido = false;
+          break;
+        }
+    }
+    return valido;
+}
+
+  async validarDependencia(vicepresidencia:any,dependencia:any):Promise<boolean>{
+  let valido = false;
+  //console.log(this.vicepresidencias.filter(data => data.vicepresidency === vicepresidencia)[0]);
+  this.viceprecidencia = this.vicepresidencias.filter(data => data.vicepresidency === vicepresidencia)[0];
+  await this.SeleccionarVicepresidencia();
+  //console.log(dependencia,this.dependencias.filter(data => data.dependence === dependencia).length);
+  if(this.dependencias.filter(data => data.dependence === dependencia).length>0){
+    valido = true;
+  }
+  //console.log(valido);
+  return valido;
+}
+
+ async validarLocalidad(dependencia:any,localidad:any):Promise<boolean>{
+  let valido = false;
+  this.dependencia = this.dependencias.filter(data => data.dependence === dependencia)[0];
+  await this.SeleccionarDependencia();
+  
+  //console.log(this.localidades.filter(data => data.location === localidad).length);
+  if(this.localidades.filter(data => data.location === localidad).length>0){
+    valido = true;
+  }
+  return valido;
+
+}
+
+async validarCuentaContable(cuenta:any){
+  let valido = false;
+
+  
+  //console.log(valido);
+  if(this.cuentas.filter(data => data.Code === cuenta).length>0){
+    valido = true;
+  }
+  return valido;
+}
+
+
+ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
+  let valido = true;
+  console.log(lienasArchivo);
+  let arrayLinea:any;
+  this.lineasSolpedCVS = [];
+  
+  let lineasProcesadas =0;
+  let linetotal:any;
+  let taxvalor:any;
+
+  for(let linea = 1 ;linea < lienasArchivo.length; linea ++){
+    
+      arrayLinea = lienasArchivo[linea].split(separador);
+                
+      if(arrayLinea.length==13){
+        if(this.clase =='I' && arrayLinea[0]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item de la linea ${linea}, es obligatorio para solicitudes de bienes`});
+          valido = false;  
+        }else if(arrayLinea[0]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[0]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item  de la linea ${linea}, no existe en el listado de items de SAP`});
+          valido = false;
+        }else if(arrayLinea[1]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La descripción del articulo o servicio de la linea ${linea} es obligatoria`});
+          valido = false;
+        }else if(arrayLinea[2]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha requerida de la linea ${linea} es obligatoria`});
+          valido = false;
+        }else if(arrayLinea[2]!='' && isNaN(Date.parse(arrayLinea[2]))){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha requerida de la linea ${linea} no es valida`});
+          valido = false;
+        }else if(arrayLinea[3]!='' && this.proveedores.filter(item =>item.CardCode==arrayLinea[3]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del proveedor de la linea ${linea}, no existe en el listado de proveedores de SAP`});
+          valido = false;
+        }else if(arrayLinea[4]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La cantidad de la linea ${linea} es obligatoria`});
+          valido = false;
+        }else if(arrayLinea[4]!='' && isNaN(arrayLinea[4])){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La cantidad de la linea ${linea} no es un número`});
+          valido = false;
+        }else if(arrayLinea[5]!='' && this.monedas.filter(item =>item.Currency==arrayLinea[5]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la moneda de la linea ${linea}, no existe en el listado de monedas de SAP ${JSON.stringify(this.monedas)}`});
+          valido = false;
+        }else if(arrayLinea[6]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El precio de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[6]!='' && isNaN(arrayLinea[6])){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La precio de la linea ${linea} no es un número`});
+          valido = false;
+        }else if(arrayLinea[7]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del impuesto de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[7]!='' && this.impuestos.filter(item =>item.Code==arrayLinea[7]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de impuesto de la linea ${linea}, no existe en el listado de impuestos de SAP`});
+          valido = false;
+        }else if(arrayLinea[8]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la viceprecidencia de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[8]!='' && this.vicepresidencias.filter(item =>item.vicepresidency==arrayLinea[8]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la viceprecidencia de la linea ${linea}, no existe en el listado de viceprecidencias asociadas al usuario`});
+          valido = false;
+        }else if(arrayLinea[9]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la dependencia de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[9]!='' && !( await this.validarDependencia(arrayLinea[8],arrayLinea[9]))){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la dependencia de la linea ${linea}, no existe en el listado de dependencias asociadas al usuario`});
+          valido = false;
+        }else if(arrayLinea[10]==''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la localidad de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[10]!='' && !(await this.validarLocalidad(arrayLinea[9],arrayLinea[10]))){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la localidad de la linea ${linea}, no existe en el listado de localidades asociadas al usuario`});
+          valido = false;
+        }/*else if(arrayLinea[11]!='' && this.almacenes.filter(item =>item.store==arrayLinea[11]).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del almacen de la linea ${linea}, no existe en el listado de almacenes asociadas al usuario`});
+          valido = false;
+        }*/else if(arrayLinea[12]=='' && this.clase =='S'){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la cuenta contable de la linea ${linea} es obligatorio`});
+          valido = false;
+        }else if(arrayLinea[12]!='' && !( await this.validarCuentaContable(arrayLinea[12]))){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la cuenta contable de la linea ${linea}, no existe en el listado de cuentas asociadas a la dependencia seleccionada`});
+          valido = false;
+        }else{
+            // Linea Valida
+
+            if(arrayLinea[5]=='COP'){
+              linetotal =arrayLinea[4]*arrayLinea[6];
+              taxvalor =(arrayLinea[4]*arrayLinea[6])*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
+            }else{
+              linetotal =arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM);
+              taxvalor =(arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM))*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
+            }
+
+            this.lineasSolpedCVS.push({
+              itemcode:arrayLinea[0],
+              dscription:arrayLinea[1],
+              reqdatedet:arrayLinea[2],
+              linevendor:arrayLinea[3],
+              quantity:arrayLinea[4],
+              moneda:arrayLinea[5],
+              price:arrayLinea[6],
+              tax:arrayLinea[7],
+              ocrcode3:arrayLinea[8],
+              ocrcode2:arrayLinea[9],
+              ocrcode:arrayLinea[10],
+              whscode:arrayLinea[11],
+              acctcode:arrayLinea[12],
+              acctcodename:arrayLinea[12]!=''?this.cuentasDependencia.filter(data => data.Code === arrayLinea[12])[0].Name:'',
+              id_user:this.infoUsuario.id,
+              id_solped : 0,
+              linenum:linea-1,
+              linetotal,
+              linestatus:'O',
+              taxvalor,
+              trm:this.trm,
+              linegtotal:linetotal+taxvalor
+
+            });
+        }
+
+
+        lineasProcesadas++;
+      }else{
+        if(arrayLinea.length>1){
+          lineasProcesadas++;
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La líena ${linea} del archivo a cargar, no posee la estructura básica requerida`});
+          valido = false;
+        }
+      }
+      
+       
+  }
+  
+  console.log(lineasProcesadas);
+
+  if(lineasProcesadas==0){
+    this.messageService.add({severity:'error', summary: '!Error', detail: 'El archivo seleccionado no posse lineas para agregar a la solped'});
+    valido = false;
+  }
+
+  return valido;
+
+}
+
+
+
+ 
+
+  adicionarCSV(){
+    this.lineasSolped = this.lineasSolpedCVS;
+    this.formularioCSV = false;
   }
 
   GuardarSolped(){
@@ -1237,5 +1545,7 @@ calculatTotales(){
     table.clear();
     this.filter.nativeElement.value = '';
   }
+
+ 
 
 }

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { BadgeModule } from 'primeng/badge'
+import {CardModule} from 'primeng/card';
 import { CalendarModule } from 'primeng/calendar';
 import { ChartModule } from 'primeng/chart';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -45,6 +46,7 @@ import {FileUploadModule} from 'primeng/fileupload';
     BadgeModule,
     ButtonModule,
     BreadcrumbModule,
+    CardModule,
     CalendarModule,
     ChartModule,
     CheckboxModule,

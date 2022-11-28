@@ -69,6 +69,8 @@ export interface SolpedDet {
     id_user:      number;
     created_at?:   string;
     updated_at?:   string;
+    unidad?:string;
+    zonacode?: string;
 }
 
 export interface Anexos {

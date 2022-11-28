@@ -25,25 +25,31 @@ export class TrackingMPComponent implements OnInit {
   urlBreadCrumb:string ="";
 
   allSolpedMP:any[] = [];
-
-
   allSolpedMP2:any[] = [];
 
   solpedRequest:any[] = [];
   loadingSR:boolean = true;
   selectedSolpedR:any[] = [];
 
-  solpedOrdered:any[] = [];
-  loadingSO:boolean = true;
-  selectedSolpedO:any[] = [];
+  pedidosPorCargar:any[] = [];
+  loadingPxC:boolean = true;
+  selectedPedidosPxC:any[] = [];
 
-  solpedShipped:any[] = [];
-  loadingSS:boolean = true;
-  selectedSolpedS:any[] = [];
+  pedidosCargados:any[] = [];
+  loadingC:boolean = true;
+  selectedPedidosC:any[] = [];
 
-  solpedDischarge:any[] = [];
-  loadingSD:boolean = true;
-  selectedSolpedD:any[] = [];
+  pedidosDocumentacion:any[] = [];
+  loadingD:boolean = true;
+  selectedPedidosD:any[] = [];
+
+  pedidosDescargados:any[] = [];
+  loadingPD:boolean = true;
+  selectedPedidosPD:any[] = [];
+
+  entradasNT:any[] = [];
+  loadingNT:boolean = true;
+  selectedEntradas:any[] = [];
 
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
@@ -76,75 +82,25 @@ export class TrackingMPComponent implements OnInit {
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
      this.urlBreadCrumb = this.router.url;
 
-     this.getListadoSolpedMP();
+     this.getListadosTrackingMP();
   }
 
-  getListadoSolpedMP(){
-    //console.log('Listado de solpeds');
-    /*this.comprasService.SolpedMPSL(this.authService.getToken())
-    .subscribe({
-      next:(solped =>{
-        console.log(solped);
-          
-          this.allSolpedMP = solped;
-          
-          this.agruparSolped();
-
-          this.getSolpedRequest();
-          this.getSolpedOrdered();
-          this.getSolpedShipped();
-          this.getSolpedDischarge();
-
-          
-
-      }),
-      error:(err =>{
-        console.log(err);
-      })
-    });*/
-
+  getListadosTrackingMP(){
     this.getSolpedRequest();
-          this.getSolpedOrdered();
-          this.getSolpedShipped();
-          this.getSolpedDischarge();
+    this.getPedidosPorCargar();
+    this.getPedidosCargados();
+    this.getPedidosConDocumentacion();
+    this.getPedidosDescargados();
+    this.getEntradasNacionalizadas();
   }
 
-  agruparSolped(){
-    let resultQuery:any[] =[];
-    let LineaSolpedDet!:any;
-    for(let solped of this.allSolpedMP){
-      for(let solpedDet of solped.DocumentLines){
-        LineaSolpedDet = {DocNum:solped.DocNum,
-                               key:solped.DocNum+'-'+solpedDet.LineNum,
-                               DocEntry:solped.DocEntry,
-                               U_NF_STATUS:solped.U_NF_STATUS,
-                               LineNum:solpedDet.LineNum,
-                               ItemCode:solpedDet.ItemCode,
-                               ItemDescription:solpedDet.ItemDescription,
-                               U_NF_LASTSHIPPPING:solped.U_NF_LASTSHIPPPING,
-                               U_NF_DATEOFSHIPPING: solped.U_NF_DATEOFSHIPPING,
-                               RequriedDate:solped.RequriedDate,
-                               U_NF_AGENTE:solped.U_NF_AGENTE,
-                               U_NF_PAGO:solped.U_NF_PAGO,
-                               Quantity:solpedDet.Quantity,
-                               Incoterms:solpedDet.Incoterms,
-                               U_NF_TIPOCARGA:solped.U_NF_TIPOCARGA,
-                               U_NF_PUERTOSALIDA:solped.U_NF_PUERTOSALIDA,
-                               WarehouseCode:solpedDet.WarehouseCode,
-                               U_NF_MOTONAVE:solped.U_NF_MOTONAVE,
-                               Comments:solped.Comments
-                              };
-          resultQuery.push(LineaSolpedDet);
-      }
-    }
-    this.allSolpedMP2 = resultQuery;
-    //console.log(this.allSolpedMP2);
-  }
+ 
 
   getSolpedRequest(){
     this.comprasService.SolpedMP(this.authService.getToken(),'Request')
     .subscribe({
       next:(solped =>{
+        console.log('Solped',solped);
         this.solpedRequest = solped;
       }),
       error:(err =>{
@@ -152,20 +108,21 @@ export class TrackingMPComponent implements OnInit {
       })
     });
 
-    //this.solpedRequest = this.allSolpedMP2.filter(solped=>solped.U_NF_STATUS ==='Request');
-    //console.log('SR',this.solpedRequest);
-    //this.loadingSR = false;
   }
 
-  getSolpedOrdered(){
-    //this.solpedOrdered = this.allSolpedMP.filter(solped=>solped.U_NF_STATUS ==='Ordered');
-    //console.log('SO',this.solpedOrdered);
-    //this.loadingSO = false;
-
-    this.comprasService.SolpedMP(this.authService.getToken(),'Ordered')
+  getPedidosPorCargar(){
+ 
+    this.comprasService.PedidosdMP(this.authService.getToken(),'Solicitado')
     .subscribe({
-      next:(solped =>{
-        this.solpedOrdered = solped;
+      next:(async pedidos =>{
+        console.log('Pedido x cargar',pedidos);
+
+        if(pedidos.value){
+          this.pedidosPorCargar = await this.convertirObjetoSLtoArray(pedidos);
+          console.log(this.pedidosPorCargar);
+          
+        }
+        
       }),
       error:(err =>{
         console.log(err);
@@ -174,15 +131,17 @@ export class TrackingMPComponent implements OnInit {
 
   }
   
-  getSolpedShipped(){
-    //this.solpedShipped = this.allSolpedMP.filter(solped=>solped.U_NF_STATUS ==='Shipped');
-    //console.log('SS',this.solpedShipped);
-    //this.loadingSS = false;
+  getPedidosCargados(){
 
-    this.comprasService.SolpedMP(this.authService.getToken(),'Shipped')
+    this.comprasService.PedidosdMP(this.authService.getToken(),'Cargado')
     .subscribe({
-      next:(solped =>{
-        this.solpedShipped = solped;
+      next:(async pedidos =>{
+        console.log('Pedido cargados',pedidos);
+        if(pedidos.value){
+          this.pedidosCargados = await this.convertirObjetoSLtoArray(pedidos);
+          console.log(this.pedidosCargados);
+          
+        }
       }),
       error:(err =>{
         console.log(err);
@@ -190,14 +149,86 @@ export class TrackingMPComponent implements OnInit {
     });
   }
 
-  getSolpedDischarge(){
-    //this.solpedDischarge = this.allSolpedMP.filter(solped=>solped.U_NF_STATUS ==='Discharge');
-    //console.log('SD',this.solpedDischarge);
-    //this.loadingSD = false;
-    this.comprasService.SolpedMP(this.authService.getToken(),'Discharge')
+  getPedidosConDocumentacion(){
+
+    this.comprasService.PedidosdMP(this.authService.getToken(),'Documentación lista')
     .subscribe({
-      next:(solped =>{
-        this.solpedDischarge = solped;
+      next:(async pedidos =>{
+        
+        if(pedidos.value){
+          this.pedidosDocumentacion = await this.convertirObjetoSLtoArray(pedidos);
+          console.log(this.pedidosDocumentacion);
+          
+        }
+      }),
+      error:(err =>{
+        console.log(err);
+      })
+    });
+  }
+
+  getPedidosDescargados(){
+
+    this.comprasService.PedidosdMP(this.authService.getToken(),'Descargado')
+    .subscribe({
+      next:(async pedidos =>{
+        
+        if(pedidos.value){
+          this.pedidosDescargados = await this.convertirObjetoSLtoArray(pedidos);
+          console.log(this.pedidosDescargados);
+          
+        }
+      }),
+      error:(err =>{
+        console.log(err);
+      })
+    });
+  }
+
+  getEntradasNacionalizadas(){
+
+    this.comprasService.EntradasMP(this.authService.getToken())
+    .subscribe({
+      next:(async entradas =>{
+       
+        /*if(entradas.value){
+          this.entradasNT = await this.convertirObjetoSLtoArray(entradas);
+          console.log(this.entradasNT);
+          
+        }*/
+
+        for(let item in entradas){
+          this.entradasNT.push({
+                  Comments:entradas[item].Comments,
+                  DocNum:entradas[item].DocNum,
+                  Incoterms:entradas[item].Incoterms,
+                  ItemCode:entradas[item].ItemCode,
+                  ItemDescription:entradas[item].Dscription,
+                  LineNum:entradas[item].LineNum,
+                  Quantity:entradas[item].Quantity,
+                  RequriedDate:entradas[item].DocDueDate,
+                  U_NF_AGENTE:entradas[item].U_NF_AGENTE,
+                  U_NF_DATEOFSHIPPING:entradas[item].U_NF_DATEOFSHIPPING,
+                  U_NF_LASTSHIPPPING:entradas[item].U_NF_LASTSHIPPPING,
+                  U_NF_MOTONAVE:entradas[item].U_NF_MOTONAVE,
+                  U_NF_PAGO:entradas[item].U_NF_PAGO,
+                  U_NF_PUERTOSALIDA:entradas[item].U_NF_PUERTOSALIDA,
+                  U_NF_STATUS:entradas[item].U_NF_STATUS,
+                  U_NF_TIPOCARGA:entradas[item].U_NF_TIPOCARGA,
+                  WarehouseCode: entradas[item].WhsCode,
+                  approved:'S',
+                  id:entradas[item].DocEntry,
+                  key:entradas[item].DocNum+'-'+entradas[item].LineNum,
+                  DocEntry:entradas[item].DocEntry,
+                  RemainingOpenQuantity:0,
+                  U_NT_Incoterms:entradas[item].U_NT_Incoterms,
+                  MeasureUnit:entradas[item].unitMsr,
+                  CardCode:entradas[item].CardCode,
+                  CardName:entradas[item].CardName
+          });
+        }
+
+        console.log(this.entradasNT);
       }),
       error:(err =>{
         console.log(err);
@@ -206,6 +237,86 @@ export class TrackingMPComponent implements OnInit {
   }
 
   newSolped(){}
+
+  convertirObjetoSLtoArray(pedidosSL:any){
+    let lineaPedidos:any[] = [];
+          for(let pedido of pedidosSL.value){
+              for(let lienaPedido of pedido.DocumentLines){
+                lineaPedidos.push({
+                  Comments:pedido.Comments,
+                  DocNum:pedido.DocNum,
+                  Incoterms:lienaPedido.Incoterms,
+                  ItemCode:lienaPedido.ItemCode,
+                  ItemDescription:lienaPedido.ItemDescription,
+                  LineNum:lienaPedido.LineNum,
+                  Quantity:lienaPedido.Quantity,
+                  RequriedDate:pedido.DocDueDate,
+                  U_NF_AGENTE:pedido.U_NF_AGENTE,
+                  U_NF_DATEOFSHIPPING:pedido.U_NF_DATEOFSHIPPING,
+                  U_NF_LASTSHIPPPING:pedido.U_NF_LASTSHIPPPING,
+                  U_NF_MOTONAVE:pedido.U_NF_MOTONAVE,
+                  U_NF_PAGO:pedido.U_NF_PAGO,
+                  U_NF_PUERTOSALIDA:pedido.U_NF_PUERTOSALIDA,
+                  U_NF_STATUS:pedido.U_NF_STATUS,
+                  U_NF_TIPOCARGA:pedido.U_NF_TIPOCARGA,
+                  WarehouseCode: lienaPedido.WarehouseCode,
+                  approved:'S',
+                  id:pedido.DocEntry,
+                  key:pedido.DocNum+'-'+lienaPedido.LineNum,
+                  DocEntry:pedido.DocEntry,
+                  RemainingOpenQuantity:lienaPedido.RemainingOpenQuantity,
+                  U_NT_Incoterms:pedido.U_NT_Incoterms,
+                  MeasureUnit:lienaPedido.MeasureUnit,
+                  CardCode:pedido.CardCode,
+                  CardName:pedido.CardName
+
+                });
+              }
+              
+          }
+    return lineaPedidos;
+  }
+  
+  
+  updateTable(lista:any){
+    /*switch(lista){
+
+      case 'solpedRequest':
+        this.getSolpedRequest();
+      break;
+
+      case 'pedidosPorCargar':
+        this.getPedidosPorCargar();
+        
+      break;
+
+      case 'pedidosCargados':
+        this.getPedidosCargados();
+      break;
+
+      case 'pedidosDocumentacion':
+        this.getPedidosConDocumentacion();
+      break;
+
+      case 'pedidosDescargados':
+        this.getPedidosDescargados();
+      break;
+
+      case 'entradasNT':
+          this.getEntradasNacionalizadas();
+      break;
+
+      
+    }*/
+
+      this.getSolpedRequest();
+      this.getPedidosPorCargar();
+      this.getPedidosCargados();
+      this.getPedidosConDocumentacion();
+      this.getPedidosDescargados();
+      this.getEntradasNacionalizadas();
+
+  }
 
   formatCurrency(value: number) {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });

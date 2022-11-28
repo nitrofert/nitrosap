@@ -51,6 +51,7 @@ export class FormSolpedMPComponent implements OnInit {
   series:any[] = [];
   areas:any[] = [];
   clases:any[] = [];
+  materiaprima:any[] = [{option:'Si',value:'S'},{option:'No',value:'N'}];
   proveedores:BusinessPartners[] = [];
   items:ItemsSAP[] = [];
   cuentas:CuentasSAP[]=[];
@@ -60,7 +61,7 @@ export class FormSolpedMPComponent implements OnInit {
   impuestos:any[] =[];
   infoSolpedEditar!:SolpedInterface;
 
-  estados:any[] = [{name:'Request'},{name:'Ordered'},{name:'Shipped'},{name:'Discharge'},{name:'Complete'},];
+  estados:any[] = [{name:'Proyectado'},{name:'Solicitado'}];
   u_nf_status!:any;
   
 
@@ -69,7 +70,8 @@ export class FormSolpedMPComponent implements OnInit {
   /*** Encabezado Solped ***/
   nombreusuario:string ="";
   area:string="";
-  clase:string = "";
+  clase:string = "I";
+  nf_pedmp:string = "";
   serie:string ="";
   serieName:string ="";
   codigoSap:string ="0";
@@ -86,6 +88,7 @@ export class FormSolpedMPComponent implements OnInit {
   nf_motonave:string = "";
   nf_lastshippping:Date = new Date();
   nf_dateofshipping:Date = new Date();
+  nf_Incoterms:string = "";
 
   /*** Detalle solped *****/
   iteradorLinea:number =0;
@@ -94,10 +97,12 @@ export class FormSolpedMPComponent implements OnInit {
   proveedor!:BusinessPartners;
   item!:ItemsSAP;
   descripcion:string = "";
+  unidad:any = "";
   viceprecidencia!:DependenciasUsuario;
   dependencia!:DependenciasUsuario;
   localidad!:DependenciasUsuario;
   almacen:any = "";
+  zonacode:string ="";
   cuenta!:CuentasSAP;
   cuentasDependencia!:CuentasSAP[];
   nombreCuenta:string = "";
@@ -109,6 +114,9 @@ export class FormSolpedMPComponent implements OnInit {
   prcImpuesto:number =0;
   valorImpuesto:number =0;
   totalLinea:number =0;
+
+  tiposdecarga:any[] = [{tipo:'Empacado'},{tipo:'Granel'}]
+
 
   totalimpuestos:number =0;
   subtotal:number =0;
@@ -194,7 +202,8 @@ export class FormSolpedMPComponent implements OnInit {
         //Cargar items
         this.getItems();
         //Cargar almacenes x usuario
-        this.getAlmacenes();
+        //this.getAlmacenes();
+        this.getAlmacenesMPSL();
         //Cargar cuentas
         this.getCuentas();
         //Cargar monedas
@@ -251,7 +260,9 @@ export class FormSolpedMPComponent implements OnInit {
             if((this.vicepresidencias.filter(data => data.vicepresidency === dependencia.vicepresidency)).length ===0){
               this.vicepresidencias.push(dependencia);
             }
+           
         }
+        
       },
       error: (error) => {
         //console.log(error);
@@ -265,7 +276,7 @@ export class FormSolpedMPComponent implements OnInit {
     this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
         .subscribe({
             next: (series)=>{
-                
+                console.log(series);
                 for(let item in series){
                   if(series[item].name=='SPMP'){
                     this.series.push(series[item]);
@@ -293,6 +304,7 @@ export class FormSolpedMPComponent implements OnInit {
           for(let item in areas){
              this.areas.push(areas[item]);
          }
+         this.area = 'VPCADSU2';
        },
        error: (error) => {
          //console.log(error);
@@ -328,7 +340,7 @@ export class FormSolpedMPComponent implements OnInit {
               this.items.push(items[item]);
            }
            ////console.log(cuentas);
-           ////console.log(this.items);
+           console.log(this.items);
           },
           error: (error) => {
               //console.log(error);      
@@ -349,6 +361,24 @@ export class FormSolpedMPComponent implements OnInit {
           error: (error) => {
               //console.log(error);      
           }
+        });
+  }
+
+  getAlmacenesMPSL(){
+    this.sapService.getAlmacenesMPSL(this.authService.getToken())
+        .subscribe({
+            next: (almacenes) => {
+              //console.log(almacenes.value);
+              for(let item in almacenes.value){
+                this.almacenes.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
+                
+             }
+             //console.log(this.almacenes)
+            },
+            error: (err) => {
+                console.log(err);
+            }
+
         });
   }
 
@@ -394,6 +424,10 @@ export class FormSolpedMPComponent implements OnInit {
               this.impuestos.push(taxes[item]);  
             }
             ////console.log(this.taxes);
+             //this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
+              //console.log(this.impuesto);
+      
+            this.SeleccionarImpuesto();
           },
           error: (error) => {
               //console.log(error);      
@@ -409,7 +443,7 @@ export class FormSolpedMPComponent implements OnInit {
       this.comprasService.solpedById(this.authService.getToken(),this.solpedEditar)
           .subscribe({
                 next:  (solped)=>{
-                  //console.log(solped);
+                  console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
                   
@@ -420,10 +454,12 @@ export class FormSolpedMPComponent implements OnInit {
                   this.codigoSap = this.infoSolpedEditar.solped.sapdocnum || '0';
                   
                   this.clase = this.infoSolpedEditar.solped.doctype || '';
-                  this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate);
-                  this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate);
-                  this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate);
-                  this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate);
+                  this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate.toString().replace('T00','T05'));
+                 
+                  this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate.toString().replace('T00','T05'));
+                  this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate.toString().replace('T00','T05'));
+                  this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
+                  console.log(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
                   this.comentarios = this.infoSolpedEditar.solped.comments || '';
                   this.trm = this.infoSolpedEditar.solped.trm;
                   this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';
@@ -498,17 +534,32 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarItemCode(){
-    //console.log(this.item);
+    console.log(this.item);
     this.descripcion = this.item.ItemName;
+    this.getUnidadItemSL();
     if(this.item.ApTaxCode){
-      
       this.impuesto = this.impuestos.filter(item => item.Code === this.item.ApTaxCode)[0];
       //console.log(this.impuesto);
-      
-      this.SeleccionarImpuesto();
+    }else{
+      this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
     }
+    this.SeleccionarImpuesto();
     this.cuenta = {Code:"",Name:""};
     this.nombreCuenta = "";
+  }
+
+  getUnidadItemSL(){
+    this.sapService.getUnidadItemSL(this.authService.getToken(),this.item.ItemCode)
+        .subscribe({
+          next: (unidad)=>{
+             
+              this.unidad = unidad.value[0].PurchaseUnit;
+              console.log(this.unidad);
+          },
+          error: (err)=>{
+            console.log(err);
+          }
+        });
   }
 
   SeleccionarVicepresidencia(){
@@ -523,6 +574,7 @@ export class FormSolpedMPComponent implements OnInit {
           this.dependencias.push(dependencia);
         }
       }
+      
     }
   }
 
@@ -551,7 +603,9 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarAlmacen(){
-    //console.log(this.almacen);
+    console.log(this.almacen);
+    this.zonacode = this.almacen.zonacode;
+    console.log(this.zonacode);
   }
 
   SeleccionarCuenta(){
@@ -680,7 +734,8 @@ calcularSubtotalLinea(){
   if(!this.cantidad || !this.precio){
     this.subtotalLinea =0;
   }else{
-    this.subtotalLinea = this.cantidad * (this.precio*(tasaMoneda || 0));
+    //this.subtotalLinea = this.cantidad * (this.precio*(tasaMoneda || 0));
+    this.subtotalLinea = this.cantidad * (this.precio);
   }
   this.calcularImpuesto(); 
 }
@@ -689,7 +744,7 @@ resetearFormularioLinea(){
   ////console.log(this.monedas);
   this.numeroLinea = -1;
   this.fechaRequerida = new Date();
-  this.proveedor = {CardCode:"",CardName:""};
+  this.proveedor = {CardCode:"PE821401799",CardName:"NITRON GROUP"};
   this.proveedoresFiltrados=[];
   this.item = {ApTaxCode:"",ItemCode:"",ItemName:""};
   this.itemsFiltrados=[];
@@ -704,7 +759,7 @@ resetearFormularioLinea(){
   this.cuentasFiltradas = [];
   this.nombreCuenta = "";
   this.cantidad = 1;
-  this.moneda = this.lineasSolped.length>0? this.lineasSolped[0].moneda || 'COP':'COP';
+  this.moneda = this.lineasSolped.length>0? this.lineasSolped[0].moneda || 'COP':'USD';
   this.precio =0;
   this.subtotalLinea = 0;
   this.impuesto = "";
@@ -716,6 +771,8 @@ resetearFormularioLinea(){
 setearTRMSolped(currency:string){
   if(this.monedas.filter(moneda => moneda.Currency === currency).length >0){
     this.trm = this.monedas.filter(moneda => moneda.Currency === currency)[0].TRM;
+    this.moneda = currency;
+    console.log(this.moneda);
   }else{
     this.trm = 0;
   }
@@ -937,6 +994,10 @@ calculatTotales(){
   MostrarFormularioLinea(){
     this.formularioLinea = true;
     this.nuevaLinea = false;
+    this.viceprecidencia = this.vicepresidencias.filter(data => data.vicepresidency == 'VPCADSUM')[0];
+    this.SeleccionarVicepresidencia(); 
+    this.dependencia = this.dependencias.filter(data => data.dependence == 'VPCADSU2')[0];
+    this.SeleccionarDependencia();
   }
 
   MostrarDetalle(){
@@ -947,11 +1008,11 @@ calculatTotales(){
   GuardarSolped(){
 
                
-                this.loadingSave = true;
+                
                 this.envioFormulario = true;
                 if( this.clase &&  this.serie &&  this.area && this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
                   if(this.lineasSolped.length > 0){
-
+                    this.loadingSave = true;
                           //this.submittedBotton = true;
                         //console.log(this.solped, this.solpedDetLines);
                 
@@ -978,7 +1039,9 @@ calculatTotales(){
                             nf_tipocarga:this.nf_tipocarga,
                             nf_puertosalida:this.nf_puertosalida, 
                             nf_motonave:this.nf_motonave,
-                            u_nf_status:!this.solpedEditar?'Request':this.u_nf_status
+                            u_nf_status:!this.solpedEditar?'Proyectado':this.u_nf_status,
+                            nf_pedmp:this.nf_pedmp,
+                            nf_Incoterms:this.nf_Incoterms
                            
 
                           },
@@ -1095,6 +1158,8 @@ calculatTotales(){
             tax : this.impuesto.Code,
             taxvalor : this.valorImpuesto,
             linegtotal : this.totalLinea,
+            unidad:this.unidad,
+            zonacode:this.zonacode
             }
             
   }
@@ -1147,6 +1212,8 @@ calculatTotales(){
     if(this.lineaSolped.whscode){
       if(this.almacenes.filter(item => item.store === this.lineaSolped.whscode).length>0){
         this.almacen = this.almacenes.filter(item => item.store === this.lineaSolped.whscode)[0];
+        this.zonacode = this.almacen.zonacode;
+        console.log(this.zonacode);
       }else{
         this.almacen ="";
       }

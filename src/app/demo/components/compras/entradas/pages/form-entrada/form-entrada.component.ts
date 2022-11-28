@@ -354,7 +354,7 @@ export class FormEntradaComponent implements OnInit {
             this.comprasService.pedidoByIdSL(this.authService.getToken(),this.pedido)
                 .subscribe({
                     next: (pedido)=>{
-                        console.log(pedido);
+                        console.log('by pedido',pedido);
                         this.asignarValores(pedido);
                     },
                     error: (err)=>{
@@ -373,7 +373,7 @@ export class FormEntradaComponent implements OnInit {
       this.comprasService.entradaById(this.authService.getToken(),this.entradaEditar.entrada)
           .subscribe({
               next: (entrada)=>{
-                //console.log(entrada);  
+                console.log('By entrada',entrada);  
                 this.asignarValores(entrada);
               },
               error: (err)=>{
@@ -448,9 +448,9 @@ export class FormEntradaComponent implements OnInit {
                 dscription:lineaPedido.ItemDescription,
                 //cantidad_pedido:lineaPedido.BaseOpenQuantity,
                 //cantidad_pendiente:lineaPedido.RemainingOpenQuantity,
-                cantidad_pedido: !this.entradaEditar?pedido.DocType==='dDocument_Service'?1:0:lineaPedido.BaseOpenQuantity,
-                cantidad_pendiente:!this.entradaEditar?pedido.DocType==='dDocument_Service'?1:0:lineaPedido.RemainingOpenQuantity,
-                cantidad:!this.entradaEditar?pedido.DocType==='dDocument_Service'?0:lineaPedido.Quantity:lineaPedido.cantidad,
+                cantidad_pedido: !this.entradaEditar?pedido.DocType==='dDocument_Service'?1:lineaPedido.BaseOpenQuantity:lineaPedido.BaseOpenQuantity,
+                cantidad_pendiente:!this.entradaEditar?pedido.DocType==='dDocument_Service'?1:lineaPedido.RemainingOpenQuantity:lineaPedido.RemainingOpenQuantity,
+                cantidad:!this.entradaEditar?pedido.DocType==='dDocument_Service'?0:0:lineaPedido.cantidad,
                 precio:lineaPedido.Price,
                 moneda:lineaPedido.Currency==='$'?'COP':lineaPedido.Currency,
                 tax:lineaPedido.TaxCode,

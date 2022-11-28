@@ -4,7 +4,7 @@
 		<div class="card">
 			
 			<p-table #dt1 
-					 [value]="solpedList" 
+					 [value]="documentList" 
 					 dataKey="key" 
 					 [rows]="10" 
 					 [loading]="loading" 
@@ -13,7 +13,7 @@
 					 [paginator]="true" 
 					 [globalFilterFields]="['DocNum','U_NF_STATUS','ItemCode','ItemDescription','U_NF_MOTONAVE','U_NF_LASTSHIPPPING','U_NF_DATEOFSHIPPING','RequriedDate']" 
 					 selectionMode="multiple" 
-					 [(selection)]="selectedSolped" 
+					 [(selection)]="selectedItem" 
 					 responsiveLayout="scroll">
 				<ng-template pTemplate="caption">
 					<div class="flex justify-content-between flex-column sm:flex-row">
@@ -40,7 +40,7 @@
 									class="p-button-outlined mb-2 mr-2 p-button-secondary p-button-sm" 
 									[icon]="permisosUsuarioPagina[0].update_accion?'pi pi-pencil':'pi pi-search'" 
 									(click)="editSolped()" 
-									[disabled]="!permisosUsuarioPagina[0].read_accion || (!selectedSolped || selectedSolped.length!=1)">
+									[disabled]="!permisosUsuarioPagina[0].read_accion || (!selectedItem || selectedItem.length!=1)">
 							</button>
 
                             <button pButton 
@@ -49,8 +49,10 @@
 									class="p-button-outlined mb-2 mr-2 p-button-warning p-button-sm" 
 									icon="pi pi-send" 
 									(click)="envairSAP()" 
-									[disabled]="!permisosUsuarioPagina[0].update_accion || !selectedSolped || selectedSolped.length!=1">
+									[disabled]="!permisosUsuarioPagina[0].update_accion || !selectedItem || selectedItem.length!=1">
 							</button>
+							<button pButton pRipple type="button" [label]="titulo" class="p-button-text p-button-secondary"></button>
+							
 							
 						<!--</span>-->
 						</div>
@@ -72,14 +74,21 @@
                         </th>
 						<th>
 							<div class="flex justify-content-between align-items-center">
-								Número Solped
+								Número {{ documento }}
 								<p-columnFilter type="text" field="DocNum" display="menu" placeholder="Buscar por código solped"></p-columnFilter>
 							</div>
 						</th>
                         <th>
 							<div class="flex justify-content-between align-items-center">
 								Estado
-								<p-columnFilter type="text" field="U_NF_STATUS" display="menu" placeholder="Buscar por estado"></p-columnFilter>
+								<!--<p-columnFilter type="text" field="U_NF_STATUS" display="menu" placeholder="Buscar por estado"></p-columnFilter>-->
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Proveedor
+								<!--<p-columnFilter type="text" field="U_NF_STATUS" display="menu" placeholder="Buscar por estado"></p-columnFilter>-->
 							</div>
 						</th>
 						
@@ -132,17 +141,25 @@
 						
 						<th>
 							<div class="flex justify-content-between align-items-center">
-								Cantidad
+								Cantidad {{ documento }}
 								<p-columnFilter type="text" field="Quantity" display="menu" placeholder="Buscar por cantidad"></p-columnFilter>
 							</div>
 						</th>
 
                         <th>
 							<div class="flex justify-content-between align-items-center">
-								Cantidad - MT
+								Unidad
 								
 							</div>
 						</th>
+
+						<th *ngIf="documento=='Pedido'">
+							<div class="flex justify-content-between align-items-center">
+								Cantidad disponible
+								
+							</div>
+						</th>
+
                         
                         <th>
 							<div class="flex justify-content-between align-items-center">
@@ -153,7 +170,7 @@
 
                         <th>
 							<div class="flex justify-content-between align-items-center">
-								Tipo buque
+								Presentación
                                 <p-columnFilter type="text" field="U_NF_TIPOCARGA" display="menu" placeholder="Buscar por tipo de buque"></p-columnFilter>
 							</div>
 						</th>
@@ -202,7 +219,10 @@
 							{{ solpeditem.DocNum }}
 						</td>
 						<td style="min-width: 12rem;">
-							{{ solpeditem.U_NF_STATUS }}
+							{{ solpeditem.U_NF_STATUS=='Solicitado' && documento=='Pedido' ?'Por cargar':solpeditem.U_NF_STATUS }}
+						</td>
+						<td style="min-width: 12rem;">
+							{{ solpeditem.CarCode }} {{ solpeditem.CardName?' '+solpeditem.CardName:''}}
 						</td>
                         <td style="min-width: 12rem;">
 							{{ solpeditem.ItemCode }}
@@ -211,14 +231,14 @@
 							{{ solpeditem.ItemDescription }}
 						</td>
 						<td style="min-width: 12rem;">
-							{{ solpeditem.U_NF_LASTSHIPPPING | date }}
+							{{ solpeditem.U_NF_LASTSHIPPPING |  date: 'shortDate':'+0500' }}
 						</td>
 
                         <td style="min-width: 12rem;">
-							{{ solpeditem.U_NF_DATEOFSHIPPING | date }}
+							{{ solpeditem.U_NF_DATEOFSHIPPING |  date: 'shortDate':'+0500' }}
 						</td>
 						<td style="min-width: 12rem;">
-							{{ solpeditem.RequriedDate | date }}
+							{{ solpeditem.RequriedDate | date: 'shortDate':'+0500' }}
 						</td>	
                         <td style="min-width: 12rem;">
 							{{ solpeditem.U_NF_AGENTE }}
@@ -230,11 +250,15 @@
 							{{ solpeditem.Quantity }}
 						</td>
                         <td style="min-width: 12rem;">
-							{{ solpeditem.Quantity*1000 }}
+							{{ solpeditem.MeasureUnit }}
+						</td>
+
+						<td *ngIf="documento=='Pedido'" style="min-width: 12rem;">
+							{{ solpeditem.RemainingOpenQuantity }}
 						</td>
                         
                         <td style="min-width: 12rem;">
-							{{ solpeditem.Incoterms }}
+							{{ solpeditem.U_NT_Incoterms }}
 						</td>
                         
                         <td style="min-width: 12rem;">
@@ -272,7 +296,7 @@
 	</div>
 </div>
 
-<p-dialog header="Editar solped" 
+<p-dialog header="Editar Pedido" 
           [(visible)]="formulario" 
           [modal]="true"
           [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
@@ -287,29 +311,21 @@
         <div class="grid">
             <div class="field col">
                 <label for="u_nf_status">Estados</label>
-                <p-dropdown [options]="estados" 
-                            [(ngModel)]="u_nf_status" 
-                            optionLabel="name"
-                            placeholder="Seleccione una estado" 
-                            [filter]="true" 
-                            filterBy="name" 
-                            [showClear]="true"
-                            
-                            styleClass="w-full" inputId="u_nf_status">
+                
 
-                    <ng-template pTemplate="selectedItem">
-                        <div class="country-item country-item-value" *ngIf="u_nf_status">
-
-                            <div>{{u_nf_status.name}}</div>
-                        </div>
-                    </ng-template>
-                    <ng-template let-estado pTemplate="item">
-                        <div class="country-item">
-
-                            <div>{{estado.name}}</div>
-                        </div>
-                    </ng-template>
-                </p-dropdown>
+				<p-dropdown [options]="estados" 
+				optionLabel="name" 
+				optionValue="name"
+				[(ngModel)]="u_nf_status" 
+				id="u_nf_status" 
+				name="u_nf_status"
+				
+				placeholder="Seleccione una estado"
+				styleClass="p-dropdown-sm w-full"
+				
+				[required]="true" 
+				
+				[ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !u_nf_status)}"></p-dropdown>
             </div>
             
         </div>
@@ -348,34 +364,85 @@
             </div>
             
         </div>
-        <div class="grid">
 
-            <div class="field col">
-                <label for="cantidad">Cantidad (Toneladas)</label>
-                <input  pInputText 
-                        [(ngModel)]="cantidad" 
-                        type="number" 
-                        id="cantidad" 
-                        placeholder="Cantidad"
-                        required (change)="calcularCantidadKL()" 
-                        class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty' : envioFormulario && !cantidad}">
-            </div>
-            
-            <div class="field col">
-                <label for="cantidadkl">Cantidad (Kilogramos)</label>
-                <input  pInputText 
-                        [(ngModel)]="cantidadkl" 
-                        type="number" 
-                        id="cantidadkl" 
-                        placeholder="Cantidad"
-                        required 
-                        readonly
-                        class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty' : envioFormulario && !cantidadkl}">
+		<div class="grid">
+			<div class="field col">
+				<label htmlFor="nf_pago">Tipo pago</label>
+				<input pInputText 
+						[(ngModel)]="nf_pago" 
+						id="nf_pago" 
+						name="nf_pago"
+						class="p-inputtext-sm w-full "
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+			
+			<div class="field col">
+				<label for="nf_tipocarga">Tipo carga</label>
+				<input pInputText 
+						[(ngModel)]="nf_tipocarga" 
+						id="nf_tipocarga" 
+						name="nf_tipocarga"
+						class="p-inputtext-sm w-full"
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+		</div>
 
-            </div>
-        </div>
+		<div class="grid">
+
+			<div class="field col">
+				<label for="nf_agente">Agente aduanero</label>
+				<input pInputText 
+						[(ngModel)]="nf_agente" 
+						id="nf_agente" 
+						name="nf_agente"
+						class="p-inputtext-sm w-full"
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+
+			<div class="field col">
+				<label for="nf_motonave">Motonave</label>
+				<input pInputText 
+						[(ngModel)]="nf_motonave" 
+						id="nf_motonave" 
+						name="nf_motonave"
+						class="p-inputtext-sm w-full"
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+
+			
+			
+		</div>
+
+		<div class="grid">
+			<div class="field col">
+				<label htmlFor="nf_pago">Incoterms</label>
+				<input pInputText 
+						[(ngModel)]="nf_Incoterms" 
+						id="nf_pago" 
+						name="nf_pago"
+						class="p-inputtext-sm w-full"
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+		</div>
+
+		<div class="grid">
+			<div class="field col">
+				<label htmlFor="nf_puertosalida">Puerto salida</label>
+				<input pInputText 
+						[(ngModel)]="nf_puertosalida" 
+						id="nf_puertosalida" 
+						name="nf_puertosalida"
+						class="p-inputtext-sm w-full"
+						styleClass="w-full " 
+						type="text" required />
+			</div>
+		</div>
+        
         <div class="grid">
             <div class="col">
                 <div class="field">
@@ -391,12 +458,17 @@
             </div>
         </div>
 
-
+		<div class="grid">
+			<div *ngIf=" loadingSave===true"class="field col">
+               
+                <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+            </div>
+		</div>
 
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="ActualizarSolped()"                     
+                    (click)="ActualizarPedido()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Actualizar"
                     styleClass="p-button-text">
