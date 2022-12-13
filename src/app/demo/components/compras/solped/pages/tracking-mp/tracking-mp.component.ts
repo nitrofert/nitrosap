@@ -51,6 +51,8 @@ export class TrackingMPComponent implements OnInit {
   loadingNT:boolean = true;
   selectedEntradas:any[] = [];
 
+  almacenes:any[] = [];
+
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
   approves:any[] = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
@@ -82,7 +84,7 @@ export class TrackingMPComponent implements OnInit {
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
      this.urlBreadCrumb = this.router.url;
 
-     this.getListadosTrackingMP();
+     this.getAlmacenesMPSL();
   }
 
   getListadosTrackingMP(){
@@ -94,13 +96,42 @@ export class TrackingMPComponent implements OnInit {
     this.getEntradasNacionalizadas();
   }
 
+  getAlmacenesMPSL(){
+    this.sapService.getAlmacenesMPSL(this.authService.getToken())
+        .subscribe({
+            next: (almacenes) => {
+              //console.log(almacenes.value);
+              for(let item in almacenes.value){
+                this.almacenes.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
+                
+             }
+             console.log(this.almacenes)
+             this.getListadosTrackingMP();
+            },
+            error: (err) => {
+                console.log(err);
+            }
+
+        });
+  }
+
  
 
   getSolpedRequest(){
     this.comprasService.SolpedMP(this.authService.getToken(),'Request')
     .subscribe({
       next:(solped =>{
-        console.log('Solped',solped);
+        //console.log('Solped',solped);
+        for(let line of solped){
+          line.WarehouseName ="";
+          if(this.almacenes.filter(data =>data.store === line.WarehouseCode).length>0){
+            //console.log(this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename);
+            line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
+          }
+          
+          //line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
+          //console.log(line);
+        }
         this.solpedRequest = solped;
       }),
       error:(err =>{
@@ -198,6 +229,13 @@ export class TrackingMPComponent implements OnInit {
         }*/
 
         for(let item in entradas){
+
+          let WarehouseName ="";
+          if(this.almacenes.filter(data =>data.store === entradas[item].WhsCode).length>0){
+            console.log('storename',this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0]);
+            WarehouseName = this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0].storename;
+          }
+          
           this.entradasNT.push({
                   Comments:entradas[item].Comments,
                   DocNum:entradas[item].DocNum,
@@ -216,6 +254,7 @@ export class TrackingMPComponent implements OnInit {
                   U_NF_STATUS:entradas[item].U_NF_STATUS,
                   U_NF_TIPOCARGA:entradas[item].U_NF_TIPOCARGA,
                   WarehouseCode: entradas[item].WhsCode,
+                  WarehouseName,
                   approved:'S',
                   id:entradas[item].DocEntry,
                   key:entradas[item].DocNum+'-'+entradas[item].LineNum,
@@ -238,10 +277,18 @@ export class TrackingMPComponent implements OnInit {
 
   newSolped(){}
 
-  convertirObjetoSLtoArray(pedidosSL:any){
+   convertirObjetoSLtoArray(pedidosSL:any){
     let lineaPedidos:any[] = [];
           for(let pedido of pedidosSL.value){
               for(let lienaPedido of pedido.DocumentLines){
+
+                let WarehouseName ="";
+                if(this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode).length>0){
+                  //console.log('storename',this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode)[0]);
+                  WarehouseName = this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode)[0].storename;
+                }
+                
+                
                 lineaPedidos.push({
                   Comments:pedido.Comments,
                   DocNum:pedido.DocNum,
@@ -260,6 +307,7 @@ export class TrackingMPComponent implements OnInit {
                   U_NF_STATUS:pedido.U_NF_STATUS,
                   U_NF_TIPOCARGA:pedido.U_NF_TIPOCARGA,
                   WarehouseCode: lienaPedido.WarehouseCode,
+                  WarehouseName,
                   approved:'S',
                   id:pedido.DocEntry,
                   key:pedido.DocNum+'-'+lienaPedido.LineNum,

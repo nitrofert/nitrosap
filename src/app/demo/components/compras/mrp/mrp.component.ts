@@ -74,6 +74,8 @@ export class MrpComponent implements OnInit {
   inventarioProyectadoMP:any[] = [];
   totalInicialMPZF:any =0;
   inventarioItemZF:any[] = [];
+  inventarioTramsitoMPPreFecha:any = [];
+  inventarioSolicitadoMPPreFecha:any[] = [];
   
   
   busqueda:boolean = false;
@@ -124,12 +126,18 @@ export class MrpComponent implements OnInit {
 
   lineasCalculadora:any[] = [];
   loading: boolean = true;
+  loadingSimular:boolean = false;
   lineaSeleccionada!:any[];
 
   fechaactual:Date = new Date();
   fechaactualstr:string = new Date().toLocaleDateString();
 
   lienas:number =0;
+  tituloUbicaciones: string="";
+  listUbicaciones: any[] = [];
+  verUbicaciones: boolean = false;
+  ubicacionesInventarioMP:any;
+  ubicacionesInventarioPT:any;
   
   constructor(private rutaActiva: ActivatedRoute,
     private comprasService:ComprasService,
@@ -291,9 +299,11 @@ export class MrpComponent implements OnInit {
     
     this.comprasService.getInventariosMpXE(this.authService.getToken(),data)
         .subscribe({
-            next: (inventarios) => {
-                //console.log(inventarios);
+            next: (inventarios:any) => {
+                console.log(inventarios);
                 this.inventariosMP = inventarios;
+                this.ubicacionesInventarioMP = inventarios.ubicacionInvetarioMP;
+                this.ubicacionesInventarioPT = inventarios.ubicacionInvetarioPT;
                 this.getInventariosTracking();
                 
             },
@@ -318,6 +328,8 @@ export class MrpComponent implements OnInit {
                   //console.log(inventarios);
                   this.inventarioTramsitoMP = inventarios.inventarioItemTransito;
                   this.inventarioSolicitadoMP = inventarios.inventarioItenSolicitado;
+                  this.inventarioTramsitoMPPreFecha = inventarios.inventarioItemTransitoPreFecha;
+                  this.inventarioSolicitadoMPPreFecha = inventarios.inventarioItenSolicitadoPreFecha;
                   this.inventarioProyectadoMP = inventarios.comprasProyectadasMP;
                   this.inventarioItemZF = inventarios.inventarioItemZF;
                   this.totalInicialMPZF = inventarios.totalInventarioItemZF;
@@ -514,8 +526,10 @@ export class MrpComponent implements OnInit {
         let cantidadCompraSugerida:number = 0;
         let inventarioFinalSemanaSugerido:number = 0;
         let estadoCompra:boolean = false;
+        let inventarioSolicitadoMPPreFecha:number = this.calcularComprasSolicitadasPreFecha();
+        let inventarioTramsitoMPPreFecha:number = this.calcularInventarioTRPreFecha();
 
-        let linea:number =0;
+        let lineaid:number =0;
         let infoLinea:any;
         for(;fechaInicioCalculadora<=fechaFinalCalculadora; fechaInicioCalculadora.setDate(fechaInicioCalculadora.getDate()+1)){
             
@@ -525,8 +539,8 @@ export class MrpComponent implements OnInit {
             if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
 
               
-              inventarioSemanaMPTR = await this.calcularInventarioSemanaTR(semanaFecha);
-              compraSolicitadaMP = await this.calcularComprasSolicitadasSemana(semanaFecha);
+              inventarioSemanaMPTR = (await this.calcularInventarioSemanaTR(semanaFecha))+inventarioTramsitoMPPreFecha;
+              compraSolicitadaMP = (await this.calcularComprasSolicitadasSemana(semanaFecha))+inventarioSolicitadoMPPreFecha;
               compraProyectadaMP = await this.calcularComprasProyectadasSemana(semanaFecha);
 
               presupuestoVentaMP = await this.calcularPresupuestoSemana(semanaFecha);
@@ -546,6 +560,7 @@ export class MrpComponent implements OnInit {
               //console.log(semanaFecha,presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
               //console.log(`Para ${fechaInicioCalculadora} el número de semana es ${semanaFecha} `);
               infoLinea = {
+                lineaid,
                 fechasemana:new Date(fechasemana),
                 semana: semanaFecha,
                 inventarioSemanaMP,
@@ -569,20 +584,24 @@ export class MrpComponent implements OnInit {
               inventarioSemanaMP = inventarioFinalSemanaMP;
               inventarioSemanaPT = 0;
               inventarioSemanaMPZF = 0;
+              inventarioSolicitadoMPPreFecha = 0;
+              inventarioTramsitoMPPreFecha = 0;
 
               this.lineasCalculadora.push(infoLinea);
               //console.log(infoLinea);
-              linea++;
+              lineaid++;
 
             }
         }
         console.log(this.lineasCalculadora);
 
-        this.lienas = linea;
+        this.lienas = lineaid;
         this.busqueda= false;  
         //this.envioForm = true;
+        this.loadingSimular = false;
         this.calculadora = true;
         this.loading= false;
+        
   }
 
   PresionaEnter(event:any){
@@ -626,7 +645,7 @@ export class MrpComponent implements OnInit {
  
   for (let linea of this.lineasCalculadora){
 
-    console.log(linea);
+    //console.log(linea);
     fechasemana= new Date(linea.fechasemana);
     semana = linea.semana;
     inventarioSemanaMP = lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP;
@@ -650,6 +669,7 @@ export class MrpComponent implements OnInit {
     //console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
 
     infoLinea = {
+      lineaid,
       fechasemana,
       semana,
       inventarioSemanaMP,
@@ -757,7 +777,7 @@ export class MrpComponent implements OnInit {
         this.lineasCalculadora =[];
         this.maxMpZona = 0;
         this.minMpZona = 0;
-      
+        this.loadingSimular = true;
         this.presupuestoMPVenta = [];
         this.inventarioTramsitoMP = [];
         this.inventarioSolicitadoMP = [];
@@ -810,9 +830,24 @@ export class MrpComponent implements OnInit {
       console.log(semanaFecha,filas);
       for(let fila of filas){
         
-        compraSolicitadaMP = compraSolicitadaMP+eval(fila.Quantity);
+        //compraSolicitadaMP = compraSolicitadaMP+eval(fila.Quantity);
+        compraSolicitadaMP = compraSolicitadaMP+eval(fila.OpenCreQty);
       }
     }
+    return compraSolicitadaMP;
+  }
+
+  calcularComprasSolicitadasPreFecha():number{
+    let compraSolicitadaMP:number=0;
+    //if(this.inventarioSolicitadoMPPreFecha.length >0 && this.inventarioSolicitadoMPPreFecha.filter(item => this.numeroDeSemana(new Date(item.FECHANECESIDAD)) ==  semanaFecha).length>0 ){
+      let filas = this.inventarioSolicitadoMPPreFecha;
+      //console.log(semanaFecha,filas);
+      for(let fila of filas){
+        
+        //compraSolicitadaMP = compraSolicitadaMP+eval(fila.Quantity);
+        compraSolicitadaMP = compraSolicitadaMP+eval(fila.OpenCreQty);
+      }
+    //}
     return compraSolicitadaMP;
   }
 
@@ -821,9 +856,21 @@ export class MrpComponent implements OnInit {
     if(this.inventarioTramsitoMP.length >0 && this.inventarioTramsitoMP.filter(item => this.numeroDeSemana(new Date(item.ETA)) ==  semanaFecha).length>0 ){
       let filas = this.inventarioTramsitoMP.filter(item => this.numeroDeSemana(new Date(item.ETA)) ==  semanaFecha);
       for(let fila of filas){
-        inventarioSemanaMPTR = inventarioSemanaMPTR+eval(fila.Quantity);
+        //inventarioSemanaMPTR = inventarioSemanaMPTR+eval(fila.Quantity);
+        inventarioSemanaMPTR = inventarioSemanaMPTR+eval(fila.OpenCreQty);
       }
     }
+    return inventarioSemanaMPTR;
+  }
+
+  calcularInventarioTRPreFecha():number{
+    let inventarioSemanaMPTR:number=0;
+    //if(this.inventarioTramsitoMPPreFecha.length >0 && this.inventarioTramsitoMPPreFecha.filter((item: { ETA: string | number | Date; }) => this.numeroDeSemana(new Date(item.ETA)) ==  semanaFecha).length>0 ){
+      let filas = this.inventarioTramsitoMPPreFecha;//.filter((item: { ETA: string | number | Date; }) => this.numeroDeSemana(new Date(item.ETA)) ==  semanaFecha);
+      for(let fila of filas){
+        inventarioSemanaMPTR = inventarioSemanaMPTR+eval(fila.OpenCreQty);
+      }
+    //}
     return inventarioSemanaMPTR;
   }
 
@@ -848,6 +895,15 @@ export class MrpComponent implements OnInit {
 
   }
 
+  verUbicacionesTipoInv(tipoInv:string){
+    if(tipoInv ==='MP'){
+      this.verUbicacionesInventario(this.ubicacionesInventarioMP,'Ubicaciones de Materia prima');
+    }
+    if(tipoInv ==='PT'){
+      this.verUbicacionesInventario(this.ubicacionesInventarioPT,'Ubicaciones de Materia prima en producto terminado');
+    }
+  }
+
   verproyecciones(semana:number){
     console.log(semana,this.inventarioProyectadoMP);
     console.log(this.inventarioProyectadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
@@ -856,16 +912,25 @@ export class MrpComponent implements OnInit {
   }
 
   versolicitudes(semana:number){
-    //console.log(semana,this.inventarioSolicitadoMP[0].FECHANECESIDAD);
+    console.log(semana,this.inventarioSolicitadoMP);
     console.log(this.inventarioSolicitadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
     let inventarioSolicitadoMP = this.inventarioSolicitadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana);
+    console.log(this.lineasCalculadora.findIndex(data => data.semana === semana));
+    if(this.lineasCalculadora.findIndex(data => data.semana === semana)==0 && (this.inventarioSolicitadoMPPreFecha.length>0)){
+      inventarioSolicitadoMP = inventarioSolicitadoMP.concat(this.inventarioSolicitadoMPPreFecha);
+    }
+
     this.generarListaDocumentos(inventarioSolicitadoMP,'Solicitud de compra item');
   }
 
   verpedidostransito(semana:number){
     //console.log(semana,this.inventarioTramsitoMP);
-    console.log(this.inventarioTramsitoMP.filter(data=> this.numeroDeSemana(new Date(data.ETA)) === semana));
+    //console.log(this.inventarioTramsitoMP.filter(data=> this.numeroDeSemana(new Date(data.ETA)) === semana));
     let inventarioTramsitoMP = this.inventarioTramsitoMP.filter(data=> this.numeroDeSemana(new Date(data.ETA)) === semana);
+    //console.log(this.lineasCalculadora.findIndex(data => data.semana === semana));
+    if(this.lineasCalculadora.findIndex(data => data.semana === semana)==0 && (this.inventarioTramsitoMPPreFecha.length>0)){
+      inventarioTramsitoMP = inventarioTramsitoMP.concat(this.inventarioTramsitoMPPreFecha);
+    }
     this.generarListaDocumentos(inventarioTramsitoMP,'Pedidos item en transito');
   }
 
@@ -876,6 +941,8 @@ export class MrpComponent implements OnInit {
   }
 
   generarListaDocumentos(documentos:any, titulo:string){
+      console.log(documentos);
+
       this.tituloDocumentos = titulo;
       this.listDocumentos=[];
       for(let documento of documentos){
@@ -886,12 +953,35 @@ export class MrpComponent implements OnInit {
           fechadoc:documento.FECHANECESIDAD,
           eta:documento.ETA,
           item:this.itemSeleccionado,
-          cantidad: documento.TIPO=='Compra'?documento.OpenCreQty:documento.Quantity
+          cantidad: documento.TIPO!='Proyectado'?documento.OpenCreQty:documento.Quantity,
+          tipo:documento.TIPO,
+          cantidadPedida:documento.Quantity
         });
       }
       console.log(this.listDocumentos);
       this.verdocumentos = true;
   }
+
+  verUbicacionesInventario(ubicaciones:any, titulo:string){
+    this.tituloUbicaciones = titulo;
+    this.listUbicaciones=[];
+    for(let ubicacion of ubicaciones){
+      this.listUbicaciones.push({
+        INVENTARIO: ubicacion.INVENTARIO,
+        ItemCode: ubicacion.ItemCode,
+        ItemName: ubicacion.ItemCode+' - '+ubicacion.ItemName,
+        WhsCode: ubicacion.WhsCode,
+        WhsName: ubicacion.WhsName,
+        OnHand: ubicacion.OnHand,
+        Location: ubicacion.Location,
+        LOCACION: ubicacion.LOCACION,
+        State: ubicacion.State,
+        PENTRADA: ubicacion.PENTRADA
+      });
+    }
+    console.log(this.listUbicaciones);
+    this.verUbicaciones = true;
+}
 
   GuardarProyecciones(){
     if(this.lineasCalculadora.length==0){

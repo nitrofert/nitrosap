@@ -1,3 +1,4 @@
+    <!--
     <div class="grid">
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0">
@@ -235,5 +236,18 @@
            </div>
         </div>
     </div>
+</div>
+-->
+<!--<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>-->
+<div class="grid">
+    <div *ngIf="mostrarDashboardGS">
+        Dashboard Generador Solped
+    </div>
+    <div *ngIf="mostrarDashboardAC">
+        Dashboard Analista de Compra
+    </div>
+    <div *ngIf="mostrarDashboardAS">
+        Dashboard Aprobador Solped
+    </div>    
 </div>
 

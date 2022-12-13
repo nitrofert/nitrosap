@@ -118,6 +118,24 @@ export class FormEntradaComponent implements OnInit {
   loading:boolean = false; // Controla el spiner de cargue del listado de lineas de la solped
   entradaEnviadaSAP: string = "N";
 
+  formularioEvaluacionProveedor:boolean = false; //
+
+  tiposEvaluacion:any[]=[{label:"Servicio"},{label:"Bienes"}];
+  U_NF_TIPO_HE:string = "";
+
+  oportunidad:any[] = [{label:"SI", value:40},{label:"NO", value:0}];
+  U_NF_BIEN_OPORTUNIDAD:string="";
+  tiempo:any[] = [{label:"SI", value:30},{label:"NO", value:0}];
+  U_NF_SERVICIO_TIEMPO:string="";
+  seguridad:any[] = [{label:"SI", value:10},{label:"NO", value:0}];
+  U_NF_SERVICIO_SEGURIDAD:string="";
+  ambiente:any[] = [{label:"SI", value:10},{label:"NO", value:0}];
+  U_NF_SERVICIO_AMBIENTE:string="";
+  U_NF_SERVICIO_CALIDAD:number=0;
+  U_NF_PUNTAJE_HE:number=0;
+  U_NF_CALIFICACION:string="";
+  color_calificacion:string="text-red-700";
+  footer:string="";
 
 
 
@@ -570,6 +588,49 @@ export class FormEntradaComponent implements OnInit {
       this.calculatTotales();
     }
 
+    VerEvaluacionProveedor(){
+      this.formularioEvaluacionProveedor = true;
+    }
+
+    seleccionarTipoEvaluacion(){
+      this.U_NF_BIEN_OPORTUNIDAD='NO';
+      this.U_NF_SERVICIO_CALIDAD=0;
+      this.U_NF_SERVICIO_TIEMPO='NO';
+      this.U_NF_SERVICIO_SEGURIDAD='NO';
+      this.U_NF_SERVICIO_AMBIENTE='NO';
+      this.calcularEvaluacion();
+    }
+
+    calcularEvaluacion(){
+      let puntuacion =0;
+      if(this.U_NF_TIPO_HE=='Bienes'){
+        
+        if(this.tiempo.filter(data =>data.label === this.U_NF_BIEN_OPORTUNIDAD).length>0){
+          puntuacion = puntuacion + (this.oportunidad.filter(data =>data.label === this.U_NF_BIEN_OPORTUNIDAD)[0].value);
+        }
+         
+          puntuacion = puntuacion + ((this.U_NF_SERVICIO_CALIDAD*60)/100);
+      }else{
+        //console.log(this.U_NF_SERVICIO_CALIDAD,this.U_NF_SERVICIO_TIEMPO, this.U_NF_SERVICIO_SEGURIDAD, this.U_NF_SERVICIO_AMBIENTE);
+        if(this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_TIEMPO).length>0){
+          puntuacion = puntuacion + (this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_TIEMPO)[0].value);
+        }
+       
+        puntuacion = puntuacion + ((this.U_NF_SERVICIO_CALIDAD*50)/100);
+        if(this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_SEGURIDAD).length>0){
+          puntuacion = puntuacion + (this.seguridad.filter(data =>data.label === this.U_NF_SERVICIO_SEGURIDAD)[0].value);
+        }
+        if(this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_AMBIENTE).length>0){
+          puntuacion = puntuacion + (this.ambiente.filter(data =>data.label === this.U_NF_SERVICIO_AMBIENTE)[0].value);
+        }
+       
+      }
+      this.U_NF_PUNTAJE_HE= puntuacion;
+      this.U_NF_CALIFICACION = puntuacion<=100 && puntuacion>=90?'Excelente':puntuacion<=89 && puntuacion>=60?'Bueno':'Regular';
+      this.color_calificacion = puntuacion<=100 && puntuacion>=90?'text-green-600':puntuacion<=89 && puntuacion>=60?'text-yellow-400':'text-red-700';
+
+    }
+
     validarCantidad():boolean{
       let resultadoValidacionForm = false;
       if(this.cantidad_pendiente < this.cantidad){
@@ -659,9 +720,11 @@ export class FormEntradaComponent implements OnInit {
     GuardarEntrada(){
      
       this.envioFormulario = true;
-      if( this.clase &&  this.serie &&   this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
+      if( this.clase &&  this.serie &&   this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad ){
         if(this.lineasEntrada.length > 0){
 
+          //Evaluar los campos de la evaluacion de proveedores
+          if(this.U_NF_CALIFICACION!=""){
             if(this.lineasEntrada.filter(item =>item.cantidad ===0 && item.LineStatus==='bost_Open').length!=this.lineasEntrada.length){
 
               if(this.lineasEntrada.filter(item =>item.cantidad ===0 && item.LineStatus==='bost_Open').length>0){
@@ -671,14 +734,17 @@ export class FormEntradaComponent implements OnInit {
                 this.messageService.add({key: 'c', sticky: true, severity:'warn', summary:'Confirmación', detail:`¿Esta seguro de realizar el registro de la entrada?`});
                 
               }
-              
-             
-
 
             }else{
               this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar al menos una línea en la entrada'});
               this.envioFormulario = false;
             }
+          }else{
+            this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe realizar la evaluación del proveedor'});
+              this.envioFormulario = false;
+          }
+
+            
           //this.submittedBotton = true;
           //console.log(this.solped, this.solpedDetLines);
   
@@ -713,14 +779,23 @@ export class FormEntradaComponent implements OnInit {
           comments:this.comentarios,
           trm:this.trm,
           currency:this.currency==='COP'?'$':this.currency,
-          pedidonumsap:this.pedidonumsap
+          pedidonumsap:this.pedidonumsap,
+          U_NF_BIEN_OPORTUNIDAD:this.U_NF_BIEN_OPORTUNIDAD,
+          U_NF_SERVICIO_CALIDAD:this.U_NF_SERVICIO_CALIDAD,
+          U_NF_SERVICIO_TIEMPO:this.U_NF_SERVICIO_TIEMPO,
+          U_NF_SERVICIO_SEGURIDAD:this.U_NF_SERVICIO_SEGURIDAD,
+          U_NF_SERVICIO_AMBIENTE:this.U_NF_SERVICIO_AMBIENTE,
+          U_NF_TIPO_HE:this.U_NF_TIPO_HE,
+          U_NF_PUNTAJE_HE:this.U_NF_PUNTAJE_HE,
+          U_NF_CALIFICACION:this.U_NF_CALIFICACION,
+          footer:this.footer
         },
         EntradaDet:this.lineasEntrada.filter(item =>item.cantidad !==0 && item.LineStatus==='bost_Open')
       }
 
       //if(this.lineasEntrada) data.entrada.id = this.entradaEditar;
 
-      //console.log(data);      
+      console.log(data);      
       this.onNewEntrada.emit(data);              
 
       this.envioFormulario = false;

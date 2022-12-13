@@ -11,7 +11,7 @@
             </div>
             <div class="grid p-fluid">
                 <div class="col-6">
-                    <button type="button" pButton (click)="onConfirm()" label="Yes" class="p-button-success"></button>
+                    <button type="button" pButton (click)="onConfirm()" label="Si" class="p-button-success"></button>
                 </div>
                 <div class="col-6">
                     <button type="button" pButton (click)="onReject()" label="No" class="p-button-secondary"></button>
@@ -70,7 +70,7 @@
                                     styleClass="w-full" 
                                     inputId="itemCode" [autofocus]="true"
                                     panelStyleClass="text-sm sm:ml-2" 
-                                    placeholder="Escriba el codigo ó nombre del item para buscar"
+                                    placeholder="Escriba el código o nombre del ítem para buscar"
                                     [disabled]="envioForm"
                                     
                                     [ngClass]="{'ng-invalid ng-dirty' :  busqueda && descripcion==''}">
@@ -97,7 +97,7 @@
 
             <div class="grid">
                 <div class="field col">
-                    <label htmlFor="zona">Zona </label>
+                    <label htmlFor="zona">Zona</label>
                     
 
                     <p-dropdown [options]="zonas" 
@@ -143,12 +143,18 @@
                     </p-calendar>
                 </div>
             </div>
+            <div *ngIf=" loadingSimular===true"class="field col">
+                <p-divider></p-divider>   
+                <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+                <p-divider></p-divider>
+            </div>
             <div class="grid">
+                
                 <div class="field col">
                     <p-button label="Simular" 
                               icon="pi pi-list" 
                               (onClick)="simular()"
-                              [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || envioForm"
+                              [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].read_accion || envioForm"
                               styleClass="p-button-outlined mb-2 p-button-primary p-button-sm"></p-button>
                 </div>
                 <!--<div class="field col">
@@ -344,7 +350,7 @@
 
                 <th>
                     <div class="flex justify-content-between align-items-center">
-                        Presupuesto de venta MP
+                        Presupuesto de consumo MP
                    
                     </div>
                 </th>
@@ -393,10 +399,28 @@
                     {{ lineaCalculadora.fechasemana  | date}}
                 </td>
                 <td style="min-width: 7rem;">
-                    {{ lineaCalculadora.inventarioSemanaMP | number:'1.0-0'}}
+                    
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.inventarioSemanaMP | number:'1.0-0'}}
+                        <div *ngIf="lineaCalculadora.inventarioSemanaMP>0 && lineaCalculadora.lineaid==0" (click)="verUbicacionesTipoInv('MP')">
+                            <i  class="pi pi-search pt-2  p-text-secondary"  
+                                style="font-size: 1rem; cursor:pointer;"  
+                                pTooltip="Ver ubicación inventario"></i>
+                        </div>
+                        
+                    </div>
                 </td>
                 <td style="min-width: 7rem;">
-                    {{ lineaCalculadora.inventarioSemanaPT | number:'1.0-0'}}
+                    
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.inventarioSemanaPT | number:'1.0-0'}}
+                        <div *ngIf="lineaCalculadora.inventarioSemanaPT>0 && lineaCalculadora.lineaid==0" (click)="verUbicacionesTipoInv('PT')">
+                            <i  class="pi pi-search pt-2  p-text-secondary"  
+                                style="font-size: 1rem; cursor:pointer;"  
+                                pTooltip="Ver ubicación inventario"></i>
+                        </div>
+                        
+                    </div>
                 </td>
 
                 <td style="min-width: 7rem;">
@@ -507,7 +531,7 @@
         </ng-template>
         <ng-template pTemplate="loadingbody">
             <tr>
-                <td colspan="12" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
+                <td colspan="12" class="text-center">Cargando lineas de la calculadora. Por favor espere</td>
             </tr>
         </ng-template>
     </p-table>
@@ -516,7 +540,12 @@
 
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-close" (click)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
-        <p-button icon="pi pi-save" (click)="GuardarProyecciones()" label="Grabar proyecciones de compra" styleClass="p-button-text"></p-button>
+        <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
+                  icon="pi pi-save" 
+                  (click)="GuardarProyecciones()" 
+                  label="Grabar proyecciones de compra" 
+                  styleClass="p-button-text">
+        </p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -532,7 +561,7 @@
           [resizable]="false">
 
           <div *ngFor="let documento of listDocumentos" calss="grid">
-            <div class="card p-fluid col-6">
+            <div class="card p-fluid col-12">
                 <div class="grid">
                     <div class="col">Número documento:</div>
                     <div class="col">{{documento.docnum}}</div>
@@ -542,7 +571,7 @@
                     <div class="col">{{documento.proveedor}}</div>
                 </div>
                 <div class="grid">
-                    <div class="col">Fecha docuemnto:</div>
+                    <div class="col">Fecha necesidad:</div>
                     <div class="col">{{documento.fechadoc | date}}</div>
                 </div>
                 <div class="grid">
@@ -553,10 +582,15 @@
                     <div class="col">Item MP:</div>
                     <div class="col">{{documento.item}}</div>
                 </div>
-                <div class="grid">
-                    <div class="col">Cantidad:</div>
-                    <div class="col">{{documento.cantidad}}</div>
+                <div *ngIf="documento.tipo!='Proyectado'" class="grid">
+                    <div class="col">Cantidad {{documento.tipo=='Pedido'?'pedido':'solicitada'}}:</div>
+                    <div class="col">{{documento.cantidadPedida | number}}</div>
                 </div>
+                <div class="grid">
+                    <div class="col">Cantidad pendiente:</div>
+                    <div class="col">{{documento.cantidad | number}}</div>
+                </div>
+                
             </div>
           </div>
 
@@ -567,6 +601,56 @@
 
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-check" (click)="verdocumentos=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin Lista detalle Solped -->
+
+<!---Dialog ubicaciones inventario-->
+
+<p-dialog [header]="tituloUbicaciones" 
+          [(visible)]="verUbicaciones" 
+          [modal]="true" 
+          [style]="{width: '50vw'}"
+          [maximizable]="true" 
+          [draggable]="false" 
+          [resizable]="false">
+
+          <div *ngFor="let ubicacion of listUbicaciones" calss="grid">
+            <div class="card p-fluid col-12">
+                <div class="grid">
+                    <div class="col">Almacen:</div>
+                    <div class="col">{{ubicacion.WhsName}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Código almacen:</div>
+                    <div class="col">{{ubicacion.WhsCode}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Zona:</div>
+                    <div class="col">{{ubicacion.PENTRADA }}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Código zona:</div>
+                    <div class="col">{{ubicacion.State}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Item MP:</div>
+                    <div class="col">{{ubicacion.ItemName}}</div>
+                </div>
+                <div class="grid">
+                    <div class="col">Cantidad:</div>
+                    <div class="col">{{ubicacion.OnHand | number}}</div>
+                </div>
+            </div>
+          </div>
+
+          
+
+
+   
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="verUbicaciones=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -791,7 +875,7 @@
         <p-button   icon="pi pi-check" 
                     (click)="RegistrarLinea()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
-                    label="Ok"
+                    label="Grabar proyecciones"
                     styleClass="p-button-text">
         </p-button>
     </ng-template>

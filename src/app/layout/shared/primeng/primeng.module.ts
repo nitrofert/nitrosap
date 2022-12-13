@@ -28,6 +28,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { RatingModule } from 'primeng/rating';
 import { SelectButtonModule } from 'primeng/selectbutton'
+import {SkeletonModule} from 'primeng/skeleton';
 import { SliderModule } from 'primeng/slider';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { StyleClassModule } from 'primeng/styleclass';
@@ -72,6 +73,7 @@ import {FileUploadModule} from 'primeng/fileupload';
     RippleModule,
     SelectButtonModule,
     SidebarModule,
+    SkeletonModule,
     SliderModule,
     SplitButtonModule,
     StyleClassModule,

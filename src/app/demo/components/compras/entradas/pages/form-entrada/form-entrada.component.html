@@ -136,6 +136,19 @@
                         
                     </div>
                 </div>
+
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="comentarios">Observación de la entrada</label>
+                        <textarea rows="3" 
+                                  pInputTextarea
+                                  [(ngModel)]="footer"
+                                  class="w-full"
+                                  id="comments">
+                        </textarea>
+                        
+                    </div>
+                </div>
             </div>
             <p-divider></p-divider>
             <div class="grid">
@@ -151,15 +164,27 @@
                             </button>-->
                             <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
                         </div>
-                        <div *ngIf="lineasEntrada.length>0" class="field col">
-                            <p-button label="Ver Detalle" 
-                                      icon="pi pi-search" 
-                                      (onClick)="MostrarDetalle()"
-                                      [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].read_accion"
-                                      styleClass="p-button-outlined mb-2 p-button-secondary p-button-sm"
-                                      [badge]="lineasEntrada.length.toString()" 
-                                      badgeClass="p-badge-danger"></p-button>
-                        </div>
+                       
+                            <div *ngIf="lineasEntrada.length>0" class="field col">
+                                <p-button label="Ver Detalle" 
+                                          icon="pi pi-search" 
+                                          (onClick)="MostrarDetalle()"
+                                          [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].read_accion"
+                                          styleClass="p-button-outlined mb-2 p-button-secondary p-button-sm"
+                                          [badge]="lineasEntrada.length.toString()" 
+                                          badgeClass="p-badge-danger"></p-button>
+    
+                                         
+                            </div>
+                            <div *ngIf="lineasEntrada.length>0" class="field col">
+                                <p-button label="Evaluar proveedor" 
+                                icon="pi pi-star-fill" 
+                                (onClick)="VerEvaluacionProveedor()"
+                                [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion"
+                                styleClass="p-button-outlined mb-2 p-button-warning p-button-sm"></p-button>
+                            </div>
+                       
+                        
                     </div>
                 </div>
             </div>
@@ -874,6 +899,125 @@
     </ng-template>
 </p-dialog>
 <!---Fin dialog Form detalle -->
+
+<!---Dilalog FORM Form evaluacion proveedor-->
+<p-dialog header="Evaluación de proveedor" 
+          [(visible)]="formularioEvaluacionProveedor" 
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+          [style]="{width: '50vw'}" 
+          [maximizable]="true"
+          [draggable]="false" 
+          (onHide)="envioLinea= false" 
+          [resizable]="false">
+
+    <ng-template pTemplate="content">
+
+        <div class="grid">
+            <div class="field col">
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_TIPO_HE">Tipo de evaluación</label><i class="pi pi-info-circle mr-2" pTooltip="Define los parametros y valores de la evaluación"></i></div>
+                    
+                    <p-dropdown [options]="tiposEvaluacion" 
+						optionLabel="label" 
+						optionValue="label"
+						[(ngModel)]="U_NF_TIPO_HE" id="U_NF_TIPO_HE" name="U_NF_TIPO_HE" placeholder="Seleccione una opción"
+						[required]="true"
+						styleClass="p-dropdown-sm w-full"
+                        (onChange)="seleccionarTipoEvaluacion()">
+				    </p-dropdown>
+                    
+                </div>
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_BIEN_OPORTUNIDAD">Oprtunidad</label><i class="pi pi-info-circle mr-2" pTooltip="Cumplió al menos en un 70% Con la fecha de entrega del bien VS la fecha acordada en Orden de Compra"></i></div>
+                    <p-dropdown [options]="oportunidad" 
+						optionLabel="label" 
+						optionValue="label"
+						[(ngModel)]="U_NF_BIEN_OPORTUNIDAD" id="U_NF_BIEN_OPORTUNIDAD" name="U_NF_BIEN_OPORTUNIDAD" placeholder="Seleccione Si o No"
+						[required]="true"
+						styleClass="p-dropdown-sm w-full"
+                        [disabled]="U_NF_TIPO_HE==''|| U_NF_TIPO_HE=='Servicio'"
+                        (onChange)="calcularEvaluacion()">
+				    </p-dropdown>
+                </div>
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_SERVICIO_CALIDAD">Calidad {{U_NF_SERVICIO_CALIDAD}}%</label><i class="pi pi-info-circle mr-2" pTooltip="Nivel de cumplimiento de las especificaciones técnicas ofertadas"></i></div>
+                    <p-slider id="U_NF_SERVICIO_CALIDAD" 
+                              name="U_NF_SERVICIO_CALIDAD" 
+                              [(ngModel)]="U_NF_SERVICIO_CALIDAD" 
+                              [min]="0" 
+                              [max]="100"
+                              [disabled]="U_NF_TIPO_HE==''"
+                              (onChange)="calcularEvaluacion()"></p-slider>
+                </div>
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_SERVICIO_TIEMPO">Tiempo</label><i class="pi pi-info-circle mr-2" pTooltip="Cumplió con el tiempo de la prestación del servicio VS el tiempo acodado en contrato"></i></div>
+                    <p-dropdown [options]="tiempo" 
+						optionLabel="label" 
+						optionValue="label"
+						[(ngModel)]="U_NF_SERVICIO_TIEMPO" id="U_NF_SERVICIO_TIEMPO" name="U_NF_SERVICIO_TIEMPO" placeholder="Seleccione Si o No"
+						[required]="true"
+						styleClass="p-dropdown-sm w-full"
+                        [disabled]="U_NF_TIPO_HE==''|| U_NF_TIPO_HE=='Bienes'"
+                        (onChange)="calcularEvaluacion()">
+				    </p-dropdown>
+                </div>
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_SERVICIO_SEGURIDAD">Seguridad {{U_NF_SERVICIO_SEGURIDAD}}%</label><i class="pi pi-info-circle mr-2" pTooltip="Cumplió al 100% con los estandares  de seguridad minimos exigibles según la naturaleza del servicio prestado, tales como  Hiegiene, EPPS, Certificaciones se sgeuridad."></i></div>
+                    
+                        <p-dropdown [options]="seguridad" 
+                                optionLabel="label" 
+                                optionValue="label"
+                                [(ngModel)]="U_NF_SERVICIO_SEGURIDAD" id="U_NF_SERVICIO_SEGURIDAD" name="U_NF_SERVICIO_SEGURIDAD" placeholder="Seleccione Si o No"
+                                [required]="true"
+                                styleClass="p-dropdown-sm w-full"
+                                [disabled]="U_NF_TIPO_HE==''|| U_NF_TIPO_HE=='Bienes'"
+                                (onChange)="calcularEvaluacion()">
+                            </p-dropdown>
+                </div>
+
+                <div class="field col">
+                    <div class="flex justify-content-between"><label for="U_NF_SERVICIO_AMBIENTE">Ambiente {{U_NF_SERVICIO_AMBIENTE}}%</label><i class="pi pi-info-circle mr-2" pTooltip="Cumplió al 100% con la normatividad legal ambientas exigibles según la naturaleza del servicio prestado, tales como manejo de residuos e impacto ambiental."></i></div>
+                    <p-dropdown [options]="ambiente" 
+                    optionLabel="label" 
+                    optionValue="label"
+                    [(ngModel)]="U_NF_SERVICIO_AMBIENTE" id="U_NF_SERVICIO_AMBIENTE" name="U_NF_SERVICIO_AMBIENTE" placeholder="Seleccione Si o No"
+                    [required]="true"
+                    styleClass="p-dropdown-sm w-full"
+                    [disabled]="U_NF_TIPO_HE==''|| U_NF_TIPO_HE=='Bienes'"
+                    (onChange)="calcularEvaluacion()">
+                </p-dropdown>
+                </div>
+            </div>
+            <div class="field col">
+                <div class="field col">
+                    
+                    <div class="grid flex justify-content-center  text-8xl pt-8">
+                        {{U_NF_PUNTAJE_HE | number }} %
+                    </div>
+                    <div [class]="'grid flex justify-content-center  text-8xl pt-8 '+color_calificacion">
+                        {{ U_NF_CALIFICACION }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       
+
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (click)="formularioEvaluacionProveedor=false"                     
+                    [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
+                    label="Ok"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin dialog Form evaluacion proveedor -->
+
 <p-toast key="c" (onClose)="onReject()" [baseZIndex]="5000">
     <ng-template let-message pTemplate="message">
         <div class="flex flex-column" style="flex: 1">

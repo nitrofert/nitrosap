@@ -8,14 +8,14 @@ import { Injectable } from '@angular/core';
   })
 export class UrlApiService {
 
-    env:string = 'dev';
+    env:string = 'test';
     url_api:string ="";
     headers:any;
     constructor() {}
 
     getUrlAPI():string{
         
-        this.url_api= this.env==='dev'?'http://localhost:3001':'http://backend.nitrofert.com.co';
+        this.url_api= this.env==='dev'?'http://localhost:3001':this.env==='test'?'http://backend.dev.nitrofert.com.co':'http://backend.nitrofert.com.co';
         //console.log('url api:',this.url_api);
         return this.url_api;
     }

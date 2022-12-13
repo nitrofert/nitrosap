@@ -1,0 +1,236 @@
+<p-toast></p-toast>
+<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
+<div class="grid">
+	<div class="col-12">
+		<div class="card">
+			
+			<p-table #dt1 
+					 [value]="presupuestos" 
+					 dataKey="id" 
+					 [rows]="10" 
+					 [loading]="loading" 
+					 [rowHover]="true" 
+					 styleClass="p-datatable-gridlines p-datatable-sm" 
+					 [paginator]="true" 
+					 [globalFilterFields]="['id','fechasemana','semana','itemcode','codigozona','descripcion']" 
+					 selectionMode="multiple" 
+					 [(selection)]="presupuestoSeleccionado" 
+					 responsiveLayout="scroll">
+				<ng-template pTemplate="caption">
+					<div class="flex justify-content-between flex-column sm:flex-row">
+						<div>
+							<button pButton 
+									pTooltip="Limpiar" tooltipPosition="bottom" placeholder="Bottom"  
+									class="p-button-outlined mb-2 mr-2 p-button-sm" 
+									icon="pi pi-filter-slash"
+									(click)="clear(dt1)">
+							</button>
+
+                            <button pButton
+									*ngIf="permisosUsuarioPagina[0].create_accion " 
+									pTooltip="Cargar presupuesto" tooltipPosition="bottom" placeholder="Bottom"  
+									class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+									icon="pi pi-cloud-upload"
+									[disabled]="!permisosUsuarioPagina[0].create_accion"
+									(click)="cargarPresupuesto()">
+							</button>
+						</div>
+						<span class="p-input-icon-left mb-2">
+							<i class="pi pi-search"></i>
+							<input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Buscar por palabra clave" class="w-full p-inputtext-sm"/>
+						</span>
+					</div>
+				</ng-template>
+				<ng-template pTemplate="header">
+					<tr>
+						<th style="width: 3rem">
+                            <!--<p-tableHeaderCheckbox></p-tableHeaderCheckbox>-->
+                        </th>
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Id
+								<p-columnFilter type="text" field="id" display="menu" placeholder="Buscar por código presupuesto"></p-columnFilter>
+							</div>
+						</th>
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Fecha
+								<p-columnFilter type="date" field="fechasemana" display="menu"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Semana
+								<p-columnFilter type="text" field="semana" display="menu" placeholder="Buscar por semana"></p-columnFilter>
+							</div>
+						</th>
+
+                        
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Código item
+								<p-columnFilter type="text" field="itemcode" display="menu" placeholder="Buscar por código item"></p-columnFilter>
+							</div>
+						</th>
+						
+						
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Descripción item
+								<p-columnFilter type="text" field="descripcion" display="menu" placeholder="Buscar por descripción item"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Código zona
+								<p-columnFilter type="text" field="codigozona" display="menu" placeholder="Buscar por codigo zona"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Zona
+								<p-columnFilter field="codigozona" 
+												matchMode="equals" 
+												display="menu" 
+												placeholder="Buscar por zona"
+												[showMatchModes]="false" 
+												[showOperator]="false">
+
+												<ng-template pTemplate="filter" let-value let-filter="filterCallback">
+													<p-dropdown [ngModel]="value" [options]="zonas" (onChange)="filter($event.value)" placeholder="Any">
+														<ng-template let-option pTemplate="item">
+															<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+														</ng-template>
+													</p-dropdown>
+												</ng-template>
+
+								</p-columnFilter>
+							</div>
+						</th>
+						
+                        
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Cantidad presupuesto
+								
+							</div>
+						</th>
+                        
+						<th>
+
+						</th>
+
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-item>
+					<tr>
+						<td>
+                            <p-tableCheckbox [value]="item"></p-tableCheckbox>
+                        </td>
+						<td style="min-width: 12rem;">
+							{{ item.id }}
+						</td>
+						<td style="min-width: 12rem;">
+							{{ item.fechasemana | date}}
+						</td>
+						
+						<td style="min-width: 12rem;">
+							{{ item.semana }}
+						</td>
+
+                        <td style="min-width: 12rem;">
+							{{ item.itemcode }}
+						</td>
+						<td style="min-width: 12rem;">
+							{{ item.descripcion }}
+						</td>	
+                        <td style="min-width: 12rem;">
+							{{ item.codigozona }}
+						</td>
+                        <td style="min-width: 12rem;">
+							{{ item.zona }}
+						</td>
+                        <td style="min-width: 12rem;">
+							{{ item.cantidad | number }}
+						</td>
+                       
+						<td>
+							
+						</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="9" class="text-center">No se econtraron lineas de presupuesto de venta.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="loadingbody">
+					<tr>
+						<td colspan="9" class="text-center">Cargando presupeusto de venta. Por favor espere</td>
+					</tr>
+				</ng-template>
+    		</p-table>
+		</div>
+
+	</div>
+</div>
+
+<!---Dilalog FORM  upload CSV presupuesto-->
+<p-dialog header="Cargar presupuesto" 
+          [(visible)]="formularioCSV" 
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+          [style]="{width: '50vw'}" 
+          [maximizable]="true"
+          [draggable]="false" 
+          (onHide)="loadingCargueCSV=false;" 
+          [resizable]="false">
+
+    <ng-template pTemplate="content">
+        
+        
+        <div class="grid">
+            <div class="field col">
+                <p-fileUpload   name="demo2[]" 
+                                chooseLabel="Seleccionar"
+                                cancelLabel="Cancelar"
+                                [multiple]="false" 
+                                accept=".csv,.txt"
+                                (onSelect)="onLoad2($event)"
+                                [showUploadButton]="false"
+                                [maxFileSize]="5000000"
+                                styleClass="w-full"
+                                class="w-full"
+                                [ngClass]="{'ng-invalid ng-dirty' :  !fileTmp2 }">
+                                <ng-template pTemplate="content">
+                                    <ul *ngIf="uploadedFiles2.length">
+                                        <li *ngFor="let file of uploadedFiles2">{{file.name}} - {{file.size}} bytes</li>
+                                    </ul>
+                                </ng-template>
+                </p-fileUpload>
+                
+                <div *ngIf="loadingCargueCSV" class="field col">
+                    
+                    <p-divider></p-divider>   
+                    <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+                    <p-divider></p-divider>
+                </div>
+                
+            </div>
+            
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (click)="adicionarCSV()"                     
+                    [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !cargueValido" 
+                    label="Ok"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->

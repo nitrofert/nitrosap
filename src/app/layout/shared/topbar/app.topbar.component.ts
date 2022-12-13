@@ -62,6 +62,15 @@ export class AppTopBarComponent implements OnInit {
      }
 
      salir(){
+        this.authService.logOut(this.authService.getToken())
+            .subscribe({
+              next: (result) => {
+                console.log(result);
+              },
+              error: (err) => {
+                console.log(err);
+              }
+            });
         localStorage.removeItem('tokenid');
         localStorage.removeItem('infoUsuario');
         localStorage.removeItem('perfilesUsuario');

@@ -620,6 +620,8 @@ clearItemCode(){
  
 }
 
+descargarPlantilla(){}
+
 cuentasxDependencia(){
   
   this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)

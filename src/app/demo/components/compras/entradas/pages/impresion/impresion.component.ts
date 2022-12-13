@@ -40,6 +40,9 @@ export class ImpresionComponent implements OnInit {
   tipodoc:string ="";
   espacio:number =210;
   labelTipoDoc:string ="ENTRADA DE MERCANCIA";
+  footer:string ="";
+  U_NF_PUNTAJE_HE:number =0;
+  U_NF_CALIFICACION:string ="";
 
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -82,6 +85,9 @@ export class ImpresionComponent implements OnInit {
               this.impuesto=this.encabezado.VatSum;
               this.comentario= this.encabezado.Comments;
               this.tipodoc = this.encabezado.DocType;
+              this.footer = this.encabezado.Footer;
+              this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
+              this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
 
               if(this.tipodoc=='S'){ 
                 this.espacio = this.espacio  - 100;

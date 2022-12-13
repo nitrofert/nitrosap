@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard.component';
 
 import { DashboardsRoutingModule } from './dashboard-routing.module';
 import { PrimengModule } from 'src/app/layout/shared/primeng/primeng.module';
+import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 
 /*import { ChartModule } from 'primeng/chart';
 import { MenuModule } from 'primeng/menu';
@@ -26,7 +27,8 @@ import { PanelMenuModule } from 'primeng/panelmenu';*/
         PanelMenuModule,
         ButtonModule,*/
         DashboardsRoutingModule,
-        PrimengModule
+        PrimengModule,
+        BreadCrumbModule
     ],
     declarations: [DashboardComponent]
 })

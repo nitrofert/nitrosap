@@ -126,14 +126,17 @@
 
             </div>
             <div *ngIf="tipodoc=='S'" class="w-full text-justify text-xs">
-                El día de hoy se reunieron en Nitrofert S.A.S. el representante de la empresa Nitrofert S.A.S. y el representante de la empresa {{ proveedor.CardName }} quienes tienen bajo su responsabilidad la ejecución de la presente obra y/o servicio, para hacer entrega y recibo de la obra y/o servicio 
+                El día de hoy se reunieron en {{nombreEmpresa}} S.A.S. el representante de la empresa {{nombreEmpresa}} S.A.S. y el representante de la empresa {{ proveedor.CardName }} quienes tienen bajo su responsabilidad la ejecución de la presente obra y/o servicio, para hacer entrega y recibo de la obra y/o servicio 
 descrito en la presente hoja de entrada.
 El proveedor declara que durante el servicio u obra prestada cumplió a cabalidad con el pago de las obligaciones laborales y prestaciones a su cargo, y por lo 
-tanto se obliga a mantener indemne a Nitrofert S.A.S. de cualquier reclamación judicial o extrajudicial que hicieren sus trabajadores o extrabajadores 
+tanto se obliga a mantener indemne a {{nombreEmpresa}} S.A.S. de cualquier reclamación judicial o extrajudicial que hicieren sus trabajadores o extrabajadores 
 directamente al proveedor como empleador o exempleador o las entidades de seguridad social o por el pago de aportes parafiscales y por consiguiente asume 
 todas las costas judiciales y extrajudiciales que demanden su defensa, incluyendo los honorarios de abogados, así como la totalidad del valor de la condena que 
 eventualmente pudiere proferirse en su contra.
 
+            </div>
+            <div class="w-full text-justify text-xs">
+               {{footer}}
             </div>
             <p-fieldset legend="Firmas" styleClass="w-full border-solid border-900">
                 <table style="width: 100%;" class="pt-4">
@@ -145,7 +148,7 @@ eventualmente pudiere proferirse en su contra.
                         <td align="center" width="32%" class="border-bottom-2"></td>
                     </tr>
                     <tr>
-                        <td align="center" class="text-sm text-900 font-semibold">DEPARTAMENTO DE COMPRAS</td>
+                        <td align="center" class="text-sm text-900 font-semibold">REALIZADO POR</td>
                         <td></td>
                         <td align="center" class="text-sm text-900 font-semibold">RECIBE</td>
                         <td></td>

@@ -62,12 +62,16 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   cantidadkl!:any;
   comentarios:any;
   nf_tipocarga:string="";
+  agentes:any[] = [{tipo:'Multiport'},{tipo:'Pharo'},{tipo:'Deep Blue'}];
   nf_agente:string="";
   nf_motonave:string="";
   nf_puertosalida:string ="";
   nf_pago:string ="";
   nf_Incoterms:string ="";
+  tipo_Incoterms:any[] = [{tipo:'CIF'},{tipo:'CFR'},{tipo:'FCA'},{tipo:'FOB'}];
   loadingSave:boolean = false;
+  tiposdecarga:any[] = [{tipo:'Empacado'},{tipo:'Granel'}];
+  tituloFormEditPedido:string = "";
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
   approves:any[] = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
@@ -150,6 +154,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   asignarCampos(){ 
     console.log(this.selectedItem[0]);
     let hora = 60 * 60000;
+    this.tituloFormEditPedido = 'Editar pedido '+this.selectedItem[0].DocNum;
     
     //this.u_nf_status = this.estados.filter(estado=>estado.name.toLowerCase() === this.selectedItem[0].U_NF_STATUS.toLowerCase())[0].name;
     this.u_nf_status=this.selectedItem[0].U_NF_STATUS=='Solicitado'?'Por cargar':this.selectedItem[0].U_NF_STATUS;

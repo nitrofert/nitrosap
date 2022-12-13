@@ -11,6 +11,8 @@ import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.mo
 import { MrpRoutingModule } from './mrp-routing.module';
 import { MrpComponent } from './mrp.component';
 import { FromTableCalculadoraComponent } from './pages/from-table-calculadora/from-table-calculadora.component';
+import { PresupuestoVentaComponent } from './pages/presupuesto-venta/presupuesto-venta.component';
+import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos.component';
 
 
 
@@ -21,7 +23,9 @@ import { FromTableCalculadoraComponent } from './pages/from-table-calculadora/fr
 @NgModule({
   declarations: [
     MrpComponent,
-    FromTableCalculadoraComponent
+    FromTableCalculadoraComponent,
+    PresupuestoVentaComponent,
+    MaximosMinimosComponent
   ],
   imports: [
     CommonModule,

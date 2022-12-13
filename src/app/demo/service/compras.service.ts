@@ -336,6 +336,15 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
+  getPresupuestosVentaAll(token:string):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/presupuestosVenta`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   getZonas(token:string):Observable<any[]>{
    
    
@@ -354,5 +363,38 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
+  getMaxMinAll(token:string):Observable<any[]>{
+   
+   
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/maxminitemzona`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
 
+  cargarPresupuestoCVS(token:string,data:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/carguepresupuesto`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  
+
+  cargarPresupuestoCVS2(token:string,data:FormData):Observable<any[]>{
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/carguepresupuesto2`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  
+
+  cargarMaxMinCVS(token:string,data:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/carguemaxmin`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
 }

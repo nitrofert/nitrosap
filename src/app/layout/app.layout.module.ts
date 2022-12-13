@@ -14,10 +14,11 @@ import { AppSidebarComponent } from "./shared/sidebar/app.sidebar.component";
 import { AppLayoutComponent } from './app.layout.component';
 import { AppMenuComponent } from './shared/menu/app.menu.component';
 
+
 /************ modulos personalizados  *******************/
 import { AppConfigModule } from './config/config.module';
 import { PrimengModule } from './shared/primeng/primeng.module';
-
+//import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 
 
 
@@ -36,6 +37,7 @@ import { PrimengModule } from './shared/primeng/primeng.module';
         FormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
+        //BreadCrumbModule,
         //InputTextModule,
         //SidebarModule,
         //BadgeModule,

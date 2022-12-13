@@ -182,4 +182,20 @@ export class AuthService  {
   return this.http.get<any[]>(url,requestOptions);
   }
 
+  
+logOut(token:string): Observable<any>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/auth/logout`;
+  ////console.log(url);
+  return this.http.get<any>(url,requestOptions);
+
+}
+
+
+
 }
