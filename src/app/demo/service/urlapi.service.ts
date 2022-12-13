@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
   })
 export class UrlApiService {
 
-    env:string = 'test';
+    env:string = 'prod';
     url_api:string ="";
     headers:any;
     constructor() {}
