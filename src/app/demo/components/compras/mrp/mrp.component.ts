@@ -246,7 +246,7 @@ export class MrpComponent implements OnInit {
     this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: (dependenciasUser) => {
-        console.log(dependenciasUser);
+        //console.log(dependenciasUser);
          for (let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
         }
@@ -300,7 +300,7 @@ export class MrpComponent implements OnInit {
     this.comprasService.getInventariosMpXE(this.authService.getToken(),data)
         .subscribe({
             next: (inventarios:any) => {
-                console.log(inventarios);
+                //console.log(inventarios);
                 this.inventariosMP = inventarios;
                 this.ubicacionesInventarioMP = inventarios.ubicacionInvetarioMP;
                 this.ubicacionesInventarioPT = inventarios.ubicacionInvetarioPT;
@@ -342,18 +342,22 @@ export class MrpComponent implements OnInit {
           });
   }
 
-  gePresupuestoItemZona(){
+  async gePresupuestoItemZona(){
+
+    let fechaInicioSemana = await this.fechaIniciSemana(this.fechaactual);
+
     let data = {
       item:this.item.ItemCode,
       zona:this.zona.State,
-      fechainicio:this.fechaactual,
+      fechainicio:fechaInicioSemana,
+      //fechainicio:this.fechaactual,
       fechafin:this.fechaProyeccion
     };
 
     this. comprasService.getPresupuestosVenta(this.authService.getToken(), data)
         .subscribe({
             next: (result) =>{
-                //console.log(result);
+                //console.log('presupuesto',result);
                 this.presupuestoMPVenta = result;
                 this.getMaxMinItemZona();
             },
@@ -499,11 +503,22 @@ export class MrpComponent implements OnInit {
     }
   }
 
+  fechaIniciSemana(fecha:Date):Date{
+    let diaDeLaSemana = fecha.getUTCDay()==0?7:fecha.getUTCDay();
+    let numeroDiasRestar = diaDeLaSemana-1;
+    fecha.setDate(fecha.getDate()-numeroDiasRestar);
+
+    console.log(fecha,fecha.getDay());
+    return fecha;
+  }
+
 
   async calcularLineas(){
     let fechaInicioCalculadora = new Date(this.fechaactual) ;
         let fechaFinalCalculadora = new Date(this.fechaProyeccion) ;
-      
+
+        
+        
 
         let semanaFecha:any;
         let fechasemana:Date;
@@ -534,6 +549,7 @@ export class MrpComponent implements OnInit {
         for(;fechaInicioCalculadora<=fechaFinalCalculadora; fechaInicioCalculadora.setDate(fechaInicioCalculadora.getDate()+1)){
             
             semanaFecha = this.numeroDeSemana(fechaInicioCalculadora);
+            //console.log(semanaFecha);
             fechasemana = fechaInicioCalculadora;
 
             if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
@@ -803,6 +819,7 @@ export class MrpComponent implements OnInit {
     let presupuestoVentaMP:number=0;
     if(this.presupuestoMPVenta.length >0 && this.presupuestoMPVenta.filter(item => item.semana ==  semanaFecha).length>0 ){
       let filas = this.presupuestoMPVenta.filter(item => item.semana ==  semanaFecha);
+      //console.log(filas);
       for(let fila of filas){
         presupuestoVentaMP = presupuestoVentaMP+eval(fila.cantidad);
       }
