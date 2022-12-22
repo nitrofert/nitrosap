@@ -268,10 +268,29 @@
 
             <div class="grid">
                 <div class="field col">
-                    <label htmlFor="zonaseleccionada">Tolerancia {{tolerancia}} %</label>
+                    <div class="flex align-items-end flex-wrap mb-2">
+                        <div class="flex text-xl font-medium"><label htmlFor="zonaseleccionada">Tolerancia: </label></div>
+                        <div class="flex"><input pInputText 
+                            [(ngModel)]="tolerancia" 
+                            id="tolerancia" 
+                            name="tolerancia" 
+                            class="p-inputtext-sm text-center ml-1 mr-1"
+                            style="width: 60px;"
+                            (input)="modificaTolerancia()"
+                            type="number"/>
+                        </div>
+                        <div class="flex text-xl font-medium"><span> %</span></div>
+                        
+                        
+                        
+                    </div>
+                    
+                                  
+
                     <p-slider [(ngModel)]="tolerancia" 
                               [min]="-100" 
                               [max]="100"
+                              class="mt-4"
                               (onSlideEnd)="cambioTolerancia($event)"></p-slider>
                 </div>
             </div>
@@ -310,6 +329,12 @@
                 </th>
                 <th>
                     <div class="flex justify-content-between align-items-center">
+                        Semana del mes
+                        
+                    </div>
+                </th>
+                <th>
+                    <div class="flex justify-content-between align-items-center">
                         Inventario MP
                         
                     </div>
@@ -343,7 +368,7 @@
 
                 <th>
                     <div class="flex justify-content-between align-items-center">
-                        Compra proyectada
+                        Cantidad requerida
                         
                     </div>
                 </th>
@@ -397,6 +422,9 @@
                 </td>
                 <td style="min-width: 7rem;">
                     {{ lineaCalculadora.fechasemana  | date}}
+                </td>
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.semanaMes  }}
                 </td>
                 <td style="min-width: 7rem;">
                     

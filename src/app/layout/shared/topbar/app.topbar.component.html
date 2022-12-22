@@ -29,9 +29,9 @@
             <span>Imprimir</span>
         </button>
 
-        <button class="p-link layout-topbar-button" pTooltip="{{fullnameUser}}" tooltipPosition="bottom">
+        <button class="p-link layout-topbar-button" pTooltip="{{fullnameUser}}" (click)="verPerfil()" tooltipPosition="bottom">
             <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <span>Perfíl</span>
         </button>
 
         <button class="p-link layout-topbar-button" pTooltip="Salir" tooltipPosition="bottom" (click)="salir()">

@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { BusinessPartners } from 'src/app/demo/api/businessPartners';
 import { DependenciasUsuario, InfoUsuario, PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
 import { ItemsSAP } from 'src/app/demo/api/itemsSAP';
@@ -138,6 +140,24 @@ export class MrpComponent implements OnInit {
   verUbicaciones: boolean = false;
   ubicacionesInventarioMP:any;
   ubicacionesInventarioPT:any;
+
+  debouncer:Subject<number> = new Subject(); 
+
+  ultimaTolerancia:number = 0;
+
+  mesesAnio:any[] = [{mes:1, mesStr:'Enero'},
+                     {mes:2, mesStr:'Febrero'},
+                     {mes:3, mesStr:'Marzo'},
+                     {mes:4, mesStr:'Abril'},
+                     {mes:5, mesStr:'Mayo'},
+                     {mes:6, mesStr:'Junio'},
+                     {mes:7, mesStr:'Julio'},
+                     {mes:8, mesStr:'Agosto'},
+                     {mes:9, mesStr:'Septiembre'},
+                     {mes:10, mesStr:'Octubre'},
+                     {mes:11, mesStr:'Noviembre'},
+                     {mes:12, mesStr:'Diciembre'}];
+
   
   constructor(private rutaActiva: ActivatedRoute,
     private comprasService:ComprasService,
@@ -153,7 +173,7 @@ export class MrpComponent implements OnInit {
     this.getItems();
     this.getZonas();
     
-    
+    this.getSeries();
 
     //Cargar informacion del usuario
     this.getInfoUsuario();
@@ -172,6 +192,16 @@ export class MrpComponent implements OnInit {
     this.getMonedas(new Date());
     //Cargar impuestos
     this.getImpuestos();
+
+    this.debouncer
+    .pipe(debounceTime(300))
+    .subscribe( value =>{
+      console.log('debouncer: ',value);
+      let event = {value}
+      this.cambioTolerancia(event);
+    });
+
+    this.fechaInicioSemana(new Date('12/20/2022'));
   }
 
   getInfoUsuario(){
@@ -253,7 +283,7 @@ export class MrpComponent implements OnInit {
 
         setTimeout(()=>{
           let dependenciesTMP = this.dependenciasUsuario.filter((data => (data.dependence === 'VPCADSU2' && data.vicepresidency === 'VPCADSUM')));
-          console.log(dependenciesTMP);
+          //console.log(dependenciesTMP);
           
           //Llena locaciones
           for(let dependencia of dependenciesTMP){
@@ -343,9 +373,9 @@ export class MrpComponent implements OnInit {
   }
 
   async gePresupuestoItemZona(){
-
-    let fechaInicioSemana = await this.fechaIniciSemana(this.fechaactual);
-
+    
+    let fechaInicioSemana = await this.fechaInicioSemana(new Date(this.fechaactual));
+    console.log('Presupuesto');
     let data = {
       item:this.item.ItemCode,
       zona:this.zona.State,
@@ -458,7 +488,7 @@ export class MrpComponent implements OnInit {
     this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
         .subscribe({
             next: (series)=>{
-                console.log(series);
+                //console.log(series);
                 for(let item in series){
                   if(series[item].name=='SPMP'){
                     this.series.push(series[item]);
@@ -485,7 +515,7 @@ export class MrpComponent implements OnInit {
           next: (unidad)=>{
              
               this.unidad = unidad.value[0].PurchaseUnit;
-              console.log(this.unidad);
+              //console.log(this.unidad);
           },
           error: (err)=>{
             console.log(err);
@@ -497,31 +527,78 @@ export class MrpComponent implements OnInit {
     if(this.monedas.filter(moneda => moneda.Currency === currency).length >0){
       this.trm = this.monedas.filter(moneda => moneda.Currency === currency)[0].TRM;
       this.moneda = currency;
-      console.log(this.moneda);
+      //console.log(this.moneda);
     }else{
       this.trm = 0;
     }
   }
 
-  fechaIniciSemana(fecha:Date):Date{
-    let diaDeLaSemana = fecha.getUTCDay()==0?7:fecha.getUTCDay();
+  fechaInicioSemana(fecha:Date):Date{
+    let fechaTMP:Date = new Date(fecha);
+    let diaDeLaSemana = fecha.getUTCDay()==0?1:fecha.getUTCDay();
     let numeroDiasRestar = diaDeLaSemana-1;
-    fecha.setDate(fecha.getDate()-numeroDiasRestar);
+    fechaTMP.setDate(fecha.getDate()-numeroDiasRestar);
 
-    console.log(fecha,fecha.getDay());
-    return fecha;
+    
+
+    //console.log(fecha, diaDeLaSemana,fecha.getDate(),numeroDiasRestar,fechaTMP);
+    return fechaTMP;
+  }
+
+  siguienteMes(fecha:Date){
+    //console.log(fecha,fecha.getFullYear(),fecha.getMonth());
+
+    let anioMesSiguiente:number = fecha.getMonth()==11?fecha.getFullYear()+1:fecha.getFullYear();
+    let mesMesSiguiente:number = fecha.getMonth()==11?0:fecha.getMonth()+1;
+    //console.log('año',anioMesSiguiente,'mes',mesMesSiguiente);
+    let fechaInicioMesSiguiente = new Date(anioMesSiguiente, mesMesSiguiente,1);
+
+    return fechaInicioMesSiguiente;
+  }
+
+  async semanaDelMes(fecha:Date):Promise<string>{
+    let semanaMes:string ='';
+    
+    //let fechaInicioSemana = await this.fechaInicioSemana(new Date(fecha));
+    let fechaInicioSemana = ((fecha));
+    fechaInicioSemana.setHours(0,0,0);
+    console.log('Inicio semana',fechaInicioSemana);
+    //let siguienteMes = await this.siguienteMes(new Date(fecha));
+    let siguienteMes = await this.siguienteMes((fecha));
+    siguienteMes.setHours(0,0,0);
+    console.log('Siguiente mes',siguienteMes);
+
+    let fechaInicioSemanaSiguienteMes = await this.fechaInicioSemana((siguienteMes));
+    fechaInicioSemanaSiguienteMes.setHours(0,0,0);
+    console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
+    await console.log(fechaInicioSemana.getFullYear(),fechaInicioSemanaSiguienteMes.getFullYear(),fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth(),fechaInicioSemana.getDate(),fechaInicioSemanaSiguienteMes.getDate());
+
+    
+    let diaDelMes = fechaInicioSemana.getDate();
+    let diaFecha = fechaInicioSemana.getDay();
+
+    
+    let weekOfMonth = Math.ceil((diaDelMes - 1 - diaFecha) / 7);
+    //console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
+    let mesStr = this.mesesAnio.filter(mes =>mes.mes === (fechaInicioSemana.getMonth()+1))[0].mesStr.substring(0,3).toUpperCase();
+    
+    if(fechaInicioSemana.getFullYear()===fechaInicioSemanaSiguienteMes.getFullYear() && fechaInicioSemana.getMonth() === fechaInicioSemanaSiguienteMes.getMonth() && fechaInicioSemana.getDate()===fechaInicioSemanaSiguienteMes.getDate()){
+      weekOfMonth = 0;
+      mesStr = this.mesesAnio.filter(mes =>mes.mes === (siguienteMes.getMonth()+1))[0].mesStr.substring(0,3).toUpperCase();
+    }
+
+    semanaMes = `${(weekOfMonth+1)}S - ${mesStr}`;
+
+    return semanaMes;
   }
 
 
   async calcularLineas(){
     let fechaInicioCalculadora = new Date(this.fechaactual) ;
         let fechaFinalCalculadora = new Date(this.fechaProyeccion) ;
-
-        
-        
-
         let semanaFecha:any;
         let fechasemana:Date;
+        let semanaMes:string='';
         let inventarioSemanaMP:number= this.getInventarioInicial('MP');
         let inventarioSemanaPT:number= this.getInventarioInicial('PT');
         let inventarioSemanaMPZF:number=this.totalInicialMPZF;
@@ -530,8 +607,6 @@ export class MrpComponent implements OnInit {
         let compraProyectadaMP:number=0;
         let presupuestoVentaMP:number=0;
         let inventarioFinalSemanaMP:number=0;
-
-
         let inventarioTransitoProxima:number=0;
         let compraSolicitadaProximaSemana:number = 0;
         let compraProyectadaProximaSemana:number=0;
@@ -549,11 +624,36 @@ export class MrpComponent implements OnInit {
         for(;fechaInicioCalculadora<=fechaFinalCalculadora; fechaInicioCalculadora.setDate(fechaInicioCalculadora.getDate()+1)){
             
             semanaFecha = this.numeroDeSemana(fechaInicioCalculadora);
-            //console.log(semanaFecha);
+            
+            
+
+
             fechasemana = fechaInicioCalculadora;
+            //fechasemana = this.fechaInicioSemana(fechaInicioCalculadora);
 
             if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
 
+
+              /*let d = await this.fechaInicioSemana(new Date(fechaInicioCalculadora));
+              let date = d.getDate();
+              let day = d.getDay();
+
+              let weekOfMonth = Math.ceil((date - 1 - day) / 7);
+              console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
+              semanaMes = `${(weekOfMonth+1)}S - ${this.mesesAnio.filter(mes =>mes.mes === (d.getMonth()+1))[0].mesStr.substring(0,3).toUpperCase()}`;*/
+              
+            /*
+             let fechaInicioSemana = await this.fechaInicioSemana(new Date(fechaInicioCalculadora));
+             console.log('Inicio semana',fechaInicioSemana);
+             let siguienteMes = await this.siguienteMes(new Date(fechaInicioCalculadora));
+             console.log('Siguiente mes',siguienteMes);
+
+             let fechaInicioSemanaSiguienteMes = await this.fechaInicioSemana(new Date(siguienteMes));
+             console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
+             await console.log(fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth());
+            */
+             semanaMes = await this.semanaDelMes(new Date(fechaInicioCalculadora));
+             //semanaMes =''; 
               
               inventarioSemanaMPTR = (await this.calcularInventarioSemanaTR(semanaFecha))+inventarioTramsitoMPPreFecha;
               compraSolicitadaMP = (await this.calcularComprasSolicitadasSemana(semanaFecha))+inventarioSolicitadoMPPreFecha;
@@ -577,8 +677,9 @@ export class MrpComponent implements OnInit {
               //console.log(`Para ${fechaInicioCalculadora} el número de semana es ${semanaFecha} `);
               infoLinea = {
                 lineaid,
-                fechasemana:new Date(fechasemana),
+                fechasemana:this.fechaInicioSemana(new Date(fechasemana)),
                 semana: semanaFecha,
+                semanaMes,
                 inventarioSemanaMP,
                 inventarioSemanaPT,
                 inventarioSemanaMPZF,
@@ -586,6 +687,7 @@ export class MrpComponent implements OnInit {
                 compraSolicitadaMP,
                 compraProyectadaMP,
                 presupuestoVentaMP,
+                presupuestoVentaMPOriginal:presupuestoVentaMP,
                 inventarioFinalSemanaMP,
                 estadoCompra,
                 necesidadCompra,
@@ -594,7 +696,7 @@ export class MrpComponent implements OnInit {
                 classCantidad:inventarioFinalSemanaMP<this.minMpZona?'c-min-stock':inventarioFinalSemanaMP>this.maxMpZona?'c-max-stock':''
               }
 
-              console.log(semanaFecha,fechaInicioCalculadora);
+              //console.log(semanaFecha,fechaInicioCalculadora);
               //console.log(semanaFecha,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPZF,inventarioSemanaMPTR,compraSolicitadaMP,compraProyectadaMP,estadoCompra);
               //Calcular inventario inicial siguiente semana
               inventarioSemanaMP = inventarioFinalSemanaMP;
@@ -609,7 +711,7 @@ export class MrpComponent implements OnInit {
 
             }
         }
-        console.log(this.lineasCalculadora);
+        //console.log(this.lineasCalculadora);
 
         this.lienas = lineaid;
         this.busqueda= false;  
@@ -639,10 +741,13 @@ export class MrpComponent implements OnInit {
   let infoLinea:any;
   let fechasemana:Date;
   let semana:number = 0;
+  let semanaMes:string ='';
   let inventarioSemanaMP:number = 0;
   let inventarioSemanaMPTR:number = 0;
+
   let compraSolicitadaMP:number = 0;
   let presupuestoVentaMP:number = 0;
+  let presupuestoVentaMPOriginal =0;
   let compraProyectadaMP:number = 0;
   let inventarioFinalSemanaMP:number = 0;
   let inventarioSemanaPT:number = 0;
@@ -657,19 +762,22 @@ export class MrpComponent implements OnInit {
   let cantidadCompraSugerida:number = 0;
   let inventarioFinalSemanaSugerido:number = 0;
 
-  console.log(this.lineasCalculadora.length);
+  //console.log(this.lineasCalculadora.length);
  
   for (let linea of this.lineasCalculadora){
 
     //console.log(linea);
     fechasemana= new Date(linea.fechasemana);
     semana = linea.semana;
+    semanaMes = linea.semanaMes;
     inventarioSemanaMP = lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP;
     inventarioSemanaPT = linea.inventarioSemanaPT;     
     inventarioSemanaMPTR = linea.inventarioSemanaMPTR;
+    inventarioSemanaMPZF = linea.inventarioSemanaMPZF;
     compraSolicitadaMP = linea.compraSolicitadaMP;
     compraProyectadaMP = linea.compraProyectadaMP;
     presupuestoVentaMP = linea.presupuestoVentaMP;
+    presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
     inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)+eval(linea.compraProyectadaMP)-eval(linea.presupuestoVentaMP);
     //console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
 
@@ -688,6 +796,7 @@ export class MrpComponent implements OnInit {
       lineaid,
       fechasemana,
       semana,
+      semanaMes,
       inventarioSemanaMP,
       inventarioSemanaPT,
       inventarioSemanaMPZF,
@@ -696,6 +805,7 @@ export class MrpComponent implements OnInit {
       compraProyectadaMP,
       presupuestoVentaMP,
       inventarioFinalSemanaMP,
+      presupuestoVentaMPOriginal,
       estadoCompra:linea.estadoCompra,
       necesidadCompra,
       cantidadCompraSugerida,
@@ -704,7 +814,7 @@ export class MrpComponent implements OnInit {
       
     }
 
-    console.log(semana,linea.fechasemana);
+    //console.log(semana,linea.fechasemana);
     lineasRecalculo.push(infoLinea);
     //Calcular inventario inicial siguiente semana
     //inventarioSemanaMP = inventarioFinalSemanaMP;
@@ -749,14 +859,25 @@ export class MrpComponent implements OnInit {
        this.recalcular();
   }
 
+  modificaTolerancia(){
+
+    this.debouncer.next(this.tolerancia);
+
+   
+  }
+
+ 
   cambioTolerancia(event:any){
-    //console.log(event.value);
+    console.log(event.value);
+
+    
     for(let item of this.lineasCalculadora){
-       let nuevoPresupuesto = item.presupuestoVentaMP+(item.presupuestoVentaMP*(event.value/100));
+       let nuevoPresupuesto = item.presupuestoVentaMPOriginal+(item.presupuestoVentaMPOriginal*(event.value/100));
 
        //console.log(item.semana,item.presupuestoVentaMP,nuevoPresupuesto);
        item.presupuestoVentaMP = nuevoPresupuesto;
     }
+    //this.ultimaTolerancia = event.value;
     this.recalcular();
   }
 
@@ -831,7 +952,7 @@ export class MrpComponent implements OnInit {
     let compraProyectadaMP:number=0;
     if(this.inventarioProyectadoMP.length >0 && this.inventarioProyectadoMP.filter(item => this.numeroDeSemana(new Date(item.FECHANECESIDAD)) ==  semanaFecha).length>0 ){
       let filas = this.inventarioProyectadoMP.filter(item => this.numeroDeSemana(new Date(item.FECHANECESIDAD)) ==  semanaFecha);
-      console.log(semanaFecha,filas);
+      //console.log(semanaFecha,filas);
       for(let fila of filas){
         
         compraProyectadaMP = compraProyectadaMP+eval(fila.Quantity);
@@ -1087,6 +1208,7 @@ export class MrpComponent implements OnInit {
 
     
       //Llamar al wbservice de registro de la solped
+      //console.log(data);
       this.registrarSolped(data);
       
       //this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});

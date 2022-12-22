@@ -85,7 +85,7 @@ export class ImpresionComponent implements OnInit {
               this.impuesto=this.encabezado.VatSum;
               this.comentario= this.encabezado.Comments;
               this.tipodoc = this.encabezado.DocType;
-              this.footer = this.encabezado.Footer;
+              this.footer = this.encabezado.ClosingRemarks;
               this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
               this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
 

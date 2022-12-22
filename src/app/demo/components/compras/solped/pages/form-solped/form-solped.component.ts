@@ -410,12 +410,12 @@ export class FormSolpedComponent implements OnInit {
   getInformacionSolped(){
 
     if(this.solpedEditar){
-      //console.log('Informacion solped',this.solpedEditar);
+      console.log('Informacion solped',this.solpedEditar);
       //Cargar datos de la solped por el id
       this.comprasService.solpedById(this.authService.getToken(),this.solpedEditar)
           .subscribe({
                 next:  (solped)=>{
-                  //console.log(solped);
+                  console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
                   console.log(this.lineasSolped);
@@ -432,10 +432,15 @@ export class FormSolpedComponent implements OnInit {
                   this.codigoSap = this.infoSolpedEditar.solped.sapdocnum || '0';
                   
                   this.clase = this.infoSolpedEditar.solped.doctype || '';
-                  this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate);
-                  this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate);
-                  this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate);
-                  this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate);
+                  let hora = 60 * 60000;
+                  this.fechaContable = new Date (new Date(this.infoSolpedEditar.solped.docdate).getTime()+(hora*5));
+                  //this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate);
+                  this.fechaCaducidad = new Date (new Date(this.infoSolpedEditar.solped.docduedate).getTime()+(hora*5));
+                  //this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate);
+                  this.fechaDocumento = new Date (new Date(this.infoSolpedEditar.solped.taxdate).getTime()+(hora*5));
+                  //this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate);
+                  this.fechaNecesidad = new Date (new Date(this.infoSolpedEditar.solped.reqdate).getTime()+(hora*5));
+                  //this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate);
                   this.comentarios = this.infoSolpedEditar.solped.comments || '';
                   this.trm = this.infoSolpedEditar.solped.trm;
                   this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';

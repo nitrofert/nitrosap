@@ -27,6 +27,10 @@ export class TrackingMPComponent implements OnInit {
   allSolpedMP:any[] = [];
   allSolpedMP2:any[] = [];
 
+  proyecciones:any[] = [];
+  loadingProyecciones:boolean = false;
+  selectedProyecciones:any[] = [];
+
   solpedRequest:any[] = [];
   loadingSR:boolean = true;
   selectedSolpedR:any[] = [];
@@ -87,15 +91,7 @@ export class TrackingMPComponent implements OnInit {
      this.getAlmacenesMPSL();
   }
 
-  getListadosTrackingMP(){
-    this.getSolpedRequest();
-    this.getPedidosPorCargar();
-    this.getPedidosCargados();
-    this.getPedidosConDocumentacion();
-    this.getPedidosDescargados();
-    this.getEntradasNacionalizadas();
-  }
-
+ 
   getAlmacenesMPSL(){
     this.sapService.getAlmacenesMPSL(this.authService.getToken())
         .subscribe({
@@ -105,7 +101,7 @@ export class TrackingMPComponent implements OnInit {
                 this.almacenes.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
                 
              }
-             console.log(this.almacenes)
+             //console.log(this.almacenes)
              this.getListadosTrackingMP();
             },
             error: (err) => {
@@ -115,24 +111,46 @@ export class TrackingMPComponent implements OnInit {
         });
   }
 
- 
+  getListadosTrackingMP(){
+    this.getSolpedRequest();
+    this.getPedidosPorCargar();
+    this.getPedidosCargados();
+    this.getPedidosConDocumentacion();
+    this.getPedidosDescargados();
+    this.getEntradasNacionalizadas();
+  }
+
 
   getSolpedRequest(){
     this.comprasService.SolpedMP(this.authService.getToken(),'Request')
     .subscribe({
-      next:(solped =>{
-        //console.log('Solped',solped);
-        for(let line of solped){
+      next:(proyeccionesSolicitudes =>{
+        //console.log('Solped',proyeccionesSolicitudes);
+        let proyecciones:any[] = [];
+        for(let line of proyeccionesSolicitudes.proyecciones){
           line.WarehouseName ="";
           if(this.almacenes.filter(data =>data.store === line.WarehouseCode).length>0){
             //console.log(this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename);
             line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
           }
+
+          line.U_NF_PEDMP = line.U_NF_PEDMP=='S'?'SI':'NO';
           
-          //line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
-          //console.log(line);
+          proyecciones.push(line);
         }
-        this.solpedRequest = solped;
+        this.proyecciones = proyecciones;  
+
+        let solicitudes:any[] = [];
+        for(let line of proyeccionesSolicitudes.solicitudesSAP){
+          line.WarehouseName ="";
+          if(this.almacenes.filter(data =>data.store === line.WarehouseCode).length>0){
+            line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
+          }
+          line.U_NF_PEDMP = line.U_NF_PEDMP=='S'?'SI':'NO';
+          solicitudes.push(line);
+        }
+        
+        this.solpedRequest = solicitudes;
       }),
       error:(err =>{
         console.log(err);
@@ -146,11 +164,11 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.PedidosdMP(this.authService.getToken(),'Solicitado')
     .subscribe({
       next:(async pedidos =>{
-        console.log('Pedido x cargar',pedidos);
+        //console.log('Pedido x cargar',pedidos);
 
         if(pedidos.value){
           this.pedidosPorCargar = await this.convertirObjetoSLtoArray(pedidos);
-          console.log(this.pedidosPorCargar);
+          //console.log(this.pedidosPorCargar);
           
         }
         
@@ -167,10 +185,10 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.PedidosdMP(this.authService.getToken(),'Cargado')
     .subscribe({
       next:(async pedidos =>{
-        console.log('Pedido cargados',pedidos);
+       // console.log('Pedido cargados',pedidos);
         if(pedidos.value){
           this.pedidosCargados = await this.convertirObjetoSLtoArray(pedidos);
-          console.log(this.pedidosCargados);
+          //console.log(this.pedidosCargados);
           
         }
       }),
@@ -181,7 +199,7 @@ export class TrackingMPComponent implements OnInit {
   }
 
   getPedidosConDocumentacion(){
-
+    /*
     this.comprasService.PedidosdMP(this.authService.getToken(),'Documentación lista')
     .subscribe({
       next:(async pedidos =>{
@@ -196,6 +214,7 @@ export class TrackingMPComponent implements OnInit {
         console.log(err);
       })
     });
+    */
   }
 
   getPedidosDescargados(){
@@ -206,7 +225,7 @@ export class TrackingMPComponent implements OnInit {
         
         if(pedidos.value){
           this.pedidosDescargados = await this.convertirObjetoSLtoArray(pedidos);
-          console.log(this.pedidosDescargados);
+          //console.log(this.pedidosDescargados);
           
         }
       }),
@@ -221,7 +240,7 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.EntradasMP(this.authService.getToken())
     .subscribe({
       next:(async entradas =>{
-       
+        let lineaEntradas:any[] = [];
         /*if(entradas.value){
           this.entradasNT = await this.convertirObjetoSLtoArray(entradas);
           console.log(this.entradasNT);
@@ -232,11 +251,11 @@ export class TrackingMPComponent implements OnInit {
 
           let WarehouseName ="";
           if(this.almacenes.filter(data =>data.store === entradas[item].WhsCode).length>0){
-            console.log('storename',this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0]);
+            //console.log('storename',this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0]);
             WarehouseName = this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0].storename;
           }
           
-          this.entradasNT.push({
+          lineaEntradas.push({
                   Comments:entradas[item].Comments,
                   DocNum:entradas[item].DocNum,
                   Incoterms:entradas[item].Incoterms,
@@ -253,6 +272,7 @@ export class TrackingMPComponent implements OnInit {
                   U_NF_PUERTOSALIDA:entradas[item].U_NF_PUERTOSALIDA,
                   U_NF_STATUS:entradas[item].U_NF_STATUS,
                   U_NF_TIPOCARGA:entradas[item].U_NF_TIPOCARGA,
+                  U_NF_PEDMP: entradas[item].U_NF_PEDMP=='S'?'SI':'NO',
                   WarehouseCode: entradas[item].WhsCode,
                   WarehouseName,
                   approved:'S',
@@ -267,7 +287,8 @@ export class TrackingMPComponent implements OnInit {
           });
         }
 
-        console.log(this.entradasNT);
+        console.log(lineaEntradas);
+        this.entradasNT = lineaEntradas;
       }),
       error:(err =>{
         console.log(err);
@@ -306,6 +327,7 @@ export class TrackingMPComponent implements OnInit {
                   U_NF_PUERTOSALIDA:pedido.U_NF_PUERTOSALIDA,
                   U_NF_STATUS:pedido.U_NF_STATUS,
                   U_NF_TIPOCARGA:pedido.U_NF_TIPOCARGA,
+                  U_NF_PEDMP: pedido.U_NF_PEDMP=='S'?'SI':'NO',
                   WarehouseCode: lienaPedido.WarehouseCode,
                   WarehouseName,
                   approved:'S',
@@ -322,6 +344,8 @@ export class TrackingMPComponent implements OnInit {
               }
               
           }
+
+          //console.log(lineaPedidos);
     return lineaPedidos;
   }
   

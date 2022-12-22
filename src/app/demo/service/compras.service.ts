@@ -223,7 +223,7 @@ export class ComprasService {
     return this.http.get<any>(url,requestOptions);
   }
 
-  SolpedMP(token:string,status:string):Observable<any[]>{
+  SolpedMP(token:string,status:string):Observable<any>{
     /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -231,7 +231,7 @@ export class ComprasService {
       const headers = this.urlApiService.getHeadersAPI(token);
       const requestOptions = { headers: headers };
       const url:string = `${this.api_url}/api/compras/solped/list/mps/${status}`;
-      return this.http.get<any[]>(url,requestOptions);
+      return this.http.get<any>(url,requestOptions);
   }
 
   PedidosdMP(token:string,status:string):Observable<any>{

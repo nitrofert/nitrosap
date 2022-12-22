@@ -83,6 +83,15 @@
                         <td class="text-sm" colspan="4">{{ email }}</td>
                         
                     </tr>
+                    <tr>
+                        <td class="text-sm text-900 font-semibold">PUNTAJE</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm">{{ U_NF_PUNTAJE_HE }}</td>
+                        <td class="text-sm text-900 font-semibold">CALIFICACIÓN</td>
+                        <td class="text-sm text-900 font-semibold">:</td>
+                        <td class="text-sm" colspan="4">{{ U_NF_CALIFICACION=='E'?'Excelente':U_NF_CALIFICACION=='B'?'Bueno':'Regular' }}</td>
+                        
+                    </tr>
                 </table>
             </p-fieldset>
             <table style="width: 100%; margin-bottom: 3px;" class="border-round border-2 border-900 text-sm text-900 font-semibold surface-400">
@@ -135,7 +144,7 @@ todas las costas judiciales y extrajudiciales que demanden su defensa, incluyend
 eventualmente pudiere proferirse en su contra.
 
             </div>
-            <div class="w-full text-justify text-xs">
+            <div class="w-full text-justify text-xs mt-2 mb-2">
                {{footer}}
             </div>
             <p-fieldset legend="Firmas" styleClass="w-full border-solid border-900">

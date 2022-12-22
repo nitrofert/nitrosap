@@ -52,7 +52,8 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   formulario:boolean = false;
   envioFormulario:boolean = false;
 
-  estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Documentación lista'},{name:'Descargado'}];
+  //estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Documentación lista'},{name:'Descargado'}];
+  estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Descargado'}];
   u_nf_status:string= "";
 
   u_nf_lastshippping!:any;
@@ -78,7 +79,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
 
   @ViewChild('filter') filter!: ElementRef;
-
+ 
   constructor(private rutaActiva: ActivatedRoute,
     private adminService:AdminService,
     private comprasService:ComprasService,
@@ -121,6 +122,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     //this.solpedList = this.solpedListestado;
 
     this.loading = false;
+    
     //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
     //console.log(this.solpedList);
   }
@@ -135,7 +137,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     //console.log(this.selectedSolped); 
     /*this.formulario = true;
     this.asignarCampos();*/
-    if(this.documento=='Solped'){
+    if(this.documento=='Solped' || this.documento=='Proyecciones'){
       this.router.navigate(['/portal/compras/solped/editar-mp',this.selectedItem[0].id]);
     }
 

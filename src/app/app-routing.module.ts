@@ -25,6 +25,7 @@ import { ResponseApprovedComponent } from './demo/components/compras/solped/page
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     { path: 'admin',canActivate:[RoleAccesGuard], data:{expectedRole:'Administrador'}, loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
                     { path: 'compras',  loadChildren: () => import('./demo/components/compras/compras.module').then(m => m.ComprasModule) },
+                    { path: 'perfil',  loadChildren: () => import('./demo/components/auth/user/user.module').then(m => m.UserModule) },
                 ],
             },
             //{ path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

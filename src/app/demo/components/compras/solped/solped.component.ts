@@ -387,7 +387,7 @@ cancelarSolped(){
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
         .subscribe({
           next: (aprobaciones) => {
-            //console.log(aprobaciones);
+            console.log(aprobaciones);
             if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
 
               if(this.selectedSolped.length>1){
@@ -397,6 +397,9 @@ cancelarSolped(){
               }
               this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
               this.getListado();
+            }else{
+              this.loading = false;
+              this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: aprobaciones[0].message});
             }
           },
           error: (err) => {

@@ -82,4 +82,8 @@ export class AppTopBarComponent implements OnInit {
      print(){
       window.print();
      }
+
+     verPerfil(){
+      this.router.navigate(['/portal/perfil']);
+     }
 }

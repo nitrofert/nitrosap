@@ -87,6 +87,20 @@ export class AuthService  {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  getEmpresasUsuario(tokenid:string):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/empresasUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  actulizarInfoUsuario(tokenid:string,infoUsuario:any):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/actulizarInfoUsuario`;
+    return this.http.post<any[]>(url,infoUsuario,requestOptions);
+  }
+
   getMenuUsuario(){
     const menuUsuario = JSON.parse(localStorage.getItem('menuUsuario') || '');
     return menuUsuario;
@@ -95,6 +109,10 @@ export class AuthService  {
   getInfoUsuario(){
     const infoUsuario = JSON.parse(localStorage.getItem('infoUsuario') || '');
     return infoUsuario[0];
+  }
+
+  setInfoUsuario(infoUsuario:any){
+    localStorage.setItem('infoUsuario',JSON.stringify(infoUsuario));
   }
 
   getPermisosUsuario(){

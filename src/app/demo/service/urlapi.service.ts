@@ -1,6 +1,7 @@
 
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -8,14 +9,15 @@ import { Injectable } from '@angular/core';
   })
 export class UrlApiService {
 
-    env:string = 'dev';
-    url_api:string ="";
+    //env:string = 'dev';
+    env:string = environment.env;
+    url_api:string =environment.url;
     headers:any;
     constructor() {}
 
     getUrlAPI():string{
         
-        this.url_api= this.env==='dev'?'http://localhost:3001':this.env==='test'?'http://backend.dev.nitrofert.com.co':'http://backend.nitrofert.com.co';
+        //this.url_api= this.env==='dev'?'http://localhost:3001':this.env==='test'?'http://backend.dev.nitrofert.com.co':'http://backend.nitrofert.com.co';
         //console.log('url api:',this.url_api);
         return this.url_api;
     }

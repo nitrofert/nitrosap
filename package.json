@@ -3,8 +3,12 @@
     "version": "14.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
-        "build": "ng build",
+        "start:dev": "ng serve --c=development",
+        "start:test": "ng serve --c=test",
+        "start:prod": "ng serve --c=production",
+        "build:dev": "ng build --c=development",
+        "build:test": "ng build --c=test",
+        "build:prod": "ng build --c=production",
         "watch": "ng build --watch --configuration development",
         "test": "ng test"
     },
