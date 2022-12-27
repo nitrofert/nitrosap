@@ -125,6 +125,21 @@ export class AuthService  {
     return perfilesUsuario;
   }
 
+  getLogoBase64():Observable<any>{
+
+    /*const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.getToken()}`
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/auth/logo64`;
+  return this.http.get<any>(url,requestOptions);
+  }
+
   getDependeciasUsuario():Observable<DependenciasUsuario[]>{
 
     /*const headers = new HttpHeaders({

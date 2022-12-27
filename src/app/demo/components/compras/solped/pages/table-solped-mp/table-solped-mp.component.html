@@ -12,7 +12,7 @@
 					 [rowHover]="true" 
 					 [styleClass]="'p-datatable-gridlines p-datatable-sm border-3 '+color" 
 					 [paginator]="true"
-					 [globalFilterFields]="['DocNum','U_NF_STATUS','ItemCode','ItemDescription','U_NF_MOTONAVE','U_NF_LASTSHIPPPING','U_NF_DATEOFSHIPPING','RequriedDate']" 
+					 [globalFilterFields]="['DocNum','CardName','CardCode','U_NF_STATUS','ItemCode','ItemDescription','U_NF_MOTONAVE','U_NF_LASTSHIPPPING','U_NF_DATEOFSHIPPING','RequriedDate']" 
 					 selectionMode="multiple" 
 					 [(selection)]="selectedItem" 
 					 responsiveLayout="scroll">
@@ -81,23 +81,18 @@
 						<th>
 							<div class="flex justify-content-between align-items-center">
 								Proveedor
-								<!--<p-columnFilter type="text" field="U_NF_STATUS" display="menu" placeholder="Buscar por estado"></p-columnFilter>-->
+								<p-columnFilter type="text" field="ProveedorDS" display="menu" placeholder="Buscar por ítem o nombre ítem"></p-columnFilter>
 							</div>
 						</th>
 
 						<th>
 							<div class="flex justify-content-between align-items-center">
-								Código Item
-								<p-columnFilter type="text" field="ItemCode" display="menu" placeholder="Buscar por código item"></p-columnFilter>
+								Ítem
+								<p-columnFilter type="text" field="Description" display="menu" placeholder="Buscar por ítem o nombre ítem"></p-columnFilter>
 							</div>
 						</th>
 
-                        <th>
-							<div class="flex justify-content-between align-items-center">
-								Nombre Item
-								<p-columnFilter type="text" field="ItemDescription" display="menu" placeholder="Buscar por nombre item"></p-columnFilter>
-							</div>
-						</th>
+                        
 
 						<th>
 							<div class="flex justify-content-between align-items-center">
@@ -106,7 +101,7 @@
 							</div>
 						</th>
 
-						<th *ngIf="documento!='Proyecciones'" >
+						<th *ngIf="documento!='Proyecciones' && documento!='Entrada'" >
 							<div class="flex justify-content-between align-items-center">
 								Cantidad disponible
 								
@@ -127,14 +122,14 @@
 							</div>
 						</th>
 
-						<th *ngIf="documento!='Entrada'">
+						<th *ngIf="documento!='Proyecciones' && documento!='Entrada'">
 							<div class="flex justify-content-between align-items-center">
 								Fecha de Cargue (LDS)
 								<p-columnFilter type="date" field="U_NF_LASTSHIPPPING" display="menu"></p-columnFilter>
 							</div>
 						</th>
 
-                        <th *ngIf="documento!='Entrada'">
+                        <th *ngIf="documento!='Proyecciones' && documento!='Entrada'">
 							<div class="flex justify-content-between align-items-center">
 								Fecha est. de salida (ETS)
 								<p-columnFilter type="date" field="U_NF_DATEOFSHIPPING" display="menu"></p-columnFilter>
@@ -147,7 +142,7 @@
 							</div>
 						</th>
 
-						<th>
+						<th *ngIf="documento!='Proyecciones' && documento!='Entrada'">
 							<div class="flex justify-content-between align-items-center">
 								Motonave
                                 <p-columnFilter type="text" field="U_NF_MOTONAVE" display="menu" placeholder="Buscar por motonave"></p-columnFilter>
@@ -161,21 +156,21 @@
 							</div>
 						</th>
 
-                        <th>
+                        <th *ngIf="documento!='Proyecciones'">
 							<div class="flex justify-content-between align-items-center">
 								Puerto llegada
                                 <p-columnFilter type="text" field="DocumentLines.WarehouseCode" display="menu" placeholder="Buscar por puerto llegada"></p-columnFilter>
 							</div>
 						</th>
 
-						<th>
+						<th *ngIf="documento!='Proyecciones' && documento!='Entrada'">
 							<div class="flex justify-content-between align-items-center">
 								Agente
 								<p-columnFilter type="text" field="U_NF_AGENTE" display="menu" placeholder="Buscar por agente"></p-columnFilter>
 							</div>
 						</th>
 						
-                        <th>
+                        <th *ngIf="documento!='Proyecciones' && documento!='Entrada'">
 							<div class="flex justify-content-between align-items-center">
 								Incoterms
 								
@@ -208,29 +203,27 @@
 						</td>
 						
 						<td style="min-width: 12rem;">
-							<span  [pTooltip]="(solpeditem.CardCode +' '+(solpeditem.CardName?' '+solpeditem.CardName:''))" 
+							<span  [pTooltip]="solpeditem.ProveedorDS" 
 								   tooltipPosition="top">
-								   {{ (solpeditem.CardCode +' '+(solpeditem.CardName?' '+solpeditem.CardName:'')) | tooltips : 15:solpeditem.DocNum}}
+								   {{ solpeditem.ProveedorDS | tooltips : 15:solpeditem.DocNum}}
 							</span>
 						</td>
 
-						<td style="min-width: 12rem;">
-							{{ solpeditem.ItemCode }}
-						</td>
-						<td style="min-width: 12rem;">
+						
+						<td style="min-width: 15rem;">
 							
-							<span  [pTooltip]="solpeditem.ItemDescription" 
+							<span  [pTooltip]="solpeditem.Description" 
 								   tooltipPosition="top">
-								   {{ solpeditem.ItemDescription | tooltips : 20:solpeditem.DocNum}}
+								   {{ solpeditem.Description | tooltips : 20:solpeditem.DocNum}}
 							</span>
 						</td>
 
 						<td style="min-width: 8rem;">
-							{{ solpeditem.Quantity }}
+							{{ solpeditem.Quantity | number }}
 						</td>
 
-						<td *ngIf="documento!='Proyecciones'"  style="min-width: 8rem;">
-							{{ solpeditem.RemainingOpenQuantity }}
+						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'"  style="min-width: 8rem;">
+							{{ solpeditem.RemainingOpenQuantity | number }}
 						</td>
 
                         <td style="min-width: 8rem;">
@@ -241,35 +234,35 @@
 							{{ solpeditem.U_NF_PEDMP }}
 						</td>
                         
-						<td *ngIf="documento!='Entrada'" style="min-width: 10rem;">
-							{{ solpeditem.U_NF_LASTSHIPPPING |  date: 'shortDate':'+0500' }}
+						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 10rem;">
+							{{ solpeditem.U_NF_LASTSHIPPPING |  date: 'dd/MM/yyyy':'+0500' }}
 						</td>
 
-                        <td *ngIf="documento!='Entrada'" style="min-width: 10rem;">
-							{{ solpeditem.U_NF_DATEOFSHIPPING |  date: 'shortDate':'+0500' }}
+                        <td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 10rem;">
+							{{ solpeditem.U_NF_DATEOFSHIPPING |  date: 'dd/MM/yyyy':'+0500' }}
 						</td>
 						<td style="min-width: 10rem;">
-							{{ solpeditem.RequriedDate | date: 'shortDate':'+0500' }}
+							{{ solpeditem.RequriedDate | date: 'dd/MM/yyyy':'+0500' }}
 						</td>	
 
-						<td style="min-width: 12rem;">
+						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 12rem;">
 							{{ solpeditem.U_NF_MOTONAVE }}
 						</td>
 
-						<td style="min-width: 12rem;">
+						<td *ngIf="documento!='Proyecciones' " style="min-width: 12rem;">
 							{{ solpeditem.U_NF_PUERTOSALIDA  }}
 						</td>
                         <td style="min-width: 12rem;">
 							{{ solpeditem.WarehouseName }}
 						</td>
 
-                        <td style="min-width: 12rem;">
+                        <td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 12rem;">
 							{{ solpeditem.U_NF_AGENTE }}
 						</td>
                         
                        
 
-						<td style="min-width: 6rem;">
+						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 6rem;">
 							{{ solpeditem.U_NT_Incoterms }}
 						</td>
                         

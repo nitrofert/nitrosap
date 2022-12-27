@@ -10,6 +10,7 @@ import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
 import { ConsultaEntradaComponent } from './pages/consulta-entrada/consulta-entrada.component';
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 import { ImpresionComponent } from './pages/impresion/impresion.component';
+import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
 
 
 
@@ -20,7 +21,8 @@ import { ImpresionComponent } from './pages/impresion/impresion.component';
     FormEntradaComponent,
     NuevaEntradaComponent,
     ConsultaEntradaComponent,
-    ImpresionComponent
+    ImpresionComponent,
+    PdfComponent
     
   ],
   imports: [

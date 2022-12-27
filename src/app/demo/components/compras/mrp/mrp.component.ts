@@ -1043,15 +1043,15 @@ export class MrpComponent implements OnInit {
   }
 
   verproyecciones(semana:number){
-    console.log(semana,this.inventarioProyectadoMP);
-    console.log(this.inventarioProyectadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
+    //console.log(semana,this.inventarioProyectadoMP);
+    //console.log(this.inventarioProyectadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
     let inventarioProyectadoMP = this.inventarioProyectadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana);
     this.generarListaDocumentos(inventarioProyectadoMP,'Proyección de compra item');
   }
 
   versolicitudes(semana:number){
-    console.log(semana,this.inventarioSolicitadoMP);
-    console.log(this.inventarioSolicitadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
+    //console.log(semana,this.inventarioSolicitadoMP);
+    //console.log(this.inventarioSolicitadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana));
     let inventarioSolicitadoMP = this.inventarioSolicitadoMP.filter(data=> this.numeroDeSemana(new Date(data.FECHANECESIDAD)) === semana);
     console.log(this.lineasCalculadora.findIndex(data => data.semana === semana));
     if(this.lineasCalculadora.findIndex(data => data.semana === semana)==0 && (this.inventarioSolicitadoMPPreFecha.length>0)){
@@ -1073,13 +1073,13 @@ export class MrpComponent implements OnInit {
   }
 
   verpedidoszf(semana:number){
-    console.log(semana,this.inventarioItemZF);
+    //console.log(semana,this.inventarioItemZF);
     let inventarioItemZF = this.inventarioItemZF;
     this.generarListaDocumentos(inventarioItemZF,'Pedidos item en Zona franca');
   }
 
   generarListaDocumentos(documentos:any, titulo:string){
-      console.log(documentos);
+      console.log(titulo,documentos);
 
       this.tituloDocumentos = titulo;
       this.listDocumentos=[];
@@ -1093,7 +1093,13 @@ export class MrpComponent implements OnInit {
           item:this.itemSeleccionado,
           cantidad: documento.TIPO!='Proyectado'?documento.OpenCreQty:documento.Quantity,
           tipo:documento.TIPO,
-          cantidadPedida:documento.Quantity
+          cantidadPedida:documento.Quantity,
+          U_NF_DATEOFSHIPPING:documento.U_NF_DATEOFSHIPPING,
+          U_NF_LASTSHIPPPING:documento.U_NF_LASTSHIPPPING,
+          U_NF_MOTONAVE:documento.U_NF_MOTONAVE,
+          U_NF_STATUS:documento.U_NF_STATUS,
+          CardName:documento.CardName?documento.CardName:''
+
         });
       }
       console.log(this.listDocumentos);
@@ -1166,8 +1172,8 @@ export class MrpComponent implements OnInit {
           comments:'',
           trm:this.trm,
           currency:this.currency,
-          nf_lastshippping:new Date(),
-          nf_dateofshipping:new Date(),
+          //nf_lastshippping:new Date(),
+          //nf_dateofshipping:new Date(),
           nf_agente:'',
           nf_pago:'',
           nf_tipocarga:this.nf_tipocarga,
@@ -1256,7 +1262,7 @@ export class MrpComponent implements OnInit {
                       CANCELED:"",
                       CardCode:"",
                       DocCur: "",
-                      DocNum: "0",
+                      DocNum: solpedID,
                       DocStatus:"O",
                       ETA: dataSolped.solped.reqdate,
                       FECHANECESIDAD: dataSolped.solped.reqdate,

@@ -261,6 +261,7 @@ export class TrackingMPComponent implements OnInit {
                   Incoterms:entradas[item].Incoterms,
                   ItemCode:entradas[item].ItemCode,
                   ItemDescription:entradas[item].Dscription,
+                  Description:`${entradas[item].ItemCode} - ${entradas[item].Dscription}`,
                   LineNum:entradas[item].LineNum,
                   Quantity:entradas[item].Quantity,
                   RequriedDate:entradas[item].DocDueDate,
@@ -283,7 +284,8 @@ export class TrackingMPComponent implements OnInit {
                   U_NT_Incoterms:entradas[item].U_NT_Incoterms,
                   MeasureUnit:entradas[item].unitMsr,
                   CardCode:entradas[item].CardCode,
-                  CardName:entradas[item].CardName
+                  CardName:entradas[item].CardName,
+                  ProveedorDS:`${entradas[item].CardCode} - ${entradas[item].CardName}`
           });
         }
 
@@ -316,6 +318,7 @@ export class TrackingMPComponent implements OnInit {
                   Incoterms:lienaPedido.Incoterms,
                   ItemCode:lienaPedido.ItemCode,
                   ItemDescription:lienaPedido.ItemDescription,
+                  Description:`${lienaPedido.ItemCode} - ${lienaPedido.ItemDescription}`,
                   LineNum:lienaPedido.LineNum,
                   Quantity:lienaPedido.Quantity,
                   RequriedDate:pedido.DocDueDate,
@@ -338,7 +341,8 @@ export class TrackingMPComponent implements OnInit {
                   U_NT_Incoterms:pedido.U_NT_Incoterms,
                   MeasureUnit:lienaPedido.MeasureUnit,
                   CardCode:pedido.CardCode,
-                  CardName:pedido.CardName
+                  CardName:pedido.CardName,
+                  ProveedorDS:`${pedido.CardCode} - ${pedido.CardName}`
 
                 });
               }

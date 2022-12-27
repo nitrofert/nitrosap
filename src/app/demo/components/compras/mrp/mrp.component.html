@@ -596,13 +596,13 @@
                 </div>
                 <div class="grid">
                     <div class="col">Proveedor:</div>
-                    <div class="col">{{documento.proveedor}}</div>
+                    <div class="col">{{documento.proveedor}} - {{documento.CardName}} </div>
                 </div>
-                <div class="grid">
-                    <div class="col">Fecha necesidad:</div>
+                <div *ngIf="documento.tipo=='Proyectado' || documento.tipo=='Necesidad'" class="grid">
+                    <div class="col">Fecha arribo:</div>
                     <div class="col">{{documento.fechadoc | date}}</div>
                 </div>
-                <div class="grid">
+                <div *ngIf="documento.tipo=='Compra' " class="grid">
                     <div class="col">ETA:</div>
                     <div class="col">{{documento.eta | date}}</div>
                 </div>
@@ -617,6 +617,15 @@
                 <div class="grid">
                     <div class="col">Cantidad pendiente:</div>
                     <div class="col">{{documento.cantidad | number}}</div>
+                </div>
+                <div *ngIf="documento.tipo=='Compra' " class="grid">
+                    <div class="col">Motonave:</div>
+                    <div class="col">{{documento.U_NF_MOTONAVE }}</div>
+                </div>
+
+                <div *ngIf="documento.tipo=='Compra' " class="grid">
+                    <div class="col">Estado:</div>
+                    <div class="col">{{documento.U_NF_STATUS }}</div>
                 </div>
                 
             </div>
@@ -864,7 +873,7 @@
             
                     
                         <div class="col">
-                            <label for="fechaRequerida">Fecha necesaria</label>
+                            <label for="fechaRequerida">Fecha arribo</label>
                             <input pInputText 
                                     [ngModel]="item.fechasemana | date" 
                                     id="fechaRequerida" 
