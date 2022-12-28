@@ -97,7 +97,7 @@ export class EntradasComponent implements OnInit {
     .subscribe({
       next:(entradas =>{
         this.loading = false;
-          //console.log(entradas);
+          console.log(entradas);
           this.entradas = entradas;
           this.loading = false;
       }),
