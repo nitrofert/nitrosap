@@ -626,8 +626,9 @@ export class FormEntradaComponent implements OnInit {
        
       }
       this.U_NF_PUNTAJE_HE= puntuacion;
-      this.U_NF_CALIFICACION = puntuacion<=100 && puntuacion>=90?'Excelente':puntuacion<=89 && puntuacion>=60?'Bueno':'Regular';
-      this.color_calificacion = puntuacion<=100 && puntuacion>=90?'text-green-600':puntuacion<=89 && puntuacion>=60?'text-yellow-400':'text-red-700';
+      this.U_NF_CALIFICACION = puntuacion>=90?'Excelente':puntuacion<90 && puntuacion>=60?'Bueno':puntuacion<60 && puntuacion>=40?'Regular':'Malo';
+      this.color_calificacion = puntuacion>=90?'text-green-600':puntuacion<90 && puntuacion>=60?'text-indigo-700':puntuacion<60 && puntuacion>=40?'text-yellow-700':'text-red-700';
+      
 
     }
 
