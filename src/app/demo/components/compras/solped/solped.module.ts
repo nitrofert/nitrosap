@@ -23,6 +23,7 @@ import { TableSolpedMPComponent } from './pages/table-solped-mp/table-solped-mp.
 import { FormSolpedMPComponent } from './pages/form-solped-mp/form-solped-mp.component';
 import { NewSolpedMpComponent } from './pages/new-solped-mp/new-solped-mp.component';
 import { EditSolpedMpComponent } from './pages/edit-solped-mp/edit-solped-mp.component';
+import { SolpedsAprobadasComponent } from './solpeds-aprobadas/solpeds-aprobadas.component';
 
 
 
@@ -46,7 +47,8 @@ import { EditSolpedMpComponent } from './pages/edit-solped-mp/edit-solped-mp.com
     TableSolpedMPComponent,
     FormSolpedMPComponent,
     NewSolpedMpComponent,
-    EditSolpedMpComponent
+    EditSolpedMpComponent,
+    SolpedsAprobadasComponent
   ],
   imports: [
     CommonModule,

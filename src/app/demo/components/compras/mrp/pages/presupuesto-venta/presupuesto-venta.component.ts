@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ItemsSAP } from 'src/app/demo/api/itemsSAP';
@@ -48,6 +49,7 @@ export class PresupuestoVentaComponent implements OnInit {
   lineasPresupuestoCVS:any;
   uploadedFiles2: any[] = [];
   separadorLista:string ="";
+
 
   constructor(private rutaActiva: ActivatedRoute,
     private adminService:AdminService,
@@ -134,12 +136,19 @@ export class PresupuestoVentaComponent implements OnInit {
             next: (presupuesto)=>{
               //console.log(presupuesto);
               for(let linea of presupuesto){
-                  let item = this.items.filter(data =>data.ItemCode===linea.itemcode);
-                  let zona = this.zonas.filter(data =>data.value === linea.codigozona);
+                
+
+                  if(this.items.filter(data =>data.ItemCode===linea.itemcode).length>0){
+                    let item = this.items.filter(data =>data.ItemCode===linea.itemcode);
+                    let zona = this.zonas.filter(data =>data.value === linea.codigozona);
+                    //console.log(item[0]);
+                    linea.descripcion = item[0].ItemName;
+                    linea.zona = zona[0].label;
+                  }else{
+                    
+                    console.log(linea.itemcode);
+                  }
                   
-                  linea.descripcion = item[0].ItemName;
-                  linea.zona = zona[0].label;
-                  //console.log(linea);
               }
               this.presupuestos = presupuesto;
               this.loading = false;
@@ -221,6 +230,7 @@ export class PresupuestoVentaComponent implements OnInit {
       let text:any =fileReader.result ;
       var lines = text.split('\n') ;
       for(let line of lines){
+        //console.log(line);
         arrayTexto.push(this.reemplazarCaracteresEspeciales(line));
       }
       this.validarArchivoDetalle(arrayTexto);
@@ -248,10 +258,10 @@ async validarArchivoDetalle(lienasArchivo:any){
     this.cargueValido = await this.validarContenidoCSV(lienasArchivo,';');
     if(this.cargueValido){
       this.separadorLista = ";";
-      this.messageService.add({severity:'success', summary: '!Ok', detail: 'El archivo cargado cumple con la estructura básica requerida'});
+      this.messageService.add({severity:'success', summary: '!Ok', detail: `El archivo cargado cumple con la estructura básica requerida. `});
     }
   }else{
-    this.messageService.add({severity:'error', summary: '!Error', detail: 'El archivo cargado no cumple con la estructura básica requerida'});
+    this.messageService.add({severity:'error', summary: '!Error', detail: `El archivo cargado no cumple con la estructura básica requerida. 5 Columnas 'FECHASEMANA',	'SEMANA',	'ITEM',	'CODIGOZONA',	'CANTIDAD'`});
   }
 
 
@@ -286,7 +296,7 @@ encabezadosValidos(camposEncabezado:any[], arrayLineaEncabezado:any[]){
 
 async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
   let valido = true;
-  console.log(lienasArchivo);
+  //console.log(lienasArchivo);
   let arrayLinea:any;
   this.lineasPresupuestoCVS = [];
   
@@ -297,10 +307,15 @@ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
   for(let linea = 1 ;linea < lienasArchivo.length; linea ++){
     
       arrayLinea = lienasArchivo[linea].split(separador);
+
+      console.log(arrayLinea);
                 
       if(arrayLinea.length==5){
         if(arrayLinea[0]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha de la semana  de la linea ${linea}, no es obligatoria`});
+          valido = false;
+        }else if(arrayLinea[0]!='' && !arrayLinea[0].includes("-")){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha de la semana  de la linea ${linea}, no es valida. Debe tener el formato YYYY-MM-DD`});
           valido = false;
         }else if(arrayLinea[0]!='' && isNaN(Date.parse(arrayLinea[0]))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha de la semana  de la linea ${linea}, no es valida`});
@@ -314,10 +329,10 @@ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
         }else if(arrayLinea[2]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item de la linea ${linea}, es obligatorio`});
           valido = false;  
-        }else if(arrayLinea[2]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[2]).length==0){
+        }/*else if(arrayLinea[2]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[2]).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item  de la linea ${linea}, no existe en el listado de items de SAP`});
           valido = false;
-        }else if(arrayLinea[3]==''){
+        }*/else if(arrayLinea[3]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la zona  de la linea ${linea} es obligatorio`});
           valido = false;
         }else if(arrayLinea[3]!='' && isNaN(arrayLinea[3])){
@@ -329,10 +344,15 @@ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
         }else if(arrayLinea[4]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El valor de la cantidad de consumo de la linea ${linea} es obligatorio`});
           valido = false;
+        }/*else if(arrayLinea[4]!='' && (arrayLinea[4].toString().includes(","))){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El valor de la cantidad de consumo  de la linea ${linea} no es valido. No debe contener (,)`});
+          valido = false;
+          
         }else if(arrayLinea[4]!='' && isNaN(eval(arrayLinea[4]))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El valor de la cantidad de consumo  de la linea ${linea} no es valido`});
           valido = false;
-        }else{
+          
+        }*/else{
             // Linea Valida
 
             
@@ -369,6 +389,46 @@ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
   return valido;
 
 }
+
+
+
+async descargarCSV(){
+  /*this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla cargue detalle solped.csv')
+      .subscribe({
+          next: (result)=>{
+            console.log(result);
+          },
+          error: (err)=>{
+              console.log(err);
+          }
+      })*/
+  const link = document.createElement('a');
+  //plantilla_maximos_minimos
+  link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_presupuesto_venta.csv');
+  link.click();
+  
+  
+}
+
+
+exportExcel() {
+  import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.json_to_sheet(this.presupuestos);
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, `maximos_minimos`);
+  });
+}  
+
+saveAsExcelFile(buffer: any, fileName: string): void {
+  let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  let EXCEL_EXTENSION = '.xlsx';
+  const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE
+  });
+  FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+}
+
 
   formatCurrency(value: number) {
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });

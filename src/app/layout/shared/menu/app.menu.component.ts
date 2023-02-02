@@ -38,7 +38,7 @@ export class AppMenuComponent implements OnInit {
         //console.log(menuUsuario);
 
         let menupadres:MenuInterface[] = menuUsuario.opcionesMenu;
-        let menuhijos:MenuInterface[] = menuUsuario.opcionesSubMenu;
+        let menuhijos:MenuInterface[] = menuUsuario.opcionesSubMenu.filter((menu: { visible: number; }) => menu.visible ===1);
         let menuportal:any[]=[{
             label: 'Inicio',
             items: [

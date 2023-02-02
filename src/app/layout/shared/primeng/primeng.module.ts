@@ -3,6 +3,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { BadgeModule } from 'primeng/badge'
 import {CardModule} from 'primeng/card';
 import { CalendarModule } from 'primeng/calendar';
+import {CaptchaModule} from 'primeng/captcha';
 import { ChartModule } from 'primeng/chart';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -33,9 +34,11 @@ import { SliderModule } from 'primeng/slider';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { StyleClassModule } from 'primeng/styleclass';
 import { TableModule } from 'primeng/table';
+import {TabMenuModule} from 'primeng/tabmenu';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import {TreeTableModule} from 'primeng/treetable';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {FileUploadModule} from 'primeng/fileupload';
 
@@ -49,6 +52,7 @@ import {FileUploadModule} from 'primeng/fileupload';
     BreadcrumbModule,
     CardModule,
     CalendarModule,
+    CaptchaModule,
     ChartModule,
     CheckboxModule,
     ConfirmDialogModule,
@@ -78,10 +82,12 @@ import {FileUploadModule} from 'primeng/fileupload';
     SplitButtonModule,
     StyleClassModule,
     TableModule,
+    TabMenuModule,
     TagModule,
     ToastModule,
     ToggleButtonModule,
-    TooltipModule
+    TooltipModule,
+    TreeTableModule
   ]
 })
 export class PrimengModule { }

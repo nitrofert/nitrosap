@@ -79,7 +79,7 @@ export class PermisosComponent implements OnInit {
       accion,
       valor
     }
-    //console.log(permiso);
+    console.log(permiso);
     this.adminService.setPermiso(this.authService.getToken(),permiso)
       .subscribe({
         next:(permisos)=>{

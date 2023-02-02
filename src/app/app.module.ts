@@ -24,10 +24,17 @@ import { PhotoService } from './demo/service/photo.service';
 
 //Provider
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { HttpClient, HttpClientModule  } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { RecaptchaV3Module, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
+import { environment } from 'src/environments/environment';
 
 
 
-
+export function HttpLoaderFactory(httpClient: HttpClient) {
+    return new TranslateHttpLoader(httpClient);
+}
 
 registerLocaleData(localeES_CO);
 
@@ -38,7 +45,15 @@ registerLocaleData(localeES_CO);
     imports: [
         AppRoutingModule,
         AppLayoutModule,
-        
+        HttpClientModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        RecaptchaV3Module
 
     ],
     providers: [
@@ -47,7 +62,15 @@ registerLocaleData(localeES_CO);
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService,
         {provide: JWT_OPTIONS, useValue: JWT_OPTIONS},
-        JwtHelperService
+        JwtHelperService,
+        
+            
+            {
+              provide: RECAPTCHA_V3_SITE_KEY,
+              useValue:  environment.key_recaptcha,
+               
+            },
+          
     ],
     bootstrap: [AppComponent]
 })

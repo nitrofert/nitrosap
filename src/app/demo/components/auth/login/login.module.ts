@@ -7,6 +7,11 @@ import { LoginComponent } from './login.component';
 import { LoginRoutingModule } from './login-routing.module';
 import { PrimengModule } from 'src/app/layout/shared/primeng/primeng.module';
 
+//import { RECAPTCHA_SETTINGS, RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings } from 'ng-recaptcha';
+import {  RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module, ReCaptchaV3Service  } from 'ng-recaptcha';
+import { environment } from 'src/environments/environment';
+
+
 /*import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { PasswordModule } from 'primeng/password';
@@ -27,8 +32,12 @@ import {MessagesModule} from 'primeng/messages';*/
         DropdownModule,
         MessageModule,
         MessagesModule*/
-        PrimengModule
+        PrimengModule,
+        //RecaptchaFormsModule, 
+        //RecaptchaModule
+       
     ],
+    
     declarations: [LoginComponent]
 })
 export class LoginModule { }

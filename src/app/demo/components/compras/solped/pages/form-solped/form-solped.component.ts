@@ -447,7 +447,11 @@ export class FormSolpedComponent implements OnInit {
                   this.iteradorLinea = (this.lineasSolped[this.lineasSolped.length-1].linenum)+1;
                   this.solpedAprobada = this.infoSolpedEditar.solped.approved || 'N';
                   //console.log( this.areas);
-                  this.area = this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped )[0].area;
+
+                  if(this.areas.length > 0 && this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped ).length>0){
+                    this.area = this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped )[0].area;
+                  }
+                  
                   //console.log(this.iteradorLinea);
                   
                 }, 
@@ -613,10 +617,12 @@ filtrarItems(event:any){
      for(let i = 0; i < this.items.length; i++) {
          let items = this.items[i];
 
+         if(items.ItemCode!=null && items.ItemName!=null){
           if((items.ItemCode.toLowerCase().indexOf(query.toLowerCase())>=0) ||
-             (items.ItemName.toLowerCase().indexOf(query.toLowerCase())>=0)){
+           (items.ItemName.toLowerCase().indexOf(query.toLowerCase())>=0)){
             filtered.push(items);
-         }
+          }
+        }
      }
      this.itemsFiltrados = filtered;
 }
@@ -1209,14 +1215,19 @@ async validarCuentaContable(cuenta:any){
           valido = false;
         }else{
             // Linea Valida
+            console.log('Linea Valida');
 
             if(arrayLinea[5]=='COP'){
+              
               linetotal =arrayLinea[4]*arrayLinea[6];
               taxvalor =(arrayLinea[4]*arrayLinea[6])*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
+              console.log('Linea Valida COP',taxvalor,this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax);
             }else{
               linetotal =arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM);
               taxvalor =(arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM))*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
             }
+
+            console.log(this.cuentas.filter(data => data.Code === arrayLinea[12])[0].Name);
 
             this.lineasSolpedCVS.push({
               itemcode:arrayLinea[0],
@@ -1232,7 +1243,7 @@ async validarCuentaContable(cuenta:any){
               ocrcode:arrayLinea[10],
               whscode:arrayLinea[11],
               acctcode:arrayLinea[12],
-              acctcodename:arrayLinea[12]!=''?this.cuentasDependencia.filter(data => data.Code === arrayLinea[12])[0].Name:'',
+              acctcodename:arrayLinea[12]!=''?await this.cuentas.filter(data => data.Code === arrayLinea[12])[0].Name:'',
               id_user:this.infoUsuario.id,
               id_solped : 0,
               linenum:linea-1,
@@ -1276,6 +1287,24 @@ async validarCuentaContable(cuenta:any){
   adicionarCSV(){
     this.lineasSolped = this.lineasSolpedCVS;
     this.formularioCSV = false;
+  }
+
+  async descargarCSV(){
+    this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
+        .subscribe({
+            next: (result)=>{
+              console.log(result);
+            },
+            error: (err)=>{
+                console.log(err);
+            }
+        })
+   /* const link = document.createElement('a');
+    link.target='_blank';
+    link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_solped.csv');
+    //link.href = await this.comprasService.downloadAnexo('assets/demo/data/plantilla_cargue_detalle_solped.csv');
+    
+    link.click();*/
   }
 
   GuardarSolped(){
@@ -1365,7 +1394,7 @@ async validarCuentaContable(cuenta:any){
       this.cantidad &&
       this.precio &&
       this.impuesto &&
-      ((this.cuenta.Code && !this.item.ItemCode) || (!this.cuenta.Code && this.item.ItemCode))){
+      this.cuenta.Code){
 
         let indexLineaDuplicada = this.LineaDuplicada();
         

@@ -7,6 +7,8 @@ import { UserInterface } from 'src/app/demo/api/users';
 import { AuthService } from 'src/app/demo/service/auth.service';
 
 
+import {MenuItem} from 'primeng/api';
+
 
 @Component({
   selector: 'app-editar-usuario',
@@ -25,11 +27,12 @@ export class EditarUsuarioComponent implements OnInit {
   password:     string="";
   password2:string = "";
   status: string="";
-  
+  perfiles:any[] = [];
+  companies:any[] = [];
 
   submitted: boolean = false;
 
-
+  items!: MenuItem[];
 
   messageForm:Message[]=[];
   submitBotton = false;
@@ -40,6 +43,8 @@ export class EditarUsuarioComponent implements OnInit {
        
     ];
 
+    opciones:any[] = [];
+
   /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
   token:string = "";*/
@@ -49,6 +54,15 @@ export class EditarUsuarioComponent implements OnInit {
               private authService:AuthService) { }
 
   ngOnInit(): void {
+
+    this.opciones = [{label: 'No', value: 0}, {label: 'Si', value: 1}];
+
+    this.items = [
+      {label: 'Información usuario', icon: 'pi pi-fw pi-user-edit'},
+      {label: 'Perfiles', icon: 'pi pi-fw pi-id-card'},
+      {label: 'Empresas', icon: 'pi pi-fw pi-building'},
+     
+  ];
     
     this.userSelected = this.rutaActiva.snapshot.params;
     //console.log((this.userSelected.user));
@@ -67,6 +81,9 @@ export class EditarUsuarioComponent implements OnInit {
           this.codusersap = user[0].codusersap;
           this.status = user[0].status;
           this.username = user[0].username;
+          this.getPerfiles();
+          this.getCompanies();
+          
           
           //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
       }),
@@ -120,6 +137,79 @@ export class EditarUsuarioComponent implements OnInit {
 
   }
 
+  getPerfiles(){
+    this.adminService.getPerfilesUser(this.authService.getToken(),this.userSelected.user)
+          .subscribe({
+            next:(perfilesUser =>{
+                
+                console.log(perfilesUser);
+                this.perfiles = perfilesUser;
+                
+                //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
+            }),
+            error:( err =>{
+              this.submitBotton = false;
+              console.log(err);
+            })
+          }); 
+  }
+
+  setPerfilUser(valor:any,idPerfil:number){
+    console.log(valor,idPerfil);
+    let perfilUser = {
+      id_perfil:idPerfil,
+      id_user:this.userSelected.user,
+      valor
+    }
+
+    console.log(perfilUser);
+    this.adminService.setPerfilUser(this.authService.getToken(),perfilUser)
+        .subscribe({
+          next: (acces) => {
+            console.log(acces);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        });
+  }
+
+  getCompanies(){
+    this.adminService.getCompaniesUser(this.authService.getToken(),this.userSelected.user)
+    .subscribe({
+      next:(companiesUser =>{
+          
+          //console.log(companiesUser);
+          this.companies = companiesUser;
+          
+          //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
+      }),
+      error:( err =>{
+        this.submitBotton = false;
+        console.error(err);
+      })
+    }); 
+  }
+
+
+  setAccess(valor:number,idCompany:number){
+    //console.log(valor,idCompany);
+    let accessCompany = {
+      id_company:idCompany,
+      id_user:this.userSelected.user,
+      valor
+    }
+    console.log(accessCompany);
+    this.adminService.setAccess(this.authService.getToken(),accessCompany)
+        .subscribe({
+          next: (acces) => {
+            //console.log(acces);
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+  }
 
   clear(){
     this.submitBotton = false;

@@ -7,7 +7,7 @@
             <div class="grid">
                 <div class="col">
                     <div class="field">
-                        <label htmlFor="nombreusuario">Nombre Solicitante</label>
+                        <label htmlFor="nombreusuario">Nombre solicitante</label>
                         <input pInputText 
                                 [(ngModel)]="infoUsuario.fullname" 
                                 id="nombreusuario" 
@@ -78,7 +78,7 @@
                     </div>
                     <div class="flex">
                         <div class="field">
-                            <label for="fechaContable">Fecha Contable</label>
+                            <label for="fechaContable">Fecha contable</label>
                             <p-calendar [(ngModel)]="fechaContable" 
                                         (onSelect)="SeleccionarFechaContable()" 
                                         [showIcon]="true"
@@ -447,8 +447,8 @@
                                 styleClass="w-full" 
                                 inputId="cuenta" 
                                 panelStyleClass="text-sm sm:ml-2"
-                                [disabled]="item.ItemCode!='' || clase ==='I'"
-                                [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && !cuenta.Code}">
+                                
+                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !cuenta.Code}">
 
                     <ng-template let-cuenta pTemplate="item">
                         <div>{{cuenta.Code}} - {{cuenta.Name}}</div>
@@ -464,7 +464,7 @@
                         id="nombreCuenta" 
                         disabled
                         class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && !nombreCuenta}">
+                        [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !nombreCuenta}">
 
             </div>
         </div>
@@ -1067,10 +1067,11 @@
                 <p-fileUpload   name="demo[]" 
                                 chooseLabel="Seleccionar"
                                 cancelLabel="Cancelar"
+                                accept=".pdf"
                                 [multiple]="false" 
                                 (onSelect)="onLoad($event)"
                                 [showUploadButton]="false"
-                                [maxFileSize]="1000000"
+                                [maxFileSize]="5000000"
                                 styleClass="w-full"
                                 class="w-full"
                                 [ngClass]="{'ng-invalid ng-dirty' :  (envioLineaanexo && !fileTmp ) || (envioLineaanexo && fileTmp=='')}"
@@ -1121,6 +1122,7 @@
                                 (onSelect)="onLoad2($event)"
                                 [showUploadButton]="false"
                                 [maxFileSize]="5000000"
+                                
                                 styleClass="w-full"
                                 class="w-full"
                                 [ngClass]="{'ng-invalid ng-dirty' :  !fileTmp2 }">
@@ -1135,11 +1137,62 @@
                     
                     <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
                 </div>
+
+                <div class="field col">
+					<p>
+						Para diligenciar correctamente la plantilla de cargue de la solped, siga las siguentes recomendaciones:
+					   </p>
+					   <p>
+						Columna <strong>ITEM</strong>: El código del item debe existir en el maestro de SAP
+					   </p>
+					   <p>
+						Columna <strong>DESCITEM</strong>: Es de caracter obligatorio, el número máximo de caracteres es de <strong>200</strong>
+					   </p>
+                       <p>
+						Columna <strong>FECHAREQ</strong>: Debe ser una fecha valida
+					   </p>
+                       <p>
+						Columna <strong>IDPROVEEDOR</strong>:El código del proveedor debe ser un codigo válido en SAP
+					   </p>
+                       <p>
+						Columna <strong>IMPUESTO</strong>:El código del impuesto debe ser un codigo válido en SAP
+					   </p>
+
+                       <p>
+						Columna <strong>VICEPRESIDENCIA</strong>:Es de caracter obligatorio, el código de la vicepresidencia debe ser un codigo válido en SAP y permitido para el usuario creador
+					   </p>
+
+                       <p>
+						Columna <strong>DEPENDENCIA</strong>:Es de caracter obligatorio, el código de la dependencia debe ser un codigo válido en SAP y permitido para el usuario creador
+					   </p>
+
+                       <p>
+						Columna <strong>LOCALIDAD</strong>:Es de caracter obligatorio, el código de la localidad debe ser un codigo válido en SAP y permitido para el usuario creador
+					   </p>
+
+                       <p>
+						Columna <strong>ALMACEN</strong>:El código del almacen debe ser un codigo válido en SAP y permitido para el usuario creador
+					   </p>
+
+                       <p>
+						Columna <strong>CODCUENTA</strong>:El código de la cuenta contable debe ser un codigo válido en SAP y permitido para el usuario creador
+					   </p>
+
+					   
+					   
+					   
+				</div>
                 
             </div>
         </div>
     </ng-template>
     <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-download" 
+                    (click)="descargarCSV()"                     
+                    
+                    label="Descargar plantilla para solped"
+                    styleClass="p-button-text">
+        </p-button>
         <p-button   icon="pi pi-check" 
                     (click)="adicionarCSV()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !cargueValido" 

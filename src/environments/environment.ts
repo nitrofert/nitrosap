@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   url: 'http://backend.dev.nitrofert.com.co',
-  env:'test'
+  env:'test',
+  key_recaptcha:'6LdIhRQkAAAAADsZQ00ivwO3DcP6iOnTJBr1I4Ti',
+  key_recaptchaV2:'6Ldo6BMkAAAAABUAduK9ZiDox7o8tE7RjWoRaMtQ'
 };
 
 /*

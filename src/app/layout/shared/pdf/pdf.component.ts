@@ -748,6 +748,8 @@ for (var key in rows)
      
     ],
 
+
+
     footer:{
       
       margin: 8,
@@ -774,7 +776,7 @@ for (var key in rows)
                   { text:''},
                   { text:''}
                 ],
-                    [ {
+                  [ {
                       //comentario de entrada footer
                       margin:[2,0,2,5],
                       colSpan:3,
@@ -834,7 +836,21 @@ for (var key in rows)
                       text:'PROVEEDOR', 
                       margin:[2,0,2,0]
                     }
-                ]
+                  ]
+                  ,
+                  /*[ {
+                    margin:[2,0,2,0],
+                    colSpan:3,
+                    border: [false, false, false, false],  
+                    text:'', 
+                    alignment:'center',
+                    //illColor: '#eeeeee',
+                    //height:50
+                    
+                  },
+                  { text:''},
+                  { text:''}
+                  ],*/
                 ]
                 
               },

@@ -571,8 +571,8 @@
                                     locale="es-CO" 
                                     placeholder="Precio" 
                                     (ngModelChange)="calcularSubtotalLinea()"
-                                    [ngStyle]="{width: '100%' }" styleClass="w-full"
-                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !precio}">
+                                    [ngStyle]="{width: '100%' }" styleClass="w-full">
+                                    <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !precio}"-->
                     </p-inputNumber>
                 </div>
 
@@ -586,8 +586,8 @@
                                 locale="es-CO" placeholder="" 
                                 [ngStyle]="{width: '100%' }" 
                                 styleClass="w-full" 
-                                [readonly]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !subtotalLinea}">
+                                [readonly]="true">
+                                <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !subtotalLinea}"-->
                 </p-inputNumber>
 
             </div>
@@ -627,8 +627,8 @@
                                     [readonly]="true" 
                                     inputStyleClass="text-center w-6"
                                     styleClass="text-center" 
-                                    [disabled]="true"
-                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !prcImpuesto}">
+                                    [disabled]="true">
+                                    <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !prcImpuesto}"-->
                     </p-inputNumber>
 
                 </div>
@@ -646,8 +646,8 @@
                                 class="w-full" 
                                 [ngStyle]="{width: '100%' }" 
                                 styleClass="w-full"
-                                [readonly]="true" [disabled]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !valorImpuesto}">
+                                [readonly]="true" [disabled]="true">
+                                <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !valorImpuesto}"-->
                 </p-inputNumber>
 
             </div>
@@ -663,8 +663,8 @@
                                 [disabled]="true" 
                                 class="w-full" 
                                 styleClass="w-full" 
-                                [readonly]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !totalLinea}">
+                                [readonly]="true">
+                                <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !totalLinea}"-->
                 </p-inputNumber>
 
             </div>

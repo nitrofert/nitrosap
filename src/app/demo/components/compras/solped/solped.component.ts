@@ -7,6 +7,8 @@ import { AdminService } from 'src/app/demo/service/admin.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
+import { SAPService } from 'src/app/demo/service/sap.service';
+//import * as download   from 'downloadjs'
 
 
 
@@ -82,10 +84,18 @@ export class SolpedComponent implements OnInit {
 
   urlBreadCrumb:string ="";
 
+  dialogAdjuntos:boolean = false;
+
+  series:any[] = [];
+
+  listaDocumentosSolped:any[] = [];
+  loadingDocumentos:boolean = true;
+
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(private rutaActiva: ActivatedRoute,
               private adminService:AdminService,
+              private sapService:SAPService,
               private comprasService:ComprasService,
               private router:Router,
               private confirmationService: ConfirmationService, 
@@ -114,10 +124,31 @@ export class SolpedComponent implements OnInit {
      this.urlBreadCrumb = this.router.url;
 
      this.statuses = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
-     this.approves = [{label:'No aprobada',value:'N'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
+     this.approves = [{label:'No enviada',value:'N'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
 
 
-    this.getListado();
+    this.getSeries();
+    
+  }
+
+  getSeries(){
+    //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
+
+    this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
+        .subscribe({
+            next: (series)=>{
+                for(let item in series){
+                    this.series.push(series[item]);
+                }
+              console.log(this.series);
+              this.getListado();
+                //this.series = series.filter(item => item.)
+            },
+            error: (err)=>{
+              console.log(err);
+            }
+        });
+
     
   }
 
@@ -172,6 +203,103 @@ mostrarAprobaciones(idSolped:any){
       });
 }
 
+mostrarAadjuntos(idSolped:any){
+  this.dialogAdjuntos = true;
+
+  this.comprasService.solpedById(this.authService.getToken(),idSolped)
+  .subscribe({
+    next:(infoSolped)=>{
+       console.log(infoSolped.anexos);
+       this.listaDocumentosSolped = infoSolped.anexos;
+       this.loadingDocumentos=false;
+    },
+    error:(err)=>{
+        console.log(err);
+    }
+
+  });
+}
+
+  async downloadAnexo(idArchivo:number,idSolped:number){
+  let file = this.listaDocumentosSolped.filter(item=>item.id === idArchivo)[0];
+
+  this.comprasService.getAnexoSolped(this.authService.getToken(),idArchivo,idSolped)
+      .subscribe({
+        next:async (anexo)=>{
+            if(anexo.data!==''){
+                //console.log(anexo.data);
+                /** Work */
+                //const blobPDF = await this.base64toBlob(anexo.data, 'application/pdf');
+                //download(new Blob([blobPDF]), 'filename.pdf', 'application/pdf');
+
+                const source = `data:application/pdf;base64,${anexo.data}`;
+                const link = document.createElement("a");
+                link.href = source;
+                link.download = `${file.nombre}`
+                link.click()
+
+            }else{
+              this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail:"No existe documento cargado en la base de datos"});
+            }
+        },
+        error:(err)=>{
+          console.log(err);
+        }
+      });
+  
+  //if(file !==null){
+    //console.log(file.toString('base64'));
+
+    /*
+    let newfile = new Blob([file.data], { type: 'application/pdf' });            
+    var fileURL = URL.createObjectURL(newfile);
+    window.open(fileURL);*/
+
+    /*const source = `data:application/pdf;base64,${file.data}`;
+    const link = document.createElement("a");
+    link.href = source;
+    link.download = `export.pdf`
+    link.click();*/
+
+    /*const url = window.URL.createObjectURL(new Blob([file.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'yourcoolpdf.pdf');
+    //document.body.appendChild(link);
+    link.click();*/
+
+    //const blobPDF = await this.base64toBlob(file.toString('base64'), 'application/pdf');
+
+    //download(new Blob([blobPDF]), 'filename.pdf', 'application/pdf');
+    //download(new Blob([file]), 'filename.pdf', 'application/pdf');
+
+  /*}else{
+    this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail:"No existe documento cargado en la base de datos"});
+  }*/
+}
+
+async base64toBlob(base64Data:any, contentType = '') {
+  const sliceSize = 1024;
+  const byteCharacters = atob(base64Data);
+  const bytesLength = byteCharacters.length;
+  const slicesCount = Math.ceil(bytesLength / sliceSize);
+  const byteArrays = new Array(slicesCount);
+
+  for (let sliceIndex = 0; sliceIndex < slicesCount; sliceIndex += 1) {
+    const begin = sliceIndex * sliceSize;
+    const end = Math.min(begin + sliceSize, bytesLength);
+
+    const bytes = new Array(end - begin);
+    for (let offset = begin, i = 0; offset < end; i += 1, offset += 1) {
+      bytes[i] = byteCharacters[offset].charCodeAt(0);
+    }
+
+    byteArrays[sliceIndex] = new Uint8Array(bytes);
+  }
+
+  return new Blob(byteArrays, { type: contentType });
+}
+
 cancelarSolped(){
 
   let arrayIdSolped:number[] = [];
@@ -219,7 +347,7 @@ cancelarSolped(){
 
     this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
     this.errorSolpedCancelada = false;
-  }else if(this.errorSopledAprobada){
+  }else /*if(this.errorSopledAprobada){
     //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
     if(this.arraySolpedAprobadas.length > 1){
 
@@ -230,7 +358,7 @@ cancelarSolped(){
 
     this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
     this.errorSopledAprobada = false;
-  }else if(this.errorSolpedEnviada){
+  }else */if(this.errorSolpedEnviada){
     //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
     if(this.arrayErrorSolpedEnviada.length > 1){
         message = `Las solicitudes ${JSON.stringify(this.arrayErrorSolpedEnviada)} ya han sido enviadas a aprobación.`;
@@ -782,8 +910,18 @@ clearToast() {
     .subscribe({
       next:(solped =>{
         this.loading = false;
+        for(let lineaSolped of solped){
+          console.log(lineaSolped.serie);
+          console.log(this.series.filter(data=>data.code == lineaSolped.serie));
+          if(lineaSolped.serie!==''){
+            lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
+          }
+          
+          
+        }
           //console.log(solped);
           this.solped = solped;
+          console.log(this.solped);
           this.loading = false;
       }),
       error:(err =>{

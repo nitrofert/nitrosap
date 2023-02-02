@@ -10,6 +10,7 @@ import { AdminService } from 'src/app/demo/service/admin.service';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-table-solped-mp',
@@ -24,6 +25,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   @Input() showNuevo!:any;
   @Input() showEditar!:any;
   @Input() showEnvioSAP!:any;
+  @Input() showDeleteSolped!:any;
   @Input() titulo!:any;
   @Input() nombreLista!:any;
   @Input() loading!:boolean;
@@ -76,6 +78,22 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
   approves:any[] = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
+
+
+  errorSolpedEnviada:boolean = false;
+  arrayErrorSolpedEnviada:any[] = [];
+
+  errorSolpedCancelada:boolean = false;
+  arrayErrorSolpedCancelada:any[] = [];
+
+  errorSopledARechazada:boolean = false;
+  arraySolpedRechazadas:any[]  =[];
+
+  arrayIdSolped:any[]=[];
+ 
+  arraryErrorTrm:any[] = [];
+
+  errorModal:any;
 
 
   @ViewChild('filter') filter!: ElementRef;
@@ -215,7 +233,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
                 console.log(result);
                 this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                 this.onChangeTabla.emit(this.nombreLista);
-
+                this.selectedItem=[];
                 this.loading = true;
                 //this.onChangeLoading.emit({lista:this.nombreLista,estado:true});
                 this.formulario = false;
@@ -252,13 +270,127 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
                   //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
                 }
             });
-      }else{
-        this.messageService.add({severity:'error', summary: '!Error', detail: 'La solped seleccionada fue ya fue enviada a SAP'});
+      }else if(this.selectedItem[0].approved=='C'){
+        this.messageService.add({severity:'error', summary: '!Error', detail: 'La solped seleccionada fue ya fue cancelada.'});
+        this.loading = false;
+      }else if(this.selectedItem[0].approved=='A'){
+        this.messageService.add({severity:'error', summary: '!Error', detail: 'La solped seleccionada fue ya fue enviada a SAP.'});
         this.loading = false;
         //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
       }
       
   }
+
+  cancelarSolped(){
+
+    let arrayIdSolped:number[] = [];
+      let fechaActual: Date = new Date();
+      
+      this.errorSolpedCancelada = false;
+      this.arrayErrorSolpedCancelada =[];
+     
+      this.errorSolpedEnviada = false;
+      this.arrayErrorSolpedEnviada = []; 
+  
+      console.log(this.selectedItem);
+  
+      for(let item of this.selectedItem){
+  
+        if(item.approved==='C'){
+          this.errorSolpedCancelada = true;
+          this.arrayErrorSolpedCancelada.push(item.id);
+        }  
+        
+        
+  
+        
+  
+        arrayIdSolped.push(item.id);
+    }
+  
+    this.arrayIdSolped = arrayIdSolped;
+    let message = "";
+    if(this.errorSolpedCancelada){
+      //Mostrar dialog de error de TRM en solicitud o solicitudes seleccionada
+      if(this.arrayErrorSolpedCancelada.length > 1){
+  
+          message = `Los documentos ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya han sido canceladaos.`;
+      }else{
+        message = `El documento ${JSON.stringify(this.arrayErrorSolpedCancelada)} ya ha sido cancelado`;
+      }
+  
+      this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
+      this.errorSolpedCancelada = false;
+    }else{
+  
+      
+        
+          if(arrayIdSolped.length >1){
+            message =`¿Desea Continuar con la cancelación de los documentos seleccionados?`;
+          }else{
+            message = `¿Desea Continuar con la cancelación del  documento seleccionado?`;
+          }
+        
+  
+        this.messageService.clear();
+        this.messageService.add({key: 'cdel', sticky: true, severity:'warn', summary:'Confirmación', detail:message});
+      
+    }
+  
+  }
+
+  onRejectCancel(){
+    this.messageService.clear('cdel');
+    //console.log(this.arrayIdSolped);
+  }
+  
+  onConfirmCancel(){
+    this.loading = true;
+    let message = "";
+    this.messageService.clear('cdel');
+    this.comprasService.cancelacionSolped(this.authService.getToken(), this.arrayIdSolped)
+        .subscribe({
+          next:(solpedCanceladas)=>{
+            if(solpedCanceladas.status=="ok"){
+              if(this.arrayIdSolped.length >1){
+                message =`La cancelación de los documentos seleccionados fueron realizados correctamente`;
+              }else{
+                message = `La cancelación del documento seleccionado fue realizado correctamente`;
+              }
+              this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
+              this.onChangeTabla.emit(this.nombreLista);
+              //this.getListado();
+            }else{
+              this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: solpedCanceladas.message});
+              this.loading = false;
+            }
+          },
+          error:(err)=>{
+            console.log(err);
+            this.loading = false
+            this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
+          }
+        });
+  }
+
+  exportExcel() {
+    import("xlsx").then(xlsx => {
+        const worksheet = xlsx.utils.json_to_sheet(this.documentList);
+        const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+        const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveAsExcelFile(excelBuffer, `${this.documento}`);
+    });
+  }  
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+        type: EXCEL_TYPE
+    });
+    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+
 
  
 

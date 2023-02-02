@@ -33,6 +33,7 @@ import { ResponseApprovedComponent } from './demo/components/compras/solped/page
             { path: 'reject/solped/:crypt', component: RechazoSolpedComponent },
             { path: 'mensaje/solped/:crypt/:message', component: ResponseApprovedComponent },
             { path: 'pages/notfound', component: NotfoundComponent },
+            
             { path: '**', redirectTo: 'pages/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
     ],

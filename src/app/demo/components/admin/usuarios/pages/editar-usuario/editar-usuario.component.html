@@ -1,5 +1,5 @@
 <div class="grid">
-	<div class="col-12 md:col-6 col-offset-3">
+	<div class="col-12 md:col-12 ">
 		<div class="card p-fluid">
             <!--mensaje error o confirmación-->
             <p-messages [(value)]="messageForm"></p-messages>
@@ -7,89 +7,99 @@
 			<h5>Editar usuario</h5>
             <!--<form (ngSubmit)="submit()">>-->
             <!--<ng-template pTemplate="content">-->
-                <div class="field">
-                    <label htmlFor="fullname">Nombre completo</label>
-                    <input pInputText
-                           [(ngModel)] ="fullname"
-                           id="fullname" 
-                           name="fullname" 
-                           type="text" 
-                           required 
-                           autofocus 
-                           [ngClass]="{'ng-invalid ng-dirty' : submitted && !fullname}"/>
+                <div class="grid">
+                    <div class="field col">
+                        <label htmlFor="fullname">Nombre completo</label>
+                        <input pInputText
+                               [(ngModel)] ="fullname"
+                               id="fullname" 
+                               name="fullname" 
+                               type="text" 
+                               required 
+                               autofocus 
+                               [ngClass]="{'ng-invalid ng-dirty' : submitted && !fullname}"/>
+                    </div>
+        
+                    <div class="field col">
+                        <label htmlFor="email">Email</label>
+                        <input pInputText
+                               [(ngModel)] = "email"
+                               id="email" 
+                               name="email" 
+                               type="email"
+                               required 
+                               
+                               [ngClass]="{'ng-invalid ng-dirty' : submitted && !email}" />
+                    </div>
                 </div>
-    
-                <div class="field">
-                    <label htmlFor="email">Email</label>
-                    <input pInputText
-                           [(ngModel)] = "email"
-                           id="email" 
-                           name="email" 
-                           type="email"
-                           required 
-                           
-                           [ngClass]="{'ng-invalid ng-dirty' : submitted && !email}" />
+                
+                <div class="grid">
+                    <div class="field col">
+                        <label htmlFor="status">Estado</label>
+                        
+                        <p-dropdown [options]="estados" 
+                                    optionLabel="name"
+                                    optionValue="code" 
+                                    [(ngModel)]="status"
+                                    id="status"
+                                    name="status"
+                                    placeholder="Seleccione el estado"
+                                    [required]="true"                        
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !status}"></p-dropdown>
+                    </div>
                 </div>
-    
-                <div class="field">
-                    <label htmlFor="status">Estado</label>
+                
+                <div class="grid">
+                    <div class="field col">
+                        <label htmlFor="codusersap">Usuario SAP</label>
+                        <input pInputText
+                               [(ngModel)] ="codusersap"
+                               id="codusersap" 
+                               name="codusersap" 
+                               type="text" 
+                               required 
+                               autofocus 
+                               [ngClass]="{'ng-invalid ng-dirty' : submitted && !codusersap}"/>
+                    </div>
+        
+                    <div class="field col">
+                        <label htmlFor="username">Usuario portal</label>
+                        <input pInputText
+                               [(ngModel)] ="username"
+                               id="username" 
+                               name="username" 
+                               type="text" 
+                               required 
+                               autofocus 
+                               [ngClass]="{'ng-invalid ng-dirty' : submitted && !username}"/>
+                    </div>
+                </div>
+                
+                <div class="grid">
+                    <div class="field col">
+                        <label htmlFor="password">Contraseña</label>
+                        <p-password [(ngModel)]="password"
+                                    id="password" 
+                                    name="password"
+                                    
+        
+                        ></p-password>
                     
-                    <p-dropdown [options]="estados" 
-                                optionLabel="name"
-                                optionValue="code" 
-                                [(ngModel)]="status"
-                                id="status"
-                                name="status"
-                                placeholder="Seleccione el estado"
-                                [required]="true"                        
-                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !status}"></p-dropdown>
+                    </div>
+        
+                    <div class="field col">
+                        <label htmlFor="password2">Repetir contraseña</label>
+                        <p-password [(ngModel)]="password2"
+                                    id="password2" 
+                                    name="password2"
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && password && !password2}"
+        
+                        ></p-password>
+                    
+                    </div>
                 </div>
+    
                 
-                <div class="field">
-                    <label htmlFor="codusersap">Usuario SAP</label>
-                    <input pInputText
-                           [(ngModel)] ="codusersap"
-                           id="codusersap" 
-                           name="codusersap" 
-                           type="text" 
-                           required 
-                           autofocus 
-                           [ngClass]="{'ng-invalid ng-dirty' : submitted && !codusersap}"/>
-                </div>
-    
-                <div class="field">
-                    <label htmlFor="username">Usuario portal</label>
-                    <input pInputText
-                           [(ngModel)] ="username"
-                           id="username" 
-                           name="username" 
-                           type="text" 
-                           required 
-                           autofocus 
-                           [ngClass]="{'ng-invalid ng-dirty' : submitted && !username}"/>
-                </div>
-    
-                <div class="field">
-                    <label htmlFor="password">Contraseña</label>
-                    <p-password [(ngModel)]="password"
-                                id="password" 
-                                name="password"
-                                
-    
-                    ></p-password>
-                
-                </div>
-    
-                <div class="field">
-                    <label htmlFor="password2">Repetir contraseña</label>
-                    <p-password [(ngModel)]="password2"
-                                id="password2" 
-                                name="password2"
-                                [ngClass]="{'ng-invalid ng-dirty' : submitted && password && !password2}"
-    
-                    ></p-password>
-                
-                </div>
             
             <!--</ng-template>-->
             <!--<ng-template pTemplate="footer">-->
@@ -99,6 +109,52 @@
                 </div>
                 
             </div>
+
+            <p-divider align="left">
+                <div class="inline-flex align-items-center">
+                    <i class="pi pi-id-card mr-2"></i>
+                    <b>Perfiles</b>
+                </div>
+            </p-divider>
+
+            <div class="grid text-center">
+                <div *ngFor="let perfil of perfiles" class="col-4">
+                    <div class="font-bold">{{perfil.perfil}}</div>
+                    <div>
+                        <p-selectButton [options]="opciones" 
+                                            [(ngModel)]="perfil.perfil_user" 
+                                            optionLabel="label" 
+                                            optionValue="value"
+                                            (onChange)="setPerfilUser(perfil.perfil_user,perfil.id)"></p-selectButton>
+                    </div>
+                </div>
+                
+            </div>
+
+            <p-divider align="left">
+                <div class="inline-flex align-items-center">
+                    <i class="pi pi-building mr-2"></i>
+                    <b>Empresas</b>
+                </div>
+            </p-divider>
+
+            <div class="grid text-center">
+                <div *ngFor="let company of companies" class="col-4">
+                    <div class="font-bold">{{company.companyname}}</div>
+                    <div>
+                        <p-selectButton [options]="opciones" 
+                                            [(ngModel)]="company.company_access" 
+                                            optionLabel="label" 
+                                            optionValue="value"
+                                            (onChange)="setAccess(company.company_access,company.id)"></p-selectButton>
+                    </div>
+                </div>
+                
+            </div>
+
+           
+
+            
                 
             <!--</ng-template>-->
                 

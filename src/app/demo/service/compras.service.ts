@@ -34,6 +34,15 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  
+  listSolpedAprobadas(token:string):Observable<any[]>{
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/list/aprobadas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   solpedById(token:string,id:number):Observable<SolpedInterface>{
     
     const headers = this.urlApiService.getHeadersAPI(token);  
@@ -75,6 +84,14 @@ export class ComprasService {
     return this.http.post<any[]>(url,body,requestOptions);
     //return this.http.post<any[]>(url,body);
 
+  }
+
+  getAnexoSolped(token:string,idAnexo:number,idSolped:number):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);  
+    const requestOptions = { headers: headers };
+
+    const url:string = `${this.api_url}/api/compras/solped/anexo/${idSolped}/${idAnexo}`;
+    return this.http.get<any>(url,requestOptions);
   }
 
   downloadAnexo3(token:string,ruta:string):Observable<any>{
@@ -285,6 +302,23 @@ export class ComprasService {
     return this.http.put<any[]>(url,data,requestOptions);
   }
 
+  updateCantidadSolped(token:string,data:any):Observable<any>{
+    //console.log('data service',data);
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/cantidadmp`;
+    return this.http.put<any[]>(url,data,requestOptions);
+  }
+
+  grabarSimulaciones(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/grabarSimulaciones`;
+    return this.http.post<any[]>(url,data,requestOptions);
+
+  }
+
   enviarSolpedSAP(token:string,idSolped:any):Observable<any>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -396,5 +430,20 @@ export class ComprasService {
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/mrp/carguemaxmin`;
     return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  evaluacionProveedores(token:string,parametros:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/rpt/evaluacionProveedores`;
+    return this.http.post<any[]>(url,parametros,requestOptions);
+  }
+
+  
+  detalleEntradasProveedor(token:string,parametros:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/rpt/detalleEntradasProveedor`;
+    return this.http.post<any[]>(url,parametros,requestOptions);
   }
 }

@@ -116,11 +116,12 @@ export class PedidosComponent implements OnInit {
             next: (pedidos)=>{
                 
                 //this.pedidos = [];
+                let lineaPedidos:any[] = []
                 for(let item in pedidos){
 
-                 this.pedidos.push(pedidos[item]);
+                 lineaPedidos.push(pedidos[item]);
                 }
-                //this.pedidos = pedidos;
+                this.pedidos = lineaPedidos;
                 console.log(this.pedidos);
                 this.loading = false;
             },

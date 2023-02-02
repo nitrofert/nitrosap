@@ -10,6 +10,7 @@ import { NuevaSolpedComponent } from './pages/nueva-solped/nueva-solped.componen
 import { TrackingMPComponent } from './pages/tracking-mp/tracking-mp.component';
 
 import { SolpedComponent } from './solped.component';
+import { SolpedsAprobadasComponent } from './solpeds-aprobadas/solpeds-aprobadas.component';
 
 
 
@@ -23,6 +24,7 @@ import { SolpedComponent } from './solped.component';
         { path: 'tracking', component: TrackingMPComponent },
         { path: 'nueva-mp', component: NewSolpedMpComponent },
         { path: 'editar-mp/:solped', component: EditSolpedMpComponent },
+        { path: 'aprobadas', component: SolpedsAprobadasComponent },
     ])],
     exports: [RouterModule]
 })

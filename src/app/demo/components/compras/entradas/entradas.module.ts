@@ -15,6 +15,7 @@ import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
 
 
 
+
 @NgModule({
   declarations: [
     EntradasComponent,
@@ -22,7 +23,8 @@ import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
     NuevaEntradaComponent,
     ConsultaEntradaComponent,
     ImpresionComponent,
-    PdfComponent
+    PdfComponent,
+  
     
   ],
   imports: [

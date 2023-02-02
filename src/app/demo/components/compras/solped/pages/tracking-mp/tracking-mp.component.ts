@@ -28,30 +28,37 @@ export class TrackingMPComponent implements OnInit {
   allSolpedMP2:any[] = [];
 
   proyecciones:any[] = [];
+  proyeccionesBK:any[] = [];
   loadingProyecciones:boolean = false;
   selectedProyecciones:any[] = [];
 
   solpedRequest:any[] = [];
+  solpedRequestBK:any[] = [];
   loadingSR:boolean = true;
   selectedSolpedR:any[] = [];
 
   pedidosPorCargar:any[] = [];
+  pedidosPorCargarBK:any[] = [];
   loadingPxC:boolean = true;
   selectedPedidosPxC:any[] = [];
 
   pedidosCargados:any[] = [];
+  pedidosCargadosBK:any[] = [];
   loadingC:boolean = true;
   selectedPedidosC:any[] = [];
 
   pedidosDocumentacion:any[] = [];
+  pedidosDocumentacionBK:any[] = [];
   loadingD:boolean = true;
   selectedPedidosD:any[] = [];
 
   pedidosDescargados:any[] = [];
+  pedidosDescargadosBK:any[] = [];
   loadingPD:boolean = true;
   selectedPedidosPD:any[] = [];
 
   entradasNT:any[] = [];
+  entradasNTBK:any[] = [];
   loadingNT:boolean = true;
   selectedEntradas:any[] = [];
 
@@ -60,6 +67,9 @@ export class TrackingMPComponent implements OnInit {
 
   statuses:any[] = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
   approves:any[] = [{label:'No aprobada',value:'No'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
+
+  tiposMateriaPrima:any[] =[{label:'Importada',value:'SI'},{label:'Nacional',value:'NO'},{label:'Todas',value:''}];
+  tipoMateriaPrima:string="Todas";
 
 
   @ViewChild('filter') filter!: ElementRef;
@@ -139,6 +149,7 @@ export class TrackingMPComponent implements OnInit {
           proyecciones.push(line);
         }
         this.proyecciones = proyecciones;  
+        this.proyeccionesBK = proyecciones;  
 
         let solicitudes:any[] = [];
         for(let line of proyeccionesSolicitudes.solicitudesSAP){
@@ -151,6 +162,7 @@ export class TrackingMPComponent implements OnInit {
         }
         
         this.solpedRequest = solicitudes;
+        this.solpedRequestBK = solicitudes;
       }),
       error:(err =>{
         console.log(err);
@@ -168,6 +180,7 @@ export class TrackingMPComponent implements OnInit {
 
         if(pedidos.value){
           this.pedidosPorCargar = await this.convertirObjetoSLtoArray(pedidos);
+          this.pedidosPorCargarBK = this.pedidosPorCargar;
           //console.log(this.pedidosPorCargar);
           
         }
@@ -188,6 +201,7 @@ export class TrackingMPComponent implements OnInit {
        // console.log('Pedido cargados',pedidos);
         if(pedidos.value){
           this.pedidosCargados = await this.convertirObjetoSLtoArray(pedidos);
+          this.pedidosCargadosBK = this.pedidosCargados;
           //console.log(this.pedidosCargados);
           
         }
@@ -225,6 +239,7 @@ export class TrackingMPComponent implements OnInit {
         
         if(pedidos.value){
           this.pedidosDescargados = await this.convertirObjetoSLtoArray(pedidos);
+          this.pedidosDescargadosBK = this.pedidosDescargados;
           //console.log(this.pedidosDescargados);
           
         }
@@ -258,6 +273,7 @@ export class TrackingMPComponent implements OnInit {
           lineaEntradas.push({
                   Comments:entradas[item].Comments,
                   DocNum:entradas[item].DocNum,
+                  pedido:entradas[item].pedido,
                   Incoterms:entradas[item].Incoterms,
                   ItemCode:entradas[item].ItemCode,
                   ItemDescription:entradas[item].Dscription,
@@ -291,11 +307,38 @@ export class TrackingMPComponent implements OnInit {
 
         console.log(lineaEntradas);
         this.entradasNT = lineaEntradas;
+        this.entradasNTBK = lineaEntradas;
       }),
       error:(err =>{
         console.log(err);
       })
     });
+  }
+
+  filtrarTablas(){
+    //Restablecer valores originales de tablas
+    this.proyecciones = this.proyeccionesBK;
+    this.solpedRequest = this.solpedRequestBK;
+    this.pedidosPorCargar = this.pedidosPorCargarBK;
+    this.pedidosCargados = this.pedidosCargadosBK;
+    this.pedidosDescargados = this.pedidosDescargadosBK;
+    this.entradasNT = this.entradasNTBK;
+    //validar cambios en filtros
+    if(this.tipoMateriaPrima!="Todas"){
+      let valorFiltro = this.tiposMateriaPrima.filter(data=>data.label == this.tipoMateriaPrima)[0].value;
+      this.proyecciones = this.proyecciones.filter(data=>data.U_NF_PEDMP==valorFiltro);
+      this.solpedRequest = this.solpedRequest.filter(data=>data.U_NF_PEDMP==valorFiltro);
+      this.pedidosPorCargar = this.pedidosPorCargar.filter(data=>data.U_NF_PEDMP==valorFiltro);
+      this.pedidosCargados = this.pedidosCargados.filter(data=>data.U_NF_PEDMP==valorFiltro);
+      this.pedidosDescargados = this.pedidosDescargados.filter(data=>data.U_NF_PEDMP==valorFiltro);
+      this.entradasNT = this.entradasNT.filter(data=>data.U_NF_PEDMP==valorFiltro);
+    }
+
+  }
+
+  reestablecerFiltro(){
+    this.tipoMateriaPrima = "Todas";
+    this.filtrarTablas();
   }
 
   newSolped(){}

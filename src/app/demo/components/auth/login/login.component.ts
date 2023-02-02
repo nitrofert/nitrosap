@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
 import {Message, MessageService} from 'primeng/api';
 import { LoginFormInterface } from 'src/app/demo/api/frmlogin';
 import { AuthService } from 'src/app/demo/service/auth.service';
+import { RecaptchaService } from 'src/app/demo/service/recaptcha.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
+import { environment } from 'src/environments/environment';
 import { CompanyInterface } from '../../../api/company';
 
 
@@ -51,7 +54,11 @@ export class LoginComponent  {
     classErrorPassword:string="";
     classErrorCompany:string="";
     classMessageForm:string="";
+    KEY_RECAPTCHA:string="";
+    KEY_RECAPTCHAv2:string="";
 
+    
+    robot:boolean;
     
 
     constructor(
@@ -59,9 +66,15 @@ export class LoginComponent  {
             private authService:AuthService, 
             private router: Router,
             private messageService: MessageService,
-            private sapService:SAPService
+            private sapService:SAPService,
+            private recaptchaService: RecaptchaService,
+            private recaptchaV3Service:ReCaptchaV3Service
             ) 
             {
+                this.KEY_RECAPTCHA = environment.key_recaptcha;
+                this.KEY_RECAPTCHAv2 = environment.key_recaptchaV2;
+
+                
                 //importar al servicio de consulta de empresas
                 this.authService.companies()
                 .subscribe({
@@ -74,10 +87,14 @@ export class LoginComponent  {
                 }
                 });
 
+                    
+                this.robot = true;
+                //Para utilizar captcha v2 deshabilitar loadCaptchaV3
+                //this.loadCaptchaV3();
+                    
                 
             }
   
-            
 
     onsubmit(){
 
@@ -190,6 +207,44 @@ export class LoginComponent  {
 
         this.submitted=false;
         
+    }
+
+
+    initRecaptcha(){
+        console.log('Recaptcha')
+    }
+
+    loadCaptchaV3(){
+        this.recaptchaV3Service.execute('')
+                        .subscribe({
+                            next:(token:string )=>{
+                                
+                                this.recaptchaService.getToken(token,'v3')
+                                    .subscribe({
+                                        next:(tokenAux:any)=>{
+                                            console.log(tokenAux);
+                                            if (tokenAux.success){
+                                                this.robot = false;
+                                            }else{
+                                                this.robot = true;
+                                            }
+                                        }
+                                    });
+
+
+                            }
+                        })
+    }
+    
+    showResponse($event:any){
+        console.log($event);
+        //this.loadCaptchaV3();
+        this.robot = false;
+    }
+
+    blockLogin($event:any){
+        console.log($event)
+        this.robot = true;
     }
 
     restoreClass(idControl:any):void{

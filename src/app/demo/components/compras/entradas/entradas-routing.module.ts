@@ -10,12 +10,14 @@ import { NuevaEntradaComponent } from './pages/nueva-entrada/nueva-entrada.compo
 
 
 
+
 @NgModule({
     imports: [RouterModule.forChild([
         { path: '', component: EntradasComponent },
         { path: 'nueva', component: NuevaEntradaComponent }, 
         { path: 'consultar/:entrada', component: ConsultaEntradaComponent }, 
         { path: 'impresion/:entrada', component: ImpresionComponent }, 
+        
        
     ])],
     exports: [RouterModule]

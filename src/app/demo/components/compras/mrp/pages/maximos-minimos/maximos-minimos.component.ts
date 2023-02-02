@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ItemsSAP } from 'src/app/demo/api/itemsSAP';
@@ -338,6 +339,42 @@ async validarContenidoCSV(lienasArchivo:any,separador:string):Promise<boolean>{
 
   return valido;
 
+}
+
+async descargarCSV(){
+  /*this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla cargue detalle solped.csv')
+      .subscribe({
+          next: (result)=>{
+            console.log(result);
+          },
+          error: (err)=>{
+              console.log(err);
+          }
+      })*/
+  const link = document.createElement('a');
+
+  link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_maximos_minimos.csv');
+  link.click();
+  
+  
+}
+
+exportExcel() {
+  import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.json_to_sheet(this.maximosminimos);
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, `maximos_minimos`);
+  });
+}  
+
+saveAsExcelFile(buffer: any, fileName: string): void {
+  let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+  let EXCEL_EXTENSION = '.xlsx';
+  const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE
+  });
+  FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
 }
 
 

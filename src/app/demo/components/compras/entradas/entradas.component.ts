@@ -34,6 +34,9 @@ export class EntradasComponent implements OnInit {
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   statuses:any = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
+
+  
+  series:any[] = [];
  
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -56,7 +59,7 @@ export class EntradasComponent implements OnInit {
         //Cargar permisos usuario pagina
         this.getPermisosUsuarioPagina();
         //Cargar listado de entradas registradas
-        this.getEntradas();
+        this.getSeries();
 
         //this.sapService.getLoginSAP();
   }
@@ -92,13 +95,33 @@ export class EntradasComponent implements OnInit {
     //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
+  getSeries(){
+    this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'20')
+        .subscribe({
+            next: (series)=>{
+                for(let item in series){
+                    this.series.push(series[item]);
+              }
+              this.getEntradas();
+            },
+            error: (err)=>{
+              console.log(err);
+            }
+        });
+  }
+
+
   getEntradas(){
     this.comprasService.listEntrada(this.authService.getToken())
     .subscribe({
       next:(entradas =>{
         this.loading = false;
-          console.log(entradas);
+         
+          for(let lineaEntrada of entradas){
+            lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
+          }
           this.entradas = entradas;
+          console.log(this.entradas);
           this.loading = false;
       }),
       error:(err =>{

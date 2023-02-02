@@ -32,9 +32,11 @@
                         ],
                         "scripts": [
                             "node_modules/prismjs/prism.js",
-                            "node_modules/prismjs/components/prism-typescript.js"
+                            "node_modules/prismjs/components/prism-typescript.js",
+                            "node_modules/pdfmake/build/pdfmake.js",
+                            "node_modules/pdfmake/build/vfs_fonts.js"
                         ],
-                        "allowedCommonJsDependencies": ["chart.js"]
+                        "allowedCommonJsDependencies": ["chart.js","pdfmake/build/pdfmake.js","pdfmake/build/vfs_fonts.js"]
                     },
                     "configurations": {
                         "production": {

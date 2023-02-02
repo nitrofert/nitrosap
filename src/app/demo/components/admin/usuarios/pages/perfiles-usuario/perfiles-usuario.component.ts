@@ -71,13 +71,15 @@ export class PerfilesUsuarioComponent implements OnInit {
 
   }
 
-  setPerfilUser(valor:number,idPerfil:number){
+  setPerfilUser(valor:any,idPerfil:number){
     console.log(valor,idPerfil);
     let perfilUser = {
       id_perfil:idPerfil,
       id_user:this.userSelected.user,
       valor
     }
+
+    console.log(perfilUser);
     this.adminService.setPerfilUser(this.authService.getToken(),perfilUser)
         .subscribe({
           next: (acces) => {

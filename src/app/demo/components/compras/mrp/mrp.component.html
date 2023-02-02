@@ -1,5 +1,73 @@
 
 <p-toast></p-toast>
+<p-toast key="confirmAnularProyeccion" (onClose)="onRejectAP()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+                
+
+             
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirmAP(message.data.idProyeccion,message.data.semana)" label="Si" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onRejectAP()" label="No" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+<p-toast key="confirmEditarProyeccion" (onClose)="onRejectCEP()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+                
+
+             
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirmCEP(message.data.idProyeccion, message.data.cantidadProyectada, message.data.semana)" label="Si" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onRejectCEP()" label="No" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-toast key="confirmGuardarSimulacion" (onClose)="onRejectGS()" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+                <h4>{{message.summary}}</h4>
+                <p>{{message.detail}}</p>
+                
+
+             
+            </div>
+            <div class="grid p-fluid">
+                <div class="col-6">
+                    <button type="button" pButton (click)="onConfirmGS()" label="Si" class="p-button-success"></button>
+                </div>
+                <div class="col-6">
+                    <button type="button" pButton (click)="onRejectGS()" label="No" class="p-button-secondary"></button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
 <p-toast key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
     <ng-template let-message pTemplate="message">
         <div class="flex flex-column" style="flex: 1">
@@ -297,6 +365,8 @@
 
         </div>
 
+        
+
     <p-table #dt1 
             [value]="lineasCalculadora" 
             dataKey="semana" 
@@ -308,7 +378,18 @@
             selectionMode="single" 
             [(selection)]="lineaSeleccionada" responsiveLayout="scroll">
         <ng-template pTemplate="caption">
-            
+            <div class="flex justify-content-between flex-column sm:flex-row">
+                <div>
+                    <button pButton 
+							
+							pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
+							class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+							icon="pi pi-file-excel" 
+							(click)="exportExcel()">
+							</button>
+							
+                </div>
+            </div>
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
@@ -567,13 +648,33 @@
    
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-close" (click)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
-        <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
-                  icon="pi pi-save" 
-                  (click)="GuardarProyecciones()" 
-                  label="Grabar proyecciones de compra" 
-                  styleClass="p-button-text">
-        </p-button>
+
+        <div *ngIf=" loadingGrabarSimulacion===true"class="field col">
+            <p-divider></p-divider>   
+            <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+            <p-divider></p-divider>
+        </div>
+
+        <div class="flex justify-content-between">
+            <div>
+                <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
+                        icon="pi pi-save" 
+                        (click)="GuardarSimulacion()" 
+                        label="Grabar simulación proyecciones de compra" 
+                        styleClass="p-button-text">
+                </p-button>
+            </div>
+            <div>
+                <p-button icon="pi pi-close" (click)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
+                <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
+                        icon="pi pi-save" 
+                        (click)="GuardarProyecciones()" 
+                        label="Grabar proyecciones de compra" 
+                        styleClass="p-button-text">
+                </p-button>
+            </div>
+        </div>
+        
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -616,7 +717,39 @@
                 </div>
                 <div class="grid">
                     <div class="col">Cantidad pendiente:</div>
-                    <div class="col">{{documento.cantidad | number}}</div>
+                    <div class="col">
+                            <div class="flex justify-content-between">
+                                <div *ngIf="!editarproyeccion">{{documento.cantidad | number}}</div>
+                                <div *ngIf="editarproyeccion">
+                                    <input pInputText 
+                                            [(ngModel)]="cantidadEditar" 
+                                            id="cantidadEditar" 
+                                            name="cantidadEditar" 
+                                            class="p-inputtext-sm text-center"
+                                            type="number"/>
+                                </div>
+                                <div>
+                                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion && permisosUsuarioPagina[0].update_accion" (click)="editarProyeccion(documento.cantidad)">
+                                        <i  class="pi pi-pencil pt-2  p-text-secondary"  
+                                        style="font-size: 1rem; cursor:pointer;"  
+                                        pTooltip="Editar proyección"></i>
+                                    </div>
+                                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion && permisosUsuarioPagina[0].delete_accion" (click)="anularProyeccion(documento.docnum,documento.semana)">
+                                        <i  class="pi pi-trash pt-2  p-text-secondary"  
+                                        style="font-size: 1rem; cursor:pointer;"  
+                                        pTooltip="Anular proyección"></i>
+                                    </div>
+                                    <div *ngIf="documento.tipo=='Proyectado' && editarproyeccion" (click)="guardarProyeccion(documento.docnum,cantidadEditar,documento.semana)">
+                                        <i  class="pi pi-save pt-2  p-text-secondary"  
+                                        style="font-size: 1rem; cursor:pointer;"  
+                                        pTooltip="Actualizar proyección"></i>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+                    </div>
                 </div>
                 <div *ngIf="documento.tipo=='Compra' " class="grid">
                     <div class="col">Motonave:</div>
@@ -637,7 +770,7 @@
    
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="verdocumentos=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (click)="verdocumentos=false;editarproyeccion=false; " label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
