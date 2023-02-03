@@ -1108,6 +1108,7 @@ encabezadosValidos(camposEncabezado:any[], arrayLineaEncabezado:any[]){
 }
 
  async validarLocalidad(dependencia:any,localidad:any):Promise<boolean>{
+  console.log(dependencia,localidad);
   let valido = false;
   this.dependencia = this.dependencias.filter(data => data.dependence === dependencia)[0];
   await this.SeleccionarDependencia();
@@ -1290,7 +1291,7 @@ async validarCuentaContable(cuenta:any){
   }
 
   async descargarCSV(){
-    this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
+    /*this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
         .subscribe({
             next: (result)=>{
               console.log(result);
@@ -1298,13 +1299,13 @@ async validarCuentaContable(cuenta:any){
             error: (err)=>{
                 console.log(err);
             }
-        })
-   /* const link = document.createElement('a');
+        })*/
+    const link = document.createElement('a');
     link.target='_blank';
-    link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_solped.csv');
-    //link.href = await this.comprasService.downloadAnexo('assets/demo/data/plantilla_cargue_detalle_solped.csv');
+    //link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_solped.csv');
+    link.href = "https://nitrofert.com.co/wp-content/uploads/2023/02/plantilla-cargue-detalle-solped.csv";
     
-    link.click();*/
+    link.click();
   }
 
   GuardarSolped(){

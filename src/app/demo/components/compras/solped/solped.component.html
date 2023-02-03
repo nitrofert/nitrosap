@@ -610,3 +610,16 @@
     </ng-template>
 </p-dialog>
 <!--  fin dialog proceso aprobacion-->
+
+<!-- Dialog loading -->
+<p-dialog header="Cargando" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+    </p>
+
+    <div *ngIf="loadingCargue" class="field col">
+                    
+        <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+</p-dialog>
+<!--Fin Dialog loading-->
