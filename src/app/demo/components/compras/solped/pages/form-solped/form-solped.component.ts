@@ -13,6 +13,7 @@ import { SolpedDet, SolpedInterface } from 'src/app/demo/api/solped';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
+import * as download from 'downloadjs';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -160,7 +161,7 @@ export class FormSolpedComponent implements OnInit {
   cargueValido:boolean = false;
   loadingCargueCSV:boolean =false;
   
-
+ 
 
   /*********************************** */
 
@@ -1291,6 +1292,8 @@ async validarCuentaContable(cuenta:any){
   }
 
   async descargarCSV(){
+
+    let url ="https://nitrofert.com.co/wp-content/uploads/2023/02/plantilla-cargue-detalle-solped.csv";
     /*this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
         .subscribe({
             next: (result)=>{
@@ -1300,13 +1303,19 @@ async validarCuentaContable(cuenta:any){
                 console.log(err);
             }
         })*/
+
     const link = document.createElement('a');
     link.target='_blank';
-    //link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_solped.csv');
-    link.href = "https://nitrofert.com.co/wp-content/uploads/2023/02/plantilla-cargue-detalle-solped.csv";
+    link.href = url;
     
     link.click();
+
+      
+    
+
   }
+
+ 
 
   GuardarSolped(){
 
