@@ -65,7 +65,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   cantidadkl!:any;
   comentarios:any;
   nf_tipocarga:string="";
-  agentes:any[] = [{tipo:'Multiport'},{tipo:'Pharo'},{tipo:'Deep Blue'},{tipo:'SCS'}];
+  agentes:any[] = [{tipo:'Multiport'},{tipo:'Pharo'},{tipo:'Deep Blue'},{tipo:'SCS'},{tipo:'TRANSMARES'}];
   nf_agente:string="";
   nf_motonave:string="";
   nf_puertosalida:string ="";

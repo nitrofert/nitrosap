@@ -35,7 +35,7 @@
             </div>
             <div class="grid p-fluid">
                 <div class="col-6">
-                    <button type="button" pButton (click)="onConfirmCEP(message.data.idProyeccion, message.data.cantidadProyectada, message.data.semana)" label="Si" class="p-button-success"></button>
+                    <button type="button" pButton (click)="onConfirmCEP(message.data.idProyeccion, message.data.cantidadProyectada, message.data.semana, message.data.fechaEditar, message.data.linenum)" label="Si" class="p-button-success"></button>
                 </div>
                 <div class="col-6">
                     <button type="button" pButton (click)="onRejectCEP()" label="No" class="p-button-secondary"></button>
@@ -701,16 +701,26 @@
                 </div>
                 <div *ngIf="documento.tipo=='Proyectado' || documento.tipo=='Necesidad'" class="grid">
                     <div class="col">Fecha arribo:</div>
-                    <div *ngIf="documento.tipo=='Necesidad'" class="col">{{documento.fechadoc | date}}</div>
-                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion" class="col">{{documento.fechadoc | date}}</div>
-                    <div *ngIf="editarproyeccion">
-                        <input pInputText 
-                                [(ngModel)]="fechaEditar" 
-                                id="fechaEditar" 
-                                name="fechaEditar" 
-                                class="p-inputtext-sm text-center"
-                                type="date"/>
+                    
+                    <div *ngIf="documento.tipo=='Necesidad'" style="text-align: left;" class="col">
+                        {{documento.fechadoc | date}}
                     </div>
+                    
+                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion" style="text-align: left;" class="col">
+                        {{documento.fechadoc | date}}
+                    </div>
+
+                    <div *ngIf="editarproyeccion"  class="col flex justify-content-start" >
+                        <p-calendar [(ngModel)]="fechaEditar" 
+                                [showIcon]="true"
+                                inputId="fechaEditar" 
+                                [required]="true"
+                                styleClass="p-calendar-sm p-inputtext-sm w-full"
+                                inputStyleClass="text-center"
+                                dateFormat="dd/mm/yy">
+                        </p-calendar>
+                    </div>
+                
                 </div>
                 <div *ngIf="documento.tipo=='Compra' " class="grid">
                     <div class="col">ETA:</div>
@@ -738,7 +748,7 @@
                                             type="number"/>
                                 </div>
                                 <div>
-                                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion && permisosUsuarioPagina[0].update_accion" (click)="editarProyeccion(documento.cantidad)">
+                                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion && permisosUsuarioPagina[0].update_accion" (click)="editarProyeccion(documento.cantidad,documento.fechadoc,documento.linenum)">
                                         <i  class="pi pi-pencil pt-2  p-text-secondary"  
                                         style="font-size: 1rem; cursor:pointer;"  
                                         pTooltip="Editar proyección"></i>
@@ -748,7 +758,7 @@
                                         style="font-size: 1rem; cursor:pointer;"  
                                         pTooltip="Anular proyección"></i>
                                     </div>
-                                    <div *ngIf="documento.tipo=='Proyectado' && editarproyeccion" (click)="guardarProyeccion(documento.docnum,cantidadEditar,documento.semana)">
+                                    <div *ngIf="documento.tipo=='Proyectado' && editarproyeccion" (click)="guardarProyeccion(documento.docnum,cantidadEditar,documento.semana,fechaEditar,documento.linenum)">
                                         <i  class="pi pi-save pt-2  p-text-secondary"  
                                         style="font-size: 1rem; cursor:pointer;"  
                                         pTooltip="Actualizar proyección"></i>
