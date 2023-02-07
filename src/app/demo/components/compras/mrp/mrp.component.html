@@ -701,7 +701,16 @@
                 </div>
                 <div *ngIf="documento.tipo=='Proyectado' || documento.tipo=='Necesidad'" class="grid">
                     <div class="col">Fecha arribo:</div>
-                    <div class="col">{{documento.fechadoc | date}}</div>
+                    <div *ngIf="documento.tipo=='Necesidad'" class="col">{{documento.fechadoc | date}}</div>
+                    <div *ngIf="documento.tipo=='Proyectado' && !editarproyeccion" class="col">{{documento.fechadoc | date}}</div>
+                    <div *ngIf="editarproyeccion">
+                        <input pInputText 
+                                [(ngModel)]="fechaEditar" 
+                                id="fechaEditar" 
+                                name="fechaEditar" 
+                                class="p-inputtext-sm text-center"
+                                type="date"/>
+                    </div>
                 </div>
                 <div *ngIf="documento.tipo=='Compra' " class="grid">
                     <div class="col">ETA:</div>
