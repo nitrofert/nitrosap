@@ -1,0 +1,16 @@
+
+<p-toast></p-toast>
+<p-dialog header="Cargando" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+    </p>
+
+    <div *ngIf="loadingCargue" class="field col">
+                    
+        <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+
+    <!--<ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="displayModal=false" label="Ok" styleClass="p-button-text"></p-button>
+    </ng-template>-->
+</p-dialog>

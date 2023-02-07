@@ -1,0 +1,23 @@
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            <p-tabMenu #tab [model]="items" [activeItem]="activeItem"  (click)="selectMenu(tab)" >
+                <ng-template  pTemplate="item" let-item let-i="index">
+                    
+                        {{ item.label }}
+                    
+                    
+                </ng-template>
+            </p-tabMenu>
+
+            <ng-template ngFor let-tab [ngForOf]="tabs" let-i="index">
+                <div *ngIf="tab.status" [id]="'tab'+tab.tabindex" [innerHTML]="tab.content.content | dynamictable:'' ">
+
+                    
+                </div>
+            </ng-template>
+            
+        </div>
+    </div>
+</div>

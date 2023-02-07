@@ -32,6 +32,7 @@ import { environment } from 'src/environments/environment';
 
 
 
+
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
 }
@@ -40,7 +41,7 @@ registerLocaleData(localeES_CO);
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent
+        AppComponent, NotfoundComponent,
     ],
     imports: [
         AppRoutingModule,

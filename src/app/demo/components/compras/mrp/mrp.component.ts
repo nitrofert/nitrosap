@@ -253,18 +253,49 @@ export class MrpComponent implements OnInit {
             for(let item in items){
               this.items.push(items[item]);
               //Obtener items de materia prima
-              if((items[item].ItemCode.toLowerCase().indexOf('mp')==0)){
+              //if((items[item].ItemCode.toLowerCase().indexOf('mp')==0)){
                 //console.log(items[item].ItemCode.toLowerCase());
                 //Llenar el array de items de MP
-                this.itemsMP.push(items[item]);
-              }
+                //this.itemsMP.push(items[item]);
+              //}
+             
            }
+           this.getItemsMP();
           
            //console.log(this.itemsMP);
            
           },
           error: (error) => {
               //console.log(error);      
+          }
+        });
+  }
+
+  getItemsMP(){
+    this.comprasService.getPresupuestosVentaAll(this.authService.getToken())
+        .subscribe({
+          next: (items) => {
+            let ItemName:string;
+            let ApTaxCode:string;
+            for(let item of items){
+              ////console.log(item);
+              //Obtener items de materia prima de presupuesto de venta
+              //Llenar el array de items de MP
+              ////console.log(this.itemsMP.filter(itemMP => itemMP.itemcode == item.itemcode).length);
+              if(this.itemsMP.filter(itemMP => itemMP.ItemCode == item.itemcode).length===0){
+                ////console.log(this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode ));
+                if(this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode ).length>0){
+                  ItemName = this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode )[0].ItemName;
+                  ApTaxCode = this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode )[0].ApTaxCode
+                  this.itemsMP.push({ItemCode:item.itemcode, ItemName, ApTaxCode});
+                }  
+              }
+           }
+           this.getZonas();
+           ////console.log(this.itemsMP);
+          },
+          error: (error) => {
+              ////console.log(error);      
           }
         });
   }

@@ -19,6 +19,7 @@ import { AppMenuComponent } from './shared/menu/app.menu.component';
 import { AppConfigModule } from './config/config.module';
 import { PrimengModule } from './shared/primeng/primeng.module';
 import { PdfComponent } from './shared/pdf/pdf.component';
+
 //import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 
 
@@ -31,6 +32,7 @@ import { PdfComponent } from './shared/pdf/pdf.component';
         AppMenuComponent,
         AppSidebarComponent,
         AppLayoutComponent,
+        
         
     ],
     imports: [

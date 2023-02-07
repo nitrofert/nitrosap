@@ -13,6 +13,9 @@ import { MrpComponent } from './mrp.component';
 import { FromTableCalculadoraComponent } from './pages/from-table-calculadora/from-table-calculadora.component';
 import { PresupuestoVentaComponent } from './pages/presupuesto-venta/presupuesto-venta.component';
 import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos.component';
+import { SimulacionAutomaticaComponent } from './pages/simulacion-automatica/simulacion-automatica.component';
+import { DynamicTabmenuModule } from 'src/app/layout/shared/dynamic-tabmenu/dynamic-tabmenu.module';
+import { DynamicTableModule } from 'src/app/layout/shared/dynamic-table/dynamic-table.module';
 
 
 
@@ -25,7 +28,8 @@ import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos
     MrpComponent,
     FromTableCalculadoraComponent,
     PresupuestoVentaComponent,
-    MaximosMinimosComponent
+    MaximosMinimosComponent,
+    SimulacionAutomaticaComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +38,9 @@ import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos
     ReactiveFormsModule,
     PrimengModule,
     ApplicationPipesModule,
-    BreadCrumbModule
+    BreadCrumbModule,
+    DynamicTabmenuModule,
+    DynamicTableModule
   ]
 })
 export class MrpModule { }

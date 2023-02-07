@@ -233,7 +233,7 @@ export class TrackingMPComponent implements OnInit {
 
   getPedidosDescargados(){
 
-    this.comprasService.PedidosdMP(this.authService.getToken(),'Descargado')
+    this.comprasService.PedidosdMP(this.authService.getToken(),'Pedidos en puerto')
     .subscribe({
       next:(async pedidos =>{
         

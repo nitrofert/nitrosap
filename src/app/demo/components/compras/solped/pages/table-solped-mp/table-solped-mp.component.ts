@@ -55,7 +55,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   envioFormulario:boolean = false;
 
   //estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Documentación lista'},{name:'Descargado'}];
-  estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Descargado'}];
+  estados:any[] = [{name:'Por cargar'},{name:'Cargado'},{name:'Pedidos en puerto'}];
   u_nf_status:string= "";
 
   u_nf_lastshippping!:any;
