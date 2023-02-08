@@ -245,7 +245,7 @@ export class MrpComponent implements OnInit {
     }
     this.urlBreadCrumb = url;
     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-    ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+    console.log(this.permisosUsuarioPagina);
   }
 
   getItems(){
