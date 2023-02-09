@@ -69,7 +69,7 @@ export class ImpresionComponent implements OnInit {
     this.comprasService.impresionEntradaByIdSL(this.authService.getToken(),this.idEntrada.entrada)
         .subscribe({
           next:(infoEntrada)=>{
-              //console.log(infoEntrada);
+              console.log(infoEntrada);
               this.proveedor = infoEntrada.value[0].BusinessPartners;
               this.encabezado = infoEntrada.value[0].PurchaseDeliveryNotes;
               //this.detalle = infoEntrada.value[0]['PurchaseDeliveryNotes/DocumentLines'];
