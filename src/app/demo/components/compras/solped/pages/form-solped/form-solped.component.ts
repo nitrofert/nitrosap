@@ -1398,7 +1398,7 @@ async validarCuentaContable(cuenta:any){
 
         let indexLineaDuplicada = this.LineaDuplicada();
         
-        if(indexLineaDuplicada>=0 && this.lineasSolped[indexLineaDuplicada].linenum!==this.numeroLinea){
+        /*if(indexLineaDuplicada>=0 && this.lineasSolped[indexLineaDuplicada].linenum!==this.numeroLinea){
           ////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
           this.messageService.add({severity:'warn', 
                                    summary: '!Atención', 
@@ -1408,7 +1408,7 @@ async validarCuentaContable(cuenta:any){
                                             localidad: ${this.localidad.location} 
                                             ya se encuentran registrados en la 
                                             linea ${this.lineasSolped[indexLineaDuplicada].linenum} de esta solped`});    
-        }else{
+        }else{*/
           if(this.editarLinea){
             
             this.asignarCamposLinea(this.lineaSeleccionada[0].linenum);
@@ -1433,7 +1433,7 @@ async validarCuentaContable(cuenta:any){
           this.resetearFormularioLinea();
           this.envioLinea = false;
 
-        }
+        //}
     }else{
         this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
         
