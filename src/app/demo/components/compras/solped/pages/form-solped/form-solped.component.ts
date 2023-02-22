@@ -13,6 +13,7 @@ import { SolpedDet, SolpedInterface } from 'src/app/demo/api/solped';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
+import * as download from 'downloadjs';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -160,7 +161,7 @@ export class FormSolpedComponent implements OnInit {
   cargueValido:boolean = false;
   loadingCargueCSV:boolean =false;
   
-
+ 
 
   /*********************************** */
 
@@ -1048,6 +1049,7 @@ async validarArchivoDetalle(lienasArchivo:any){
   if(this.validarEncabezado(lienasArchivo[0].split(","))){
     //validar contenido 
     this.cargueValido = await this.validarContenidoCSV(lienasArchivo,',');
+    console.log(this.cargueValido);
     if(this.cargueValido){
       
       this.messageService.add({severity:'success', summary: '!Ok', detail: 'El archivo cargado cumple con la estructura básica requerida'});
@@ -1108,6 +1110,7 @@ encabezadosValidos(camposEncabezado:any[], arrayLineaEncabezado:any[]){
 }
 
  async validarLocalidad(dependencia:any,localidad:any):Promise<boolean>{
+  //console.log(dependencia,localidad);
   let valido = false;
   this.dependencia = this.dependencias.filter(data => data.dependence === dependencia)[0];
   await this.SeleccionarDependencia();
@@ -1290,7 +1293,9 @@ async validarCuentaContable(cuenta:any){
   }
 
   async descargarCSV(){
-    this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
+
+    let url ="https://nitrofert.com.co/wp-content/uploads/2023/02/plantilla-cargue-detalle-solped.csv";
+    /*this.comprasService.downloadAnexo3(this.authService.getToken(),'uploads/solped/plantilla_solped.csv')
         .subscribe({
             next: (result)=>{
               //console.log(result);
@@ -1298,14 +1303,20 @@ async validarCuentaContable(cuenta:any){
             error: (err)=>{
                 //console.log(err);
             }
-        })
-   /* const link = document.createElement('a');
+        })*/
+
+    const link = document.createElement('a');
     link.target='_blank';
-    link.href = await this.comprasService.downloadAnexo('uploads/solped/plantilla_solped.csv');
-    //link.href = await this.comprasService.downloadAnexo('assets/demo/data/plantilla_cargue_detalle_solped.csv');
+    link.href = url;
     
-    link.click();*/
+    link.click();
+
+      
+    
+
   }
+
+ 
 
   GuardarSolped(){
 
@@ -1399,7 +1410,7 @@ async validarCuentaContable(cuenta:any){
         let indexLineaDuplicada = this.LineaDuplicada();
         
         /*if(indexLineaDuplicada>=0 && this.lineasSolped[indexLineaDuplicada].linenum!==this.numeroLinea){
-          ////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
+          //////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
           this.messageService.add({severity:'warn', 
                                    summary: '!Atención', 
                                    detail: `Los siguientes datos item: ${this.item.ItemCode}, 

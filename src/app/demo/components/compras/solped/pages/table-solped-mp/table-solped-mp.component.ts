@@ -257,8 +257,12 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
         this.comprasService.enviarSolpedSAP(this.authService.getToken(),{id:this.selectedItem[0].id})
             .subscribe({
                 next:(result)=>{
-                    //console.log(result);
-                    this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                    if(!result.status){
+                      this.messageService.add({severity:'error', summary: '!Ok¡', detail: result.err});
+                    }else{
+                      this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                    }
+                    
                     this.loading = false;
                     this.onChangeTabla.emit(this.nombreLista);
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs';
     selector: 'app-root',
     templateUrl: './app.component.html'
 })
+
+
 export class AppComponent {
 
     menuMode = 'static';
@@ -14,7 +16,7 @@ export class AppComponent {
     subscription: Subscription;
 
     constructor(private primengConfig: PrimeNGConfig,
-                public translate: TranslateService,) {
+        public translate: TranslateService,) {
         
         translate.addLangs(['es', 'en']);
         translate.setDefaultLang('es');

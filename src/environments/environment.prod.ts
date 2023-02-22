@@ -8,3 +8,4 @@ export const environment = {
   key_recaptcha:'6LdIhRQkAAAAADsZQ00ivwO3DcP6iOnTJBr1I4Ti',
   key_recaptchaV2:'6Ldo6BMkAAAAABUAduK9ZiDox7o8tE7RjWoRaMtQ'
 };
+

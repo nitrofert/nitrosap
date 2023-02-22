@@ -91,6 +91,9 @@ export class SolpedComponent implements OnInit {
   listaDocumentosSolped:any[] = [];
   loadingDocumentos:boolean = true;
 
+  displayModal:boolean = false;
+  loadingCargue:boolean = false;
+
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -388,6 +391,8 @@ cancelarSolped(){
 
   solicitudAprobacion(){
     //console.log(this.selectedSolped);
+   
+
     let arrayIdSolped:number[] = [];
     let fechaActual: Date = new Date();
     let fechaContSolped:Date;
@@ -506,16 +511,22 @@ cancelarSolped(){
       
     }
 
+   
+
   }
 
   onConfirm() {
+    this.loadingCargue = true;
+    this.displayModal= true;
     this.loading = true;
     let message = "";
     this.messageService.clear('c');
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
         .subscribe({
           next: (aprobaciones) => {
-            console.log(aprobaciones);
+            //console.log(aprobaciones);
+            this.loadingCargue = false;
+            this.displayModal= false;
             if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
 
               if(this.selectedSolped.length>1){
@@ -533,6 +544,8 @@ cancelarSolped(){
           error: (err) => {
             console.log(err);
             this.loading = false;
+            this.loadingCargue = false;
+            this.displayModal= false;
             this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
           }
         });
@@ -733,12 +746,16 @@ onRejectCancel(){
 }
 
 onConfirmCancel(){
+  this.loadingCargue = true;
+  this.displayModal= true;
   this.loading = true;
   let message = "";
   this.messageService.clear('cdel');
   this.comprasService.cancelacionSolped(this.authService.getToken(), this.arrayIdSolped)
       .subscribe({
         next:(solpedCanceladas)=>{
+          this.loadingCargue = false;
+          this.displayModal= false;
           if(solpedCanceladas.status=="ok"){
             if(this.arrayIdSolped.length >1){
               message =`La cancelación de las solicitudes seleccionadas fueron realizadas correctamente`;
@@ -755,6 +772,8 @@ onConfirmCancel(){
         error:(err)=>{
           console.log(err);
           this.loading = false
+          this.loadingCargue = false;
+          this.displayModal= false;
           this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
         }
       });
@@ -768,6 +787,8 @@ onConfirmRap(){
 }
 
 rechazarSolped(){
+    this.loadingCargue = true;
+    this.displayModal= true;
     this.submitRechazo = true;
     
     if(!this.motivoRechazo){
@@ -777,6 +798,7 @@ rechazarSolped(){
       this.comprasService.aprobacionesSolped(this.authService.getToken(),this.selectedSolped[0].id)
           .subscribe({
             next: (aprobaciones)=>{
+
                 //console.log(aprobaciones);
                 //Filtrar el array de aprobaciones asociados a la solped seleccionada donde el aprobador, estadoap y estadoseccion de la liena === al usuario aprobador, estadoseccion activo y estado de aprobacion line a en P
                 let lineaAprobacionUsuario = aprobaciones.filter(item => item.usersapaprobador === this.infoUsuario.codusersap && item.estadoseccion==='A' && item.estadoap==='P');
@@ -807,6 +829,8 @@ rechazarSolped(){
                     .subscribe({
                         next: (result)=>{
                             //console.log(result);
+                            this.loadingCargue = false;
+                            this.displayModal= false;
                             if(result[0].status==='ok'){
                                 
                                 this.getListado();
@@ -818,6 +842,8 @@ rechazarSolped(){
                             }
                         },
                         error: (err)=>{
+                          this.loadingCargue = false;
+                          this.displayModal= false;
                             console.log(err);
                         }
                     });
@@ -826,12 +852,16 @@ rechazarSolped(){
             },  
             error: (err)=>{
                 console.log(err);
+                this.loadingCargue = false;
+                 this.displayModal= false;
             }
           });
     }
 }
 
 onConfirmAp() {
+  this.loadingCargue = true;
+  this.displayModal= true;
   this.loading = true;
   let message = "";
   this.messageService.clear('ap');
@@ -839,50 +869,49 @@ onConfirmAp() {
       .subscribe({
         next: (aprobaciones) => {
           //console.log(aprobaciones);
-
+          this.loadingCargue = false;
+          this.displayModal= false;
           let messageServiceTmp:any[] = [];
 
-          if(aprobaciones.arrayErrors.length>0){
-            for(let item of aprobaciones.arrayErrors){
-              messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped,life:5000});
-              //this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped});
-            }
-            if(aprobaciones.arrayAproved.length>0){
-              //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.'});
-              messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.',life:5000});
-              for(let item of aprobaciones.arrayAproved){
-                //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped});
-                messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped,life:5000});
-              }
-            }
+          if(aprobaciones[0].status && aprobaciones[0].status=='error'){
+            this.messageService.add({key: 't1',severity:'error', summary: '!Error', detail: aprobaciones[0].message});
           }else{
-            if(aprobaciones.arrayAproved.length>0){
-              
-              for(let item of aprobaciones.arrayAproved){
-                //this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped});
-                messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped,life:5000});
+
+            if(aprobaciones.arrayErrors.length>0){
+              for(let item of aprobaciones.arrayErrors){
+                messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped,life:5000});
+                //this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped});
+              }
+              if(aprobaciones.arrayAproved.length>0){
+                //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.'});
+                messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.',life:5000});
+                for(let item of aprobaciones.arrayAproved){
+                  //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped});
+                  messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped,life:5000});
+                }
+              }
+            }else{
+              if(aprobaciones.arrayAproved.length>0){
+                
+                for(let item of aprobaciones.arrayAproved){
+                  //this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped});
+                  messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped,life:5000});
+                }
               }
             }
-          }
-          this.getListado();
-          this.messageService.addAll(messageServiceTmp);
-
-
-
-          /*if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
-
-            if(this.selectedSolped.length>1){
-              message = "Las solicitudes seleccionadas, han sido aprobadas";
-            }else{
-              message = "Las solicitud seleccionada, ha sido enviada a aprobación";
-            }
-            this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
             this.getListado();
-          }*/
+            this.messageService.addAll(messageServiceTmp);
+            
+
+          }
+
+          
         },
         error: (err) => {
           //console.log(err);
           this.loading = false;
+          this.loadingCargue = false;
+          this.displayModal= false;
           this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
         }
       });
