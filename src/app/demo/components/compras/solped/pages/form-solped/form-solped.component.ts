@@ -137,6 +137,7 @@ export class FormSolpedComponent implements OnInit {
 
   uploadedFiles: any[] = [];
   uploadedFiles2: any[] = [];
+  tiposanexoBk:any[] = [{name:"Revisión presupuestal"},{name:"Especificación técnica"},{name:"Otro"}];
   tiposanexo:any[] = [{name:"Revisión presupuestal"},{name:"Especificación técnica"},{name:"Otro"}];
   tipoanexo!:any ; 
 
@@ -150,6 +151,8 @@ export class FormSolpedComponent implements OnInit {
   file2!: any ;
   fileTmp2:any;
 
+  validaCuenta:boolean = true;
+
   /******************* */
 
   /******* Filtros autocompetar ********/
@@ -161,6 +164,8 @@ export class FormSolpedComponent implements OnInit {
   cargueValido:boolean = false;
   loadingCargueCSV:boolean =false;
   
+
+  //arregloej:any[] = [1,2,3,4,5,6,7,8,9,10,11,12,13];
  
 
   /*********************************** */
@@ -176,7 +181,15 @@ export class FormSolpedComponent implements OnInit {
 
   ngOnInit(): void {
 
-     
+    /*const lineasDetSolped = this.arregloej.length;
+    const iteraciones = Math.ceil((lineasDetSolped / 5));
+    let rangoinf =0;
+    let rangosup = 5;
+    for(let i=1;i<=iteraciones;i++){
+        console.log(this.arregloej.slice(rangoinf,rangosup));
+        rangoinf+=5;
+        rangosup+=5;
+    }*/
        
         //Cargar informacion del usuario
         this.getInfoUsuario();
@@ -254,6 +267,7 @@ export class FormSolpedComponent implements OnInit {
         for(let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
         }
+        //console.log(this.dependenciasUsuario);
         //Llenara array de vicepresidencias
         for(let dependencia of this.dependenciasUsuario){
             if((this.vicepresidencias.filter(data => data.vicepresidency === dependencia.vicepresidency)).length ===0){
@@ -273,10 +287,13 @@ export class FormSolpedComponent implements OnInit {
     this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
         .subscribe({
             next: (series)=>{
-                
+                //console.log(series);
                 for(let item in series){
                   if(series[item].name!='SPMP'){
-                    this.series.push(series[item]);
+                    if(series[item].Estado == 'N'){
+                      this.series.push(series[item]);
+                    }
+                    
                   }
                   
               }
@@ -328,7 +345,7 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getItems(){
-    this.sapService.itemsSAPXE(this.authService.getToken())
+    this.sapService.itemsSolpedSAPXE(this.authService.getToken())
         .subscribe({
           next: (items) => {
             for(let item in items){
@@ -506,7 +523,7 @@ export class FormSolpedComponent implements OnInit {
   }
 
   SeleccionarItemCode(){
-    ////console.log(this.item);
+    console.log(this.item);
     this.descripcion = this.item.ItemName;
     if(this.item.ApTaxCode){
       
@@ -517,6 +534,15 @@ export class FormSolpedComponent implements OnInit {
     }
     this.cuenta = {Code:"",Name:""};
     this.nombreCuenta = "";
+
+    if(this.item.Cuenta!='987654321'){
+      this.validaCuenta = true;
+      this.cuenta = {Code:this.item.Cuenta || '',Name:this.item.Nombre_Cuenta ||''};
+      this.nombreCuenta = this.item.Nombre_Cuenta || '';
+    }else{
+      this.validaCuenta = false;
+    }
+    
   }
 
   SeleccionarVicepresidencia(){
@@ -727,6 +753,7 @@ resetearFormularioLinea(){
   this.prcImpuesto =0;
   this.valorImpuesto =0;
   this.totalLinea =0;
+  this.validaCuenta=true;
 }
 
 setearTRMSolped(currency:string){
@@ -774,7 +801,7 @@ calculatTotales(){
   }
 
   adicionarlineaAnexo(){
-    ////console.log(this.tipoanexo,this.fileTmp);
+    console.log(this.tipoanexo,this.fileTmp, this.uploadedFiles);
     this.envioLineaanexo = true;
     if(this.tipoanexo && this.tipoanexo!="" &&  this.fileTmp && this.fileTmp!=""){
     
@@ -828,13 +855,14 @@ calculatTotales(){
   AdicionarAnexo(){
     this.formularioAnexo = true;
     let tiposAnexosTMP =[];
-    if(this.anexosSolped.length>0){
-
+    //if(this.anexosSolped.length>0){
+        //console.log(this.anexosSolped);
         //Recorrer el arreglo de tipos de anexo
-        for(let tipo of this.tiposanexo){
+        for(let tipo of this.tiposanexoBk){
           //validar tipo.name en el array de anexos
-          ////console.log(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name));
+          //console.log(tipo, this.anexosSolped);
           if(tipo.name!='Otro'){
+            
             if(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name).length==0){
               tiposAnexosTMP.push({name:tipo.name});
             }
@@ -844,10 +872,12 @@ calculatTotales(){
         }
         this.tiposanexo = tiposAnexosTMP;
       
-    }
+    //}
   }
 
   BorrarAnexo(){
+
+    
     let lineasAnexoMP=[];
     let existe = false;
     for(let linea of this.anexosSolped){
@@ -855,7 +885,7 @@ calculatTotales(){
       for(let lineaSelect of this.lineaAnexoSeleccionada){
           if(linea === lineaSelect){
             existe = true;
-    
+            //console.log(linea,this.lineaAnexoSeleccionada);
           }
       }
       if(!existe){
@@ -918,7 +948,7 @@ calculatTotales(){
   onLoad($event:any){
 
     const [ file ] = $event.currentFiles;
-    ////console.log(file);
+    console.log(file);
     this.fileTmp = {
       fileRaw:file,
       fileName:file.name
@@ -1021,6 +1051,8 @@ calculatTotales(){
       fileRaw:file,
       fileName:file.name
     }
+
+    console.log(this.fileTmp2);
     this.readDocument(file);
   
   }
@@ -1032,15 +1064,18 @@ calculatTotales(){
       let text:any =fileReader.result ;
       var lines = text.split('\n') ;
       for(let line of lines){
+        //console.log(line);
         arrayTexto.push(this.reemplazarCaracteresEspeciales(line));
       }
       this.validarArchivoDetalle(arrayTexto);
     }
-    fileReader.readAsText(file);
+    fileReader.readAsText(file, 'ISO-8859-1');
 }
 
 reemplazarCaracteresEspeciales(texto:string){
   return texto.replace('\r','').replace('\t','');
+  //return texto.normalize('NFD').replace(/[\u0300-\u036f]/g,"");
+
 }
 
 
@@ -1099,24 +1134,27 @@ encabezadosValidos(camposEncabezado:any[], arrayLineaEncabezado:any[]){
   async validarDependencia(vicepresidencia:any,dependencia:any):Promise<boolean>{
   let valido = false;
   ////console.log(this.vicepresidencias.filter(data => data.vicepresidency === vicepresidencia)[0]);
-  this.viceprecidencia = this.vicepresidencias.filter(data => data.vicepresidency === vicepresidencia)[0];
-  await this.SeleccionarVicepresidencia();
+  //this.viceprecidencia = this.vicepresidencias.filter(data => data.vicepresidency === vicepresidencia)[0];
+  //await this.SeleccionarVicepresidencia();
+  const dependencias = this.dependenciasUsuario.filter(data => data.vicepresidency === vicepresidencia);
   ////console.log(dependencia,this.dependencias.filter(data => data.dependence === dependencia).length);
-  if(this.dependencias.filter(data => data.dependence === dependencia).length>0){
+  if(dependencias.filter(data => data.dependence === dependencia).length>0){
     valido = true;
   }
   ////console.log(valido);
   return valido;
 }
 
- async validarLocalidad(dependencia:any,localidad:any):Promise<boolean>{
+ async validarLocalidad(vicepresidencia:any,dependencia:any,localidad:any):Promise<boolean>{
   //console.log(dependencia,localidad);
   let valido = false;
-  this.dependencia = this.dependencias.filter(data => data.dependence === dependencia)[0];
-  await this.SeleccionarDependencia();
+  //this.dependencia = this.dependencias.filter(data => data.dependence === dependencia)[0];
+  //await this.SeleccionarDependencia();
+
+  const localidades = this.dependenciasUsuario.filter(data =>data.vicepresidency === vicepresidencia && data.dependence === dependencia);
   
   ////console.log(this.localidades.filter(data => data.location === localidad).length);
-  if(this.localidades.filter(data => data.location === localidad).length>0){
+  if(localidades.filter(data => data.location === localidad).length>0){
     valido = true;
   }
   return valido;
@@ -1153,7 +1191,7 @@ async validarCuentaContable(cuenta:any){
         if(this.clase =='I' && arrayLinea[0]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item de la linea ${linea}, es obligatorio para solicitudes de bienes`});
           valido = false;  
-        }else if(arrayLinea[0]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[0]).length==0){
+        }else if(arrayLinea[0]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[0] ).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item  de la linea ${linea}, no existe en el listado de items de SAP`});
           valido = false;
         }else if(arrayLinea[1]==''){
@@ -1165,7 +1203,7 @@ async validarCuentaContable(cuenta:any){
         }else if(arrayLinea[2]!='' && isNaN(Date.parse(arrayLinea[2]))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `La fecha requerida de la linea ${linea} no es valida`});
           valido = false;
-        }else if(arrayLinea[3]!='' && this.proveedores.filter(item =>item.CardCode==arrayLinea[3]).length==0){
+        }else if(arrayLinea[3]!='' && this.proveedores.filter(item =>item.CardCode==arrayLinea[3].trim()).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del proveedor de la linea ${linea}, no existe en el listado de proveedores de SAP`});
           valido = false;
         }else if(arrayLinea[4]==''){
@@ -1174,7 +1212,7 @@ async validarCuentaContable(cuenta:any){
         }else if(arrayLinea[4]!='' && isNaN(arrayLinea[4])){
           this.messageService.add({severity:'error', summary: '!Error', detail: `La cantidad de la linea ${linea} no es un número`});
           valido = false;
-        }else if(arrayLinea[5]!='' && this.monedas.filter(item =>item.Currency==arrayLinea[5]).length==0){
+        }else if(arrayLinea[5]!='' && this.monedas.filter(item =>item.Currency==arrayLinea[5].trim()).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la moneda de la linea ${linea}, no existe en el listado de monedas de SAP ${JSON.stringify(this.monedas)}`});
           valido = false;
         }else if(arrayLinea[6]==''){
@@ -1186,25 +1224,25 @@ async validarCuentaContable(cuenta:any){
         }else if(arrayLinea[7]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del impuesto de la linea ${linea} es obligatorio`});
           valido = false;
-        }else if(arrayLinea[7]!='' && this.impuestos.filter(item =>item.Code==arrayLinea[7]).length==0){
+        }else if(arrayLinea[7]!='' && this.impuestos.filter(item =>item.Code==arrayLinea[7].trim()).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de impuesto de la linea ${linea}, no existe en el listado de impuestos de SAP`});
           valido = false;
         }else if(arrayLinea[8]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la viceprecidencia de la linea ${linea} es obligatorio`});
           valido = false;
-        }else if(arrayLinea[8]!='' && this.vicepresidencias.filter(item =>item.vicepresidency==arrayLinea[8]).length==0){
-          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la viceprecidencia de la linea ${linea}, no existe en el listado de viceprecidencias asociadas al usuario`});
+        }else if(arrayLinea[8]!='' && this.vicepresidencias.filter(item =>item.vicepresidency==arrayLinea[8].trim()).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la viceprecidencia ${arrayLinea[8]} de la linea ${linea}, no existe en el listado de viceprecidencias asociadas al usuario`});
           valido = false;
         }else if(arrayLinea[9]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la dependencia de la linea ${linea} es obligatorio`});
           valido = false;
-        }else if(arrayLinea[9]!='' && !( await this.validarDependencia(arrayLinea[8],arrayLinea[9]))){
+        }else if(arrayLinea[9]!='' && !( await this.validarDependencia(arrayLinea[8].trim(),arrayLinea[9].trim()))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la dependencia de la linea ${linea}, no existe en el listado de dependencias asociadas al usuario`});
           valido = false;
         }else if(arrayLinea[10]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la localidad de la linea ${linea} es obligatorio`});
           valido = false;
-        }else if(arrayLinea[10]!='' && !(await this.validarLocalidad(arrayLinea[9],arrayLinea[10]))){
+        }else if(arrayLinea[10]!='' && !(await this.validarLocalidad(arrayLinea[8].trim(),arrayLinea[9].trim(),arrayLinea[10].trim()))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la localidad de la linea ${linea}, no existe en el listado de localidades asociadas al usuario`});
           valido = false;
         }/*else if(arrayLinea[11]!='' && this.almacenes.filter(item =>item.store==arrayLinea[11]).length==0){
@@ -1231,7 +1269,7 @@ async validarCuentaContable(cuenta:any){
             }
 
             //console.log(this.cuentas.filter(data => data.Code === arrayLinea[12])[0].Name);
-
+            //console.log(await arrayLinea[1].normalize('NFD').replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi,"$1").normalize());
             this.lineasSolpedCVS.push({
               itemcode:arrayLinea[0],
               dscription:arrayLinea[1],
@@ -1321,15 +1359,17 @@ async validarCuentaContable(cuenta:any){
   GuardarSolped(){
 
                
-
+                this.registroSolped = true;
                 this.envioFormulario = true;
                 if( this.clase &&  this.serie &&  this.area && this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
                   if(this.lineasSolped.length > 0){
 
                     if(this.anexosSolped.length > 0){
-                        if((this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0) ||
-                           (this.authService.getInfoUsuario().companyname.toLowerCase()!='nitrofert'  && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0)){
+                        /*if((this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0) ||
+                           (this.authService.getInfoUsuario().companyname.toLowerCase()!='nitrofert'  && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0)){*/
 
+                        if(this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0){
+ 
                           //this.submittedBotton = true;
                         ////console.log(this.solped, this.solpedDetLines);
                 
@@ -1359,32 +1399,33 @@ async validarCuentaContable(cuenta:any){
                         ////console.log(data);      
                         this.onNewSolped.emit(data);              
                 
-                        this.registroSolped = true;
+                        
                         this.envioFormulario = false;
 
                         }else{
-                          if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert'){
+                          /*if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert'){
                             this.messageService.add({severity:'error', summary: '!Error', detail: 'Los anexos de revisión presupuestal y revisión técnica son obligatorios'});
                           }
                           if(this.authService.getInfoUsuario().companyname.toLowerCase()=='intefert'){
                             this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión técnica es obligatorio'});
-                          }
-                          
+                          }*/
+                          this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión técnica es obligatorio'});
+                          this.registroSolped = false;
                         }
 
                     }else{
                       this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe adjuntar los anexos requeridos'});
-                     
+                      this.registroSolped = false;
                     }
                     
                   }else{
                     this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar al menos una línea en la solped'});
-                   
+                    this.registroSolped = false;
                   }
                   
                 }else{
                   this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
-                  
+                  this.registroSolped = false;
                 }
   }
 
@@ -1396,7 +1437,7 @@ async validarCuentaContable(cuenta:any){
 
   RegistrarLinea(){
     this.envioLinea = true;
-    ////console.log(this.numeroLinea, this.iteradorLinea);
+    //console.log(this.item.ItemCode, this.clase);
     if(this.descripcion && 
       this.fechaRequerida && 
       this.viceprecidencia.vicepresidency && 
@@ -1405,7 +1446,9 @@ async validarCuentaContable(cuenta:any){
       this.cantidad &&
       this.precio &&
       this.impuesto &&
-      this.cuenta.Code){
+      ((this.cuenta.Code && this.validaCuenta) || (!this.cuenta.Code && !this.validaCuenta) ) 
+      //&&((this.item.ItemCode && this.clase=='I') || (this.clase=='S'))
+      ){
 
         let indexLineaDuplicada = this.LineaDuplicada();
         

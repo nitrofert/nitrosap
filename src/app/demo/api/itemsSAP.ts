@@ -3,4 +3,12 @@ export interface ItemsSAP {
     ItemCode:     string;
     ItemName:     string;
     ApTaxCode:     string;
+    Cuenta?:        string;
+    InvntItem?: string;
+    ItemType?: string;
+    ItmsGrpCod?: number;
+    ItmsGrpNam?:string;
+    PrchseItem?: string;
+    SellItem?: string;
+    Nombre_Cuenta?: string;
 }

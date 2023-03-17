@@ -76,6 +76,7 @@ export class ImpresionComponent implements OnInit {
               
              
               this.userdoc = infoEntrada.value[0].Users;
+              console.log(this.userdoc);
 
               this.nit =this.proveedor.FederalTaxID;
               this.ciudad = this.proveedor.City;
@@ -87,7 +88,7 @@ export class ImpresionComponent implements OnInit {
               //this.bodega = this.encabezado.;
               this.direccion = this.proveedor.MailAddress;
               this.email = this.proveedor.EmailAdddress;
-              this.usuario = this.userdoc.UserName;
+              this.usuario = this.userdoc.fullname==""?this.userdoc.UserName:this.userdoc.fullname;
               this.total =this.encabezado.DocTotal;
               this.impuesto=this.encabezado.VatSum;
               this.comentario= this.encabezado.Comments;

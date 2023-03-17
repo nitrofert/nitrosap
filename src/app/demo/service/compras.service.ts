@@ -35,6 +35,8 @@ export class ComprasService {
   }
 
   
+
+  
   listSolpedAprobadas(token:string):Observable<any[]>{
     
     let headers = this.urlApiService.getHeadersAPI(token);
@@ -69,6 +71,16 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/solped/`;
+    console.log(url)
+    return this.http.post<any[]>(url,data,requestOptions);
+
+  }
+
+  saveDetailSolped(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/detail`;
+    console.log(url)
     return this.http.post<any[]>(url,data,requestOptions);
 
   }

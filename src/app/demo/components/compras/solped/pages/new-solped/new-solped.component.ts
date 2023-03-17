@@ -13,6 +13,9 @@ import { ComprasService } from 'src/app/demo/service/compras.service';
 export class NewSolpedComponent implements OnInit {
 
   registroSolped:boolean = false;
+  displayModal:boolean = false;
+  loadingCargue:boolean = true;
+  percentProgressBar:number=0;
 
   constructor(private messageService: MessageService,
     private authService: AuthService,
@@ -23,8 +26,25 @@ export class NewSolpedComponent implements OnInit {
   }
 
   registrarSolped(dataSolped:any){
-    //console.log(dataSolped);
-    this.comprasService.saveSolped(this.authService.getToken(),dataSolped)
+    console.log(dataSolped);
+    const detalleSolped:any=dataSolped.solpedDet;
+    const limit = 200
+    const lineasDetSolped = dataSolped.solpedDet.length;
+    const iteraciones = Math.ceil((lineasDetSolped / limit));
+    const prcAdvance = 100 / (iteraciones+1);
+    let rangoinf =0;
+    let rangosup = limit;
+    this.displayModal =true;
+    
+
+    const newDataSolped:any = {
+      anexos:dataSolped.anexos,
+      solped:dataSolped.solped
+    }
+
+    console.log(newDataSolped);
+    
+    this.comprasService.saveSolped(this.authService.getToken(),newDataSolped)
             .subscribe({
                 next: (result) =>{
                     //console.log(result);
@@ -33,12 +53,43 @@ export class NewSolpedComponent implements OnInit {
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
                      
                     }else{
-                      this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                      //this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                      this.percentProgressBar += prcAdvance;
                       let solpedID = result.solpednum;
                       //Upload files
+                      
+                      
+                      for(let i=1;i<=iteraciones;i++){
+                        console.log(dataSolped.solpedDet.slice(rangoinf,rangosup));
+                        let detailPartialSolped:any = dataSolped.solpedDet.slice(rangoinf,rangosup);
+                        let data:any = {
+                          id:solpedID,
+                          solpedDet:detailPartialSolped
+                        }
+                        this.comprasService.saveDetailSolped(this.authService.getToken(),data)
+                            .subscribe({
+                                next:(result)=>{
+                                    console.log(result);
+                                    this.percentProgressBar += prcAdvance;
+                                    if(i==iteraciones){
+                                      this.displayModal =false;
+                                      this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                                      setTimeout(()=>{
+                                        this.router.navigate(['portal/compras/solped']);
+                                      },2000);
+                                    }
+                                },
+                                error:(error)=>{
+                                  console.error(error);
+                                  this.displayModal =false;
+                                  this.messageService.add({severity:'error', summary: '!Error', detail: error});
+                                }
+                            });                            
+                        rangoinf+=limit;
+                        rangosup+=limit;
+                      }  
+                      
                       this.loadFiles(solpedID,dataSolped.anexos);
-                      
-                      
                       
                     }
                 },
@@ -74,7 +125,7 @@ export class NewSolpedComponent implements OnInit {
         });
       
     }
-    this.router.navigate(['portal/compras/solped']);
+    //this.router.navigate(['portal/compras/solped']);
   }
 
 }

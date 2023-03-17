@@ -139,7 +139,8 @@
                                   pInputTextarea
                                   [(ngModel)]="comentarios"
                                   class="w-full"
-                                  id="comments">
+                                  id="comments"
+                                  maxlength="200">
                         </textarea>
                         
                     </div>
@@ -283,7 +284,7 @@
                                 [minLength]="1" 
                                 [delay]="1000"
                                 (onSelect)="SeleccionarItemCode()" 
-                                [showClear]="true" 
+                                
                                 (onClear)="clearItemCode()"
                                 inputStyleClass="w-full" 
                                 styleClass="w-full" 
@@ -300,15 +301,19 @@
             </div>
             <div class="field col">
                 <label for="descripcion">Descripción</label>
-                <input  pInputText 
+                <div class="p-inputgroup">
+                    <input  pInputText 
                         [(ngModel)]="descripcion" 
                         id="descripcion" 
                         name="descripcion" 
                         type="text"
                         required 
-                        
+                        maxlength="200"
                         class="w-full"
                         [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !descripcion}" />
+                        <span class="p-inputgroup-addon"><p-badge [value]="descripcion.length.toString()"></p-badge></span>
+                </div>
+                
             </div>
 
         </div>
@@ -447,8 +452,8 @@
                                 styleClass="w-full" 
                                 inputId="cuenta" 
                                 panelStyleClass="text-sm sm:ml-2"
-                                
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !cuenta.Code}">
+                                [disabled]="!validaCuenta"
+                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !cuenta.Code && validaCuenta}">
 
                     <ng-template let-cuenta pTemplate="item">
                         <div>{{cuenta.Code}} - {{cuenta.Name}}</div>
@@ -464,7 +469,7 @@
                         id="nombreCuenta" 
                         disabled
                         class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !nombreCuenta}">
+                        [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !nombreCuenta && validaCuenta}">
 
             </div>
         </div>
@@ -1071,7 +1076,7 @@
                                 [multiple]="false" 
                                 (onSelect)="onLoad($event)"
                                 [showUploadButton]="false"
-                                [maxFileSize]="5000000"
+                                [maxFileSize]="50000000"
                                 styleClass="w-full"
                                 class="w-full"
                                 [ngClass]="{'ng-invalid ng-dirty' :  (envioLineaanexo && !fileTmp ) || (envioLineaanexo && fileTmp=='')}"
@@ -1121,7 +1126,7 @@
                                 accept=".csv,.txt"
                                 (onSelect)="onLoad2($event)"
                                 [showUploadButton]="false"
-                                [maxFileSize]="5000000"
+                                [maxFileSize]="20000000"
                                 
                                 styleClass="w-full"
                                 class="w-full"

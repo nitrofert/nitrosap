@@ -152,7 +152,7 @@ export class FormEntradaComponent implements OnInit {
 
   ngOnInit(): void {
 
-    //console.log("form entrada:", this.pedido);
+    ////console.log("form entrada:", this.pedido);
 
      //Cargar informacion del usuario
      this.getInfoUsuario();
@@ -200,21 +200,21 @@ export class FormEntradaComponent implements OnInit {
   
     getPermisosUsuarioPagina(){
       let url ="";
-      //console.log("URL origen",this.router.url);
-      //console.log("URL params",this.rutaActiva.snapshot.params['solped']);
+      ////console.log("URL origen",this.router.url);
+      ////console.log("URL params",this.rutaActiva.snapshot.params['solped']);
       if(this.rutaActiva.snapshot.params['entrada']){
         let entradaSeleccionada = this.rutaActiva.snapshot.params;
         if(this.router.url.indexOf("/"+entradaSeleccionada['entrada'])>=0){
           url = this.router.url.substring(0,this.router.url.indexOf("/"+entradaSeleccionada['entrada']));
         }
-        //console.log("URL con parametros: ",url);
+        ////console.log("URL con parametros: ",url);
       }else{
         url= this.router.url;
-        //console.log("URL sin parametros: ",url);
+        ////console.log("URL sin parametros: ",url);
       }
       this.urlBreadCrumb = url;
       this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-      //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+      ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
     }
 
     getDependenciasUsuario(){
@@ -231,10 +231,10 @@ export class FormEntradaComponent implements OnInit {
               }
           }
 
-          //console.log(this.vicepresidencias);
+          ////console.log(this.vicepresidencias);
         },
         error: (error) => {
-          //console.log(error);
+          ////console.log(error);
         }
       });
     }
@@ -245,18 +245,18 @@ export class FormEntradaComponent implements OnInit {
       this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'20')
           .subscribe({
               next: (series)=>{
-                  //console.log(series);
+                  ////console.log(series);
                   for(let item in series){
                     this.series.push(series[item]);
                 }
                   this.series = this.series.filter(item => item.name !='Canc');
                   //this.serie = this.series[0].code;
                   //this.serieName =this.series[0].name;
-                  console.log(this.series);
+                  //console.log(this.series, this.series.length);
                 
               },
               error: (err)=>{
-                console.log(err);
+                //console.log(err);
               }
           });
   
@@ -269,13 +269,13 @@ export class FormEntradaComponent implements OnInit {
       this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'22')
           .subscribe({
               next: (series)=>{
-                  //console.log(series);
+                  ////console.log(series);
                   for(let item in series){
                     this.seriesPedido.push(series[item]);
                 }
               },
               error: (err)=>{
-                console.log(err);
+                //console.log(err);
               }
           });
   
@@ -289,11 +289,11 @@ export class FormEntradaComponent implements OnInit {
               for(let item in items){
                 this.items.push(items[item]);
              }
-             ////console.log(cuentas);
-             //console.log(this.items);
+             //////console.log(cuentas);
+             ////console.log(this.items);
             },
             error: (error) => {
-                //console.log(error);      
+                ////console.log(error);      
             }
           });
     }
@@ -305,11 +305,11 @@ export class FormEntradaComponent implements OnInit {
               for(let item in cuentas){
                 this.cuentas.push(cuentas[item]);
              }
-             ////console.log(cuentas);
-             ////console.log(this.cuentas);
+             //////console.log(cuentas);
+             //////console.log(this.cuentas);
             },
             error: (error) => {
-                //console.log(error);      
+                ////console.log(error);      
             }
           });
     }
@@ -318,14 +318,14 @@ export class FormEntradaComponent implements OnInit {
       this.authService.getAlmacenesUsuarioXE()
       .subscribe({
         next: (stores) => {
-          ////console.log(stores);
+          //////console.log(stores);
           for(let item in stores){
             this.almacenes.push(stores[item]);
          }
-         ////console.log(this.stores);
+         //////console.log(this.stores);
         },
         error: (error) => {
-            console.log(error);      
+            //console.log(error);      
         }
       });
     }
@@ -342,7 +342,7 @@ export class FormEntradaComponent implements OnInit {
              //this.setearTRMSolped('USD');
            },
            error: (error) => {
-               console.log(error);      
+               //console.log(error);      
            }
          });
     }
@@ -355,10 +355,10 @@ export class FormEntradaComponent implements OnInit {
               for(let item in taxes){
                 this.impuestos.push(taxes[item]);  
               }
-              //console.log(this.impuestos);
+              ////console.log(this.impuestos);
             },
             error: (error) => {
-                console.log(error);      
+                //console.log(error);      
             }
           });
     }
@@ -367,22 +367,22 @@ export class FormEntradaComponent implements OnInit {
     getInfoPedido(){
       //Obtener info entrada desde un pedido SAP
       if(this.pedido){
-          //console.log(this.pedido);
+          ////console.log(this.pedido);
                  
             this.comprasService.pedidoByIdSL(this.authService.getToken(),this.pedido)
                 .subscribe({
                     next: (pedido)=>{
-                        console.log('by pedido',pedido);
+                        //console.log('by pedido',pedido);
                         this.asignarValores(pedido);
                     },
                     error: (err)=>{
-                        console.log(err);
+                        //console.log(err);
                     }
                 });
         
       }else{
           //Obtener info entrada de una entrada registrada en MySQL
-          //console.log(this.entradaEditar);
+          ////console.log(this.entradaEditar);
           this.getInfoEntrada();
       }
     }
@@ -391,11 +391,11 @@ export class FormEntradaComponent implements OnInit {
       this.comprasService.entradaById(this.authService.getToken(),this.entradaEditar.entrada)
           .subscribe({
               next: (entrada)=>{
-                console.log('By entrada',entrada);  
+                //console.log('By entrada',entrada);  
                 this.asignarValores(entrada);
               },
               error: (err)=>{
-                console.log(err);
+                //console.log(err);
               }
           });
     }
@@ -404,17 +404,17 @@ export class FormEntradaComponent implements OnInit {
         this.nombreproveedor = pedido.CardName;
         this.codigoproveedor = pedido.CardCode;
         this.comentarios = !this.entradaEditar?pedido.Comments+" - Basado en pedido de compra "+pedido.DocNum:pedido.Comments;
-        this.fechaContable = new Date(pedido.DocDate);
+        //this.fechaContable = new Date(pedido.DocDate);
         
         this.fechaCaducidad = new Date(pedido.DocDueDate);
-        this.fechaDocumento = new Date(pedido.TaxDate);
+        //this.fechaDocumento = new Date(pedido.TaxDate);
         this.fechaNecesidad = new Date(pedido.RequriedDate);
         this.pedidonumsap = pedido.DocNum;
         
 
         if(!this.entradaEditar){
             //Obtener nombre serie de pedido
-          //console.log(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name);
+          ////console.log(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name);
           //Obtener nombre serie de entrada segun serie pedido
 
           switch(this.seriesPedido.filter(item=>item.code === pedido.Series)[0].name){
@@ -434,7 +434,7 @@ export class FormEntradaComponent implements OnInit {
           }
 
           //Obtener codigo de serie entrada
-          console.log(this.series,this.serieName);  
+          //console.log(this.series,this.serieName);  
 
           if(this.series.filter(item=>item.name === this.serieName).length>0){
             this.serie = this.series.filter(item=>item.name === this.serieName)[0].code;
@@ -444,9 +444,18 @@ export class FormEntradaComponent implements OnInit {
 
         }else{
           //Obtener serie de entradas
-          //console.log(this.series, pedido.Series,this.series.filter(item=>item.code == pedido.Series));
-          this.serieName = this.series.filter(item=>item.code == pedido.Series)[0].name;
-          this.serie = this.series.filter(item=>item.code == pedido.Series)[0].code;
+          let seriesTMP:any = this.series;
+          console.log('series: ',seriesTMP[0], this.series);
+          console.log('series: ',seriesTMP.length);
+          console.log('pedido serie: ', pedido.Series.toString());
+          console.log('filtro series:',this.series.filter(item=>item.code.toString() == pedido.Serie));
+          for(let serie of this.series){
+         
+            console.log(serie);
+          }
+          
+          /*this.serieName = await this.series.filter(item=>item.code == pedido.Series)[0].name;
+          this.serie = await this.series.filter(item=>item.code == pedido.Series)[0].code;*/
           this.codigoSap = pedido.sapdocnum;
         }
         
@@ -458,7 +467,7 @@ export class FormEntradaComponent implements OnInit {
         this.lineasEntrada = [];
         this.lineaEntrada = [];
         for(let lineaPedido of pedido.DocumentLines){
-          console.log(lineaPedido);
+          //console.log(lineaPedido);
             this.lineasEntrada.push({
                 linenum:lineaPedido.LineNum,
                 LineStatus:lineaPedido.LineStatus,
@@ -503,12 +512,12 @@ export class FormEntradaComponent implements OnInit {
     SeleccionarLinea(){}
 
     SeleccionarItemCode(){
-      //console.log(this.item);
+      ////console.log(this.item);
       this.descripcion = this.item.ItemName;
       if(this.item.ApTaxCode){
         
         this.impuesto = this.impuestos.filter(item => item.Code === this.item.ApTaxCode)[0];
-        //console.log(this.impuesto);
+        ////console.log(this.impuesto);
         
         this.SeleccionarImpuesto();
       }
@@ -521,7 +530,7 @@ export class FormEntradaComponent implements OnInit {
     }
 
     SeleccionarVicepresidencia(){
-      //console.log(this.viceprecidencia);
+      ////console.log(this.viceprecidencia);
   
       if(this.viceprecidencia){
         
@@ -536,7 +545,7 @@ export class FormEntradaComponent implements OnInit {
     }
 
     SeleccionarDependencia(){
-      //console.log(this.dependencia);
+      ////console.log(this.dependencia);
       if(this.dependencia){
         
         let dependenciesTMP = this.dependenciasUsuario.filter((data => (data.dependence === this.dependencia.dependence && data.vicepresidency === this.dependencia.vicepresidency)));
@@ -555,21 +564,21 @@ export class FormEntradaComponent implements OnInit {
     }
   
     SeleccionarLocalidad(){
-      //console.log(this.localidad);
+      ////console.log(this.localidad);
       
     }
   
     SeleccionarAlmacen(){
-      //console.log(this.almacen);
+      ////console.log(this.almacen);
     }
   
     SeleccionarCuenta(){
-      //console.log(this.cuenta);
+      ////console.log(this.cuenta);
       this.nombreCuenta = this.cuenta.Name;
     }
 
     SeleccionarImpuesto(){
-      //console.log(this.impuesto);
+      ////console.log(this.impuesto);
       
       if(!this.impuesto){
         this.prcImpuesto = 0;
@@ -583,7 +592,7 @@ export class FormEntradaComponent implements OnInit {
     AdicionarLinea(){}
 
     MostrarDetalle(){
-      //console.log(this.lineasEntrada);
+      ////console.log(this.lineasEntrada);
       this.listadoLineas =  true;
       this.calculatTotales();
     }
@@ -611,7 +620,7 @@ export class FormEntradaComponent implements OnInit {
          
           puntuacion = puntuacion + ((this.U_NF_SERVICIO_CALIDAD*60)/100);
       }else{
-        //console.log(this.U_NF_SERVICIO_CALIDAD,this.U_NF_SERVICIO_TIEMPO, this.U_NF_SERVICIO_SEGURIDAD, this.U_NF_SERVICIO_AMBIENTE);
+        ////console.log(this.U_NF_SERVICIO_CALIDAD,this.U_NF_SERVICIO_TIEMPO, this.U_NF_SERVICIO_SEGURIDAD, this.U_NF_SERVICIO_AMBIENTE);
         if(this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_TIEMPO).length>0){
           puntuacion = puntuacion + (this.tiempo.filter(data =>data.label === this.U_NF_SERVICIO_TIEMPO)[0].value);
         }
@@ -662,9 +671,9 @@ export class FormEntradaComponent implements OnInit {
     }
 
     calcularSubtotalLinea(){
-      //console.log(this.cantidad,this.precio,this.monedas, this.trm);
+      ////console.log(this.cantidad,this.precio,this.monedas, this.trm);
       let tasaMoneda = this.monedas.filter(item=>item.Currency === this.moneda)[0].TRM;
-      //console.log(tasaMoneda);
+      ////console.log(tasaMoneda);
       if(!this.cantidad || !this.precio){
         this.subtotalLinea =0;
       }else{
@@ -682,7 +691,7 @@ export class FormEntradaComponent implements OnInit {
       if(!this.impuesto.tax || this.subtotalLinea ==0){
         this.valorImpuesto =0;
       }else{
-        ///console.log("Calcula impuesto")
+        /////console.log("Calcula impuesto")
         this.valorImpuesto =this.subtotalLinea*(this.impuesto.tax/100);
       }
       this.calcularTotalLinea();
@@ -692,7 +701,7 @@ export class FormEntradaComponent implements OnInit {
       this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
           .subscribe({
               next: (cuentas) => {
-                //console.log(cuentas);
+                ////console.log(cuentas);
                 let arrayCuentasDep = [];
                 for(let item in cuentas){
                   arrayCuentasDep.push(cuentas[item].U_NF_CUENTA);
@@ -704,16 +713,16 @@ export class FormEntradaComponent implements OnInit {
                   cuenta = this.cuentas[i]; 
                   for(let item of arrayCuentasDep){
                     if((cuenta.Code.indexOf(item)==0)){
-                    ////console.log(businessPartner);
+                    //////console.log(businessPartner);
                     filtered.push(cuenta);
                     }
                   }
                 }
-                //console.log(filtered);
+                ////console.log(filtered);
                 this.cuentasDependencia = filtered;
               },
               error: (err) => {
-                //console.log(err);
+                ////console.log(err);
               }
           });
     }
@@ -747,7 +756,7 @@ export class FormEntradaComponent implements OnInit {
 
             
           //this.submittedBotton = true;
-          //console.log(this.solped, this.solpedDetLines);
+          ////console.log(this.solped, this.solpedDetLines);
   
           
         }else{
@@ -796,7 +805,7 @@ export class FormEntradaComponent implements OnInit {
 
       //if(this.lineasEntrada) data.entrada.id = this.entradaEditar;
 
-      console.log(data);      
+      //console.log(data);      
       this.onNewEntrada.emit(data);              
 
       this.envioFormulario = false;
@@ -805,16 +814,16 @@ export class FormEntradaComponent implements OnInit {
     NuevaEntrada(){}
 
     EditarLinea(){
-      //console.log(this.lineaSeleccionada[0]); 
+      ////console.log(this.lineaSeleccionada[0]); 
       this.lineaEntrada = this.lineaSeleccionada[0];
-      console.log(this.lineaEntrada);
+      //console.log(this.lineaEntrada);
       this.editarLinea = true;
       this.MostrarFormularioLinea();
       this.numeroLinea = this.lineaEntrada.linenum;
       
       this.item = "";
       if(this.lineaEntrada.itemcode && this.lineaEntrada.itemcode!=null){
-        //console.log(this.lineaEntrada.itemcode);
+        ////console.log(this.lineaEntrada.itemcode);
         this.item = this.items.filter(item => item.ItemCode ===this.lineaEntrada.itemcode)[0];
       }
       
@@ -823,7 +832,7 @@ export class FormEntradaComponent implements OnInit {
       
       if(this.lineaEntrada.acctcode){
         this.cuenta = this.cuentas.filter(item =>item.Code === this.lineaEntrada.acctcode)[0];
-        //console.log(this.cuenta);
+        ////console.log(this.cuenta);
       }
   
       if(this.lineaEntrada.ocrcode3){
@@ -850,14 +859,14 @@ export class FormEntradaComponent implements OnInit {
       if(this.lineaEntrada.tax){
         this.impuesto = this.impuestos.filter(item =>item.Code === this.lineaEntrada.tax)[0];
         this.prcImpuesto =  this.impuesto.tax;
-        //console.log(this.impuesto);
+        ////console.log(this.impuesto);
       }
   
       if(this.lineaEntrada.acctcode){
         this.cuenta = this.cuentas.filter(item =>item.Code === this.lineaEntrada.acctcode)[0];
         this.nombreCuenta = this.cuenta.Name;
       }
-      console.log(this.entradaEditar,this.clase,this.lineaEntrada.cantidad);
+      //console.log(this.entradaEditar,this.clase,this.lineaEntrada.cantidad);
       this.cantidad = !this.entradaEditar?this.clase=='S'?1:(this.lineaEntrada.cantidad || 0):(this.lineaEntrada.cantidad || 0);
       
       this.cantidad_pendiente = this.lineaEntrada.cantidad_pendiente || 0;
@@ -883,19 +892,19 @@ export class FormEntradaComponent implements OnInit {
 
     RegistrarLinea(){
       this.envioLinea = true;
-      //console.log(this.numeroLinea, this.iteradorLinea);
+      //console.log(!this.cuenta);
       if(this.viceprecidencia.vicepresidency && 
         this.dependencia.dependence && 
         this.localidad.location && 
         this.cantidad &&
         this.precio &&
         this.impuesto &&
-        ((this.cuenta.Code && !this.item.ItemCode) || (!this.cuenta.Code && this.item.ItemCode)) || !this.validarCantidad()){
+        ((this.cuenta!=undefined && !this.item.ItemCode) || (this.cuenta==undefined && this.item.ItemCode)) || !this.validarCantidad()){
   
           let indexLineaDuplicada = this.LineaDuplicada();
           
-          if(indexLineaDuplicada>=0 && this.lineasEntrada[indexLineaDuplicada].linenum!==this.numeroLinea){
-            //console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
+          /*if(indexLineaDuplicada>=0 && this.lineasEntrada[indexLineaDuplicada].linenum!==this.numeroLinea){
+            ////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
             this.messageService.add({severity:'warn', 
                                      summary: '!Atención', 
                                      detail: `Los siguientes datos item: ${this.item.ItemCode}, 
@@ -904,13 +913,13 @@ export class FormEntradaComponent implements OnInit {
                                               localidad: ${this.localidad.location} 
                                               ya se encuentran registrados en la 
                                               linea ${this.lineasEntrada[indexLineaDuplicada].linenum} de esta solped`});    
-          }else{
+          }else{*/
             if(this.editarLinea){
               
               this.asignarCamposLinea(this.lineaSeleccionada[0].linenum);
-              //console.log(this.lineasEntrada.indexOf(this.lineaSeleccionada[0]));
+              ////console.log(this.lineasEntrada.indexOf(this.lineaSeleccionada[0]));
               this.lineasEntrada.splice(this.lineasEntrada.indexOf(this.lineaSeleccionada[0]),1,this.lineaEntrada);
-              //console.log(this.lineasSolped);
+              ////console.log(this.lineasSolped);
               this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente la actualización de la línea'});
               this.editarLinea = false;
             }else{
@@ -921,7 +930,7 @@ export class FormEntradaComponent implements OnInit {
               this.asignarCamposLinea(this.numeroLinea);
               this.lineasEntrada.push(this.lineaEntrada);
               this.iteradorLinea++;
-              //console.log(this.lineasEntrada);
+              ////console.log(this.lineasEntrada);
               this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});
             }
             //realizar el proceso de registro de linea
@@ -930,7 +939,7 @@ export class FormEntradaComponent implements OnInit {
             this.resetearFormularioLinea();
             this.envioLinea = false;
   
-          }
+          //}
       }else{
           this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
           
@@ -943,7 +952,7 @@ export class FormEntradaComponent implements OnInit {
                                                       line.ocrcode === this.localidad.location && 
                                                       line.ocrcode2 === this.dependencia.dependence &&
                                                       line.ocrcode3 === this.viceprecidencia.vicepresidency);
-      //console.log(this.lineasSolped.indexOf(sameLine[0]));
+      ////console.log(this.lineasSolped.indexOf(sameLine[0]));
       return this.lineasEntrada.indexOf(sameLine[0]); 
     }
 
@@ -958,14 +967,14 @@ export class FormEntradaComponent implements OnInit {
         this.lineaEntrada.taxvalor = this.valorImpuesto;
         this.lineaEntrada.linegtotal = this.totalLinea;
 
-        //console.log("Editar linea",this.lineaEntrada);
+        ////console.log("Editar linea",this.lineaEntrada);
       }else{
         //Generar Linea
       }
     }
 
     resetearFormularioLinea(){
-      ////console.log(this.monedas);
+      //////console.log(this.monedas);
       this.numeroLinea = -1;
       this.fechaRequerida = new Date();
       this.proveedor = {CardCode:"",CardName:""};
@@ -1028,7 +1037,7 @@ export class FormEntradaComponent implements OnInit {
           
           if((cuentaDependencia.Code.toLowerCase().indexOf(query.toLowerCase())>=0) ||
             (cuentaDependencia.Name.toLowerCase().indexOf(query.toLowerCase())>=0)){
-            //console.log(cuentaDependencia);
+            ////console.log(cuentaDependencia);
             filtered.push(cuentaDependencia);
          }
         }

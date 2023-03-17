@@ -8,6 +8,8 @@ import { ComprasService } from 'src/app/demo/service/compras.service';
 import { PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { SAPService } from 'src/app/demo/service/sap.service';
+import { SolpedDet } from 'src/app/demo/api/solped';
+import * as FileSaver from 'file-saver';
 //import * as download   from 'downloadjs'
 
 
@@ -96,6 +98,15 @@ export class SolpedComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
+
+  lineasSolped:SolpedDet[] = [];
+  lineaSeleccionada:SolpedDet[] = [];
+  listadoLineas:boolean = false;
+
+  totalimpuestos:number = 0;
+  subtotal:number = 0;
+  grantotal:number =0;
+
   constructor(private rutaActiva: ActivatedRoute,
               private adminService:AdminService,
               private sapService:SAPService,
@@ -114,15 +125,15 @@ export class SolpedComponent implements OnInit {
      const token = localStorage.getItem('token') || '';*/
 
      this.infoUsuario = this.authService.getInfoUsuario();
-    //console.log(this.infoUsuario);
+    ////console.log(this.infoUsuario);
      
-     //console.log(this.authService.getPerfilesUsuario());
+     ////console.log(this.authService.getPerfilesUsuario());
      this.perfilesUsuario = this.authService.getPerfilesUsuario();
 
-     //console.log(this.router.url);
-     //console.log(this.authService.getPermisosUsuario());
+     ////console.log(this.router.url);
+     ////console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
-     //console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+     ////console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
      this.urlBreadCrumb = this.router.url;
 
@@ -143,12 +154,12 @@ export class SolpedComponent implements OnInit {
                 for(let item in series){
                     this.series.push(series[item]);
                 }
-              console.log(this.series);
+              //console.log(this.series);
               this.getListado();
                 //this.series = series.filter(item => item.)
             },
             error: (err)=>{
-              console.log(err);
+              //console.log(err);
             }
         });
 
@@ -195,12 +206,12 @@ mostrarAprobaciones(idSolped:any){
   this.comprasService.aprobacionesSolped(this.authService.getToken(),idSolped)
       .subscribe({
         next:(aprobaciones)=>{
-            //console.log(aprobaciones);
+            ////console.log(aprobaciones);
             this.listaAprobaciones = aprobaciones;
             this.loadingAp = false;
         },
         error:(err)=>{
-            console.log(err);
+            //console.log(err);
         }
 
       });
@@ -212,12 +223,12 @@ mostrarAadjuntos(idSolped:any){
   this.comprasService.solpedById(this.authService.getToken(),idSolped)
   .subscribe({
     next:(infoSolped)=>{
-       console.log(infoSolped.anexos);
+       //console.log(infoSolped.anexos);
        this.listaDocumentosSolped = infoSolped.anexos;
        this.loadingDocumentos=false;
     },
     error:(err)=>{
-        console.log(err);
+        //console.log(err);
     }
 
   });
@@ -230,7 +241,7 @@ mostrarAadjuntos(idSolped:any){
       .subscribe({
         next:async (anexo)=>{
             if(anexo.data!==''){
-                //console.log(anexo.data);
+                ////console.log(anexo.data);
                 /** Work */
                 //const blobPDF = await this.base64toBlob(anexo.data, 'application/pdf');
                 //download(new Blob([blobPDF]), 'filename.pdf', 'application/pdf');
@@ -246,12 +257,12 @@ mostrarAadjuntos(idSolped:any){
             }
         },
         error:(err)=>{
-          console.log(err);
+          //console.log(err);
         }
       });
   
   //if(file !==null){
-    //console.log(file.toString('base64'));
+    ////console.log(file.toString('base64'));
 
     /*
     let newfile = new Blob([file.data], { type: 'application/pdf' });            
@@ -390,7 +401,7 @@ cancelarSolped(){
 }
 
   solicitudAprobacion(){
-    //console.log(this.selectedSolped);
+    ////console.log(this.selectedSolped);
    
 
     let arrayIdSolped:number[] = [];
@@ -411,7 +422,7 @@ cancelarSolped(){
     this.errorSopledAprobada = false;
     this.arraySolpedAprobadas = [];
     for(let item of this.selectedSolped){
-        //console.log(item);
+        ////console.log(item);
         fechaContSolped = new Date(item.docdate);
 
         if(item.approved==='C'){
@@ -439,7 +450,7 @@ cancelarSolped(){
         }
         arrayIdSolped.push(item.id);
     }
-    //console.log(arrayIdSolped);
+    ////console.log(arrayIdSolped);
     this.arrayIdSolped = arrayIdSolped;
     let message = "";
     if(this.errorSolpedCancelada){
@@ -524,7 +535,7 @@ cancelarSolped(){
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
         .subscribe({
           next: (aprobaciones) => {
-            //console.log(aprobaciones);
+            ////console.log(aprobaciones);
             this.loadingCargue = false;
             this.displayModal= false;
             if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
@@ -542,7 +553,7 @@ cancelarSolped(){
             }
           },
           error: (err) => {
-            console.log(err);
+            //console.log(err);
             this.loading = false;
             this.loadingCargue = false;
             this.displayModal= false;
@@ -552,7 +563,7 @@ cancelarSolped(){
 }
 
 rechazar(){
-  //console.log('Rechazar solcitud');
+  ////console.log('Rechazar solcitud');
   this.arrayIdSolped = [];
   let arrayIdSolped:number[] = [];
   this.arraySolpedRechazadas = [];
@@ -563,7 +574,7 @@ rechazar(){
   this.errorUsuarioAprobador = false;
 
   for(let item of this.selectedSolped){
-      //console.log(item);
+      ////console.log(item);
     
       if(item.approved==='R'){
         this.errorSopledARechazada = true;
@@ -585,11 +596,11 @@ rechazar(){
       arrayIdSolped.push(item.id);
   }
 
-  //console.log(arrayIdSolped);
+  ////console.log(arrayIdSolped);
   this.arrayIdSolped = arrayIdSolped;
   let message = "";
 
-  //console.log('Rechazada',this.errorSopledARechazada,'Aprobada',this.errorSopledAprobada,'Usuario',this.errorUsuarioAprobador);
+  ////console.log('Rechazada',this.errorSopledARechazada,'Aprobada',this.errorSopledAprobada,'Usuario',this.errorUsuarioAprobador);
 
   if(this.errorSopledARechazada){
     if(this.arraySolpedRechazadas.length>1){
@@ -616,7 +627,7 @@ rechazar(){
       this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: message});
       this.errorUsuarioAprobador = false;
   }else{
-    //console.log("Aprobar");
+    ////console.log("Aprobar");
     if(arrayIdSolped.length >1){
       message =`¿Desea Continuar con el rechazo de las solicitudes seleccionadas?`;
     }else{
@@ -629,7 +640,7 @@ rechazar(){
 }
 
 aprobar(){
-  //console.log('Aprobar solcitudes');
+  ////console.log('Aprobar solcitudes');
   
   this.arrayIdSolped = [];
   let arrayIdSolped:number[] = [];
@@ -642,7 +653,7 @@ aprobar(){
   this.errorSolpedCancelada = false;
   this.arrayErrorSolpedCancelada =[];
   for(let item of this.selectedSolped){
-      //console.log(item);
+      ////console.log(item);
     
       if(item.approved==='R'){
         this.errorSopledARechazada = true;
@@ -666,7 +677,7 @@ aprobar(){
       arrayIdSolped.push(item.id);
   }
 
-  //console.log(arrayIdSolped);
+  ////console.log(arrayIdSolped);
   this.arrayIdSolped = arrayIdSolped;
   let message = "";
 
@@ -710,7 +721,7 @@ aprobar(){
       this.errorUsuarioAprobador = false;
    
   }else{
-    //console.log("Aprobar");
+    ////console.log("Aprobar");
     if(arrayIdSolped.length >1){
       message =`¿Desea Continuar con la aprobación de las solicitudes seleccionadas?`;
     }else{
@@ -727,22 +738,22 @@ aprobar(){
 onReject() {
     this.messageService.clear('c');
     this.errorFechaAprobacion = false;
-    //console.log(this.arrayIdSolped);
+    ////console.log(this.arrayIdSolped);
 }
 
 onRejectAp() {
   this.messageService.clear('ap');
-  console.log(this.arrayIdSolped);
+  //console.log(this.arrayIdSolped);
 }
 
 onRejectRap(){
   this.messageService.clear('rj');
-  //console.log(this.arrayIdSolped);
+  ////console.log(this.arrayIdSolped);
 }
 
 onRejectCancel(){
   this.messageService.clear('cdel');
-  //console.log(this.arrayIdSolped);
+  ////console.log(this.arrayIdSolped);
 }
 
 onConfirmCancel(){
@@ -770,7 +781,7 @@ onConfirmCancel(){
           }
         },
         error:(err)=>{
-          console.log(err);
+          //console.log(err);
           this.loading = false
           this.loadingCargue = false;
           this.displayModal= false;
@@ -799,10 +810,10 @@ rechazarSolped(){
           .subscribe({
             next: (aprobaciones)=>{
 
-                //console.log(aprobaciones);
+                ////console.log(aprobaciones);
                 //Filtrar el array de aprobaciones asociados a la solped seleccionada donde el aprobador, estadoap y estadoseccion de la liena === al usuario aprobador, estadoseccion activo y estado de aprobacion line a en P
                 let lineaAprobacionUsuario = aprobaciones.filter(item => item.usersapaprobador === this.infoUsuario.codusersap && item.estadoseccion==='A' && item.estadoap==='P');
-                //console.log(lineaAprobacionUsuario);
+                ////console.log(lineaAprobacionUsuario);
                 //Rechazar la solped y enviar notificación
                 let infoSolped:any = {
                     autor: {
@@ -828,7 +839,7 @@ rechazarSolped(){
                 this.comprasService.rechazoSolped(infoSolped)
                     .subscribe({
                         next: (result)=>{
-                            //console.log(result);
+                            ////console.log(result);
                             this.loadingCargue = false;
                             this.displayModal= false;
                             if(result[0].status==='ok'){
@@ -844,14 +855,14 @@ rechazarSolped(){
                         error: (err)=>{
                           this.loadingCargue = false;
                           this.displayModal= false;
-                            console.log(err);
+                            //console.log(err);
                         }
                     });
 
                 
             },  
             error: (err)=>{
-                console.log(err);
+                //console.log(err);
                 this.loadingCargue = false;
                  this.displayModal= false;
             }
@@ -868,7 +879,7 @@ onConfirmAp() {
   this.comprasService.aprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
       .subscribe({
         next: (aprobaciones) => {
-          //console.log(aprobaciones);
+          console.log(aprobaciones);
           this.loadingCargue = false;
           this.displayModal= false;
           let messageServiceTmp:any[] = [];
@@ -877,23 +888,27 @@ onConfirmAp() {
             this.messageService.add({key: 't1',severity:'error', summary: '!Error', detail: aprobaciones[0].message});
           }else{
 
-            if(aprobaciones.arrayErrors.length>0){
-              for(let item of aprobaciones.arrayErrors){
-                messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped,life:5000});
+            console.log("aqui entro");
+
+            if(aprobaciones[0].arrayErrors.length>0){
+              for(let item of aprobaciones[0].arrayErrors){
+                messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.message,life:5000});
                 //this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: item.messageSolped});
               }
-              if(aprobaciones.arrayAproved.length>0){
+            
+              if(aprobaciones[0].arrayAproved.length>0){
                 //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.'});
                 messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: 'Es posible que las siguentes solicitudes no se lograran guardar debido a los errores presentados.',life:5000});
-                for(let item of aprobaciones.arrayAproved){
+                for(let item of aprobaciones[0].arrayAproved){
                   //this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped});
-                  messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: item.messageSolped,life:5000});
+                  messageServiceTmp.push({key: 'tl',severity:'warn', summary: '!información', detail: item.message,life:5000});
                 }
               }
+            
             }else{
-              if(aprobaciones.arrayAproved.length>0){
+              if(aprobaciones[0].arrayAproved.length>0){
                 
-                for(let item of aprobaciones.arrayAproved){
+                for(let item of aprobaciones[0].arrayAproved){
                   //this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped});
                   messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Ok', detail: item.messageSolped,life:5000});
                 }
@@ -908,7 +923,7 @@ onConfirmAp() {
           
         },
         error: (err) => {
-          //console.log(err);
+          ////console.log(err);
           this.loading = false;
           this.loadingCargue = false;
           this.displayModal= false;
@@ -938,25 +953,76 @@ clearToast() {
     this.comprasService.listSolped(this.authService.getToken())
     .subscribe({
       next:(solped =>{
+        console.log(solped);
         this.loading = false;
         for(let lineaSolped of solped){
-          console.log(lineaSolped.serie);
-          console.log(this.series.filter(data=>data.code == lineaSolped.serie));
+          //console.log(lineaSolped.serie);
+          //console.log(this.series.filter(data=>data.code == lineaSolped.serie));
           if(lineaSolped.serie!==''){
             lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
           }
           
           
         }
-          //console.log(solped);
+          //////console.log(solped);
           this.solped = solped;
-          console.log(this.solped);
+          //console.log(this.solped);
           this.loading = false;
       }),
       error:(err =>{
-        console.log(err);
+        //console.log(err);
       })
     });
+  }
+
+  mostrarDetalle(solpedID:number){
+    this.displayModal= true;
+      this.comprasService.solpedById(this.authService.getToken(), solpedID)
+          .subscribe({
+                next:(solped)=>{
+                  console.log(solped);
+                  let totalimpuestos = 0;
+                  let subtotal =0;
+                  let grantotal =0;
+                  
+                  for(let linea of solped.solpedDet){
+                    totalimpuestos+= linea.taxvalor;
+                    subtotal+= linea.linetotal;
+                    grantotal+= linea.linegtotal;
+                    
+                  }
+                  this.displayModal= false;
+                  this.listadoLineas =true;
+                  this.lineasSolped = solped.solpedDet;
+                  this.totalimpuestos = totalimpuestos;
+                  this.subtotal =   subtotal;
+                  this.grantotal = grantotal;
+
+                },
+                error:(err)=>{
+                    console.error(err)
+                    this.displayModal= false;
+                }
+          })
+
+  }
+
+  exportExcel() {
+    import("xlsx").then(xlsx => {
+        const worksheet = xlsx.utils.json_to_sheet(this.solped);
+        const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+        const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveAsExcelFile(excelBuffer, `solpeds`);
+    });
+  }  
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+        type: EXCEL_TYPE
+    });
+    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
   }
 
 }

@@ -1,2 +1,12 @@
 <p-toast></p-toast>
 <app-form-solped [solpedEditar]="solpedSeleccionada.solped"  (onNewSolped)="actualizarSolped($event)"></app-form-solped>
+<p-dialog header="Cargando" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+    </p>
+
+    <div *ngIf="loadingCargue" class="field col">
+                    
+        <p-progressBar  mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+</p-dialog>

@@ -122,6 +122,7 @@ export class SAPService {
   }
 
 
+  
   itemsSAPXE(token:string):Observable<any[]>{
    
     /*const headers = new HttpHeaders({
@@ -131,6 +132,18 @@ export class SAPService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/items`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  itemsSolpedSAPXE(token:string):Observable<any[]>{
+   
+    /*const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/wssap/Xengine/itemsSolped`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
