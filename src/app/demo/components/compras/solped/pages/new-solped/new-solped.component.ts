@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
@@ -16,14 +16,40 @@ export class NewSolpedComponent implements OnInit {
   displayModal:boolean = false;
   loadingCargue:boolean = true;
   percentProgressBar:number=0;
+  idSolped!:any;
 
   constructor(private messageService: MessageService,
     private authService: AuthService,
     private router:Router,
+    private rutaActiva: ActivatedRoute,
     private comprasService: ComprasService) { }
 
   ngOnInit(): void {
+    console.log(this.rutaActiva);
+    if(this.rutaActiva.snapshot.params){
+      this.idSolped = this.rutaActiva.snapshot.params;
+      console.log(Object.keys(this.idSolped).length,this.idSolped);
+
+      if(Object.keys(this.idSolped).length>0){
+        this.displayModal= true;
+        this.comprasService.solpedById(this.authService.getToken(),parseInt(this.idSolped.solped))
+            .subscribe({
+                  next:(solped)=>{
+                        this.messageService.add({severity:'success', summary: 'Ok', detail: `Se han cargado correctamente los datos de la solped`});
+                        this.displayModal= false;
+                        
+                  },
+                  error:(err)=>{
+                    console.error(err)
+                    this.displayModal= false;
+                    this.messageService.add({severity:'error', summary: '!Error', detail: err});
+                  }
+            });
+      }
+    }
+    
   }
+
 
   registrarSolped(dataSolped:any){
     console.log(dataSolped);

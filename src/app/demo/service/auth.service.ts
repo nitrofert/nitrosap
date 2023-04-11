@@ -140,20 +140,7 @@ export class AuthService  {
   return this.http.get<any>(url,requestOptions);
   }
 
-  getDependeciasUsuario():Observable<DependenciasUsuario[]>{
-
-    /*const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.getToken()}`
-    });*/
-
-    let headers = this.urlApiService.getHeadersAPI(this.getToken());
-
-  const requestOptions = { headers: headers };
-
-  const url:string = `${this.api_url}/api/auth/dependenciesUser`;
-  return this.http.get<DependenciasUsuario[]>(url,requestOptions);
-  }
+  
 
   getAlmacenesUsuario():Observable<any[]>{
 
@@ -185,6 +172,17 @@ export class AuthService  {
   return this.http.get<any[]>(url,requestOptions);
   }
 
+  getAlmacenesUsuarioMysql():Observable<any[]>{
+
+ 
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/mysql/query/almacenes-usuario`;
+  return this.http.get<any[]>(url,requestOptions);
+  }
+
   getDependeciasUsuarioXE():Observable<DependenciasUsuario[]>{
 
     /*const headers = new HttpHeaders({
@@ -200,6 +198,23 @@ export class AuthService  {
   return this.http.get<DependenciasUsuario[]>(url,requestOptions);
   }
 
+  getDependeciasUsuarioMysql():Observable<DependenciasUsuario[]>{
+
+    /*const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.getToken()}`
+    });*/
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/mysql/query/dependencias-usuario`;
+  return this.http.get<DependenciasUsuario[]>(url,requestOptions);
+  }
+
+  
+
   getAreasUsuarioXE():Observable<any[]>{
 
     /*const headers = new HttpHeaders({
@@ -212,6 +227,16 @@ export class AuthService  {
   const requestOptions = { headers: headers };
 
   const url:string = `${this.api_url}/api/auth/areasUser`;
+  return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getAreasUsuarioMysql():Observable<any[]>{
+
+    let headers = this.urlApiService.getHeadersAPI(this.getToken());
+
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/mysql/query/areas-usuario`;
   return this.http.get<any[]>(url,requestOptions);
   }
 

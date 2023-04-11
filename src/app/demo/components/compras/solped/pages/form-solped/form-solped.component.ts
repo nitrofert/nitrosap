@@ -65,7 +65,7 @@ export class FormSolpedComponent implements OnInit {
   cuentas:CuentasSAP[]=[];
   almacenes:any[] = [];
   monedas:any[] =[];
-  trm:number =0;
+  trm:number =1;
   impuestos:any[] =[];
   infoSolpedEditar!:SolpedInterface;
 
@@ -216,7 +216,8 @@ export class FormSolpedComponent implements OnInit {
         //Cargar cuentas
         this.getCuentas();
         //Cargar monedas
-        this.getMonedas(new Date());
+        //this.getMonedas(new Date());
+        this.getMonedasMysql();
         //Cargar impuestos
         this.getImpuestos();
         setTimeout(()=>{this.getInformacionSolped();},500);
@@ -261,7 +262,8 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getDependenciasUsuario(){
-    this.authService.getDependeciasUsuarioXE()
+    this.authService.getDependeciasUsuarioMysql()
+    //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: (dependenciasUser) => {
         for(let item in dependenciasUser){
@@ -284,7 +286,8 @@ export class FormSolpedComponent implements OnInit {
   getSeries(){
     //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
 
-    this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
+    this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
+    //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
         .subscribe({
             next: (series)=>{
                 //console.log(series);
@@ -312,13 +315,14 @@ export class FormSolpedComponent implements OnInit {
   }
 
   async getAreas(){
-    await this.authService.getAreasUsuarioXE()
+    this.authService.getAreasUsuarioMysql()
+    //this.authService.getAreasUsuarioXE()
      .subscribe({
        next:  (areas) => {
           for(let item in areas){
              this.areas.push(areas[item]);
          }
-         ////console.log(this.areas);
+         console.log(this.areas);
        },
        error: (error) => {
          ////console.log(error);
@@ -331,7 +335,8 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getProveedores(){
-    this.sapService.BusinessPartnersXE(this.authService.getToken())
+    this.sapService.sociosDeNegocioMysql(this.authService.getToken())
+    //this.sapService.BusinessPartnersXE(this.authService.getToken())
         .subscribe({
           next: (businessPartners) => {
             for(let item in businessPartners){
@@ -345,7 +350,8 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getItems(){
-    this.sapService.itemsSolpedSAPXE(this.authService.getToken())
+    this.sapService.itemsSAPMysql(this.authService.getToken())
+    //this.sapService.itemsSolpedSAPXE(this.authService.getToken())
         .subscribe({
           next: (items) => {
             for(let item in items){
@@ -361,7 +367,8 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getCuentas(){
-    this.sapService.CuentasSAPXE(this.authService.getToken())
+    this.sapService.CuentasSAPMysql(this.authService.getToken())
+    //this.sapService.CuentasSAPXE(this.authService.getToken())
         .subscribe({
           next: (cuentas) => {
             for(let item in cuentas){
@@ -377,7 +384,8 @@ export class FormSolpedComponent implements OnInit {
   }
 
   getAlmacenes(){
-    this.authService.getAlmacenesUsuarioXE()
+    this.authService.getAlmacenesUsuarioMysql()
+    //this.authService.getAlmacenesUsuarioXE()
     .subscribe({
       next: (stores) => {
         ////console.log(stores);
@@ -409,8 +417,31 @@ export class FormSolpedComponent implements OnInit {
        });
   }
 
+  getMonedasMysql(){
+    this.sapService.monedasMysql(this.authService.getToken())
+       .subscribe({
+         next: (monedas) => {
+            console.log('Monedas Mysql',monedas);
+           //this.monedas = [{Currency:  'COP',TRM:1}];
+           for(let item in monedas){
+              this.monedas.push({
+                Currency:monedas[item].Code,
+                TRM:monedas[item].TRM,
+              });
+           }
+           
+          // this.setearTRMSolped('USD');
+         },
+         error: (error) => {
+             ////console.log(error);      
+         }
+       });
+  }
+
+
   getImpuestos(){
-    this.comprasService.taxesXE(this.authService.getToken())
+    this.comprasService.impuestosMysql(this.authService.getToken())
+    //this.comprasService.taxesXE(this.authService.getToken())
         .subscribe({
           next: (taxes) => {
            
@@ -459,6 +490,14 @@ export class FormSolpedComponent implements OnInit {
                   //this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate);
                   this.fechaNecesidad = new Date (new Date(this.infoSolpedEditar.solped.reqdate).getTime()+(hora*5));
                   //this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate);
+
+                  this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate.toString().replace('T00','T05'));
+              
+                this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate.toString().replace('T00','T05'));
+                this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate.toString().replace('T00','T05'));
+                this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
+
+
                   this.comentarios = this.infoSolpedEditar.solped.comments || '';
                   this.trm = this.infoSolpedEditar.solped.trm;
                   this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';
@@ -515,7 +554,7 @@ export class FormSolpedComponent implements OnInit {
 
   SeleccionarFechaContable(){
     ////console.log(this.fechaContable);
-    this.getMonedas(this.fechaContable);
+    //this.getMonedas(this.fechaContable);
   }
 
   SeleccionarProveedor(){
@@ -598,7 +637,8 @@ export class FormSolpedComponent implements OnInit {
     
     //this.trm= this.monedas.filter(item => item.Currency === this.moneda)[0].TRM;
     this.currency = this.monedas.filter(item => item.Currency === this.moneda)[0].Currency;
-    ////console.log( "seleccion moneda",this.trm );
+    this.trm = this.monedas.filter(item => item.Currency === this.moneda)[0].TRM;
+    console.log( "seleccion moneda",this.trm, this.currency);
     
     this.calcularSubtotalLinea();
   }
@@ -662,10 +702,11 @@ descargarPlantilla(){}
 
 cuentasxDependencia(){
   
-  this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
+  this.sapService.cuentasPorDependenciaMysql(this.authService.getToken(),this.dependencia.dependence)
+  //this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
       .subscribe({
           next: (cuentas) => {
-            ////console.log(cuentas);
+            console.log(cuentas);
             let arrayCuentasDep = [];
             for(let item in cuentas){
               arrayCuentasDep.push(cuentas[item].U_NF_CUENTA);
@@ -1212,7 +1253,7 @@ async validarCuentaContable(cuenta:any){
         }else if(arrayLinea[4]!='' && isNaN(arrayLinea[4])){
           this.messageService.add({severity:'error', summary: '!Error', detail: `La cantidad de la linea ${linea} no es un número`});
           valido = false;
-        }else if(arrayLinea[5]!='' && this.monedas.filter(item =>item.Currency==arrayLinea[5].trim()).length==0){
+        }else if(arrayLinea[5].trim()!='' && this.monedas.filter(item =>item.Currency==arrayLinea[5].trim()).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la moneda de la linea ${linea}, no existe en el listado de monedas de SAP ${JSON.stringify(this.monedas)}`});
           valido = false;
         }else if(arrayLinea[6]==''){
@@ -1379,6 +1420,7 @@ async validarCuentaContable(cuenta:any){
                             usersap: this.infoUsuario.codusersap,
                             fullname: this.infoUsuario.fullname,
                             serie:this.serie,
+                            //serieName:this.serieName,
                             doctype: this.clase,
                             docdate:this.fechaContable,
                             docduedate: this.fechaCaducidad,
@@ -1441,13 +1483,13 @@ async validarCuentaContable(cuenta:any){
     if(this.descripcion && 
       this.fechaRequerida && 
       this.viceprecidencia.vicepresidency && 
-      this.dependencia.dependence && 
+      this.dependencia.dependence &&    
       this.localidad.location && 
       this.cantidad &&
       this.precio &&
       this.impuesto &&
-      ((this.cuenta.Code && this.validaCuenta) || (!this.cuenta.Code && !this.validaCuenta) ) 
-      //&&((this.item.ItemCode && this.clase=='I') || (this.clase=='S'))
+      ((this.cuenta.Code && this.validaCuenta) || (!this.cuenta.Code && !this.validaCuenta) )  &&
+      ((this.item.ItemCode && this.clase=='I') || (this.clase=='S'))
       ){
 
         let indexLineaDuplicada = this.LineaDuplicada();

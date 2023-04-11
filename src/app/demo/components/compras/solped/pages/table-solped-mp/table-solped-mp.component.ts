@@ -35,21 +35,13 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   @Output() onChangeTabla: EventEmitter<any> = new EventEmitter();
   @Output() onChangeLoading: EventEmitter<any> = new EventEmitter();
 
-
-  
-
   infoUsuario!:InfoUsuario;
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
-
-
-
- 
   
   //loading:boolean = true;
   selectedItem:any[] = [];
-
 
   formulario:boolean = false;
   envioFormulario:boolean = false;
@@ -152,13 +144,24 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   }
 
   editSolped(){
-    //console.log(this.selectedSolped); 
+    console.log(this.selectedItem); 
     /*this.formulario = true;
     this.asignarCampos();*/
-    if(this.documento=='Solped' || this.documento=='Proyecciones'){
+
+    if(this.documento=='Proyecciones' || this.documento=='Solped'){
       this.router.navigate(['/portal/compras/solped/editar-mp',this.selectedItem[0].id]);
     }
 
+
+    /*
+    if(this.documento=='Proyecciones'){
+      this.router.navigate(['/portal/compras/solped/editar-proyeccion',this.selectedItem[0].id]);
+    }
+
+    if(this.documento=='Solped'){
+      this.router.navigate(['/portal/compras/solped/editar-solped',this.selectedItem[0].id]);
+    }
+    */
     if(this.documento=='Pedido'){
         this.formulario= true;
         this.loadingSave = false;
@@ -285,6 +288,42 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
       
   }
 
+  envairSAP2(){
+    
+    this.loading = true;
+
+    let solpedsId:any[] = this.selectedItem.map(solped =>{ return solped.id})
+    console.log('Envio a SAP',solpedsId);
+    this.comprasService.enviarSolpedSAP(this.authService.getToken(),{solpedsId})
+        .subscribe({
+              next: (result)=>{
+                console.log(result);
+                let severity = "success";
+                if(result.arrayErrors.length > 0){
+                  severity = "error";
+                }
+                this.messageService.add({severity, summary: '!Error', detail: 'El proceso de envio a SAP ha sido completado: del cual se obtuvo el siguiente resultado:'});
+
+                for(let error of  result.arrayErrors){
+                  this.messageService.add({severity:'error', summary: '!Error', detail: error.message});
+                }
+
+                for(let approved of  result.arrayApproved){
+                  this.messageService.add({severity:'success', summary: '!Error', detail: approved.message});
+                }
+                this.loading = false;
+                this.selectedItem=[];
+                this.onChangeTabla.emit(this.nombreLista);
+
+              },
+              error:(err)=>{
+                this.messageService.add({severity:'error', summary: '!Error', detail: `El proceso de envio a SAP se ha interrupido debido al siguiente error: ${err}`});
+                this.loading = false;
+              }
+        });
+    
+}
+
   cancelarSolped(){
 
     let arrayIdSolped:number[] = [];
@@ -362,6 +401,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
                 message = `La cancelación del documento seleccionado fue realizado correctamente`;
               }
               this.messageService.add({key: 'tl',severity:'success', summary: '!Ok', detail: message});
+              this.selectedItem=[];
               this.onChangeTabla.emit(this.nombreLista);
               //this.getListado();
             }else{

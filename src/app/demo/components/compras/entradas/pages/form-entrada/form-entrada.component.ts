@@ -136,6 +136,7 @@ export class FormEntradaComponent implements OnInit {
   U_NF_CALIFICACION:string="";
   color_calificacion:string="text-red-700";
   footer:string="";
+  DocType:any="";
 
 
 
@@ -371,9 +372,10 @@ export class FormEntradaComponent implements OnInit {
                  
             this.comprasService.pedidoByIdSL(this.authService.getToken(),this.pedido)
                 .subscribe({
-                    next: (pedido)=>{
-                        //console.log('by pedido',pedido);
-                        this.asignarValores(pedido);
+                    next: (pedido:any)=>{
+                        console.log('by pedido',pedido);
+                        
+                        this.getEntradasPedido(pedido);
                     },
                     error: (err)=>{
                         //console.log(err);
@@ -387,12 +389,40 @@ export class FormEntradaComponent implements OnInit {
       }
     }
 
+    getEntradasPedido(pedido:any){
+
+        const DocEntry:any = pedido.DocEntry;
+               
+          this.comprasService.entradasByPedido(this.authService.getToken(),DocEntry)
+              .subscribe({
+                  next: (entradasPedido)=>{
+                    console.log('entradas x pedido',entradasPedido);
+                    this.asignarValores(pedido, entradasPedido);
+                  },
+                  error: (err)=>{
+                      //console.log(err);
+                  }
+              });
+      
+    
+    }
+
     getInfoEntrada(){
       this.comprasService.entradaById(this.authService.getToken(),this.entradaEditar.entrada)
           .subscribe({
               next: (entrada)=>{
-                //console.log('By entrada',entrada);  
+                console.log('By entrada',entrada);  
                 this.asignarValores(entrada);
+                /*this.comprasService.entradasByPedido(this.authService.getToken(),entrada.DocumentLines.BaseEntry)
+                .subscribe({
+                    next: (entradasPedido)=>{
+                      console.log('entradas x pedido',entradasPedido);
+                      this.asignarValores(entrada, entradasPedido);
+                    },
+                    error: (err)=>{
+                        console.log(err);
+                    }
+                });*/
               },
               error: (err)=>{
                 //console.log(err);
@@ -400,7 +430,8 @@ export class FormEntradaComponent implements OnInit {
           });
     }
 
-    async asignarValores (pedido:any){
+    async asignarValores (pedido:any, entradasPedido?:any){
+
         this.nombreproveedor = pedido.CardName;
         this.codigoproveedor = pedido.CardCode;
         this.comentarios = !this.entradaEditar?pedido.Comments+" - Basado en pedido de compra "+pedido.DocNum:pedido.Comments;
@@ -410,6 +441,7 @@ export class FormEntradaComponent implements OnInit {
         //this.fechaDocumento = new Date(pedido.TaxDate);
         this.fechaNecesidad = new Date(pedido.RequriedDate);
         this.pedidonumsap = pedido.DocNum;
+        this.DocType =pedido.DocType;
         
 
         if(!this.entradaEditar){
@@ -445,13 +477,13 @@ export class FormEntradaComponent implements OnInit {
         }else{
           //Obtener serie de entradas
           let seriesTMP:any = this.series;
-          console.log('series: ',seriesTMP[0], this.series);
-          console.log('series: ',seriesTMP.length);
-          console.log('pedido serie: ', pedido.Series.toString());
-          console.log('filtro series:',this.series.filter(item=>item.code.toString() == pedido.Serie));
+          //console.log('series: ',seriesTMP[0], this.series);
+          //console.log('series: ',seriesTMP.length);
+          //console.log('pedido serie: ', pedido.Series.toString());
+          //console.log('filtro series:',this.series.filter(item=>item.code.toString() == pedido.Serie));
           for(let serie of this.series){
          
-            console.log(serie);
+            //console.log(serie);
           }
           
           /*this.serieName = await this.series.filter(item=>item.code == pedido.Series)[0].name;
@@ -467,7 +499,24 @@ export class FormEntradaComponent implements OnInit {
         this.lineasEntrada = [];
         this.lineaEntrada = [];
         for(let lineaPedido of pedido.DocumentLines){
-          //console.log(lineaPedido);
+
+          if(lineaPedido.LineStatus!="bost_Close"){
+            //console.log(lineaPedido);
+            let totalEntradasLinea = 0;
+            if(entradasPedido){
+                //let totalEntradasLinea = 0;
+                for(let entradaPedido of entradasPedido.value){
+                  //console.log(lineaPedido.LineNum,entradaPedido['PurchaseDeliveryNotes/DocumentLines'].BaseLine);
+                  if(lineaPedido.LineNum == entradaPedido['PurchaseDeliveryNotes/DocumentLines'].BaseLine){
+                    //console.log(lineaPedido.LineNum,entradaPedido.PurchaseDeliveryNotes.DocNum,entradaPedido['PurchaseDeliveryNotes/DocumentLines'].LineTotal);
+                    totalEntradasLinea+=entradaPedido['PurchaseDeliveryNotes/DocumentLines'].LineTotal;
+                    
+                  }
+                }   
+            }
+
+            console.log(lineaPedido.LineTotal,totalEntradasLinea);
+
             this.lineasEntrada.push({
                 linenum:lineaPedido.LineNum,
                 LineStatus:lineaPedido.LineStatus,
@@ -475,15 +524,28 @@ export class FormEntradaComponent implements OnInit {
                 dscription:lineaPedido.ItemDescription,
                 //cantidad_pedido:lineaPedido.BaseOpenQuantity,
                 //cantidad_pendiente:lineaPedido.RemainingOpenQuantity,
-                cantidad_pedido: !this.entradaEditar?pedido.DocType==='dDocument_Service'?1:lineaPedido.BaseOpenQuantity:lineaPedido.BaseOpenQuantity,
-                cantidad_pendiente:!this.entradaEditar?pedido.DocType==='dDocument_Service'?1:lineaPedido.RemainingOpenQuantity:lineaPedido.RemainingOpenQuantity,
-                cantidad:!this.entradaEditar?pedido.DocType==='dDocument_Service'?0:0:lineaPedido.cantidad,
-                precio:lineaPedido.Price,
+                cantidad_pedido: !this.entradaEditar?
+                                    pedido.DocType==='dDocument_Service'?
+                                    1:lineaPedido.BaseOpenQuantity
+                                 :lineaPedido.BaseOpenQuantity,
+
+                cantidad_pendiente:!this.entradaEditar?
+                                      pedido.DocType==='dDocument_Service'?
+                                      1:lineaPedido.RemainingOpenQuantity
+                                   :lineaPedido.RemainingOpenQuantity,
+
+                cantidad:!this.entradaEditar?0:lineaPedido.cantidad,
+
+                precio:!this.entradaEditar?0:lineaPedido.Price,
+                
                 moneda:lineaPedido.Currency==='$'?'COP':lineaPedido.Currency,
                 tax:lineaPedido.TaxCode,
-                linetotal:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.LineTotal:0:lineaPedido.LineTotal,
-                valortax:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.TaxTotal:0:lineaPedido.TaxTotal,
-                linegtotal:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.LineTotal+lineaPedido.TaxTotal:0:lineaPedido.linegtotal,
+                //linetotal:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.LineTotal:0:lineaPedido.LineTotal,
+                linetotal:!this.entradaEditar?0:lineaPedido.LineTotal,
+                //valortax:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.TaxTotal==null?0:lineaPedido.TaxTotal:0:lineaPedido.TaxTotal==null?0:lineaPedido.TaxTotal,
+                valortax:!this.entradaEditar?0:lineaPedido.TaxTotal==null?0:lineaPedido.TaxTotal,
+                //linegtotal:!this.entradaEditar?pedido.DocType==='dDocument_Service'?lineaPedido.LineTotal+lineaPedido.TaxTotal:0:lineaPedido.GrossTotal,
+                linegtotal:!this.entradaEditar?0:lineaPedido.GrossTotal,
                 acctcode:lineaPedido.AccountCode,
                 BaseEntry:pedido.DocEntry,
                 BaseDocNum:pedido.DocNum,
@@ -492,12 +554,25 @@ export class FormEntradaComponent implements OnInit {
                 ocrcode:lineaPedido.CostingCode,
                 ocrcode2:lineaPedido.CostingCode2,
                 ocrcode3:lineaPedido.CostingCode3,
-                whscode:lineaPedido.WarehouseCode
+                whscode:lineaPedido.WarehouseCode,
+                total_entradas_linea:0,
+                total_pendiente:lineaPedido.LineTotal-totalEntradasLinea,
+                precio_linea:0,
+                valor_impuesto:0,
+
+
+           
+                
+
 
             });
+
+            //console.log(lineaPedido.LineNum,totalEntradasLinea);
             //this.lineasEntrada.push(this.lineaEntrada);
 
             //if(lineaPedido.ItemCode!=='') this.lineaEntrada.ItemCode = lineaPedido.ItemCode;
+          }
+          
 
         }
     }
@@ -803,6 +878,8 @@ export class FormEntradaComponent implements OnInit {
         EntradaDet:this.lineasEntrada.filter(item =>item.cantidad !==0 && item.LineStatus==='bost_Open')
       }
 
+      console.log(data);
+
       //if(this.lineasEntrada) data.entrada.id = this.entradaEditar;
 
       //console.log(data);      
@@ -814,7 +891,7 @@ export class FormEntradaComponent implements OnInit {
     NuevaEntrada(){}
 
     EditarLinea(){
-      ////console.log(this.lineaSeleccionada[0]); 
+      console.log(this.lineaSeleccionada[0]); 
       this.lineaEntrada = this.lineaSeleccionada[0];
       //console.log(this.lineaEntrada);
       this.editarLinea = true;
@@ -873,14 +950,18 @@ export class FormEntradaComponent implements OnInit {
       this.cantidad_pedido = this.lineaEntrada.cantidad_pedido || 1;
       this.moneda = this.monedas.filter(item =>item.Currency === this.lineaEntrada.moneda)[0].Currency;
      
-      this.precio = this.lineaEntrada.precio || 0;
-      this.subtotalLinea = this.lineaEntrada.linetotal;
+      //this.precio = this.lineaEntrada.precio || 0;
+      this.precio = (this.lineaEntrada.total_pendiente/this.cantidad_pendiente) || 0;
+      //this.subtotalLinea = this.lineaEntrada.linetotal;
+      this.subtotalLinea = this.lineaEntrada.total_pendiente;
      
   
      
-      this.valorImpuesto = this.lineaEntrada.linetotal*(this.prcImpuesto/100);
-      this.totalLinea = this.lineaEntrada.linegtotal;
-      
+      //this.valorImpuesto = this.lineaEntrada.linetotal*(this.prcImpuesto/100);
+      this.valorImpuesto = this.subtotalLinea*(this.prcImpuesto/100);
+
+      //this.totalLinea = this.lineaEntrada.linegtotal;
+      this.totalLinea = this.subtotalLinea+this.valorImpuesto;
     }
 
     MostrarFormularioLinea(){
@@ -892,14 +973,20 @@ export class FormEntradaComponent implements OnInit {
 
     RegistrarLinea(){
       this.envioLinea = true;
-      //console.log(!this.cuenta);
+      console.log(this.precio <= this.lineaEntrada.total_pendiente,this.precio,this.lineaEntrada.total_pendiente, this.cuenta!=undefined && !this.item.ItemCode,this.cuenta==undefined && this.item.ItemCode);
       if(this.viceprecidencia.vicepresidency && 
         this.dependencia.dependence && 
         this.localidad.location && 
         this.cantidad &&
         this.precio &&
+        (this.subtotalLinea <= this.lineaEntrada.total_pendiente) &&
+       
         this.impuesto &&
-        ((this.cuenta!=undefined && !this.item.ItemCode) || (this.cuenta==undefined && this.item.ItemCode)) || !this.validarCantidad()){
+        //((this.cuenta!=undefined && !this.item.ItemCode && this.DocType=='dDocument_Items') || (this.cuenta==undefined && this.item.ItemCode)) && !this.validarCantidad()){
+        //((this.cuenta!=undefined && !this.item.ItemCode) || (this.cuenta==undefined && this.item.ItemCode)) && 
+        this.cuenta &&
+        ((this.DocType=="dDocument_Items" && this.item.ItemCode ) || (this.DocType=="dDocument_Service" && !this.item.ItemCode )) &&
+        !this.validarCantidad()){
   
           let indexLineaDuplicada = this.LineaDuplicada();
           
@@ -930,7 +1017,7 @@ export class FormEntradaComponent implements OnInit {
               this.asignarCamposLinea(this.numeroLinea);
               this.lineasEntrada.push(this.lineaEntrada);
               this.iteradorLinea++;
-              ////console.log(this.lineasEntrada);
+              console.log('lineas entrada',this.lineasEntrada);
               this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});
             }
             //realizar el proceso de registro de linea
@@ -940,6 +1027,8 @@ export class FormEntradaComponent implements OnInit {
             this.envioLinea = false;
   
           //}
+      }else if(this.precio > this.lineaEntrada.total_pendiente ){
+        this.messageService.add({severity:'error', summary: '!Error', detail: 'El precio de la entrada no puede ser mayor al disponible del pedido'});
       }else{
           this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
           
@@ -963,11 +1052,15 @@ export class FormEntradaComponent implements OnInit {
         this.lineaEntrada = this.lineasEntrada.filter(item => item.linenum === linea)[0];
         this.lineaEntrada.id_user=this.infoUsuario.id;
         this.lineaEntrada.cantidad = this.cantidad;
+        this.lineaEntrada.precio = this.precio;
         this.lineaEntrada.linetotal = this.subtotalLinea;
         this.lineaEntrada.taxvalor = this.valorImpuesto;
         this.lineaEntrada.linegtotal = this.totalLinea;
+        this.lineaEntrada.total_pendiente-=this.subtotalLinea;
+        this.lineaEntrada.total_entradas_linea+= this.subtotalLinea;
 
-        ////console.log("Editar linea",this.lineaEntrada);
+
+        //console.log("Editar linea",this.lineaEntrada);
       }else{
         //Generar Linea
       }

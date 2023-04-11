@@ -201,7 +201,8 @@ export class MrpComponent implements OnInit {
     this.getProveedores();
     
     //Cargar monedas
-    this.getMonedas(new Date());
+    //this.getMonedas(new Date());
+    this.getMonedasMysql();
     //Cargar impuestos
     this.getImpuestos();
 
@@ -249,7 +250,9 @@ export class MrpComponent implements OnInit {
   }
 
   getItems(){
-    this.sapService.itemsSAPXE(this.authService.getToken())
+    //this.sapService.itemsSAPXE(this.authService.getToken())
+    this.sapService.itemsSAPMysql(this.authService.getToken())
+    
         .subscribe({
           next: (items) => {
             for(let item in items){
@@ -317,7 +320,9 @@ export class MrpComponent implements OnInit {
   }
 
   getDependenciasUsuario(){
-    this.authService.getDependeciasUsuarioXE()
+    //this.authService.getDependeciasUsuarioXE()
+    this.authService.getDependeciasUsuarioMysql()
+    
     .subscribe({
       next: (dependenciasUser) => {
         
@@ -355,7 +360,8 @@ export class MrpComponent implements OnInit {
   }
 
   getProveedores(){
-    this.sapService.BusinessPartnersXE(this.authService.getToken())
+    this.sapService.sociosDeNegocioMysql(this.authService.getToken())
+    //this.sapService.BusinessPartnersXE(this.authService.getToken())
         .subscribe({
           next: (businessPartners) => {
             for(let item in businessPartners){
@@ -478,14 +484,19 @@ export class MrpComponent implements OnInit {
   }
 
   getAlmacenesMPSL(){
-    this.sapService.getAlmacenesMPSL(this.authService.getToken())
+    //this.sapService.getAlmacenesMPSL(this.authService.getToken())
+    this.sapService.getAlmacenesMysql(this.authService.getToken())
         .subscribe({
             next: (almacenes) => {
-              ////console.log(almacenes.value);
+              console.log(almacenes);
               let almacenesTMP:any[] = [];
-              for(let item in almacenes.value){
+              /*for(let item in almacenes.value){
                 almacenesTMP.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
                 
+              }*/
+             for(let item in almacenes){
+              almacenesTMP.push({store:almacenes[item].WarehouseCode, storename: almacenes[item].WarehouseName, zonacode:almacenes[item].State});
+              
              }
              ////console.log(this.almacenes)
              this.almacenes = almacenesTMP.filter(data => data.zonacode == this.zona.State);
@@ -498,7 +509,9 @@ export class MrpComponent implements OnInit {
   }
 
   getImpuestos(){
-    this.comprasService.taxesXE(this.authService.getToken())
+    //this.comprasService.taxesXE(this.authService.getToken())
+    this.comprasService.impuestosMysql(this.authService.getToken())
+    
         .subscribe({
           next: (taxes) => {
            
@@ -534,10 +547,33 @@ export class MrpComponent implements OnInit {
        });
   }
 
+  getMonedasMysql(){
+    this.sapService.monedasMysql(this.authService.getToken())
+       .subscribe({
+         next: (monedas) => {
+            console.log('Monedas Mysql',monedas);
+           //this.monedas = [{Currency:  'COP',TRM:1}];
+           for(let item in monedas){
+              this.monedas.push({
+                Currency:monedas[item].Code,
+                TRM:monedas[item].TRM,
+              });
+           }
+           
+          // this.setearTRMSolped('USD');
+         },
+         error: (error) => {
+             ////console.log(error);      
+         }
+       });
+  }
+
   getSeries(){
     //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
 
-    this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
+    //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
+    this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
+    
         .subscribe({
             next: (series)=>{
                 ////console.log(series);

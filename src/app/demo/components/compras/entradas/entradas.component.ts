@@ -37,6 +37,9 @@ export class EntradasComponent implements OnInit {
 
   
   series:any[] = [];
+  displayModal:boolean = false;
+  dialogCancel:boolean = false;
+  comentariosCancel:string = "";
  
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -137,6 +140,54 @@ export class EntradasComponent implements OnInit {
   VerEntrada(){
     //console.log(this.entradaSeleccionada[0].id);
     this.router.navigate(['portal/compras/entradas/consultar/'+this.entradaSeleccionada[0].id]);
+  }
+
+  cancelarEntrada(){
+
+    console.log(this.entradaSeleccionada);
+
+      if(this.comentariosCancel!=""){
+
+        this.confirmationService.confirm({
+          message: `Esta usted seguro de cancelar la entrada número ${this.entradaSeleccionada[0].id}?`,
+
+          accept: () => {
+              //Actual logic to perform a confirmation
+              const data:any = {
+                  comment: this.comentariosCancel,
+                  sapdocnum: this.entradaSeleccionada[0].sapdocnum
+              }
+              this.displayModal= true;
+              this.sapService.cancelarEntrada(this.authService.getToken(),this.entradaSeleccionada[0].id,data)
+                  .subscribe({
+                        next:(result)=>{
+                            console.log('next',result)
+                            if(result.status ===200){
+                              this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                              this.getEntradas();
+                              this.comentariosCancel="";
+                              this.dialogCancel = false;
+                            }else{
+                              this.messageService.add({severity:'error', summary: '!Error', detail: result.err});
+                            }
+                            this.displayModal= false;
+                        },
+                        error:(err)=>{
+                          console.error(err)
+                          this.displayModal= false;
+                          this.messageService.add({severity:'error', summary: '!Error', detail: err});
+                        }
+                  });
+          }
+      });
+
+      }else{
+        this.messageService.add({severity:'error', summary: '!Error', detail: "Debe ingresar un comentario para cancelar la entrada"});
+      }
+
+      
+  
+  
   }
 
   impresion(id:number){

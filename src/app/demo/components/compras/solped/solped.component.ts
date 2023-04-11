@@ -141,7 +141,8 @@ export class SolpedComponent implements OnInit {
      this.approves = [{label:'No enviada',value:'N'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
 
 
-    this.getSeries();
+   //this.getSeries();
+    this.getListado();
     
   }
 
@@ -198,7 +199,7 @@ export class SolpedComponent implements OnInit {
             }
         }
     });
-}
+  }
 
 mostrarAprobaciones(idSolped:any){
   this.dialogAprobaciones = true;
@@ -401,7 +402,7 @@ cancelarSolped(){
 }
 
   solicitudAprobacion(){
-    ////console.log(this.selectedSolped);
+    console.log(this.selectedSolped);
    
 
     let arrayIdSolped:number[] = [];
@@ -535,8 +536,8 @@ cancelarSolped(){
     this.comprasService.envioAprobacionSolped(this.authService.getToken(), this.arrayIdSolped)
         .subscribe({
           next: (aprobaciones) => {
-            ////console.log(aprobaciones);
-            this.loadingCargue = false;
+            console.log(aprobaciones);
+            /*this.loadingCargue = false;
             this.displayModal= false;
             if(aprobaciones.filter((item:any)=> item.status==='error').length === 0) {
 
@@ -550,7 +551,40 @@ cancelarSolped(){
             }else{
               this.loading = false;
               this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: aprobaciones[0].message});
+            }*/
+            this.loadingCargue = false;
+            this.displayModal= false;
+            let messageServiceTmp:any[] = [];
+            let severity:string ="";
+            
+            if(aprobaciones[0].status=='error'){
+              this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: aprobaciones[0].message});
             }
+
+            if(aprobaciones[0].status=='complete'){
+              
+              if(aprobaciones[0].arrayErrors.length >0 && aprobaciones[0].arrayAproved.length >0){
+                severity="warn";
+              }else if(aprobaciones[0].arrayErrors.length >0 && aprobaciones[0].arrayAproved.length ==0){
+                severity="error";
+              }else if(aprobaciones[0].arrayErrors.length ==0 && aprobaciones[0].arrayAproved.length >0){
+                severity="success";
+              }
+              this.messageService.add({key: 'tl',severity, summary: '!información', detail: aprobaciones[0].message});
+            }
+
+            for(let item of aprobaciones[0].arrayErrors){
+              messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.message,life:5000});
+            }
+
+            for(let item of aprobaciones[0].arrayAproved){
+              messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Notificación¡', detail: item.message,life:5000});
+            }
+
+            this.getListado();
+            this.messageService.addAll(messageServiceTmp);
+            this.selectedSolped=[]
+
           },
           error: (err) => {
             //console.log(err);
@@ -588,7 +622,7 @@ rechazar(){
         this.arraySolpedAprobadas.push(item.id);
       }
       
-      if(item.usersapaprobador !== this.infoUsuario.codusersap){
+      if(item.usersapaprobador.toLowerCase() !== this.infoUsuario.codusersap.toLowerCase()){
        
         this.errorUsuarioAprobador = true;
         this.arrayErrorUsuarioAprobador.push(item.id);
@@ -670,7 +704,7 @@ aprobar(){
         this.arraySolpedAprobadas.push(item.id);
       }
 
-      if(item.usersapaprobador !== this.infoUsuario.codusersap){
+      if(item.usersapaprobador.toLowerCase() !== this.infoUsuario.codusersap.toLowerCase()){
         this.errorUsuarioAprobador = true;
         this.arrayErrorUsuarioAprobador.push(item.id);
       }
@@ -732,6 +766,26 @@ aprobar(){
   }
 
 
+
+}
+
+duplicar(){
+
+  console.log(this.selectedSolped);
+  
+  this.confirmationService.confirm({
+    header: 'Confirmación',
+    icon: 'pi pi-exclamation-triangle',
+    message: `Esta usted seguro de dulpicar la solped número ${this.selectedSolped[0].id}?`,
+    accept: () => {
+        //Actual logic to perform a confirmation
+        this.displayModal= true;
+        this.loadingCargue= true;
+        this.router.navigate(['/portal/compras/solped/nueva',this.selectedSolped[0].id]);
+        
+        
+    }
+});
 
 }
 
@@ -883,7 +937,36 @@ onConfirmAp() {
           this.loadingCargue = false;
           this.displayModal= false;
           let messageServiceTmp:any[] = [];
+          let severity:string ="";
+          
+          if(aprobaciones[0].status=='error'){
+            this.messageService.add({key: 'tl',severity:'warn', summary: '!información', detail: aprobaciones[0].message});
+          }
 
+          if(aprobaciones[0].status=='complete'){
+            
+            if(aprobaciones[0].arrayErrors.length >0 && aprobaciones[0].arrayAproved.length >0){
+              severity="warn";
+            }else if(aprobaciones[0].arrayErrors.length >0 && aprobaciones[0].arrayAproved.length ==0){
+              severity="error";
+            }else if(aprobaciones[0].arrayErrors.length ==0 && aprobaciones[0].arrayAproved.length >0){
+              severity="success";
+            }
+            this.messageService.add({key: 'tl',severity, summary: '!información', detail: aprobaciones[0].message});
+          }
+
+          for(let item of aprobaciones[0].arrayErrors){
+            messageServiceTmp.push({key: 'tl',severity:'error', summary: '!Error', detail: item.message,life:5000});
+          }
+
+          for(let item of aprobaciones[0].arrayAproved){
+            messageServiceTmp.push({key: 'tl',severity:'success', summary: '!Notificación¡', detail: item.message,life:5000});
+          }
+
+          this.getListado();
+          this.messageService.addAll(messageServiceTmp);
+          this.selectedSolped=[]
+          /* 
           if(aprobaciones[0].status && aprobaciones[0].status=='error'){
             this.messageService.add({key: 't1',severity:'error', summary: '!Error', detail: aprobaciones[0].message});
           }else{
@@ -914,11 +997,10 @@ onConfirmAp() {
                 }
               }
             }
-            this.getListado();
-            this.messageService.addAll(messageServiceTmp);
+            
             
 
-          }
+          }*/
 
           
         },
@@ -959,7 +1041,7 @@ clearToast() {
           //console.log(lineaSolped.serie);
           //console.log(this.series.filter(data=>data.code == lineaSolped.serie));
           if(lineaSolped.serie!==''){
-            lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
+            //lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
           }
           
           

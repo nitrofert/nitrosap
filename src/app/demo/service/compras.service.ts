@@ -67,6 +67,13 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  impuestosMysql(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/impuestos-compra`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   saveSolped(token:string,data:any):Observable<any>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -274,6 +281,17 @@ export class ComprasService {
       return this.http.get<any>(url,requestOptions);
   }
 
+  getDocumentsTrackingSAP(token:string):Observable<any>{
+    /*const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });*/
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url}/api/compras/solped/list/documentsTracking`;
+      return this.http.get<any>(url,requestOptions);
+  }
+
   EntradasMP(token:string):Observable<any>{
     /*const headers = new HttpHeaders({
         'Content-Type': 'application/json',
@@ -396,7 +414,8 @@ export class ComprasService {
    
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
-    const url:string = `${this.api_url}/api/compras/mrp/zonas`;
+    //const url:string = `${this.api_url}/api/compras/mrp/zonas`;
+    const url:string = `${this.api_url}/api/mysql/query/zonas`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -458,4 +477,13 @@ export class ComprasService {
     const url:string = `${this.api_url}/api/compras/rpt/detalleEntradasProveedor`;
     return this.http.post<any[]>(url,parametros,requestOptions);
   }
+
+  entradasByPedido(token:string,DocEntry:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/entrada/pedido/${DocEntry}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  
 }

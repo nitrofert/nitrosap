@@ -32,6 +32,14 @@ export class EstadosPipe implements PipeTransform {
                 return 'Cerrada';
               break;
 
+              case 'O':
+                return 'Abierta';
+              break;
+
+              case 'C':
+                return 'Cancelada';
+              break;
+
               default: return value
           }
       break;

@@ -18,12 +18,15 @@ import { SolpedsAprobadasComponent } from './solpeds-aprobadas/solpeds-aprobadas
 @NgModule({
     imports: [RouterModule.forChild([
         { path: '', component: SolpedComponent }, 
+        { path: 'nueva/:solped', component: NewSolpedComponent },
         { path: 'nueva', component: NewSolpedComponent },
         { path: 'editar/:solped', component: EditSolpedComponent },
         { path: 'formSolped', component: NewSolpedComponent },
         { path: 'tracking', component: TrackingMPComponent },
         { path: 'nueva-mp', component: NewSolpedMpComponent },
         { path: 'editar-mp/:solped', component: EditSolpedMpComponent },
+        { path: 'editar-proyeccion/:solped', component: EditSolpedMpComponent },
+        { path: 'editar-solped/:solped', component: EditSolpedMpComponent },
         { path: 'aprobadas', component: SolpedsAprobadasComponent },
     ])],
     exports: [RouterModule]

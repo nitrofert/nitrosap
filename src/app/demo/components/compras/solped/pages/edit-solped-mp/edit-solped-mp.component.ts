@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 
+
 @Component({
   selector: 'app-edit-solped-mp',
   providers:[MessageService],
@@ -13,6 +14,7 @@ import { ComprasService } from 'src/app/demo/service/compras.service';
 export class EditSolpedMpComponent implements OnInit {
 
   solpedSeleccionada!:any;
+  pathSolped:string="";
 
   constructor(private rutaActiva: ActivatedRoute,
     private messageService: MessageService,
@@ -25,7 +27,9 @@ export class EditSolpedMpComponent implements OnInit {
   ngOnInit(): void {
 
     this.solpedSeleccionada = this.rutaActiva.snapshot.params;
-
+    this.pathSolped = this.rutaActiva.snapshot.url[0].path;
+   
+    
     
   }
 

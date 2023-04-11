@@ -19,7 +19,7 @@
                     </div>
                     <div class="field">
                         <label htmlFor="area">Area</label>
-                        <p-dropdown [options]="areas" 
+                        <!--<p-dropdown [options]="areas" 
                                     optionLabel="area" 
                                     optionValue="area"
                                     [(ngModel)]="area" id="area" name="area" placeholder="Area"
@@ -28,7 +28,16 @@
                                     [readonly]="lineasSolped.length > 0"
                                     (onChange)="SeleccionarArea()"
                                     [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !area) || (nuevaLinea && !area)}">
-                        </p-dropdown>
+                        </p-dropdown>--->
+
+                        <input pInputText 
+                        [(ngModel)]="area" 
+                        id="viceprecidencia" 
+                        name="viceprecidencia" 
+                        class="p-inputtext-sm w-full"
+                        type="text"
+                        required 
+                        readonly/>
                     </div>
                     <div class="field">
                         <label htmlFor="nf_pedmp"> Materia prima importada</label>
@@ -271,7 +280,7 @@
         <div class="card p-fluid">
             <div class="grid">
                 <div class="col">
-                    <button pButton 
+                    <button pButton feditar
                             label="Guardar" 
                             (click)="GuardarSolped()" 
                             [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || registroSolped  "  
@@ -382,7 +391,7 @@
         <div class="grid">
             <div class="field col">
                 <label for="viceprecidencia">Vicepresidencia</label>
-                <p-dropdown [options]="vicepresidencias" 
+                <!--<p-dropdown [options]="vicepresidencias" 
                             [(ngModel)]="viceprecidencia"
                             optionLabel="vicepresidency" 
                             [filter]="true" 
@@ -393,7 +402,7 @@
                             inputId="viceprecidencia"
                             [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && !viceprecidencia.vicepresidency}"
                             (onChange)="SeleccionarVicepresidencia()" #ocrcode3>
-
+                
                     <ng-template pTemplate="selectedItem">
                         <div class="country-item country-item-value" *ngIf="viceprecidencia">
 
@@ -406,11 +415,21 @@
                             <div>{{viceprecidencia.vicepresidency}}</div>
                         </div>
                     </ng-template>
-                </p-dropdown>
+                </p-dropdown>-->
+
+                <input pInputText 
+                            [(ngModel)]="viceprecidencia" 
+                            id="viceprecidencia" 
+                            name="viceprecidencia" 
+                            class="p-inputtext-sm w-full"
+                            type="text"
+                            required 
+                            readonly/>
+
             </div>
             <div class="field col">
                 <label for="dependencia">Dependencia</label>
-                <p-dropdown [options]="dependencias" 
+                <!--<p-dropdown [options]="dependencias" 
                             [(ngModel)]="dependencia" 
                             optionLabel="dependence"
                             placeholder="Seleccione una dependencia" 
@@ -434,7 +453,16 @@
                             <div>{{dependencia.dependence}}</div>
                         </div>
                     </ng-template>
-                </p-dropdown>
+                </p-dropdown>-->
+
+                <input pInputText 
+                            [(ngModel)]="dependencia" 
+                            id="dependencia" 
+                            name="viceprecidependenciadencia" 
+                            class="p-inputtext-sm w-full"
+                            type="text"
+                            required 
+                            readonly/>
             </div>
             <div class="field col">
                 <label for="localidad">Localidad</label>
@@ -1162,3 +1190,16 @@
     </ng-template>
 </p-dialog>
 <!---Fin dialog Form detalle -->
+
+<!-- Dialog loading -->
+<p-dialog header="Cargando" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+    </p>
+
+    <div *ngIf="loadingCargue" class="field col">
+                    
+        <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+</p-dialog>
+<!--Fin Dialog loading-->

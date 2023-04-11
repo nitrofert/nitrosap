@@ -360,10 +360,18 @@
                 </th>
                 <th>
                     <div class="flex justify-content-between align-items-center">
-                        Cantidad pendiente
+                        Cantidad disponible
 
                     </div>
                 </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Total disponible
+
+                    </div>
+                </th>
+
                 <th>
                     <div class="flex justify-content-between align-items-center">
                         Cantidad entrada
@@ -391,17 +399,22 @@
                 </th>
                 <th>
                     <div class="flex justify-content-between align-items-center">
-                        Subtotal línea
+                        Subtotal
 
                     </div>
                 </th>
 
                 <th>
                     <div class="flex justify-content-between align-items-center">
-                        Total línea
+                        Total 
 
                     </div>
                 </th>
+
+                
+               
+
+
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-pedido>
@@ -442,6 +455,11 @@
                 <td style="min-width: 12rem;">
                     {{ (pedido.cantidad_pendiente - pedido.cantidad) }}
                 </td>
+
+                <td style="min-width: 12rem;">
+                    {{ pedido.total_pendiente | currency: 'COP' }}
+                </td>
+
                 <td style="min-width: 12rem;">
                     {{ pedido.cantidad }}
                 </td>
@@ -462,11 +480,15 @@
                 <td style="min-width: 12rem;">
                     {{ pedido.linegtotal | currency: 'COP' }}
                 </td>
+
+                
+
+                
             </tr>
         </ng-template>
         <ng-template pTemplate="footer">
             <tr>
-                <td colspan="14" class="text-right">Total</td>
+                <td colspan="15" class="text-right">Total</td>
                 <td>{{totalimpuestos | currency: 'COP'}}</td>
                 <td>{{subtotal | currency: 'COP'}}</td>
 
@@ -475,12 +497,12 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="14" class="text-center">No se econtraron lineas asociadas a la solped.</td>
+                <td colspan="15" class="text-center">No se econtraron lineas asociadas a la solped.</td>
             </tr>
         </ng-template>
         <ng-template pTemplate="loadingbody">
             <tr>
-                <td colspan="14" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
+                <td colspan="15" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
             </tr>
         </ng-template>
     </p-table>
@@ -553,7 +575,7 @@
                                 inputId="ItemCode" [autofocus]="true"
                                 panelStyleClass="text-sm sm:ml-2" 
                                 [readonly]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !item.ItemCode}">
+                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !item.ItemCode && DocType=='dDocument_Items'}">
 
                     <ng-template let-item pTemplate="item">
                         <div>{{item.ItemCode}} - {{item.ItemName}}</div>
@@ -782,11 +804,11 @@
                                     mode="currency" 
                                     currency="COP"
                                     locale="es-CO" 
-                                    [disabled]="true"
+                                    [disabled]="DocType=='dDocument_Items'"
                                     placeholder="Precio" 
                                     (ngModelChange)="calcularSubtotalLinea()"
                                     [ngStyle]="{width: '100%' }" styleClass="w-full"
-                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !precio}">
+                                    [ngClass]="{'ng-invalid ng-dirty' : (envioLinea && !precio) || (envioLinea && precio > this.lineaEntrada.total_pendiente)}">
                     </p-inputNumber>
                 </div>
 
@@ -861,8 +883,7 @@
                                 class="w-full" 
                                 [ngStyle]="{width: '100%' }" 
                                 styleClass="w-full"
-                                [readonly]="true" [disabled]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !valorImpuesto}">
+                                [readonly]="true" [disabled]="true">
                 </p-inputNumber>
 
             </div>
@@ -879,7 +900,7 @@
                                 class="w-full" 
                                 styleClass="w-full" 
                                 [readonly]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !totalLinea}">
+                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !totalLinea }">
                 </p-inputNumber>
 
             </div>

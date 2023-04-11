@@ -86,6 +86,15 @@ export class SAPService {
       return this.http.get<any[]>(url,requestOptions);
   }
 
+  sociosDeNegocioMysql(token:string):Observable<any[]>{
+  
+      const headers = this.urlApiService.getHeadersAPI(token);
+      const requestOptions = { headers: headers };
+      const url:string = `${this.api_url3}/api/mysql/query/socios-negocio`;
+      return this.http.get<any[]>(url,requestOptions);
+  }
+
+
 
 
   ItemsSAPSL(token:string):Observable<any[]>{
@@ -121,6 +130,14 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  CuentasSAPMysql(token:string):Observable<any[]>{
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/cuentas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
 
   
   itemsSAPXE(token:string):Observable<any[]>{
@@ -147,6 +164,15 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  itemsSAPMysql(token:string):Observable<any[]>{
+   
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/items`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   seriesDocXEngineSAP(token:string,objType?:string):Observable<any[]>{
    
     /*const headers = new HttpHeaders({
@@ -161,6 +187,17 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  seriesDocSAPMysql(token:string,objType?:string):Observable<any[]>{
+   
+    
+    const headers = this.urlApiService.getHeadersAPI(token);
+    let paramObjType = "";
+    if(objType) paramObjType =`/${objType}`;
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/series${paramObjType}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
 
 
   monedasXEngineSAP(token:string, date:string):Observable<any[]>{
@@ -172,6 +209,14 @@ export class SAPService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/wssap/Xengine/monedas/${date}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  monedasMysql(token:string):Observable<any[]>{
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/monedas`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -205,6 +250,19 @@ export class SAPService {
     }
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/shared/functions/cuentas${dependenciaParam}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  cuentasPorDependenciaMysql(token:string, dependencia:string=''):Observable<any[]>{
+   
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+    let dependenciaParam:string ="";
+    if(dependencia!=''){
+      dependenciaParam = `/${dependencia}`;
+    }
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/cuentas-dependencia${dependenciaParam}`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -247,8 +305,26 @@ export class SAPService {
     return this.http.get<any>(url,requestOptions);
   }
 
+  getAlmacenesMysql(token:string):Observable<any>{
+   
 
+    const headers = this.urlApiService.getHeadersAPI(token);
   
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/almacenes`;
+    return this.http.get<any>(url,requestOptions);
+  }
+
+
+  cancelarEntrada(token:string,idEntrada:number,data:any):Observable<any>{
+   
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+  
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/compras/entrada/cancel/${idEntrada}`;
+    return this.http.patch<any>(url,data,requestOptions);
+  }
 
   
 
