@@ -143,7 +143,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     
       getPerfilesUsuario(){
         this.perfilesUsuario = this.authService.getPerfilesUsuario();
-        console.log(this.perfilesUsuario);
+        //console.log(this.perfilesUsuario);
       }
     
       getPermisosUsuario(){

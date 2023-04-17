@@ -58,6 +58,13 @@ export class AuthService  {
     return infoToken;
   }
 
+  loadConfigUsuario(tokenid:string):Observable<any>{
+    let headers = this.urlApiService.getHeadersAPI(tokenid);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/auth/configUsuario`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   loadInfoUsuario(tokenid:string):Observable<any>{
     let headers = this.urlApiService.getHeadersAPI(tokenid);
     const requestOptions = { headers: headers };

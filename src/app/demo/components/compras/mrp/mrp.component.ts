@@ -182,10 +182,7 @@ export class MrpComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getItems();
-    this.getZonas();
-    
-    this.getSeries();
+  
 
     //Cargar informacion del usuario
     this.getInfoUsuario();
@@ -196,15 +193,22 @@ export class MrpComponent implements OnInit {
     //Cargar permisos usuario pagina
     this.getPermisosUsuarioPagina();
 
-    this.getDependenciasUsuario();
+    this.getConfigSolpedMP();
 
-    this.getProveedores();
+    //this.getItems();
+    //this.getZonas();
+    
+    //this.getSeries();
+
+    //this.getDependenciasUsuario();
+
+    //this.getProveedores();
     
     //Cargar monedas
     //this.getMonedas(new Date());
-    this.getMonedasMysql();
+    //this.getMonedasMysql();
     //Cargar impuestos
-    this.getImpuestos();
+    //this.getImpuestos();
 
     this.debouncer
     .pipe(debounceTime(300))
@@ -249,31 +253,60 @@ export class MrpComponent implements OnInit {
     console.log(this.permisosUsuarioPagina);
   }
 
-  getItems(){
+  getConfigSolpedMP(){
+    this.comprasService.getConfigSolpedMP(this.authService.getToken())
+    //this.authService.getDependeciasUsuarioXE()
+    .subscribe({
+      next: async (configSolped:any) => {
+        console.log(configSolped);
+
+        await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
+        await this.getSeries(configSolped.series);
+        //await this.getAreas(configSolped.areas);
+        await this.getProveedores(configSolped.proveedores);
+        await this.getItems(configSolped.items);
+        //await this.getCuentas(configSolped.cuentas);
+        await this.getAlmacenesMPSL(configSolped.almacenes);
+        await this.getMonedasMysql(configSolped.monedas);
+        await this.getImpuestos(configSolped.impuestos);
+        await this.getZonas(configSolped.zonas);
+        //this.getInformacionSolped();
+
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  async getItems(items:any){
     //this.sapService.itemsSAPXE(this.authService.getToken())
-    this.sapService.itemsSAPMysql(this.authService.getToken())
+    //this.sapService.itemsSAPMysql(this.authService.getToken())
+    //this.sapService.itemsSAPMysqlCalc(this.authService.getToken())
     
-        .subscribe({
-          next: (items) => {
+    //    .subscribe({
+    //      next: (items) => {
             for(let item in items){
               this.items.push(items[item]);
+
               //Obtener items de materia prima
               //if((items[item].ItemCode.toLowerCase().indexOf('mp')==0)){
                 ////console.log(items[item].ItemCode.toLowerCase());
                 //Llenar el array de items de MP
                 //this.itemsMP.push(items[item]);
               //}
-             
+              this.itemsMP.push(items[item]);
            }
-           this.getItemsMP();
+           //this.getItemsMP();
           
            ////console.log(this.itemsMP);
-           
-          },
-          error: (error) => {
+           //console.log(this.itemsMP);
+           //this.getZonas();
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
   getItemsMP(){
@@ -296,7 +329,7 @@ export class MrpComponent implements OnInit {
                 }  
               }
            }
-           this.getZonas();
+           //this.getZonas();
            //////console.log(this.itemsMP);
           },
           error: (error) => {
@@ -305,26 +338,29 @@ export class MrpComponent implements OnInit {
         });
   }
 
-  getZonas(){
-    this.comprasService.getZonas(this.authService.getToken())
-        .subscribe({
-            next: (zonas)=>{
+  async getZonas(zonas:any){
+    //this.comprasService.getZonas(this.authService.getToken())
+    //    .subscribe({
+    //        next: (zonas)=>{
                 ////console.log(zonas);
-                this.zonas = zonas;
-            },
-            error: (err)=>{
+                
+                for (let item in zonas){
+                  this.zonas.push(zonas[item]);
+                }
+    //        },
+    //        error: (err)=>{
               //console.log(err);
-            }
-        });
+    //        }
+    //    });
     
   }
 
-  getDependenciasUsuario(){
+  async getDependenciasUsuario(dependenciasUser:any){
     //this.authService.getDependeciasUsuarioXE()
-    this.authService.getDependeciasUsuarioMysql()
+    //this.authService.getDependeciasUsuarioMysql()
     
-    .subscribe({
-      next: (dependenciasUser) => {
+    //.subscribe({
+    //  next: (dependenciasUser) => {
         
          for (let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
@@ -352,29 +388,144 @@ export class MrpComponent implements OnInit {
 
         
         
-      },
-      error: (error) => {
+  //    },
+  //    error: (error) => {
         ////console.log(error);
-      }
-    });
+  //    }
+  //  });
   }
 
-  getProveedores(){
-    this.sapService.sociosDeNegocioMysql(this.authService.getToken())
+  async getProveedores(businessPartners:any){
+    //this.sapService.sociosDeNegocioMysql(this.authService.getToken())
     //this.sapService.BusinessPartnersXE(this.authService.getToken())
-        .subscribe({
-          next: (businessPartners) => {
+    //    .subscribe({
+    //      next: (businessPartners) => {
             for(let item in businessPartners){
               this.proveedores.push(businessPartners[item]);
            }
 
            
-          },
-          error: (error) => {
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
+
+  
+  async getAlmacenesMPSL(almacenes:any){
+    //this.sapService.getAlmacenesMPSL(this.authService.getToken())
+    //this.sapService.getAlmacenesMysql(this.authService.getToken())
+    //    .subscribe({
+    //        next: (almacenes) => {
+    //          console.log(almacenes);
+              let almacenesTMP:any[] = [];
+              /*for(let item in almacenes.value){
+                almacenesTMP.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
+                
+              }*/
+             for(let item in almacenes){
+              almacenesTMP.push({store:almacenes[item].WarehouseCode, storename: almacenes[item].WarehouseName, zonacode:almacenes[item].State});
+              this.almacenes.push({store:almacenes[item].WarehouseCode, storename: almacenes[item].WarehouseName, zonacode:almacenes[item].State}); 
+             }
+             ////console.log(this.almacenes)
+             //this.almacenes = almacenesTMP.filter(data => data.zonacode == this.zona.State);
+    //        },
+    //        error: (err) => {
+                //console.log(err);
+    //        }
+
+    //    });
+  }
+
+  async getImpuestos(taxes:any){
+    //this.comprasService.taxesXE(this.authService.getToken())
+    //this.comprasService.impuestosMysql(this.authService.getToken())
+    
+    //    .subscribe({
+    //      next: (taxes) => {
+           
+            for(let item in taxes){
+              this.impuestos.push(taxes[item]);  
+            }
+            //////console.log(this.taxes);
+             //this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
+              ////console.log(this.impuesto);
+      
+            //this.SeleccionarImpuesto();
+     //     },
+     //     error: (error) => {
+              ////console.log(error);      
+     //     }
+     //   });
+  }
+
+  getMonedas(fecha:Date){
+    this.sapService.monedasXEngineSAP(this.authService.getToken(),fecha.toISOString())
+       .subscribe({
+         next: (monedas) => {
+           this.monedas = [{Currency:  'COP',TRM:1}];
+           for(let item in monedas){
+              this.monedas.push(monedas[item]);
+           }
+           
+           this.setearTRMSolped('USD');
+         },
+         error: (error) => {
+             ////console.log(error);      
+         }
+       });
+  }
+
+  async  getMonedasMysql(monedas:any){
+    //this.sapService.monedasMysql(this.authService.getToken())
+    //   .subscribe({
+    //     next: (monedas) => {
+    //        console.log('Monedas Mysql',monedas);
+           //this.monedas = [{Currency:  'COP',TRM:1}];
+           for(let item in monedas){
+              this.monedas.push({
+                Currency:monedas[item].Code,
+                TRM:monedas[item].TRM,
+              });
+           }
+           
+           this.setearTRMSolped('USD');
+   //      },
+   //      error: (error) => {
+             ////console.log(error);      
+    //     }
+    //   });
+  }
+
+  async getSeries(series:any){
+    //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
+
+    //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
+    //this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
+    
+    //    .subscribe({
+    //        next: (series)=>{
+                ////console.log(series);
+                for(let item in series){
+                  if(series[item].name=='SPMP'){
+                    this.series.push(series[item]);
+                  }
+                  
+                }
+                //this.series = series.filter(item => item.)
+                this.serie = this.series[0].code;
+                this.serieName =this.series[0].name;
+
+    //        },
+    //        error: (err)=>{
+              //console.log(err);
+    //        }
+    //    });
+
+    
+  }
+
 
   getInventariosMP(){
 
@@ -422,7 +573,7 @@ export class MrpComponent implements OnInit {
                   this.inventarioItemZF = inventarios.inventarioItemZF;
                   this.totalInicialMPZF = inventarios.totalInventarioItemZF;
                   this.gePresupuestoItemZona();
-                
+                  console.log(inventarios.inventarioItemZF);
               },
               error: (error) => {
                   //console.log(error);
@@ -480,120 +631,7 @@ export class MrpComponent implements OnInit {
 
   SeleccionarZona(){
     //console.log(this.zona);
-    this.getAlmacenesMPSL();
-  }
-
-  getAlmacenesMPSL(){
-    //this.sapService.getAlmacenesMPSL(this.authService.getToken())
-    this.sapService.getAlmacenesMysql(this.authService.getToken())
-        .subscribe({
-            next: (almacenes) => {
-              console.log(almacenes);
-              let almacenesTMP:any[] = [];
-              /*for(let item in almacenes.value){
-                almacenesTMP.push({store:almacenes.value[item].WarehouseCode, storename: almacenes.value[item].WarehouseName, zonacode:almacenes.value[item].State});
-                
-              }*/
-             for(let item in almacenes){
-              almacenesTMP.push({store:almacenes[item].WarehouseCode, storename: almacenes[item].WarehouseName, zonacode:almacenes[item].State});
-              
-             }
-             ////console.log(this.almacenes)
-             this.almacenes = almacenesTMP.filter(data => data.zonacode == this.zona.State);
-            },
-            error: (err) => {
-                //console.log(err);
-            }
-
-        });
-  }
-
-  getImpuestos(){
-    //this.comprasService.taxesXE(this.authService.getToken())
-    this.comprasService.impuestosMysql(this.authService.getToken())
-    
-        .subscribe({
-          next: (taxes) => {
-           
-            for(let item in taxes){
-              this.impuestos.push(taxes[item]);  
-            }
-            //////console.log(this.taxes);
-             //this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
-              ////console.log(this.impuesto);
-      
-            this.SeleccionarImpuesto();
-          },
-          error: (error) => {
-              ////console.log(error);      
-          }
-        });
-  }
-
-  getMonedas(fecha:Date){
-    this.sapService.monedasXEngineSAP(this.authService.getToken(),fecha.toISOString())
-       .subscribe({
-         next: (monedas) => {
-           this.monedas = [{Currency:  'COP',TRM:1}];
-           for(let item in monedas){
-              this.monedas.push(monedas[item]);
-           }
-           
-           this.setearTRMSolped('USD');
-         },
-         error: (error) => {
-             ////console.log(error);      
-         }
-       });
-  }
-
-  getMonedasMysql(){
-    this.sapService.monedasMysql(this.authService.getToken())
-       .subscribe({
-         next: (monedas) => {
-            console.log('Monedas Mysql',monedas);
-           //this.monedas = [{Currency:  'COP',TRM:1}];
-           for(let item in monedas){
-              this.monedas.push({
-                Currency:monedas[item].Code,
-                TRM:monedas[item].TRM,
-              });
-           }
-           
-          // this.setearTRMSolped('USD');
-         },
-         error: (error) => {
-             ////console.log(error);      
-         }
-       });
-  }
-
-  getSeries(){
-    //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
-
-    //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
-    this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
-    
-        .subscribe({
-            next: (series)=>{
-                ////console.log(series);
-                for(let item in series){
-                  if(series[item].name=='SPMP'){
-                    this.series.push(series[item]);
-                  }
-                  
-                }
-                //this.series = series.filter(item => item.)
-                this.serie = this.series[0].code;
-                this.serieName =this.series[0].name;
-
-            },
-            error: (err)=>{
-              //console.log(err);
-            }
-        });
-
-    
+    //this.getAlmacenesMPSL();
   }
 
 
@@ -706,11 +744,13 @@ export class MrpComponent implements OnInit {
         let inventarioSemanaMPTR:number=0;
         let compraSolicitadaMP:number = 0;
         let compraProyectadaMP:number=0;
+        let simularCantidadLineaMP:number=0;
         let presupuestoVentaMP:number=0;
         let inventarioFinalSemanaMP:number=0;
         let inventarioTransitoProxima:number=0;
         let compraSolicitadaProximaSemana:number = 0;
-        let compraProyectadaProximaSemana:number=0;
+        let compraProyectadaProximaSemana:number=0; 
+        let simularCantidadLineaMPProximaSemana:number=0;
         let presupuestoProximaSemana:number=0;
         let inventarioFinalProximaSemana:number=0;
         let necesidadCompra:string="";
@@ -735,13 +775,14 @@ export class MrpComponent implements OnInit {
               compraSolicitadaMP = (await this.calcularComprasSolicitadasSemana(semanaFecha))+inventarioSolicitadoMPPreFecha;
               compraProyectadaMP = await this.calcularComprasProyectadasSemana(semanaFecha);
               presupuestoVentaMP = await this.calcularPresupuestoSemana(semanaFecha);
-              inventarioFinalSemanaMP = inventarioSemanaMP+inventarioSemanaPT+inventarioSemanaMPZF+inventarioSemanaMPTR+compraSolicitadaMP+compraProyectadaMP-presupuestoVentaMP;
+              inventarioFinalSemanaMP = (inventarioSemanaMP+inventarioSemanaPT+inventarioSemanaMPZF+inventarioSemanaMPTR+compraSolicitadaMP+compraProyectadaMP+simularCantidadLineaMP)-presupuestoVentaMP;
               inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
               estadoCompra = compraProyectadaMP==0?false:true;
               //proxima semana
               inventarioTransitoProxima = await this.calcularInventarioSemanaTR(semanaFecha+1);
               compraSolicitadaProximaSemana = await this.calcularComprasSolicitadasSemana(semanaFecha+1);
               compraProyectadaProximaSemana = await this.calcularComprasProyectadasSemana(semanaFecha+1);
+              
               presupuestoProximaSemana = await this.calcularPresupuestoSemana(eval(semanaFecha)+1);
               inventarioFinalProximaSemana = inventarioFinalSemanaMP+inventarioTransitoProxima+compraSolicitadaProximaSemana+compraProyectadaProximaSemana-presupuestoProximaSemana;
               necesidadCompra = inventarioFinalProximaSemana<this.minMpZona?'Si':'No';
@@ -763,6 +804,7 @@ export class MrpComponent implements OnInit {
                 inventarioSemanaMPTR,
                 compraSolicitadaMP,
                 compraProyectadaMP,
+                simularCantidadLineaMP,
                 presupuestoVentaMP,
                 presupuestoVentaMPOriginal:presupuestoVentaMP,
                 inventarioFinalSemanaMP,
@@ -843,6 +885,7 @@ export class MrpComponent implements OnInit {
   let presupuestoVentaMP:number = 0;
   let presupuestoVentaMPOriginal =0;
   let compraProyectadaMP:number = 0;
+  let simularCantidadLineaMP:number=0;
   let inventarioFinalSemanaMP:number = 0;
   let inventarioSemanaPT:number = 0;
   let inventarioSemanaMPZF:number = 0;
@@ -870,9 +913,10 @@ export class MrpComponent implements OnInit {
     inventarioSemanaMPZF = linea.inventarioSemanaMPZF;
     compraSolicitadaMP = linea.compraSolicitadaMP;
     compraProyectadaMP = linea.compraProyectadaMP;
+    simularCantidadLineaMP = linea.simularCantidadLineaMP;
     presupuestoVentaMP = linea.presupuestoVentaMP;
     presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
-    inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)+eval(linea.compraProyectadaMP)-eval(linea.presupuestoVentaMP);
+    inventarioFinalSemanaMP = await (eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)+eval(linea.compraProyectadaMP)+eval(linea.simularCantidadLineaMP))-eval(linea.presupuestoVentaMP);
     inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
     ////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
 
@@ -900,6 +944,7 @@ export class MrpComponent implements OnInit {
       inventarioSemanaMPTR,
       compraSolicitadaMP,
       compraProyectadaMP,
+      simularCantidadLineaMP,
       presupuestoVentaMP,
       inventarioFinalSemanaMP,
       presupuestoVentaMPOriginal,
@@ -1163,10 +1208,11 @@ async simulacionSinTransito(){
   }
 
   SeleccionarItemCode(){
-    ////console.log(this.item);
+    console.log(this.item);
     this.descripcion = this.item.ItemName;
     this.itemSeleccionado = this.item.ItemCode+' - '+ this.item.ItemName;
-    this.getUnidadItemSL();
+    this.unidad = this.item.BuyUnitMsr;
+    //this.getUnidadItemSL();
   }
 
 

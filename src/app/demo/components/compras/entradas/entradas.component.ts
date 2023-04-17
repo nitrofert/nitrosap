@@ -62,9 +62,10 @@ export class EntradasComponent implements OnInit {
         //Cargar permisos usuario pagina
         this.getPermisosUsuarioPagina();
         //Cargar listado de entradas registradas
-        this.getSeries();
+        //this.getSeries();
 
         //this.sapService.getLoginSAP();
+        this.getEntradas();
   }
 
   getInfoUsuario(){
@@ -118,11 +119,13 @@ export class EntradasComponent implements OnInit {
     this.comprasService.listEntrada(this.authService.getToken())
     .subscribe({
       next:(entradas =>{
+
+        console.log(entradas);
         this.loading = false;
          
-          for(let lineaEntrada of entradas){
+          /*for(let lineaEntrada of entradas){
             lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
-          }
+          }*/
           this.entradas = entradas;
           console.log(this.entradas);
           this.loading = false;

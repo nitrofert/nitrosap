@@ -201,10 +201,14 @@ export class FormSolpedMPComponent implements OnInit {
         //Cargar permisos usuario pagina
         this.getPermisosUsuarioPagina();
         //Cargar dependencia x usuario
-        this.getDependenciasUsuario();
+        //this.getDependenciasUsuario();
+
+        this.getConfigSolpedMP();
+
+
         
         //Cargar almacenes x usuario
-        console.log(this.solpedEditar, this.pathSolped);
+        //console.log(this.solpedEditar, this.pathSolped);
   }
 
   /**** Getters ****/
@@ -240,6 +244,31 @@ export class FormSolpedMPComponent implements OnInit {
    //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
+  getConfigSolpedMP(){
+    this.comprasService.getConfigSolpedMP(this.authService.getToken())
+    //this.authService.getDependeciasUsuarioXE()
+    .subscribe({
+      next: async (configSolped:any) => {
+        console.log(configSolped);
+
+        await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
+        await this.getSeries(configSolped.series);
+        await this.getAreas(configSolped.areas);
+        await this.getProveedores(configSolped.proveedores);
+        await this.getItems(configSolped.items);
+        await this.getCuentas(configSolped.cuentas);
+        await this.getAlmacenesMPSL(configSolped.almacenes);
+        await this.getMonedasMysql(configSolped.monedas);
+        await this.getImpuestos(configSolped.impuestos);
+        this.getInformacionSolped();
+
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
   getDependenciasUsuario2(){
     this.authService.getDependeciasUsuarioXE()
     .subscribe({
@@ -263,7 +292,7 @@ export class FormSolpedMPComponent implements OnInit {
         }
 
          //Cargar series de la solped
-         this.getSeries();
+         //this.getSeries();
         
       },
       error: (error) => {
@@ -272,11 +301,11 @@ export class FormSolpedMPComponent implements OnInit {
     });
   }
 
-  getDependenciasUsuario(){
+  async getDependenciasUsuario(dependenciasUser:any){
     //this.authService.getDependeciasUsuarioXE()
-    this.authService.getDependeciasUsuarioMysql()
-    .subscribe({
-      next: (dependenciasUser) => {
+    //this.authService.getDependeciasUsuarioMysql()
+    //.subscribe({
+    //  next: (dependenciasUser) => {
         
          for (let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
@@ -302,34 +331,34 @@ export class FormSolpedMPComponent implements OnInit {
           }
 
           //Cargar series de la solped
-         this.getSeries();
+         //this.getSeries();
 
         },500);
 
 
         
-      },
-      error: (error) => {
+  //    },
+  //    error: (error) => {
         ////console.log(error);
-      }
-    });
+  //    }
+  //  });
   }
 
 
-  getSeries(){
+  async getSeries(series:any){
     //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
 
     //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
-    this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
-        .subscribe({
-            next: (series)=>{
+    //this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
+    //    .subscribe({
+    //        next: (series)=>{
                 //console.log(series);
                 for(let item in series){
                   if(series[item].name=='SPMP'){
                     this.series.push(series[item]);
                   }
                   
-              }
+                }
                 //this.series = series.filter(item => item.)
                 this.serie = this.series[0].code;
                 this.serieName =this.series[0].name;
@@ -337,22 +366,22 @@ export class FormSolpedMPComponent implements OnInit {
                 ////console.log(this.series);
 
                  //Cargar areas asociadas al usuario para la solped
-                this.getAreas();
-            },
-            error: (err)=>{
+                //this.getAreas();
+    //        },
+    //        error: (err)=>{
               //console.log(err);
-            }
-        });
+    //        }
+    //    });
 
     
   }
 
-  async getAreas(){
+  async getAreas(areas:any){
     //this.authService.getAreasUsuarioXE()
-    this.authService.getAreasUsuarioMysql()
-     .subscribe({
-       next:  (areas) => {
-          for(let item in areas){
+    //this.authService.getAreasUsuarioMysql()
+    // .subscribe({
+    //   next:  (areas) => {
+         for(let item in areas){
              this.areas.push(areas[item]);
          }
          //console.log('Areas usuario:',this.areas);
@@ -361,98 +390,112 @@ export class FormSolpedMPComponent implements OnInit {
          }
          this.area = 'VPCADSU2';
 
-         //Cargar clases de solped
-        this.getClases();
+        //Cargar clases de solped
+        //this.getClases();
          
-       },
-       error: (error) => {
+    //   },
+    //   error: (error) => {
          ////console.log(error);
-       }
-     });
+    //   }
+    // });
   }
 
   getClases(){
     this.clases = [{code:"I", name:"Artículo"},{code:"S",name:"Servicio"}];
     //Cargar proveedores
-    this.getProveedores();
+    //this.getProveedores();
   }
 
-  getProveedores(){
+  async getProveedores(businessPartners:any){
     //this.sapService.BusinessPartnersXE(this.authService.getToken())
-    this.sapService.sociosDeNegocioMysql(this.authService.getToken())
-        .subscribe({
-          next: (businessPartners) => {
+    //this.sapService.sociosDeNegocioMysql(this.authService.getToken())
+    //    .subscribe({
+    //      next: (businessPartners) => {
             for(let item in businessPartners){
               this.proveedores.push(businessPartners[item]);
            }
 
            //Cargar items
-            this.getItems();
-          },
-          error: (error) => {
+           //this.getItems();
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
-  getItems(){
-    this.sapService.itemsSAPXE(this.authService.getToken())
+  async getItems(items:any){
+    //this.sapService.itemsSAPXE(this.authService.getToken())
     //this.sapService.itemsSAPMysql(this.authService.getToken())
-        .subscribe({
-          next: (items) => {
+    //    .subscribe({
+    //      next: (items) => {
             for(let item in items){
               this.items.push(items[item]);
            }
           
             //Cargar almacenes
-            this.getAlmacenesMPSL();
-          },
-          error: (error) => {
+            //this.getAlmacenesMPSL();
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
+  async getAlmacenes(stores:any){
+    //this.authService.getAlmacenesUsuarioXE()
+    //.subscribe({
+    //  next: (stores) => {
+        //console.log(stores);
+        for(let item in stores){
+          this.almacenes.push(stores[item]);
+        }
+       //////console.log(this.stores);
+    //  },
+    //  error: (error) => {
+          ////console.log(error);      
+    //  }
+    //});
+  }
 
-
-  getAlmacenesMPSL(){
+  getAlmacenesMPSL(almacenes:any){
     //this.sapService.getAlmacenesMPSL(this.authService.getToken())
-    this.sapService.getAlmacenesMysql(this.authService.getToken())
-        .subscribe({
-            next: (almacenes) => {
-              //console.log(almacenes);
+    //this.sapService.getAlmacenesMysql(this.authService.getToken())
+    //    .subscribe({
+    //        next: (almacenes) => {
+              console.log(almacenes);
               for(let item in almacenes){
                 this.almacenes.push({store:almacenes[item].WarehouseCode, 
                                      storename: almacenes[item].WarehouseName, 
                                      zonacode:almacenes[item].State});
-             }
-             this.getCuentas();
+              }
+             //this.getCuentas();
              ////console.log(this.almacenes)
-            },
-            error: (err) => {
+    //        },
+    //        error: (err) => {
                 //console.log(err);
-            }
+    //        }
 
-        });
+    //    });
   }
 
-  getCuentas(){
+  async getCuentas(cuentas:any){
     //this.sapService.CuentasSAPXE(this.authService.getToken())
-    this.sapService.CuentasSAPMysql(this.authService.getToken())
-        .subscribe({
-          next: (cuentas) => {
+    //this.sapService.CuentasSAPMysql(this.authService.getToken())
+    //    .subscribe({
+    //      next: (cuentas) => {
             for(let item in cuentas){
               this.cuentas.push(cuentas[item]);
            }
          
            //Cargar monedas
           //this.getMonedas(new Date());
-          this.getMonedasMysql();
-          },
-          error: (error) => {
+          //this.getMonedasMysql();
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
   getMonedas(fecha:Date){
@@ -466,7 +509,7 @@ export class FormSolpedMPComponent implements OnInit {
            
            this.setearTRMSolped('USD');
            //Cargar impuestos
-          this.getImpuestos();
+          //this.getImpuestos();
          },
          error: (error) => {
              ////console.log(error);      
@@ -474,11 +517,11 @@ export class FormSolpedMPComponent implements OnInit {
        });
   }
 
-  getMonedasMysql(){
-    this.sapService.monedasMysql(this.authService.getToken())
-       .subscribe({
-         next: (monedas) => {
-            console.log('Monedas Mysql',monedas);
+  async getMonedasMysql(monedas:any){
+    //this.sapService.monedasMysql(this.authService.getToken())
+    //   .subscribe({
+    //     next: (monedas) => {
+    //        console.log('Monedas Mysql',monedas);
            //this.monedas = [{Currency:  'COP',TRM:1}];
            for(let item in monedas){
               this.monedas.push({
@@ -486,37 +529,23 @@ export class FormSolpedMPComponent implements OnInit {
                 TRM:monedas[item].TRM,
               });
            }
-           this.getImpuestos();
+          // this.getImpuestos();
           // this.setearTRMSolped('USD');
-         },
-         error: (error) => {
+    //     },
+    //     error: (error) => {
              ////console.log(error);      
-         }
-       });
+    //     }
+    //   });
   }
 
 
-  getAlmacenes(){
-    this.authService.getAlmacenesUsuarioXE()
-    .subscribe({
-      next: (stores) => {
-        //console.log(stores);
-        for(let item in stores){
-          this.almacenes.push(stores[item]);
-       }
-       //////console.log(this.stores);
-      },
-      error: (error) => {
-          ////console.log(error);      
-      }
-    });
-  }
+ 
 
-  getImpuestos(){
+  async getImpuestos(taxes:any){
     //this.comprasService.taxesXE(this.authService.getToken())
-    this.comprasService.impuestosMysql(this.authService.getToken())
-        .subscribe({
-          next: (taxes) => {
+    //this.comprasService.impuestosMysql(this.authService.getToken())
+    //    .subscribe({
+    //      next: (taxes) => {
            
             for(let item in taxes){
               this.impuestos.push(taxes[item]);  
@@ -529,11 +558,11 @@ export class FormSolpedMPComponent implements OnInit {
 
             setTimeout(()=>{this.getInformacionSolped();},500);
             this.resetearFormularioLinea();
-          },
-          error: (error) => {
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
   getInformacionSolped(){
@@ -651,9 +680,10 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarItemCode(){
-    //console.log(this.item);
+    console.log(this.item);
     this.descripcion = this.item.ItemName;
-    this.getUnidadItemSL();
+    this.unidad = this.item.BuyUnitMsr;
+    //this.getUnidadItemSL();
     if(this.item.ApTaxCode){
       this.impuesto = this.impuestos.filter(item => item.Code === this.item.ApTaxCode)[0];
       ////console.log(this.impuesto);

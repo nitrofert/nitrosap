@@ -412,10 +412,11 @@
                 <label for="almacen">Almacen</label>
                 <p-dropdown [options]="almacenes" 
                             [(ngModel)]="almacen" 
-                            optionLabel="store"
+                            optionLabel="label"
+                        
                             placeholder="Seleccione una almacen" 
                             [filter]="true" 
-                            filterBy="store" 
+                            filterBy="label" 
                             [showClear]="true"
                             (onChange)="SeleccionarAlmacen()"
                             styleClass="w-full" inputId="almacen">
@@ -423,13 +424,13 @@
                     <ng-template pTemplate="selectedItem">
                         <div class="country-item country-item-value" *ngIf="almacen">
 
-                            <div>{{almacen.store}}</div>
+                            <div>{{almacen.label}}</div>
                         </div>
                     </ng-template>
                     <ng-template let-almacen pTemplate="item">
                         <div class="country-item">
 
-                            <div>{{almacen.store}}</div>
+                            <div>{{almacen.label}}</div>
                         </div>
                     </ng-template>
                 </p-dropdown>

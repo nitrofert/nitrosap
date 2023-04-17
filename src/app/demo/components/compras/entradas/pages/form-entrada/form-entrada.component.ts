@@ -176,7 +176,8 @@ export class FormEntradaComponent implements OnInit {
      //Cargar cuentas
      this.getCuentas();
      //Cargar monedas
-     this.getMonedas(new Date());
+     //this.getMonedas(new Date());
+     this.getMonedasMysql();
      //Cargar impuestos
      this.getImpuestos();
 
@@ -219,7 +220,9 @@ export class FormEntradaComponent implements OnInit {
     }
 
     getDependenciasUsuario(){
-      this.authService.getDependeciasUsuarioXE()
+      //this.authService.getDependeciasUsuarioXE()
+      this.authService.getDependeciasUsuarioMysql()
+      
       .subscribe({
         next: (dependenciasUser) => {
           for(let item in dependenciasUser){
@@ -243,7 +246,9 @@ export class FormEntradaComponent implements OnInit {
     getSeriesEntrada(){
       //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
   
-      this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'20')
+      //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'20')
+      this.sapService.seriesDocSAPMysql(this.authService.getToken(),'20')
+      
           .subscribe({
               next: (series)=>{
                   ////console.log(series);
@@ -267,7 +272,8 @@ export class FormEntradaComponent implements OnInit {
     getSeriesPedido(){
       //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
   
-      this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'22')
+      //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'22')
+      this.sapService.seriesDocSAPMysql(this.authService.getToken(),'22')
           .subscribe({
               next: (series)=>{
                   ////console.log(series);
@@ -284,7 +290,9 @@ export class FormEntradaComponent implements OnInit {
     }
 
     getItems(){
-      this.sapService.itemsSAPXE(this.authService.getToken())
+      //this.sapService.itemsSAPXE(this.authService.getToken())
+      this.sapService.itemsSAPMysql(this.authService.getToken())
+      
           .subscribe({
             next: (items) => {
               for(let item in items){
@@ -300,7 +308,9 @@ export class FormEntradaComponent implements OnInit {
     }
   
     getCuentas(){
-      this.sapService.CuentasSAPXE(this.authService.getToken())
+      //this.sapService.CuentasSAPXE(this.authService.getToken())
+      this.sapService.CuentasSAPMysql(this.authService.getToken())
+      
           .subscribe({
             next: (cuentas) => {
               for(let item in cuentas){
@@ -316,7 +326,9 @@ export class FormEntradaComponent implements OnInit {
     }
   
     getAlmacenes(){
-      this.authService.getAlmacenesUsuarioXE()
+      //this.authService.getAlmacenesUsuarioXE()
+      this.authService.getAlmacenesUsuarioMysql()
+      
       .subscribe({
         next: (stores) => {
           //////console.log(stores);
@@ -347,9 +359,32 @@ export class FormEntradaComponent implements OnInit {
            }
          });
     }
+
+    getMonedasMysql(){
+      this.sapService.monedasMysql(this.authService.getToken())
+         .subscribe({
+           next: (monedas) => {
+              console.log('Monedas Mysql',monedas);
+             //this.monedas = [{Currency:  'COP',TRM:1}];
+             for(let item in monedas){
+                this.monedas.push({
+                  Currency:monedas[item].Code,
+                  TRM:monedas[item].TRM,
+                });
+             }
+             
+            // this.setearTRMSolped('USD');
+           },
+           error: (error) => {
+               ////console.log(error);      
+           }
+         });
+    }
   
     getImpuestos(){
-      this.comprasService.taxesXE(this.authService.getToken())
+      //this.comprasService.taxesXE(this.authService.getToken())
+      this.comprasService.impuestosMysql(this.authService.getToken())
+      
           .subscribe({
             next: (taxes) => {
              
@@ -773,7 +808,9 @@ export class FormEntradaComponent implements OnInit {
     }
 
     cuentasxDependencia(){
-      this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
+      //this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
+      this.sapService.cuentasPorDependenciaMysql(this.authService.getToken(),this.dependencia.dependence)
+      
           .subscribe({
               next: (cuentas) => {
                 ////console.log(cuentas);

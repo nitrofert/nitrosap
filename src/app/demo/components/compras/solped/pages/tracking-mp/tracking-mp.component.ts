@@ -98,7 +98,8 @@ export class TrackingMPComponent implements OnInit {
      this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
      this.urlBreadCrumb = this.router.url;
 
-     this.getAlmacenesMPSL();
+    // this.getAlmacenesMPSL();
+     this.getListadosTrackingMP();
   }
 
  
@@ -180,28 +181,29 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.getDocumentsTrackingSAP(this.authService.getToken())
     .subscribe({
       next:(async documentosTracking =>{
-       //console.log('Documentos',documentosTracking);
+       console.log('Documentos',documentosTracking);
 
        for(let documentoTracking of documentosTracking){
-          documentoTracking.Comments ='';
-          documentoTracking.Incoterms =documentoTracking.U_NT_Incoterms;
-          documentoTracking.ItemDescription ='';
+          //documentoTracking.Comments ='';
+          documentoTracking.Incoterms =documentoTracking.INCOTERMS;
+          documentoTracking.ItemDescription =documentoTracking.ITEMDESCRIPTIO;
           documentoTracking.Description = `${documentoTracking.ItemCode} - ${documentoTracking.ItemDescription}`;
-          documentoTracking.LineNum = 0;
-          documentoTracking.RequriedDate = documentoTracking.FECHANECESIDAD;
-          documentoTracking.U_NF_PAGO = '';
-          documentoTracking.U_NF_TIPOCARGA = '';
+          //documentoTracking.LineNum = 0;
+          documentoTracking.RequriedDate = documentoTracking.ReqDate;
+          //documentoTracking.U_NF_PAGO = '';
+          //documentoTracking.U_NF_TIPOCARGA = '';
           documentoTracking.U_NF_PEDMP = documentoTracking.U_NF_PEDMP=='S'?'SI':'NO';
-          documentoTracking.WarehouseCode = documentoTracking.WhsCode;
-          documentoTracking.WarehouseName = this.almacenes.filter(almacen => almacen.store == documentoTracking.WhsCode)[0].storename;
+          documentoTracking.WarehouseCode = documentoTracking.WAREHOUSECODE;
+          //documentoTracking.WarehouseName = this.almacenes.filter(almacen => almacen.store == documentoTracking.WAREHOUSECODE)[0].storename;
+          documentoTracking.WarehouseName = documentoTracking.WAREHOUSENAME;
           documentoTracking.approved = 'S';
-          documentoTracking.id =''; //DocEntry
+          documentoTracking.id =documentoTracking.DocEntry; //DocEntry
           documentoTracking.key = documentoTracking.DocNum+'-'+documentoTracking.LineNum;
-          documentoTracking.DocEntry = 0; //DocEntry
+          //documentoTracking.DocEntry = 0; //DocEntry
           documentoTracking.RemainingOpenQuantity = documentoTracking.OpenCreQty;
-          documentoTracking.MeasureUnit = ''; //MeasureUnit
-          documentoTracking.CardName =''; // CardName
-          documentoTracking.ProveedorDS = `${documentoTracking.CardCode} - ${documentoTracking.CardName}`;
+          documentoTracking.MeasureUnit = documentoTracking.MEASUREUNIT; //MeasureUnit
+          documentoTracking.CardName =documentoTracking.CardName; // CardName
+          documentoTracking.ProveedorDS = `${documentoTracking.CARDCODE} - ${documentoTracking.CardName}`;
        }
 
        this.solpedRequest =  await documentosTracking.filter((documento: {
@@ -238,7 +240,7 @@ export class TrackingMPComponent implements OnInit {
         this.entradasNT = await documentosTracking.filter((documento: {
                                                                           U_NF_STATUS: string; 
                                                                           TIPO: string; 
-                                                                      }) => documento.TIPO =='Entrada');
+                                                                      }) => documento.TIPO =='Entradas');
         this.entradasNTBK = this.entradasNT;
                   
 
@@ -514,11 +516,13 @@ export class TrackingMPComponent implements OnInit {
     }*/
 
       this.getSolpedRequest();
-      this.getPedidosPorCargar();
+      this.getDocumentsTrackingSAP();
+      
+      /*this.getPedidosPorCargar();
       this.getPedidosCargados();
       this.getPedidosConDocumentacion();
       this.getPedidosDescargados();
-      this.getEntradasNacionalizadas();
+      this.getEntradasNacionalizadas();*/
 
   }
 

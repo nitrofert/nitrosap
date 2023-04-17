@@ -199,28 +199,32 @@ export class FormSolpedComponent implements OnInit {
         this.getPermisosUsuario();
         //Cargar permisos usuario pagina
         this.getPermisosUsuarioPagina();
+
+
+        this.getConfigSolped();
+
         //Cargar dependencia x usuario
-        this.getDependenciasUsuario();
+        //this.getDependenciasUsuario();
         //Cargar series de la solped
-        this.getSeries();
+        //this.getSeries();
         //Cargar areas asociadas al usuario para la solped
-       this.getAreas();
+       //this.getAreas();
         //Cargar clases de solped
-        this.getClases();
+        
         //Cargar proveedores
-        this.getProveedores();
+        //this.getProveedores();
         //Cargar items
-        this.getItems();
+        //this.getItems();
         //Cargar almacenes x usuario
-        this.getAlmacenes();
+        //this.getAlmacenes();
         //Cargar cuentas
-        this.getCuentas();
+        //this.getCuentas();
         //Cargar monedas
         //this.getMonedas(new Date());
-        this.getMonedasMysql();
+        //this.getMonedasMysql();
         //Cargar impuestos
-        this.getImpuestos();
-        setTimeout(()=>{this.getInformacionSolped();},500);
+        //this.getImpuestos();
+        //setTimeout(()=>{this.getInformacionSolped();},500);
         
         this.resetearFormularioLinea();
         
@@ -261,11 +265,37 @@ export class FormSolpedComponent implements OnInit {
     ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
-  getDependenciasUsuario(){
-    this.authService.getDependeciasUsuarioMysql()
+  getConfigSolped(){
+    this.comprasService.getConfigSolped(this.authService.getToken())
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
-      next: (dependenciasUser) => {
+      next: async (configSolped:any) => {
+        //console.log(configSolped);
+
+        await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
+        await this.getSeries(configSolped.series);
+        await this.getAreas(configSolped.areas);
+        await this.getProveedores(configSolped.proveedores);
+        await this.getItems(configSolped.items);
+        await this.getCuentas(configSolped.cuentas);
+        await this.getAlmacenes(configSolped.almacenesUsuario);
+        await this.getMonedasMysql(configSolped.monedas);
+        await this.getImpuestos(configSolped.impuestos);
+        this.getClases();
+        this.getInformacionSolped();
+
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  async getDependenciasUsuario(dependenciasUser:any){
+    //this.authService.getDependeciasUsuarioMysql()
+    //this.authService.getDependeciasUsuarioXE()
+    //.subscribe({
+    //  next: (dependenciasUser) => {
         for(let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
         }
@@ -276,20 +306,20 @@ export class FormSolpedComponent implements OnInit {
               this.vicepresidencias.push(dependencia);
             }
         }
-      },
-      error: (error) => {
+      //},
+      //error: (error) => {
         //console.log(error);
-      }
-    });
+      //}
+    //});
   }
 
-  getSeries(){
+  async getSeries(series:any){
     //this.series = [{name:'SPB',code:'94'},{name:'SPS',code:'62'}];
 
-    this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
+    //this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
     //this.sapService.seriesDocXEngineSAP(this.authService.getToken(),'1470000113')
-        .subscribe({
-            next: (series)=>{
+    //    .subscribe({
+    //        next: (series)=>{
                 //console.log(series);
                 for(let item in series){
                   if(series[item].name!='SPMP'){
@@ -299,105 +329,105 @@ export class FormSolpedComponent implements OnInit {
                     
                   }
                   
-              }
+                }
                 //this.series = series.filter(item => item.)
                 this.serie = this.series[0].code;
                 this.serieName =this.series[0].name;
                 this.clase ='I';
                 ////console.log(this.series);
-            },
-            error: (err)=>{
+    //        },
+    //        error: (err)=>{
               //console.log(err);
-            }
-        });
+    //        }
+    //    });
 
     
   }
 
-  async getAreas(){
-    this.authService.getAreasUsuarioMysql()
+  async getAreas(areas:any){
+    //this.authService.getAreasUsuarioMysql()
     //this.authService.getAreasUsuarioXE()
-     .subscribe({
-       next:  (areas) => {
-          for(let item in areas){
+    // .subscribe({
+    //   next:  (areas) => {
+         for(let item in areas){
              this.areas.push(areas[item]);
          }
-         console.log(this.areas);
-       },
-       error: (error) => {
+         //console.log(this.areas);
+    //   },
+    //   error: (error) => {
          ////console.log(error);
-       }
-     });
+    //  }
+    //});
   }
 
-  getClases(){
+  async getClases(){
     this.clases = [{code:"I", name:"Artículo"},{code:"S",name:"Servicio"}];
   }
 
-  getProveedores(){
-    this.sapService.sociosDeNegocioMysql(this.authService.getToken())
+  async getProveedores(businessPartners:any){
+    //this.sapService.sociosDeNegocioMysql(this.authService.getToken())
     //this.sapService.BusinessPartnersXE(this.authService.getToken())
-        .subscribe({
-          next: (businessPartners) => {
+    //    .subscribe({
+    //      next: (businessPartners) => {
             for(let item in businessPartners){
               this.proveedores.push(businessPartners[item]);
-           }
-          },
-          error: (error) => {
+            }
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
-  getItems(){
-    this.sapService.itemsSAPMysql(this.authService.getToken())
-    //this.sapService.itemsSolpedSAPXE(this.authService.getToken())
-        .subscribe({
-          next: (items) => {
+  async getItems(items:any){
+  //  this.sapService.itemsSAPMysql(this.authService.getToken())
+  //this.sapService.itemsSolpedSAPXE(this.authService.getToken())
+  //      .subscribe({
+  //        next: (items) => {
             for(let item in items){
               this.items.push(items[item]);
-           }
+            }
            //////console.log(cuentas);
            //////console.log(this.items);
-          },
-          error: (error) => {
+  //        },
+  //        error: (error) => {
               ////console.log(error);      
-          }
-        });
+  //        }
+  //      });
   }
 
-  getCuentas(){
-    this.sapService.CuentasSAPMysql(this.authService.getToken())
+  async getCuentas(cuentas:any){
+    //this.sapService.CuentasSAPMysql(this.authService.getToken())
     //this.sapService.CuentasSAPXE(this.authService.getToken())
-        .subscribe({
-          next: (cuentas) => {
+    //    .subscribe({
+    //      next: (cuentas) => {
             for(let item in cuentas){
               this.cuentas.push(cuentas[item]);
-           }
+            }
            ////console.log(cuentas);
            //////console.log(this.cuentas);
-          },
-          error: (error) => {
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
-  getAlmacenes(){
-    this.authService.getAlmacenesUsuarioMysql()
+  async getAlmacenes(stores:any){
+    //this.authService.getAlmacenesUsuarioMysql()
     //this.authService.getAlmacenesUsuarioXE()
-    .subscribe({
-      next: (stores) => {
-        ////console.log(stores);
+    //.subscribe({
+    //  next: (stores) => {
+        //console.log(stores);
         for(let item in stores){
           this.almacenes.push(stores[item]);
-       }
+        }
        //console.log(this.almacenes);
-      },
-      error: (error) => {
+    //  },
+    //  error: (error) => {
           ////console.log(error);      
-      }
-    });
+    //  }
+    //});
   }
 
   getMonedas(fecha:Date){
@@ -417,11 +447,11 @@ export class FormSolpedComponent implements OnInit {
        });
   }
 
-  getMonedasMysql(){
-    this.sapService.monedasMysql(this.authService.getToken())
-       .subscribe({
-         next: (monedas) => {
-            console.log('Monedas Mysql',monedas);
+  async getMonedasMysql(monedas:any){
+    //this.sapService.monedasMysql(this.authService.getToken())
+    //   .subscribe({
+    //     next: (monedas) => {
+    //        console.log('Monedas Mysql',monedas);
            //this.monedas = [{Currency:  'COP',TRM:1}];
            for(let item in monedas){
               this.monedas.push({
@@ -431,29 +461,29 @@ export class FormSolpedComponent implements OnInit {
            }
            
           // this.setearTRMSolped('USD');
-         },
-         error: (error) => {
+   //      },
+   //      error: (error) => {
              ////console.log(error);      
-         }
-       });
+   //      }
+   //    });
   }
 
 
-  getImpuestos(){
-    this.comprasService.impuestosMysql(this.authService.getToken())
+  async getImpuestos(taxes:any){
+    //this.comprasService.impuestosMysql(this.authService.getToken())
     //this.comprasService.taxesXE(this.authService.getToken())
-        .subscribe({
-          next: (taxes) => {
+    //    .subscribe({
+    //      next: (taxes) => {
            
             for(let item in taxes){
               this.impuestos.push(taxes[item]);  
             }
            ////console.log(this.impuestos);
-          },
-          error: (error) => {
+    //      },
+    //      error: (error) => {
               ////console.log(error);      
-          }
-        });
+    //      }
+    //    });
   }
 
   getInformacionSolped(){
@@ -493,9 +523,9 @@ export class FormSolpedComponent implements OnInit {
 
                   this.fechaContable = new Date(this.infoSolpedEditar.solped.docdate.toString().replace('T00','T05'));
               
-                this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate.toString().replace('T00','T05'));
-                this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate.toString().replace('T00','T05'));
-                this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
+                  this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate.toString().replace('T00','T05'));
+                  this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate.toString().replace('T00','T05'));
+                  this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
 
 
                   this.comentarios = this.infoSolpedEditar.solped.comments || '';
@@ -624,7 +654,7 @@ export class FormSolpedComponent implements OnInit {
   }
 
   SeleccionarAlmacen(){
-    ////console.log(this.almacen);
+    //console.log(this.almacen);
   }
 
   SeleccionarCuenta(){
@@ -1413,6 +1443,11 @@ async validarCuentaContable(cuenta:any){
  
                           //this.submittedBotton = true;
                         ////console.log(this.solped, this.solpedDetLines);
+                        let linenum=0;
+                        for(let line of this.lineasSolped){
+                          line.linenum=linenum;
+                          linenum++
+                        }
                 
                         const data:any = {
                           solped:  {
@@ -1519,6 +1554,7 @@ async validarCuentaContable(cuenta:any){
             //this.lineaSolped.linenum =  this.numeroLinea;
             this.asignarCamposLinea(this.numeroLinea);
             this.lineasSolped.push(this.lineaSolped);
+            console.log(this.lineasSolped);
             this.iteradorLinea++;
             ////console.log(this.lineasSolped);
             this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});

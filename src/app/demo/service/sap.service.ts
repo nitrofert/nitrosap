@@ -165,11 +165,16 @@ export class SAPService {
   }
 
   itemsSAPMysql(token:string):Observable<any[]>{
-   
-
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url3}/api/mysql/query/items`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  itemsSAPMysqlCalc(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/items-calculadora`;
     return this.http.get<any[]>(url,requestOptions);
   }
 

@@ -88,7 +88,9 @@ export class LoginComponent  {
                 });
 
                     
-                this.robot = true;
+                //this.robot = true;
+
+                this.robot = false;
                 //Para utilizar captcha v2 deshabilitar loadCaptchaV3
                 //this.loadCaptchaV3();
                     
@@ -131,13 +133,27 @@ export class LoginComponent  {
                   next:(response)=>{
                     //console.log('Response',response);
                     //Obtener mensaje
-                    //this.messageService.add({ severity: 'success', summary: '!Hola¡', detail: response.message, life: 3000 });
                     this.messageForm = [{severity:'success', summary:'', detail:response.message}];
                     //Obtener token y guardarlo en local storage
-                    //localStorage.setItem('token',response.token!);
                     
                     localStorage.setItem('tokenid',response.tokenid!); 
-                    
+
+                    //Obtener configuracion del usuario
+                    this.authService.loadConfigUsuario(response.tokenid!)
+                        .subscribe({
+                            next: (configUsuario)=>{
+                                console.log(configUsuario);
+
+                                localStorage.setItem('infoUsuario',JSON.stringify(configUsuario.infoUsuario));
+                                localStorage.setItem('menuUsuario',JSON.stringify(configUsuario.menuUsuario));
+                                localStorage.setItem('perfilesUsuario',JSON.stringify(configUsuario.perfilesUsuario));   
+                                localStorage.setItem('permisosUsuario',JSON.stringify(configUsuario.permisosUsuario)); 
+                            },
+                            error: (err)=>{
+                                console.error(err);
+                            }
+                        })
+                    /*
                     //Obtener infoUsuario
                     this.authService.loadInfoUsuario(response.tokenid!)
                         .subscribe({
@@ -185,6 +201,7 @@ export class LoginComponent  {
                                 console.error(err);
                             }
                         })
+                    */
 
                     //redireccionar al main del portal
                     setTimeout(() => {  

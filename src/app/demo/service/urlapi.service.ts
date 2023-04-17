@@ -18,7 +18,7 @@ export class UrlApiService {
     getUrlAPI():string{
         
         //this.url_api= this.env==='dev'?'http://localhost:3001':this.env==='test'?'http://backend.dev.nitrofert.com.co':'http://backend.nitrofert.com.co';
-        console.log('url api:',this.url_api);
+        //console.log('url api:',this.url_api);
         return this.url_api;
     }
 

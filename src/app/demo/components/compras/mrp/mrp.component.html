@@ -427,11 +427,11 @@
                     </div>
                 </th>
 
-                <th>
+                <!--<th>
                     <div class="flex justify-content-between align-items-center">
                         Inventario MP - ZF
                     </div>
-                </th>
+                </th>-->
 
                 <th>
                     <div class="flex justify-content-between align-items-center">
@@ -450,6 +450,13 @@
                 <th>
                     <div class="flex justify-content-between align-items-center">
                         Cantidad requerida
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Simular cantidad linea
                         
                     </div>
                 </th>
@@ -532,7 +539,7 @@
                     </div>
                 </td>
 
-                <td style="min-width: 7rem;">
+                <!--<td style="min-width: 7rem;">
                     <div class="flex justify-content-between">
                         {{ lineaCalculadora.inventarioSemanaMPZF | number:'1.0-0'}}
                         <div (click)="verpedidoszf(lineaCalculadora.semana)">
@@ -543,7 +550,7 @@
                         </div>
                         
                     </div>
-                </td>
+                </td>-->
 
                 <td style="min-width: 10rem;">
                     <div class="flex justify-content-between">
@@ -602,7 +609,21 @@
                 </ng-template>
                 
                
-
+                <td style="min-width: 10rem;" pEditableColumn>
+                    <p-cellEditor>
+                        <ng-template  pTemplate="input">
+                            <input pInputText type="number" 
+                                    [(ngModel)]="lineaCalculadora.simularCantidadLineaMP" 
+                                    
+                                    (keydown.enter)="PresionaEnter($event)"
+                                    (blur)="cambio($event)"
+                                    >
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{lineaCalculadora.simularCantidadLineaMP | number:'1.0-0'}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
                 
 
 

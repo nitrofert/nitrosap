@@ -11,4 +11,6 @@ export interface ItemsSAP {
     PrchseItem?: string;
     SellItem?: string;
     Nombre_Cuenta?: string;
+    BuyUnitMsr?: string;
+    ValidFor?:string;
 }

@@ -34,7 +34,21 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
-  
+  getConfigSolped(token:string):Observable<any[]>{
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/load-config-solped`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getConfigSolpedMP(token:string):Observable<any[]>{
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/load-config-solped-mp`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
 
   
   listSolpedAprobadas(token:string):Observable<any[]>{

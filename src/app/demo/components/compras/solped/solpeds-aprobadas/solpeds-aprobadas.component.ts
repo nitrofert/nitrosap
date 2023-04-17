@@ -3,10 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService, ConfirmationService, ConfirmEventType } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { InfoUsuario, PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
+import { SolpedDet } from 'src/app/demo/api/solped';
 import { AdminService } from 'src/app/demo/service/admin.service';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-solpeds-aprobadas',
@@ -81,6 +83,18 @@ export class SolpedsAprobadasComponent implements OnInit {
   listaDocumentosSolped:any[] = [];
   loadingDocumentos:boolean = true;
 
+  displayModal:boolean = false;
+  listadoLineas:boolean = false;
+  loadingCargue:boolean = false;
+
+  lineasSolped:SolpedDet[] = [];
+  lineaSeleccionada:SolpedDet[] = [];
+
+  totalimpuestos:number = 0;
+  subtotal:number = 0;
+  grantotal:number =0;
+
+
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -117,7 +131,8 @@ export class SolpedsAprobadasComponent implements OnInit {
      this.approves = [{label:'No aprobada',value:'N'},{label:'Aprobada',value:'A'},{label:'Pendiente',value:'P'},{label:'Rechazada',value:'R'}];
 
 
-    this.getSeries();
+    //this.getSeries();
+    this.getListado();
     
   }
 
@@ -150,7 +165,26 @@ export class SolpedsAprobadasComponent implements OnInit {
     
   }
 
-  
+  getListado(){
+    this.comprasService.listSolpedAprobadas(this.authService.getToken())
+    .subscribe({
+      next:(solped =>{
+        this.loading = false;
+        /*for(let lineaSolped of solped){
+          //console.log(lineaSolped);
+          //console.log(this.series.filter(data=>data.code == lineaSolped.serie)[0].name);
+          lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
+        }*/
+          //console.log(solped);
+          this.solped = solped;
+          //console.log(this.solped);
+          this.loading = false;
+      }),
+      error:(err =>{
+        console.error(err);
+      })
+    });
+  }
 
   newSolped(){
     
@@ -217,6 +251,39 @@ mostrarAadjuntos(idSolped:any){
 
   });
 }
+
+mostrarDetalle(solpedID:number){
+  this.displayModal= true;
+    this.comprasService.solpedById(this.authService.getToken(), solpedID)
+        .subscribe({
+              next:(solped)=>{
+                console.log(solped);
+                let totalimpuestos = 0;
+                let subtotal =0;
+                let grantotal =0;
+                
+                for(let linea of solped.solpedDet){
+                  totalimpuestos+= linea.taxvalor;
+                  subtotal+= linea.linetotal;
+                  grantotal+= linea.linegtotal;
+                  
+                }
+                this.displayModal= false;
+                this.listadoLineas =true;
+                this.lineasSolped = solped.solpedDet;
+                this.totalimpuestos = totalimpuestos;
+                this.subtotal =   subtotal;
+                this.grantotal = grantotal;
+
+              },
+              error:(err)=>{
+                  console.error(err)
+                  this.displayModal= false;
+              }
+        })
+
+}
+
 
   async downloadAnexo(idArchivo:number,idSolped:number){
   let file = this.listaDocumentosSolped.filter(item=>item.id === idArchivo)[0];
@@ -903,25 +970,24 @@ clearToast() {
     this.filter.nativeElement.value = '';
   }
 
-  getListado(){
-    this.comprasService.listSolpedAprobadas(this.authService.getToken())
-    .subscribe({
-      next:(solped =>{
-        this.loading = false;
-        for(let lineaSolped of solped){
-          //console.log(lineaSolped);
-          //console.log(this.series.filter(data=>data.code == lineaSolped.serie)[0].name);
-          lineaSolped.serieStr = this.series.filter(data=>data.code == lineaSolped.serie)[0].name;
-        }
-          //console.log(solped);
-          this.solped = solped;
-          console.log(this.solped);
-          this.loading = false;
-      }),
-      error:(err =>{
-        console.log(err);
-      })
+  exportExcel() {
+    import("xlsx").then(xlsx => {
+        const worksheet = xlsx.utils.json_to_sheet(this.solped);
+        const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+        const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveAsExcelFile(excelBuffer, `solpeds_aprobadas`);
     });
+  }  
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+        type: EXCEL_TYPE
+    });
+    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
   }
+
+ 
 
 }
