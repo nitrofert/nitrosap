@@ -550,7 +550,7 @@ export class FormEntradaComponent implements OnInit {
                 }   
             }
 
-            console.log(lineaPedido.LineTotal,totalEntradasLinea);
+            console.log(lineaPedido);
 
             this.lineasEntrada.push({
                 linenum:lineaPedido.LineNum,
@@ -594,6 +594,7 @@ export class FormEntradaComponent implements OnInit {
                 total_pendiente:lineaPedido.LineTotal-totalEntradasLinea,
                 precio_linea:0,
                 valor_impuesto:0,
+                tasa:lineaPedido.Rate
 
 
            
@@ -988,7 +989,7 @@ export class FormEntradaComponent implements OnInit {
       this.moneda = this.monedas.filter(item =>item.Currency === this.lineaEntrada.moneda)[0].Currency;
      
       //this.precio = this.lineaEntrada.precio || 0;
-      this.precio = (this.lineaEntrada.total_pendiente/this.cantidad_pendiente) || 0;
+      this.precio = ((this.lineaEntrada.total_pendiente/this.cantidad_pendiente)/(this.lineaEntrada.tasa==0?1:this.lineaEntrada.tasa)) || 0;
       //this.subtotalLinea = this.lineaEntrada.linetotal;
       this.subtotalLinea = this.lineaEntrada.total_pendiente;
      
