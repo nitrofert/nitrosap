@@ -16,10 +16,10 @@ import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos
 import { SimulacionAutomaticaComponent } from './pages/simulacion-automatica/simulacion-automatica.component';
 import { DynamicTabmenuModule } from 'src/app/layout/shared/dynamic-tabmenu/dynamic-tabmenu.module';
 import { DynamicTableModule } from 'src/app/layout/shared/dynamic-table/dynamic-table.module';
-
-
-
-
+import { CalculadoraPreciosComponent } from './pages/calculadora-precios/calculadora-precios.component';
+import { FormPrecioItemComponent } from './pages/form-precio-item/form-precio-item.component';
+import { DialogService } from 'primeng/dynamicdialog';
+import { ListaPreciosItemMpComponent } from './pages/lista-precios-item-mp/lista-precios-item-mp.component';
 
 
 
@@ -29,7 +29,11 @@ import { DynamicTableModule } from 'src/app/layout/shared/dynamic-table/dynamic-
     FromTableCalculadoraComponent,
     PresupuestoVentaComponent,
     MaximosMinimosComponent,
-    SimulacionAutomaticaComponent
+    SimulacionAutomaticaComponent,
+    CalculadoraPreciosComponent,
+    FormPrecioItemComponent,
+    ListaPreciosItemMpComponent,
+
   ],
   imports: [
     CommonModule,
@@ -41,6 +45,7 @@ import { DynamicTableModule } from 'src/app/layout/shared/dynamic-table/dynamic-
     BreadCrumbModule,
     DynamicTabmenuModule,
     DynamicTableModule
-  ]
+  ],
+  providers:[DialogService]
 })
 export class MrpModule { }

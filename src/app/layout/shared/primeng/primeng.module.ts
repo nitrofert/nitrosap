@@ -41,6 +41,8 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import {TreeTableModule} from 'primeng/treetable';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {FileUploadModule} from 'primeng/fileupload';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
+
 
 
 
@@ -59,6 +61,7 @@ import {FileUploadModule} from 'primeng/fileupload';
     DialogModule,
     DividerModule,
     DropdownModule,
+    DynamicDialogModule,
     FileUploadModule,
     FieldsetModule,
     InputNumberModule,

@@ -178,6 +178,13 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  itemsMPSAPMysql(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/items-mp`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   seriesDocXEngineSAP(token:string,objType?:string):Observable<any[]>{
    
     /*const headers = new HttpHeaders({

@@ -88,9 +88,9 @@ export class LoginComponent  {
                 });
 
                     
-                //this.robot = true;
+                this.robot = true;
 
-                this.robot = false;
+                //this.robot = false;
                 //Para utilizar captcha v2 deshabilitar loadCaptchaV3
                 //this.loadCaptchaV3();
                     

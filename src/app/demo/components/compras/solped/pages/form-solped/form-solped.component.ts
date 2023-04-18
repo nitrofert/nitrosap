@@ -270,7 +270,7 @@ export class FormSolpedComponent implements OnInit {
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: async (configSolped:any) => {
-        //console.log(configSolped);
+        console.log(configSolped);
 
         await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
         await this.getSeries(configSolped.series);
@@ -387,7 +387,7 @@ export class FormSolpedComponent implements OnInit {
             for(let item in items){
               this.items.push(items[item]);
             }
-           //////console.log(cuentas);
+           console.log(this.items,items);
            //////console.log(this.items);
   //        },
   //        error: (error) => {
@@ -1464,7 +1464,7 @@ async validarCuentaContable(cuenta:any){
                             sapdocnum:"0",
                             u_nf_depen_solped:this.area,
                             comments:this.comentarios,
-                            trm:this.trm,
+                            trm:this.monedas.filter(moneda => moneda.Currency == 'USD')[0].TRM,
                             currency:this.currency
                           },
                           solpedDet:this.lineasSolped,
@@ -1590,6 +1590,7 @@ async validarCuentaContable(cuenta:any){
             quantity : this.cantidad,
             moneda : this.moneda,
             price : this.precio,
+            //trm : this.monedas.filter(moneda => moneda.Currency == this.moneda)[0].TRM,
             trm : this.trm,
             linetotal : this.subtotalLinea,
             tax : this.impuesto.Code,
