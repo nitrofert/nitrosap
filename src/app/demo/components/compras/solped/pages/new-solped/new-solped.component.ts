@@ -95,7 +95,7 @@ export class NewSolpedComponent implements OnInit {
                         this.comprasService.saveDetailSolped(this.authService.getToken(),data)
                             .subscribe({
                                 next:(result)=>{
-                                    //console.log(result);
+                                    console.log(result);
                                     this.percentProgressBar += prcAdvance;
                                     if(i==iteraciones){
                                       this.displayModal =false;
