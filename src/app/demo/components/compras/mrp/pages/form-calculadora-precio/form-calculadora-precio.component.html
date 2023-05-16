@@ -1,0 +1,927 @@
+<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
+<p-toast></p-toast>
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            
+            <div class="grid">
+                <div class="field col">
+                    <label for="fechaRequerida">Fecha semana</label>
+                    <p-calendar [(ngModel)]="fecha" 
+                                [showIcon]="true" 
+                                inputId="fechaRequerida" 
+                                [required]="true"
+                                styleClass="w-full"
+                                (onSelect)="calcularSemana()"
+                                [disabled]="editarCalculo" 
+                                [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+                    </p-calendar>
+                </div>
+                <div class="field col">
+                    <label for="nombreCuenta">Semana Año</label>
+                            <input type="text" 
+                                    pInputText 
+                                    [(ngModel)]="semanaAnio" 
+                                    id="nombreCuenta" 
+                                    disabled
+                                    class="w-full"
+                                    [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+                </div>
+                <div class="field col">
+                    <label for="nombreCuenta">Semana mes</label>
+                            <input type="text" 
+                                    pInputText 
+                                    [(ngModel)]="semanaMes" 
+                                    id="nombreCuenta" 
+                                    disabled
+                                    class="w-full"
+                                    [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+                </div>
+            </div>
+
+            <div class="grid">
+
+                <div class="field col">
+                    <label for="nombreCuenta">TRM dia</label>
+                    <input type="text" 
+                            pInputText 
+                            [(ngModel)]="trm_dia" 
+                            id="nombreCuenta" 
+                            disabled
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty' : envioForm && !trm_dia}">
+                </div>
+                <div class="field col">
+                    <label for="nombreCuenta">Moneda calculo</label>
+                    <p-dropdown [options]="monedas" 
+                                optionLabel="Currency" 
+                                [(ngModel)]="moneda" 
+                                id="moneda" 
+                                name="moneda" 
+                                [required]="true"
+                                [disabled]="editarCalculo" 
+                                (onChange)="SeleccionarMoneda()">
+                    </p-dropdown>
+                </div>
+
+                <div class="field col">
+                    <label for="nombreCuenta">TRM moneda</label>
+                    <input type="text" 
+                            pInputText 
+                            [(ngModel)]="trm_moneda" 
+                            id="nombreCuenta" 
+                            disabled
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty' : envioForm && !trm_dia}">
+                </div>
+                
+            </div>
+
+            <div class="grid">
+                <div class="field col">
+                    <label for="itemCode">Código ítem</label>
+                    <p-autoComplete [(ngModel)]="item" 
+                                    [showEmptyMessage]="true" 
+                                    [suggestions]="itemsFiltrados"
+                                    (completeMethod)="filtrarItems($event)" 
+                                    field="label" 
+                                    [minLength]="1" 
+                                    [delay]="1000"
+                                    
+                                    (onSelect)="SeleccionarItem()"
+                                    (onClear)="clearItem()" 
+                                    [showClear]="true" 
+                                    inputStyleClass="w-full" 
+                                    styleClass="w-full" 
+                                    inputId="itemCode" [autofocus]="true"
+                                    panelStyleClass="text-sm sm:ml-2" 
+                                    placeholder="Escriba el código o nombre del ítem para buscar"
+                                    [disabled]="editarCalculo" 
+                                    [ngClass]="{'ng-invalid ng-dirty' :  envioForm && item==''}">
+    
+                        <ng-template let-item pTemplate="item">
+                            <div>{{item.ItemCode}} - {{item.ItemName}}</div>
+                        </ng-template>
+                       
+    
+                    </p-autoComplete>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="field col">
+                    <label for="nombreCuenta">Observación</label>
+                    <input type="text" 
+                            pInputText 
+                            [(ngModel)]="observacion" 
+                            id="nombreCuenta" 
+                            [disabled]="editarCalculo"         
+                            class="w-full">
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+
+
+<!--  Calculadora de precios -->
+
+<div class="card">
+
+    <div class="grid">
+        <div class="field col">
+            <label for="precioBase">Precio base</label>
+            
+                <p-dropdown [options]="opcionesPrecioBase" 
+                        optionLabel="label" 
+                        id="precioBase"
+                        [(ngModel)]="precioBase" 
+                        [required]="true"
+                        styleClass="w-full"
+                        [disabled]="editarCalculo"
+                        (onChange)="SeleccionarPrecioBase()">
+            </p-dropdown>
+            
+            
+        </div>
+        
+        <div class="field col">
+                
+                <label for="precioGerente">Precio gerente</label>
+                <div>
+                    <input type="number" 
+                            pInputText 
+                            [(ngModel)]="precioGerente" 
+                            id="precioGerente" 
+                            disabled
+                            class="w-8"
+                            [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+                    
+                    <input type="number" 
+                           pInputText id="prcGerente" 
+                           [(ngModel)]="prcGerente"
+                           [disabled]="editarCalculo"  
+                           (input)="cambiarPrcGerente(prcGerente)"
+                           class="w-4"/>
+
+                    <p-slider [(ngModel)]="prcGerente" 
+                              [min]="-100" 
+                              [max]="100"
+                              [disabled]="editarCalculo"
+                              (onSlideEnd)="cambioPrcGerente($event)">
+                    </p-slider>
+                </div>
+                    
+        </div>
+        <div class="field col">
+            <label for="precioVendedor">Precio vendedor</label>
+                    <input type="number" 
+                            pInputText 
+                            [(ngModel)]="precioVendedor" 
+                            id="precioVendedor" 
+                            (change)="cambioPrecioVendedor(precioVendedor)"
+                            class="w-full"
+                            [disabled]="editarCalculo"
+                            [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+        </div>
+        <div class="field col">
+            <label for="precioLista">Precio lista</label>
+            <div>
+                <input type="number" 
+                            pInputText 
+                            [(ngModel)]="precioLista" 
+                            id="precioLista" 
+                            disabled
+                            class="w-8"
+                            [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
+                    <input type="number" 
+                            pInputText 
+                            id="prcLPrecio" 
+                            [(ngModel)]="prcLPrecio"  
+                            class="w-4"
+                            [disabled]="editarCalculo"
+                            (input)="cambiarPrcLP(prcLPrecio)"/>
+                    <p-slider [(ngModel)]="prcLPrecio" 
+                                [min]="-100" 
+                                [max]="100"
+                                [disabled]="editarCalculo"
+                                (onSlideEnd)="cambioPrcLP($event)">
+                    </p-slider>
+            </div>
+                    
+        </div>
+    </div>
+            
+    <p-table #dt2 
+            [value]="tablaCalculadora" 
+            [rowHover]="true"
+            styleClass="p-datatable-gridlines p-datatable-sm" 
+            responsiveLayout="scroll">
+            <ng-template pTemplate="caption">
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <div>
+                        <button pButton 
+                                
+                                pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+                                icon="pi pi-file-excel" 
+                                (click)="exportExcel()">
+                                </button>
+
+                                <button *ngIf="detalle_receta.length>0" pButton 
+                                pTooltip="ver detalle calculo" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-warn p-button-sm" 
+                                icon="pi pi-bars" 
+                                (click)="detalleMP()">
+                                </button>
+
+                                <button pButton 
+                                *ngIf="detalle_receta.length>0 && !editarCalculo && permisosUsuarioPagina[0].create_accion"
+                                pTooltip="Guardar" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-primary p-button-sm" 
+                                icon="pi pi-save" 
+                                (click)="guardarCalculo()">
+                                </button>
+                                
+                    </div>
+
+                    <div>
+                        <button pButton 
+                                
+                                pTooltip="Parametros globales" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-info p-button-sm" 
+                                icon="pi pi-cog" 
+                                (click)="parametrosGlobales()">
+                                </button>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="surface-200 text-center" colspan="2">Producto</th>
+                    <th class="surface-200 text-center" colspan="3">Lista precios SAP</th>
+                    <th class="surface-200 text-center" rowspan="2">Precio promedio mercado</th>
+                    <th class="surface-200 text-center" rowspan="2">Precio promedio venta</th>
+                    <th class="bg-blue-200 text-center" colspan="2">Reposición semana 0</th>
+                    <th class="bg-green-200 text-center" colspan="2">Reposición semana 1</th>
+                    <th class="bg-yellow-200 text-center" colspan="2">Reposición semana 2</th>
+                  
+                </tr>
+                <tr>
+                    <th class="surface-200 text-center"><div class="text-center">Código item</div></th>
+                    <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+
+                    <th class="surface-200 text-center"><div class="text-center">Gerente</div></th>
+                    <th class="surface-200 text-center"><div class="text-center">Vendedor</div></th>
+                    <th class="surface-200 text-center"><div class="text-center">Precio de lista</div></th>
+                    
+                    <th class="bg-blue-200 text-center"><div class="text-center">% Bruto</div></th>
+                    <th class="bg-blue-200 text-center"><div class="text-center">% Neto</div></th>
+
+                    <th class="bg-green-200 text-center"><div class="text-center">% Bruto</div></th>
+                    <th class="bg-green-200 text-center"><div class="text-center">% Neto</div></th>
+
+                    <th class="bg-yellow-200 text-center"><div class="text-center">% Bruto</div></th>
+                    <th class="bg-yellow-200 text-center"><div class="text-center">% Neto</div></th>
+                    
+                   
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-lineaCalculadora>
+                <tr>
+                    
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.ItemCode }}</td>
+                    <td style="min-width: 10rem; text-align: left;">{{ lineaCalculadora.ItemName }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpGerente | number : '1.1-2'}}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number : '1.1-2' }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number : '1.1-2' }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent  }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS1 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS1 | percent  }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS2 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS2 | percent  }}</td>
+
+
+
+                    
+                    
+                </tr>
+           
+            </ng-template>
+           
+          
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="16" class="text-center">No se econtraron materias primas asociadas al producto terminado seleccionado.</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="16" class="text-center">Cargando materias primas asociadas al producto terminado. Por favor espere</td>
+                </tr>
+            </ng-template>
+           
+    </p-table>
+
+    <p-divider></p-divider>
+
+    <p-table #dt3 
+            [value]="tablaCalculadoraCostos" 
+            [rowHover]="true"
+            styleClass="p-datatable-gridlines p-datatable-sm" 
+            responsiveLayout="scroll">
+            <ng-template pTemplate="caption">
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <div>
+                        <button pButton 
+                                
+                                pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+                                icon="pi pi-file-excel" 
+                                (click)="exportExcel()">
+                                </button>
+
+                                <!--<button *ngIf="detalle_receta.length>0" pButton 
+                                pTooltip="ver detalle calculo" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-warn p-button-sm" 
+                                icon="pi pi-bars" 
+                                (click)="detalleMP()">
+                                </button>
+
+                                <button pButton 
+                                *ngIf="detalle_receta.length>0 && !editarCalculo"
+                                pTooltip="Guardar" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-primary p-button-sm" 
+                                icon="pi pi-save" 
+                                (click)="guardarCalculo()">
+                                </button>-->
+                                
+                    </div>
+
+                    <div>
+                        <!--<button pButton 
+                                
+                                pTooltip="Parametros globales" tooltipPosition="bottom" placeholder="Bottom"   
+                                class="p-button-outlined mb-2 mr-2 p-button-info p-button-sm" 
+                                icon="pi pi-cog" 
+                                (click)="parametrosGlobales()">
+                                </button>-->
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="surface-200 text-center" colspan="2">Producto</th>
+                    <th class="surface-200 text-center" colspan="3">Lista precios SAP</th>
+                    <th class="surface-200 text-center" rowspan="2">Precio promedio mercado</th>
+                    <th class="surface-200 text-center" rowspan="2">Precio promedio venta</th>
+                    <th class="bg-blue-200 text-center" colspan="2">Reposición semana 0</th>
+                   
+                  
+                </tr>
+                <tr>
+                    <th class="surface-200 text-center"><div class="text-center">Código item</div></th>
+                    <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+
+                    <th class="surface-200 text-center"><div class="text-center">Gerente</div></th>
+                    <th class="surface-200 text-center"><div class="text-center">Vendedor</div></th>
+                    <th class="surface-200 text-center"><div class="text-center">Precio de lista</div></th>
+                    
+                    <th class="bg-blue-200 text-center"><div class="text-center">% Bruto</div></th>
+                    <th class="bg-blue-200 text-center"><div class="text-center">% Neto</div></th>
+
+                   
+                    
+                   
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-lineaCalculadora>
+                <tr>
+                    
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.ItemCode }}</td>
+                    <td style="min-width: 10rem; text-align: left;">{{ lineaCalculadora.ItemName }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpGerente | number : '1.1-2'}}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number: '1.1-2'  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number: '1.1-2'  }}</td>
+
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent  }}</td>
+
+                
+
+
+
+                    
+                    
+                </tr>
+           
+            </ng-template>
+           
+          
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="12" class="text-center">No se econtraron materias primas asociadas al producto terminado seleccionado.</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="12" class="text-center">Cargando materias primas asociadas al producto terminado. Por favor espere</td>
+                </tr>
+            </ng-template>
+           
+    </p-table>
+
+
+    
+        
+    
+</div>
+
+
+<!-- Fin Calculadora de precios -->
+
+
+
+
+<!---Dilalog FORM detalle calculo-->
+    <p-dialog [header]="'Detalle calculo MP '+!item?'':item.ItemName" 
+          [(visible)]="formDetalleCalculo" 
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+          [style]="{width: '50vw'}" 
+          [maximizable]="true"
+          [draggable]="false" 
+          [resizable]="false">
+
+    <ng-template pTemplate="content">
+        
+        <!-- Detalle de materia prima-->
+
+
+        <div class="card p-10">
+            
+            <p-table #dt1 
+                    [value]="detalle_receta" 
+                    [rowHover]="true"
+                    styleClass="p-datatable-gridlines p-datatable-sm" 
+                    responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+                        <div>
+                            <button pButton 
+                                    
+                                    pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
+                                    class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+                                    icon="pi pi-file-excel" 
+                                    (click)="exportExcel()">
+                                    </button>
+
+                               
+                                    
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="surface-200 text-center" colspan="5">Info MP</th>
+                        <th class="bg-blue-200 text-center" colspan="4">Semana 0</th>
+                        <th class="bg-green-200 text-center" colspan="4">Semana 1</th>
+                        <th class="bg-yellow-200 text-center" colspan="4">semana 2</th>
+                    </tr>
+                    <tr>
+                        <th class="surface-200 text-center"><div class="text-center">Código item</div></th>
+                        <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+                        <th class="surface-200 text-center"><div class="text-center">Empaque</div></th>
+                        <th class="surface-200 text-center"><div class="text-center">Cantidad</div></th>
+                        <th class="surface-200 text-center"><div class="text-center">Costo SAP</div></th>
+
+                        <th class="bg-blue-200 text-center"><div class="text-center">Año</div></th>
+                        <th class="bg-blue-200 text-center"><div class="text-center">Semana</div></th>
+                        <th class="bg-blue-200 text-right"><div class="text-right">Costo MP</div></th>
+                        <th class="bg-blue-200 text-right"><div class="text-right">Costo Empaque</div></th>
+                 
+                       
+                        <th class="bg-green-200 text-center"><div class="text-center">Año</div></th>
+                        <th class="bg-green-200 text-center"><div class="text-center">Semana</div></th>
+                        <th class="bg-green-200 text-right"><div class="text-right">Costo MP</div></th>
+                        <th class="bg-green-200 text-right"><div class="text-right">Costo Empaque</div></th>
+
+                        <th class="bg-yellow-200 text-center"><div class="text-center">Año</div></th>
+                        <th class="bg-yellow-200 text-center"><div class="text-center">Semana</div></th>
+                        <th class="bg-yellow-200 text-right"><div class="text-right">Costo MP</div></th>
+                        <th class="bg-yellow-200 text-right" style="text-align: right;"><div class="text-right">Costo Empaque</div></th>
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        
+                        <td style="min-width: 2rem; text-align: center;">{{ product.itemMP.Code }}</td>
+                        <td style="min-width: 10rem; text-align: left;">{{ product.itemMP.ItemName }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.itemMP.EMPAQUE }}</td>
+                        
+                        
+                        <td *ngIf="editarCalculo"  style="min-width: 4rem; text-align: center;">{{ product.itemMP.Quantity | number }}</td>
+                        <td *ngIf="!editarCalculo && product.itemMP.MODIFICAR=='SI' && permisosUsuarioPagina[0].create_accion" style="width: 12rem; text-align: right;">
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText 
+                                           type="number" 
+                                           class="w-full"
+                                           style="width: 12rem;"
+                                           [(ngModel)]="product.itemMP.Quantity"
+                                           (keydown.enter)="PresionaEnterMP($event,product.itemMP.Code)"
+                                           (blur)="cambioMP($event,product.itemMP.Code)">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ product.itemMP.Quantity | number  }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td *ngIf="!editarCalculo && product.itemMP.MODIFICAR!='SI'"  style="min-width: 4rem; text-align: center;">{{ product.itemMP.Quantity | number }}</td>
+                        <td style="min-width: 4rem; text-align: right;">{{ product.itemMP.costoSAP | number : '1.1-2'}}</td>
+
+
+
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana0.anio  }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana0.semana | number  }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana0.costoMP | number : '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana0.empaqueMP | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana1.anio  }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana1.semana | number  }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana1.costoMP | number : '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana1.empaqueMP | number : '1.1-2'}}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana2.anio  }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana2.semana | number  }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana2.costoMP | number : '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana2.empaqueMP | number : '1.1-2'}}</td>
+                     
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td style="min-width: 2rem; text-align: center;" colspan="3" rowspan="3">Totales</td>
+                        <td style="min-width: 2rem; text-align: center;"></td>
+                        <td style="min-width: 2rem; text-align: center;">{{ totalCostoPTSAP | number : '1.1-2'}}</td>
+                        <td class="bg-blue-200" colspan="2">{{(totalMPsemana0+totalEmpaque | number: '1.1-2')}}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana0 | number : '1.1-2'}}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
+
+                        <td class="bg-green-200" colspan="2">{{(totalMPsemana1+totalEmpaque | number: '1.1-2')}}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana1 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
+
+                        <td class="bg-yellow-200" colspan="2">{{(totalMPsemana2+totalEmpaque | number: '1.1-2')}}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana2 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number: '1.1-2' }}</td>
+
+                    </tr>
+                    <tr>
+                        <!--<td style="min-width: 2rem; text-align: left;" colspan="4"></td>-->
+                        <td style="min-width: 2rem; text-align: center;">Costo Venta</td>
+                        <td style="min-width: 2rem; text-align: center;">Costo Total</td>
+                        <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Venta</td>
+                        <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Total</td>
+                        <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Venta</td>
+                        <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Total</td>
+                        <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Venta</td>
+                        <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">Costo Total</td>
+                    </tr>
+                    <tr>
+                        <!--<td style="min-width: 2rem; text-align: right;" colspan="4"></td>-->
+                        <td style="min-width: 2rem; text-align: center;">{{ costoVentaPTSAP | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;">{{ costoTotalPTSAP | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana0 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana0 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana1 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana1 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana2 | number: '1.1-2' }}</td>
+                        <td style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana2 | number: '1.1-2' }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="16" class="text-center">No se econtraron materias primas asociadas al producto terminado seleccionado.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="16" class="text-center">Cargando materias primas asociadas al producto terminado. Por favor espere</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+        </div>
+
+        <!-- Fin detalle de materia prima-->
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (click)="formDetalleCalculo=false"                     
+                    
+                    label="Cerrar"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->
+
+<!---Dilalog FORM parametros globales-->
+<p-dialog header="Parametros gobales calculadora" 
+[(visible)]="formParametrosG" 
+[modal]="true"
+[breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+[style]="{width: '50vw'}" 
+[maximizable]="true"
+[draggable]="false" 
+[resizable]="false">
+
+<ng-template pTemplate="content">
+
+<!-- Detalle de materia prima-->
+
+
+<div class="card p-10">
+  
+    <div class="grid">
+        <div class="col-12">
+            <div class="card p-fluid">
+                <!-- TABLA DE PARAMETROS CALCULADORA-->                
+                <div class="grid">
+                    <div class="field col">
+                        <p-table #dt3 
+                        [value]="parametros" 
+                        [rowHover]="true"
+                        styleClass="p-datatable-gridlines p-datatable-sm" 
+                        responsiveLayout="scroll">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <h4>Parametros costo materia prima nacionalizada</h4> 
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            
+                            <tr>
+                                <th class="surface-200 text-center"><div class="text-center">Id</div></th>
+                                <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+                                <th class="surface-200 text-center"><div class="text-center">Valor</div></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-parametro>
+                            <tr>
+                                
+                                <td style="min-width: 2rem; width: 2rem; text-align: center;">{{ parametro.id }}</td>
+                                <td style="min-width: 10rem; text-align: left;">{{ parametro.parametro }}</td>
+            
+                                
+
+                                <td pEditableColumn style="width: 8rem; text-align: right;">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText 
+                                                   type="number" 
+                                                   class="w-full"
+                                                   
+                                                   [(ngModel)]="parametro.valor"
+                                                   (keydown.enter)="PresionaEnter($event)"
+                                                   (blur)="cambio($event)">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ parametro.valor | number : '1.1-2'}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                
+                            </tr>
+                       
+                        </ng-template>
+                       
+                      
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="16" class="text-center">No se econtraron parametros.</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td colspan="16" class="text-center">Cargando parametros. Por favor espere</td>
+                            </tr>
+                        </ng-template>
+                       
+                </p-table>
+                    </div>
+                </div>
+                <!-- TABLA DE COSTOS LOCALIDAD-->
+                <div class="grid">
+                    
+                    <div class="field col">
+                        <p-table #dt4 
+                        [value]="costos_localidad" 
+                        [rowHover]="true"
+                        styleClass="p-datatable-gridlines p-datatable-sm" 
+                        responsiveLayout="scroll">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <h4>Costos por localidad</h4> 
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            
+                            <tr>
+                                <th class="surface-200 text-center"><div class="text-center">Id</div></th>
+                                <th class="surface-200 text-left"><div class="text-left">Localidad</div></th>
+                                <th class="surface-200 text-center"><div class="text-center">Administración</div></th>
+                                <th class="surface-200 text-center"><div class="text-center">Recurso</div></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-costo_localidad>
+                            <tr>
+                                
+                                <td style="min-width: 2rem; width: 2rem; text-align: center;">{{ costo_localidad.codigo }}</td>
+                                <td style="min-width: 10rem; text-align: left;">{{ costo_localidad.localidad }}</td>
+                                <td pEditableColumn style="width: 8rem; text-align: right;">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText 
+                                                   type="number" 
+                                                   class="w-full"
+                                                   
+                                                   [(ngModel)]="costo_localidad.costo_admin"
+                                                   (keydown.enter)="PresionaEnter($event)"
+                                                   (blur)="cambio($event)">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{costo_localidad.costo_admin | number : '1.1-2'}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <td pEditableColumn style="width: 8rem; text-align: right;">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText 
+                                                   type="number" 
+                                                   class="w-full"
+                                                   
+                                                   [(ngModel)]="costo_localidad.costo_recurso"
+                                                   (keydown.enter)="PresionaEnter($event)"
+                                                   (blur)="cambio($event)">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{costo_localidad.costo_recurso | number : '1.1-2'}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                <!--<td style="min-width: 2rem; text-align: center;">{{ costo_localidad.costo_admin | number }}</td>
+                                <td style="min-width: 2rem; text-align: center;">{{ costo_localidad.costo_recurso | number }}</td>-->
+                                
+                            </tr>
+                       
+                        </ng-template>
+                       
+                      
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="16" class="text-center">No se econtraron parametros.</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td colspan="16" class="text-center">Cargando parametros. Por favor espere</td>
+                            </tr>
+                        </ng-template>
+                       
+                </p-table>
+                    </div>
+                </div>
+                <!-- TABLA DE PRESENTACION PRODUCTOS-->
+                <div class="grid">
+                    
+                    <div class="field col">
+                        <p-table #dt5 
+                        [value]="presentacion_items" 
+                        [rowHover]="true"
+                        styleClass="p-datatable-gridlines p-datatable-sm" 
+                        responsiveLayout="scroll">
+                        <ng-template pTemplate="caption">
+                            <div class="flex justify-content-between flex-column sm:flex-row">
+                                <div>
+                                    <h4>Tipo de presentación producto</h4> 
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            
+                            <tr>
+                                <th class="surface-200 text-center"><div class="text-center">Id</div></th>
+                                <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+                                <th class="surface-200 text-center"><div class="text-center">Presentación</div></th>
+                                <th class="surface-200 text-center"><div class="text-center">Valor</div></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-presentacion_item>
+                            <tr>
+                                
+                                <td style="min-width: 2rem; width: 2rem; text-align: center;">{{ presentacion_item.id }}</td>
+                                <td style="min-width: 10rem; text-align: left;">{{ presentacion_item.descripcion }}</td>
+                                <td style="min-width: 2rem; text-align: center;">{{ presentacion_item.presentacion | number }}</td>
+                                <td pEditableColumn style="width: 8rem; text-align: right;">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <input pInputText 
+                                                   type="number" 
+                                                   class="w-full"
+                                                   
+                                                   [(ngModel)]="presentacion_item.valor"
+                                                   (keydown.enter)="PresionaEnter($event)"
+                                                   (blur)="cambio($event)">
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            {{ presentacion_item.valor | number : '1.1-2'}}
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </td>
+                                
+                            </tr>
+                       
+                        </ng-template>
+                       
+                      
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td colspan="16" class="text-center">No se econtraron parametros.</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="loadingbody">
+                            <tr>
+                                <td colspan="16" class="text-center">Cargando parametros. Por favor espere</td>
+                            </tr>
+                        </ng-template>
+                       
+                </p-table>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+  
+</div>
+
+<!-- Fin detalle de materia prima-->
+
+
+</ng-template>
+<ng-template pTemplate="footer">
+    <p-button   icon="pi pi-save" 
+    (click)="grabarCambiosParametros()"                     
+    
+    label="Guardar"
+    styleClass="p-button-text">
+</p-button>
+<p-button   icon="pi pi-check" 
+          (click)="formParametrosG=false"                     
+          
+          label="Cerrar"
+          styleClass="p-button-text">
+</p-button>
+</ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->
+
+<!-- Dialog loading -->
+<p-dialog header="Cargando" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <p class="m-0">
+
+    </p>
+
+    <div *ngIf="loadingCargue" class="field col">
+                    
+        <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+</p-dialog>
+<!--Fin Dialog loading-->

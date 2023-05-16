@@ -21,7 +21,7 @@ export class AppMenuComponent implements OnInit {
     constructor(public layoutService: LayoutService,
                 private portalervice:Portalervice,
                 private router: Router,
-                private authService: AuthService
+                public authService: AuthService
                 ) { }
 
    async ngOnInit() {

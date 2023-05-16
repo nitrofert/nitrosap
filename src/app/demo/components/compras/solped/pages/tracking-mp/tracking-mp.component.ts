@@ -20,6 +20,7 @@ export class TrackingMPComponent implements OnInit {
   infoUsuario!:InfoUsuario;
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
 
   urlBreadCrumb:string ="";
@@ -80,22 +81,26 @@ export class TrackingMPComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService: SAPService) { }
 
   ngOnInit(): void {
 
     this.infoUsuario = this.authService.getInfoUsuario();
-    ////console.log(this.infoUsuario);
+    //////console.log(this.infoUsuario);
      
-     ////console.log(this.authService.getPerfilesUsuario());
+     //////console.log(this.authService.getPerfilesUsuario());
      this.perfilesUsuario = this.authService.getPerfilesUsuario();
 
-     ////console.log(this.router.url);
-     ////console.log(this.authService.getPermisosUsuario());
+     //////console.log(this.router.url);
+     //////console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
-     ////console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     //////console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
      this.urlBreadCrumb = this.router.url;
 
     // this.getAlmacenesMPSL();
@@ -108,17 +113,17 @@ export class TrackingMPComponent implements OnInit {
     this.sapService.getAlmacenesMysql(this.authService.getToken())
         .subscribe({
             next: (almacenes) => {
-              //console.log(almacenes);
+              ////console.log(almacenes);
               for(let item in almacenes){
                 this.almacenes.push({store:almacenes[item].WarehouseCode, 
                                      storename: almacenes[item].WarehouseName, 
                                      zonacode:almacenes[item].State});
              }
-             ////console.log(this.almacenes)
+             //////console.log(this.almacenes)
              this.getListadosTrackingMP();
             },
             error: (err) => {
-                //console.log(err);
+                ////console.log(err);
             }
 
         });
@@ -146,7 +151,7 @@ export class TrackingMPComponent implements OnInit {
         for(let line of proyeccionesSolicitudes.proyecciones){
           /*line.WarehouseName ="";
           if(this.almacenes.filter(data =>data.store === line.WarehouseCode).length>0){
-            ////console.log(this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename);
+            //////console.log(this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename);
             line.WarehouseName = this.almacenes.filter(data =>data.store === line.WarehouseCode)[0].storename;
           }*/
 
@@ -171,7 +176,7 @@ export class TrackingMPComponent implements OnInit {
         this.solpedRequestBK = solicitudes;*/
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
 
@@ -181,7 +186,7 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.getDocumentsTrackingSAP(this.authService.getToken())
     .subscribe({
       next:(async documentosTracking =>{
-       console.log('Documentos',documentosTracking);
+       //console.log('Documentos',documentosTracking);
 
        for(let documentoTracking of documentosTracking){
           //documentoTracking.Comments ='';
@@ -197,7 +202,7 @@ export class TrackingMPComponent implements OnInit {
           //documentoTracking.WarehouseName = this.almacenes.filter(almacen => almacen.store == documentoTracking.WAREHOUSECODE)[0].storename;
           documentoTracking.WarehouseName = documentoTracking.WAREHOUSENAME;
           documentoTracking.approved = 'S';
-          documentoTracking.id =documentoTracking.DocEntry; //DocEntry
+          documentoTracking.id =documentoTracking.TIPO =='Necesidad'?documentoTracking.U_ID_PORTAL:documentoTracking.DocEntry; //DocEntry
           documentoTracking.key = documentoTracking.DocNum+'-'+documentoTracking.LineNum;
           //documentoTracking.DocEntry = 0; //DocEntry
           documentoTracking.RemainingOpenQuantity = documentoTracking.OpenCreQty;
@@ -247,13 +252,13 @@ export class TrackingMPComponent implements OnInit {
         /*if(pedidos.value){
           this.pedidosPorCargar = await this.convertirObjetoSLtoArray(pedidos);
           this.pedidosPorCargarBK = this.pedidosPorCargar;
-          ////console.log(this.pedidosPorCargar);
+          //////console.log(this.pedidosPorCargar);
           
         }*/
         
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
   }
@@ -263,18 +268,18 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.PedidosdMP(this.authService.getToken(),'Solicitado')
     .subscribe({
       next:(async pedidos =>{
-        ////console.log('Pedido x cargar',pedidos);
+        //////console.log('Pedido x cargar',pedidos);
 
         if(pedidos.value){
           this.pedidosPorCargar = await this.convertirObjetoSLtoArray(pedidos);
           this.pedidosPorCargarBK = this.pedidosPorCargar;
-          ////console.log(this.pedidosPorCargar);
+          //////console.log(this.pedidosPorCargar);
           
         }
         
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
 
@@ -285,16 +290,16 @@ export class TrackingMPComponent implements OnInit {
     this.comprasService.PedidosdMP(this.authService.getToken(),'Cargado')
     .subscribe({
       next:(async pedidos =>{
-       // //console.log('Pedido cargados',pedidos);
+       // ////console.log('Pedido cargados',pedidos);
         if(pedidos.value){
           this.pedidosCargados = await this.convertirObjetoSLtoArray(pedidos);
           this.pedidosCargadosBK = this.pedidosCargados;
-          ////console.log(this.pedidosCargados);
+          //////console.log(this.pedidosCargados);
           
         }
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
   }
@@ -307,12 +312,12 @@ export class TrackingMPComponent implements OnInit {
         
         if(pedidos.value){
           this.pedidosDocumentacion = await this.convertirObjetoSLtoArray(pedidos);
-          //console.log(this.pedidosDocumentacion);
+          ////console.log(this.pedidosDocumentacion);
           
         }
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
     */
@@ -327,12 +332,12 @@ export class TrackingMPComponent implements OnInit {
         if(pedidos.value){
           this.pedidosDescargados = await this.convertirObjetoSLtoArray(pedidos);
           this.pedidosDescargadosBK = this.pedidosDescargados;
-          ////console.log(this.pedidosDescargados);
+          //////console.log(this.pedidosDescargados);
           
         }
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
   }
@@ -345,7 +350,7 @@ export class TrackingMPComponent implements OnInit {
         let lineaEntradas:any[] = [];
         /*if(entradas.value){
           this.entradasNT = await this.convertirObjetoSLtoArray(entradas);
-          //console.log(this.entradasNT);
+          ////console.log(this.entradasNT);
           
         }*/
 
@@ -353,7 +358,7 @@ export class TrackingMPComponent implements OnInit {
 
           let WarehouseName ="";
           if(this.almacenes.filter(data =>data.store === entradas[item].WhsCode).length>0){
-            ////console.log('storename',this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0]);
+            //////console.log('storename',this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0]);
             WarehouseName = this.almacenes.filter(data =>data.store === entradas[item].WhsCode)[0].storename;
           }
           
@@ -392,12 +397,12 @@ export class TrackingMPComponent implements OnInit {
           });
         }
 
-        //console.log(lineaEntradas);
+        ////console.log(lineaEntradas);
         this.entradasNT = lineaEntradas;
         this.entradasNTBK = lineaEntradas;
       }),
       error:(err =>{
-        //console.log(err);
+        ////console.log(err);
       })
     });
   }
@@ -437,7 +442,7 @@ export class TrackingMPComponent implements OnInit {
 
                 let WarehouseName ="";
                 if(this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode).length>0){
-                  ////console.log('storename',this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode)[0]);
+                  //////console.log('storename',this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode)[0]);
                   WarehouseName = this.almacenes.filter(data =>data.store === lienaPedido.WarehouseCode)[0].storename;
                 }
                 
@@ -479,7 +484,7 @@ export class TrackingMPComponent implements OnInit {
               
           }
 
-          ////console.log(lineaPedidos);
+          //////console.log(lineaPedidos);
     return lineaPedidos;
   }
   

@@ -54,7 +54,7 @@ export class PedidosComponent implements OnInit {
 
 
   constructor(private comprasService:ComprasService,
-              private authService: AuthService,
+              public authService: AuthService,
               private router:Router,
               private sapService:SAPService,
               private rutaActiva: ActivatedRoute) { }
@@ -112,9 +112,11 @@ export class PedidosComponent implements OnInit {
 
   getListado(){
     this.comprasService.ordenesAbiertasUsuarioXE(this.authService.getToken())
+    //this.comprasService.ordenesAbiertasUsuarioSL(this.authService.getToken())
+    
         .subscribe({
             next: (pedidos)=>{
-                
+                console.log(pedidos);
                 //this.pedidos = [];
                 let lineaPedidos:any[] = []
                 for(let item in pedidos){

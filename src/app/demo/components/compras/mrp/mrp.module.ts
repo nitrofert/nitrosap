@@ -20,6 +20,10 @@ import { CalculadoraPreciosComponent } from './pages/calculadora-precios/calcula
 import { FormPrecioItemComponent } from './pages/form-precio-item/form-precio-item.component';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ListaPreciosItemMpComponent } from './pages/lista-precios-item-mp/lista-precios-item-mp.component';
+import { FormCalculadoraPrecioComponent } from './pages/form-calculadora-precio/form-calculadora-precio.component';
+import { ListaPreciosItemPtComponent } from './pages/lista-precios-item-pt/lista-precios-item-pt.component';
+import { FormPrecioItemPtComponent } from './pages/form-precio-item-pt/form-precio-item-pt.component';
+import { FormAutoresComponent } from './pages/form-autores/form-autores.component';
 
 
 
@@ -33,6 +37,10 @@ import { ListaPreciosItemMpComponent } from './pages/lista-precios-item-mp/lista
     CalculadoraPreciosComponent,
     FormPrecioItemComponent,
     ListaPreciosItemMpComponent,
+    FormPrecioItemPtComponent,
+    ListaPreciosItemPtComponent,
+    FormCalculadoraPrecioComponent,
+    FormAutoresComponent,
 
   ],
   imports: [

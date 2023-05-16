@@ -42,7 +42,7 @@ export class UsuariosComponent implements OnInit {
 
   constructor(private adminService:AdminService,
               private router:Router,
-              private authService:AuthService) { }
+              public authService:AuthService) { }
 
   ngOnInit(): void {
 

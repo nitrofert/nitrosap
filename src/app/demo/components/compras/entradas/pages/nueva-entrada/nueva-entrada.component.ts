@@ -19,7 +19,7 @@ export class NuevaEntradaComponent implements OnInit {
   constructor(private router:Router,
               private messageService: MessageService,
               private rutaActiva: ActivatedRoute,
-              private authService: AuthService,
+              public authService: AuthService,
               private comprasService:ComprasService) {
 
      }

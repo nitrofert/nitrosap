@@ -63,7 +63,7 @@ export class LoginComponent  {
 
     constructor(
             public layoutService: LayoutService,
-            private authService:AuthService, 
+            public authService:AuthService, 
             private router: Router,
             private messageService: MessageService,
             private sapService:SAPService,

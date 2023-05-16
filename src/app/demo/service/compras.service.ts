@@ -92,7 +92,7 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/solped/`;
-    console.log(url)
+    //console.log(url)
     return this.http.post<any[]>(url,data,requestOptions);
 
   }
@@ -101,13 +101,13 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/solped/detail`;
-    console.log(url)
+    //console.log(url)
     return this.http.post<any[]>(url,data,requestOptions);
 
   }
 
   uploadAnexo(token:string,body:FormData):Observable<any>{
-    //console.log(body);
+    ////console.log(body);
     let headers = this.urlApiService.getHeadersAPI(token);
     headers=headers.delete('content-type');
     //headers=headers.append('content-type','multipart/form-data;');
@@ -157,7 +157,7 @@ export class ComprasService {
   }
 
   downloadAnexo2(token:string,fileInfo:any):Observable<any>{
-    //console.log(body);
+    ////console.log(body);
     
     let headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -166,7 +166,7 @@ export class ComprasService {
   }
 
   borrarAnexo(token:string,fileInfo:any):Observable<any>{
-    //console.log(body);
+    ////console.log(body);
     
     let headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -258,7 +258,7 @@ export class ComprasService {
   }
 
   entradaById(token:string,id:number):Observable<any>{
-    //console.log(id);
+    ////console.log(id);
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/entrada/${id}`;
@@ -266,7 +266,7 @@ export class ComprasService {
   }
 
   impresionEntradaByIdSL(token:string,id:number):Observable<any>{
-    //console.log(id);
+    ////console.log(id);
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/entrada/impresion/${id}`;
@@ -338,7 +338,7 @@ export class ComprasService {
   }
 
   updateSolpedMP(token:string,data:any):Observable<any>{
-    //console.log('data service',data);
+    ////console.log('data service',data);
     let headers = this.urlApiService.getHeadersAPI(token);
     headers=headers.delete('content-type');
     const requestOptions = { headers: headers };
@@ -347,7 +347,7 @@ export class ComprasService {
   }
 
   updateCantidadSolped(token:string,data:any):Observable<any>{
-    //console.log('data service',data);
+    ////console.log('data service',data);
     let headers = this.urlApiService.getHeadersAPI(token);
     headers=headers.delete('content-type');
     const requestOptions = { headers: headers };
@@ -468,6 +468,22 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
+  cargarLPMercado(token:string,data:FormData):Observable<any[]>{
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/cargar-lp-mercado`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+  cargarLPMP(token:string,data:FormData):Observable<any[]>{
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/cargar-lp-mp`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
   
 
   cargarMaxMinCVS(token:string,data:any):Observable<any[]>{
@@ -499,5 +515,169 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  getListaPreciosMP(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-mp`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  grabarListaPreciosMP(token:string,dataListaPreciosMP:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-mp`;
+    return this.http.post<any[]>(url,dataListaPreciosMP,requestOptions);
+  }
+
+  getItemsMPSemana(token:string,semana:number):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-mp/${semana}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getListaPreciosPT(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-pt`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  grabarListaPreciosPT(token:string,dataListaPreciosPT:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-pt`;
+    return this.http.post<any[]>(url,dataListaPreciosPT,requestOptions);
+  }
+
+  getItemsPTSemana(token:string,semana:number):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-pt/${semana}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getConfigCalculadora(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/load-config-calculadora-precios`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getPreciosListaItemSAP(token:string,itemCode:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-item/${itemCode}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getItemsMPbyItemPT(token:string,itemCode:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/items-mp-by-item-pt/${itemCode}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  //getPreciosMPItemUltimasSemanas(token:string,itemCode:string, semanaAnio?:number=0, anio?:number=0):Observable<any[]>{
+    getPreciosMPItemUltimasSemanas(token:string,itemCode:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    //const requestOptions = { headers: headers, params: {itemCode,semanaAnio,anio} };
+    const requestOptions = { headers: headers, params: {itemCode} };
+    const url:string = `${this.api_url}/api/compras/mrp/precio-mp-item-ultimas-semanas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+
+  getPrecioMercadoItemSemana(token:string,itemCode:string, semanaAnio:number, anio:number, fechaInicio:string, fechaFin:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers, params: {itemCode,semanaAnio,anio,fechaInicio,fechaFin} };
+    const url:string = `${this.api_url}/api/compras/mrp/precio-mercado-item-semana`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  updateParametrosCalculadora(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/actualizar-parametros-calculadora`;
+    return this.http.post<any>(url,data,requestOptions);
+  }
+
+  getParametrosMP(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/parametros-mp-calculadora`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getDimensiones(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/dependencias`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getAutores(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/autores`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  nuevoAutor(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/nuevo-autor`;
+    return this.http.post<any>(url,data,requestOptions);
+  }
+
+  getPreciosPTxSemanaZonaAutor(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers,  params: data  };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-pt-seman-zona`;
+    return this.http.get<any>(url,requestOptions);
+  }
+
+  grabarCalculoPreciosItem(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/grabar-calculo-precios-item`;
+    return this.http.post<any>(url,data,requestOptions);
+  }
+
+  listaPreciosCalculados(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/lista-calculos-precios-item`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getInfoCalculoItem(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers,  params: data  };
+    const url:string = `${this.api_url}/api/compras/mrp/consulta-calculos-item`;
+    return this.http.get<any>(url,requestOptions);
+  }
+
+  getPrecioVentaItemSAP(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers,  params: data  };
+    const url:string = `${this.api_url}/api/compras/mrp/precio-venta-item`;
+    return this.http.get<any>(url,requestOptions);
+  }
+
+ 
+  
+
+  getProyectos(token:string):Observable<any[]>{
+    /*const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });*/
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/solped/proyectos`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+ 
   
 }

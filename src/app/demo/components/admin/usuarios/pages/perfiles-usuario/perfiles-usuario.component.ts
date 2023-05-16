@@ -30,7 +30,7 @@ export class PerfilesUsuarioComponent implements OnInit {
 
   constructor(private rutaActiva: ActivatedRoute,
               private adminService:AdminService,
-              private authService:AuthService) { }
+              public authService:AuthService) { }
 
   ngOnInit(): void {
 

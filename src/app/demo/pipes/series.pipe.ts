@@ -13,7 +13,7 @@ export class SeriesPipe implements PipeTransform {
     serie!:string;
 
     constructor(private sapService:SAPService,
-                private authService: AuthService) {
+                public authService: AuthService) {
                 
                
     }

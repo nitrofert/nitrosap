@@ -22,7 +22,7 @@ export class PdfComponent implements OnInit {
 
  
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
     //Cargar informacion del usuario
@@ -112,6 +112,7 @@ for (var key in rows)
     if (rows.hasOwnProperty(key))
     {
         var data = rows[key];
+        console.log(new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency }).format(data.Price));
         var row = new Array();
         row.push( { text:iterador.toString(),
                     fontSize:8,
@@ -129,11 +130,11 @@ for (var key in rows)
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]}  );
-        row.push( {text:data.Price.toString(),
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency }).format(data.Price),//data.Price.toString(),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]} );
-        row.push( {text:data.LineTotal.toString(),
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency }).format(data.LineTotal),//data.LineTotal.toString(),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]} );
@@ -683,7 +684,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${this.infoPDF.content.subtotal}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency }).format(this.infoPDF.content.subtotal)}`,
                       fontSize:8,
                       alignment:'right',
                       border: [false, false, false, false],
@@ -704,7 +705,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${this.infoPDF.content.iva}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency }).format(this.infoPDF.content.iva)}`,
                       fontSize:8,
                       alignment:'right',
                       border: [false, false, false, false],
@@ -725,7 +726,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${this.infoPDF.content.total}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency }).format(this.infoPDF.content.total)}`,
                       style:'subheader',
                       alignment:'right',
                       border: [false, true, false, false],

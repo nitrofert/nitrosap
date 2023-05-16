@@ -28,7 +28,7 @@ export class SAPService {
 
 
   constructor(private http: HttpClient,
-              private authService: AuthService,
+              public authService: AuthService,
               private urlApiService:UrlApiService) { 
                 this.api_url3 = this.urlApiService.getUrlAPI();
               }
@@ -184,6 +184,14 @@ export class SAPService {
     const url:string = `${this.api_url3}/api/mysql/query/items-mp`;
     return this.http.get<any[]>(url,requestOptions);
   }
+
+  itemsPTSAPMysql(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/items-pt`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
 
   seriesDocXEngineSAP(token:string,objType?:string):Observable<any[]>{
    

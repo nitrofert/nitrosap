@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private router:Router,
         private confirmationService: ConfirmationService, 
         private messageService: MessageService,
-        private authService: AuthService,
+        public authService: AuthService,
         private sapService:SAPService) { }
 
     ngOnInit() {

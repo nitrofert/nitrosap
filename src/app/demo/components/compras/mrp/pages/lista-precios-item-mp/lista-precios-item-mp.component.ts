@@ -23,16 +23,24 @@ export class ListaPreciosItemMpComponent  implements OnInit {
 
   listaPreciosMP:any[] = [];
   selectedLine:any[] = [];
-  loading:boolean = false;
+  loading:boolean = true;
 
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   urlBreadCrumb:string ="";
   infoUsuario!:InfoUsuario;
 
   displayModal:boolean = false;
   loadingCargue:boolean = false;
+  formularioCSV:boolean = false;
+  loadingCargueCSV:boolean = false;
+
+  lineasPrecioMP:any[] = [];
+  fileTmp2:any;
+  separadorLista:string =";";
+  uploadedFiles2: any[] = [];
 
   constructor(private rutaActiva: ActivatedRoute,
     private adminService:AdminService,
@@ -41,7 +49,7 @@ export class ListaPreciosItemMpComponent  implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     public dialogService: DialogService,) { }
 
   ngOnInit(): void {
@@ -55,8 +63,15 @@ export class ListaPreciosItemMpComponent  implements OnInit {
     //////console.logthis.authService.getPermisosUsuario());
     this.permisosUsuario = this.authService.getPermisosUsuario();
     //////console.log'Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-    this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+    //his.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+    this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+    //console.log(this.permisosUsuarioPagina);
     this.urlBreadCrumb = this.router.url;
+
+    this.getListaPreciosMP();
 
   }
 
@@ -83,20 +98,115 @@ export class ListaPreciosItemMpComponent  implements OnInit {
 
   }
 
-  
+  getListaPreciosMP(){
+    this.loading = true;
+    this.comprasService.getListaPreciosMP(this.authService.getToken())
+        .subscribe({
+           next:(items)=>{
+              console.log(items);
+              this.listaPreciosMP= items;
+              this.loading = false;
+              },
+           error:(err)=>{
+              console.error(err);
+           }
+        });
+  }
 
   editarPrecioItem(){}
 
   anularPrecioItem(){}
 
+  cargarLPMP(){
+    this.formularioCSV = true;
+  }
 
+  onLoad2($event:any){
+
+  
+    this.loadingCargueCSV = true;
+    const [ file ] = $event.currentFiles;
+    this.fileTmp2 = {
+      fileRaw:file,
+      fileName:file.name
+    }
+    this.readDocument(file);
+  
+  }
+
+  readDocument(file:Blob) {
+    let fileReader = new FileReader();
+    let arrayTexto:any[] =[];
+    fileReader.onload = (e) => {
+      let text:any =fileReader.result ;
+      var lines = text.split('\n') ;
+      for(let line of lines){
+        console.log(line);
+        //arrayTexto.push(this.reemplazarCaracteresEspeciales(line));
+
+        let arrayLinea = line.split(";");
+
+        /*this.lineasPrecioMercado.push({
+          fechasemana:arrayLinea[0],
+          semana:arrayLinea[1],
+          itemcode:arrayLinea[2],
+          codigozona:arrayLinea[3],
+          cantidad:arrayLinea[4]
+        });*/
+
+      }
+      this.loadingCargueCSV = false;
+      //this.validarArchivoDetalle(arrayTexto);
+    }
+    fileReader.readAsText(file);
+}
+
+adicionarCSV(){
+  this.loadingCargueCSV=true;
+  this.loading = true;
+ //if(this.lineasPrecioMercado.length>0){
+    console.log(this.lineasPrecioMP);
+    
+    let body = new FormData();
+
+    console.log('fileTmp2',this.fileTmp2);
+    body.append('separador',this.separadorLista);
+    body.append('myFileMP', this.fileTmp2.fileRaw, this.fileTmp2.fileName); 
+
+    
+
+        this.comprasService.cargarLPMP(this.authService.getToken(),body)
+        .subscribe({
+          next: (result:any)=>{
+            console.log(result);
+            this.messageService.add({severity:'success', summary: '!Ok', detail: result.message});
+            this.formularioCSV = false;
+            this.getListaPreciosMP();
+
+            //this.getItems();
+          },
+          error: (err)=>{
+            console.log('Error',err);
+            this.messageService.add({severity:'error', summary: '!Error', detail: 'Error en cargue del listado de precios: '+err});
+            this.loadingCargueCSV=false;
+          }
+        });
+
+
+    
+    
+  //}
+  
+}
+
+descargarCSV(){}
 
   exportExcel() {
     import("xlsx").then(xlsx => {
         const worksheet = xlsx.utils.json_to_sheet(this.listaPreciosMP);
         const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
         const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-        this.saveAsExcelFile(excelBuffer, `solpeds`);
+        this.saveAsExcelFile(excelBuffer, `Lista de precios MP`);
     });
   }  
 

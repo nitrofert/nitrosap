@@ -49,11 +49,12 @@ export class ImpresionComponent implements OnInit {
   footer:string ="";
   U_NF_PUNTAJE_HE:number =0;
   U_NF_CALIFICACION:string ="";
+  DocCurrency:string="";
 
 
   constructor(private rutaActiva: ActivatedRoute,
               private comprasService: ComprasService,
-              private authService: AuthService,) { }
+              public authService: AuthService,) { }
 
   ngOnInit(): void {
 
@@ -72,6 +73,7 @@ export class ImpresionComponent implements OnInit {
               console.log(infoEntrada);
               this.proveedor = infoEntrada.value[0].BusinessPartners;
               this.encabezado = infoEntrada.value[0].PurchaseDeliveryNotes;
+              console.log(this.encabezado.DocCurrency);
               //this.detalle = infoEntrada.value[0]['PurchaseDeliveryNotes/DocumentLines'];
               
              
@@ -96,6 +98,7 @@ export class ImpresionComponent implements OnInit {
               this.footer = this.encabezado.ClosingRemarks;
               this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
               this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
+              
 
               if(this.tipodoc=='S'){ 
                 this.espacio = this.espacio  - 100;
@@ -106,7 +109,7 @@ export class ImpresionComponent implements OnInit {
                 this.detalle.push(linea['PurchaseDeliveryNotes/DocumentLines']);
                 this.espacio = this.espacio  - 10;
               }
-              //console.log(this.detalle.length)
+              console.log(this.detalle)
 
               //console.log(this.proveedor,this.encabezado,this.detalle)
               this.setInfoPdf();
@@ -150,6 +153,7 @@ export class ImpresionComponent implements OnInit {
         U_NF_CALIFICACION:this.U_NF_CALIFICACION==null?'':this.U_NF_CALIFICACION=='E'?'Excelente':this.U_NF_CALIFICACION=='B'?'Bueno':'Regular',
         detalle:newObjeto,
         comentario:this.comentario==null?'':this.comentario,
+        DocCurrency:this.encabezado.DocCurrency,
         subtotal:this.total - this.impuesto,
         iva:this.impuesto,
         total:this.total,

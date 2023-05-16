@@ -57,7 +57,7 @@ export class PresupuestoVentaComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService:SAPService) { }
 
   ngOnInit(): void {

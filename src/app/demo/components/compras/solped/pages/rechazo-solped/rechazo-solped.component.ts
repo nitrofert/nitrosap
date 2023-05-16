@@ -27,7 +27,7 @@ export class RechazoSolpedComponent implements OnInit {
               private messageService: MessageService,
               private comprasService: ComprasService,
               private router:Router,
-              private authService: AuthService){
+              public authService: AuthService){
 
   }
 

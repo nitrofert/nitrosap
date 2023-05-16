@@ -15,7 +15,7 @@ export class NewSolpedMpComponent implements OnInit {
   registroSolped:boolean = false;
 
   constructor(private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router:Router,
     private comprasService: ComprasService) { }
 

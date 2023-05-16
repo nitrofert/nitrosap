@@ -736,7 +736,7 @@
                                 inputId="cuenta" 
                                 panelStyleClass="text-sm sm:ml-2"
                                 [disabled]="true"
-                                [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && !cuenta.Code}">
+                                [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && cuenta.Code==''}">
 
                     <ng-template let-cuenta pTemplate="item">
                         <div>{{cuenta.Code}} - {{cuenta.Name}}</div>
@@ -752,7 +752,7 @@
                         id="nombreCuenta" 
                         disabled
                         class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && !nombreCuenta}">
+                        [ngClass]="{'ng-invalid ng-dirty' : !item.ItemCode && envioLinea && nombreCuenta==''}">
 
             </div>
         </div>
@@ -865,7 +865,7 @@
                                     inputStyleClass="text-center w-6"
                                     styleClass="text-center" 
                                     [disabled]="true"
-                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !prcImpuesto}">
+                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !impuesto}">
                     </p-inputNumber>
 
                 </div>

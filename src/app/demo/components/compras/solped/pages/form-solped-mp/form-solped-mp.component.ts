@@ -176,7 +176,7 @@ export class FormSolpedMPComponent implements OnInit {
 
   /*********************************** */
 
-  constructor(private authService: AuthService,
+  constructor(public authService: AuthService,
               private sapService:SAPService,
               private comprasService: ComprasService,
               private router:Router,
@@ -208,7 +208,7 @@ export class FormSolpedMPComponent implements OnInit {
 
         
         //Cargar almacenes x usuario
-        //console.log(this.solpedEditar, this.pathSolped);
+        ////console.log(this.solpedEditar, this.pathSolped);
   }
 
   /**** Getters ****/
@@ -227,21 +227,21 @@ export class FormSolpedMPComponent implements OnInit {
 
   getPermisosUsuarioPagina(){
     let url ="";
-    ////console.log("URL origen",this.router.url);
-    ////console.log("URL params",this.rutaActiva.snapshot.params['solped']);
+    //////console.log("URL origen",this.router.url);
+    //////console.log("URL params",this.rutaActiva.snapshot.params['solped']);
     if(this.rutaActiva.snapshot.params['solped']){
       let idSolpedSelected = this.rutaActiva.snapshot.params;
       if(this.router.url.indexOf("/"+idSolpedSelected['solped'])>=0){
         url = this.router.url.substring(0,this.router.url.indexOf("/"+idSolpedSelected['solped']));
       }
-      ////console.log("URL con parametros: ",url);
+      //////console.log("URL con parametros: ",url);
     }else{
       url= this.router.url;
-      ////console.log("URL sin parametros: ",url);
+      //////console.log("URL sin parametros: ",url);
     }
     this.urlBreadCrumb = url;
     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-   //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+   ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
   getConfigSolpedMP(){
@@ -249,7 +249,7 @@ export class FormSolpedMPComponent implements OnInit {
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: async (configSolped:any) => {
-        console.log(configSolped);
+        //console.log(configSolped);
 
         await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
         await this.getSeries(configSolped.series);
@@ -278,7 +278,7 @@ export class FormSolpedMPComponent implements OnInit {
         }
 
        
-        //console.log('dependencias usuario',this.dependenciasUsuario);
+        ////console.log('dependencias usuario',this.dependenciasUsuario);
         //Llenara array de vicepresidencias
         for(let dependencia of this.dependenciasUsuario){
             if((this.vicepresidencias.filter(data => data.vicepresidency === dependencia.vicepresidency)).length ===0){
@@ -296,7 +296,7 @@ export class FormSolpedMPComponent implements OnInit {
         
       },
       error: (error) => {
-        ////console.log(error);
+        //////console.log(error);
       }
     });
   }
@@ -310,11 +310,11 @@ export class FormSolpedMPComponent implements OnInit {
          for (let item in dependenciasUser){
           this.dependenciasUsuario.push(dependenciasUser[item]);
         }
-        ////console.log('dependencias usuario',this.dependenciasUsuario);
+        //////console.log('dependencias usuario',this.dependenciasUsuario);
 
         setTimeout(()=>{
           let dependenciesTMP = this.dependenciasUsuario.filter((data => (data.dependence === 'VPCADSU2' && data.vicepresidency === 'VPCADSUM')));
-          ////console.log(dependenciesTMP);
+          //////console.log(dependenciesTMP);
           
           //Llena locaciones
           for(let dependencia of dependenciesTMP){
@@ -327,7 +327,7 @@ export class FormSolpedMPComponent implements OnInit {
             this.localidades = [{codusersap:this.infoUsuario.codusersap, dependence:'VPCADSU2',location:'SANTAMAR',vicepresidency:'VPCADSUM', id:0},
                                 {codusersap:this.infoUsuario.codusersap, dependence:'VPCADSU2',location:'BVENTURA',vicepresidency:'VPCADSUM', id:1},                     
                                ]
-            ////console.log(this.localidades);
+            //////console.log(this.localidades);
           }
 
           //Cargar series de la solped
@@ -339,7 +339,7 @@ export class FormSolpedMPComponent implements OnInit {
         
   //    },
   //    error: (error) => {
-        ////console.log(error);
+        //////console.log(error);
   //    }
   //  });
   }
@@ -352,7 +352,7 @@ export class FormSolpedMPComponent implements OnInit {
     //this.sapService.seriesDocSAPMysql(this.authService.getToken(),'1470000113')
     //    .subscribe({
     //        next: (series)=>{
-                //console.log(series);
+                ////console.log(series);
                 for(let item in series){
                   if(series[item].name=='SPMP'){
                     this.series.push(series[item]);
@@ -363,13 +363,13 @@ export class FormSolpedMPComponent implements OnInit {
                 this.serie = this.series[0].code;
                 this.serieName =this.series[0].name;
                 this.clase ='I';
-                ////console.log(this.series);
+                //////console.log(this.series);
 
                  //Cargar areas asociadas al usuario para la solped
                 //this.getAreas();
     //        },
     //        error: (err)=>{
-              //console.log(err);
+              ////console.log(err);
     //        }
     //    });
 
@@ -384,7 +384,7 @@ export class FormSolpedMPComponent implements OnInit {
          for(let item in areas){
              this.areas.push(areas[item]);
          }
-         //console.log('Areas usuario:',this.areas);
+         ////console.log('Areas usuario:',this.areas);
          if(this.areas.length == 0){
             this.areas.push({codusersap: this.infoUsuario.username, area: 'VPCADSU2'});
          }
@@ -395,7 +395,7 @@ export class FormSolpedMPComponent implements OnInit {
          
     //   },
     //   error: (error) => {
-         ////console.log(error);
+         //////console.log(error);
     //   }
     // });
   }
@@ -419,7 +419,7 @@ export class FormSolpedMPComponent implements OnInit {
            //this.getItems();
     //      },
     //      error: (error) => {
-              ////console.log(error);      
+              //////console.log(error);      
     //      }
     //    });
   }
@@ -437,7 +437,7 @@ export class FormSolpedMPComponent implements OnInit {
             //this.getAlmacenesMPSL();
     //      },
     //      error: (error) => {
-              ////console.log(error);      
+              //////console.log(error);      
     //      }
     //    });
   }
@@ -446,14 +446,14 @@ export class FormSolpedMPComponent implements OnInit {
     //this.authService.getAlmacenesUsuarioXE()
     //.subscribe({
     //  next: (stores) => {
-        //console.log(stores);
+        ////console.log(stores);
         for(let item in stores){
           this.almacenes.push(stores[item]);
         }
-       //////console.log(this.stores);
+       ////////console.log(this.stores);
     //  },
     //  error: (error) => {
-          ////console.log(error);      
+          //////console.log(error);      
     //  }
     //});
   }
@@ -463,17 +463,17 @@ export class FormSolpedMPComponent implements OnInit {
     //this.sapService.getAlmacenesMysql(this.authService.getToken())
     //    .subscribe({
     //        next: (almacenes) => {
-              console.log(almacenes);
+              //console.log(almacenes);
               for(let item in almacenes){
                 this.almacenes.push({store:almacenes[item].WarehouseCode, 
                                      storename: almacenes[item].WarehouseName, 
                                      zonacode:almacenes[item].State});
               }
              //this.getCuentas();
-             ////console.log(this.almacenes)
+             //////console.log(this.almacenes)
     //        },
     //        error: (err) => {
-                //console.log(err);
+                ////console.log(err);
     //        }
 
     //    });
@@ -493,7 +493,7 @@ export class FormSolpedMPComponent implements OnInit {
           //this.getMonedasMysql();
     //      },
     //      error: (error) => {
-              ////console.log(error);      
+              //////console.log(error);      
     //      }
     //    });
   }
@@ -512,7 +512,7 @@ export class FormSolpedMPComponent implements OnInit {
           //this.getImpuestos();
          },
          error: (error) => {
-             ////console.log(error);      
+             //////console.log(error);      
          }
        });
   }
@@ -521,7 +521,7 @@ export class FormSolpedMPComponent implements OnInit {
     //this.sapService.monedasMysql(this.authService.getToken())
     //   .subscribe({
     //     next: (monedas) => {
-    //        console.log('Monedas Mysql',monedas);
+    //        //console.log('Monedas Mysql',monedas);
            //this.monedas = [{Currency:  'COP',TRM:1}];
            for(let item in monedas){
               this.monedas.push({
@@ -533,7 +533,7 @@ export class FormSolpedMPComponent implements OnInit {
           // this.setearTRMSolped('USD');
     //     },
     //     error: (error) => {
-             ////console.log(error);      
+             //////console.log(error);      
     //     }
     //   });
   }
@@ -550,9 +550,9 @@ export class FormSolpedMPComponent implements OnInit {
             for(let item in taxes){
               this.impuestos.push(taxes[item]);  
             }
-            //////console.log(this.taxes);
+            ////////console.log(this.taxes);
              //this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
-              ////console.log(this.impuesto);
+              //////console.log(this.impuesto);
       
             this.SeleccionarImpuesto();
 
@@ -560,7 +560,7 @@ export class FormSolpedMPComponent implements OnInit {
             this.resetearFormularioLinea();
     //      },
     //      error: (error) => {
-              ////console.log(error);      
+              //////console.log(error);      
     //      }
     //    });
   }
@@ -569,26 +569,28 @@ export class FormSolpedMPComponent implements OnInit {
 
     if(this.solpedEditar){
 
+      //console.log(this.pathSolped);
+
       if(this.pathSolped=='editar-solped'){
           //Cargar datos de la solped por el id
-      
+          
       }
 
       if(this.pathSolped=='editar-proyeccion'){
           
       }
 
-      ////console.log('Informacion solped',this.solpedEditar);
+      //////console.log('Informacion solped',this.solpedEditar);
       
       this.comprasService.solpedById(this.authService.getToken(),this.solpedEditar)
         .subscribe({
               next:  (solped)=>{
-                console.log(solped);
+                //console.log(solped);
                 this.infoSolpedEditar = solped;
                 this.lineasSolped = this.infoSolpedEditar.solpedDet;
-                
+                //console.log(this.lineasSolped);
         
-                ////console.log(this.infoSolpedEditar.solped.serie, this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie));
+                //////console.log(this.infoSolpedEditar.solped.serie, this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie));
                 this.serie = this.series.filter(item=>item.code==this.infoSolpedEditar.solped.serie)[0].code;
                 
                 this.codigoSap = this.infoSolpedEditar.solped.sapdocnum || '0';
@@ -599,22 +601,22 @@ export class FormSolpedMPComponent implements OnInit {
                 this.fechaCaducidad = new Date( this.infoSolpedEditar.solped.docduedate.toString().replace('T00','T05'));
                 this.fechaDocumento = new Date(this.infoSolpedEditar.solped.taxdate.toString().replace('T00','T05'));
                 this.fechaNecesidad = new Date(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
-                ////console.log(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
+                //////console.log(this.infoSolpedEditar.solped.reqdate.toString().replace('T00','T05'));
                 this.comentarios = this.infoSolpedEditar.solped.comments || '';
                 this.trm = this.infoSolpedEditar.solped.trm;
                 this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';
                 this.iteradorLinea = (this.lineasSolped[this.lineasSolped.length-1].linenum)+1;
                 this.solpedAprobada = this.infoSolpedEditar.solped.approved || 'N';
-                ////console.log( this.areas,this.infoSolpedEditar.solped.u_nf_depen_solped);
+                //////console.log( this.areas,this.infoSolpedEditar.solped.u_nf_depen_solped);
                 
                 if(this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped ).length>0){
                   this.area = this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped )[0].area;
                 }
                 
-                //////console.log(this.iteradorLinea);
+                ////////console.log(this.iteradorLinea);
 
                 this.u_nf_status = this.estados.filter(item => item.name === this.infoSolpedEditar.solped.u_nf_status)[0].name;
-                ////console.log(this.u_nf_status);
+                //////console.log(this.u_nf_status);
 
                 this.nf_agente =this.infoSolpedEditar.solped.nf_agente ||'';
                 this.nf_lastshippping = new Date(this.infoSolpedEditar.solped.nf_lastshippping || Date.now()) ;
@@ -630,12 +632,12 @@ export class FormSolpedMPComponent implements OnInit {
                 
               }, 
               error: (error)  => {
-                  //console.log(error);
+                  ////console.log(error);
               }
         });
 
     }else{
-          ////console.log('Nueva solped');
+          //////console.log('Nueva solped');
           this.displayModal = false;
           this.loadingCargue = false;
     }
@@ -649,18 +651,18 @@ export class FormSolpedMPComponent implements OnInit {
   /**** Selecteds objects */
 
   SeleccionarArea(){
-    ////console.log(this.area);
+    //////console.log(this.area);
   }
 
   SeleccionarClase(){
-    ////console.log(this.clase);
+    //////console.log(this.clase);
   }
 
   SeleccionarSerie(){
-    ////console.log(this.serie,this.series);
+    //////console.log(this.serie,this.series);
 
     this.serieName = this.series.filter(item => item.code===this.serie)[0].name;
-    ////console.log(this.serieName);
+    //////console.log(this.serieName);
     if(this.serieName=='SPB'){
       this.clase ='I';
     }else{
@@ -671,22 +673,22 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarFechaContable(){
-    //////console.log(this.fechaContable);
+    ////////console.log(this.fechaContable);
     //this.getMonedas(this.fechaContable);
   }
 
   SeleccionarProveedor(){
-    ////console.log("Valor proveedor",this.proveedor);
+    //////console.log("Valor proveedor",this.proveedor);
   }
 
   SeleccionarItemCode(){
-    console.log(this.item);
+    //console.log(this.item);
     this.descripcion = this.item.ItemName;
     this.unidad = this.item.BuyUnitMsr;
     //this.getUnidadItemSL();
     if(this.item.ApTaxCode){
       this.impuesto = this.impuestos.filter(item => item.Code === this.item.ApTaxCode)[0];
-      ////console.log(this.impuesto);
+      //////console.log(this.impuesto);
     }else{
       this.impuesto = this.impuestos.filter(item => item.Code === 'ID08')[0];
     }
@@ -701,16 +703,16 @@ export class FormSolpedMPComponent implements OnInit {
           next: (unidad)=>{
              
               this.unidad = unidad.value[0].PurchaseUnit;
-              //console.log(this.unidad);
+              ////console.log(this.unidad);
           },
           error: (err)=>{
-            //console.log(err);
+            ////console.log(err);
           }
         });
   }
 
   SeleccionarVicepresidencia(){
-    ////console.log(this.viceprecidencia);
+    //////console.log(this.viceprecidencia);
 
    /* if(this.viceprecidencia){
       
@@ -731,7 +733,7 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarDependencia(){
-    ////console.log(this.dependencia);
+    //////console.log(this.dependencia);
     /*if(this.dependencia){
       
       let dependenciesTMP = this.dependenciasUsuario.filter((data => (data.dependence === this.dependencia.dependence && data.vicepresidency === this.dependencia.vicepresidency)));
@@ -755,33 +757,33 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarLocalidad(){
-    ////console.log(this.localidad);
+    //////console.log(this.localidad);
     
   }
 
   SeleccionarAlmacen(){
     //console.log(this.almacen);
     this.zonacode = this.almacen.zonacode;
-    //console.log(this.zonacode);
+    ////console.log(this.zonacode);
   }
 
   SeleccionarCuenta(){
-    ////console.log(this.cuenta);
+    //////console.log(this.cuenta);
     this.nombreCuenta = this.cuenta.Name;
   }
 
   SeleccionarMoneda(){
-    ////console.log(this.monedas);
+    //////console.log(this.monedas);
     
     this.currency = this.monedas.filter(item => item.Currency === this.moneda)[0].Currency;
     this.trm = this.monedas.filter(item => item.Currency === this.moneda)[0].TRM;
-    console.log( "seleccion moneda",this.trm, this.currency);
+    //console.log( "seleccion moneda",this.trm, this.currency);
     
     this.calcularSubtotalLinea();
   }
 
   SeleccionarImpuesto(){
-    ////console.log(this.impuesto);
+    //////console.log(this.impuesto);
     
     if(!this.impuesto){
       this.prcImpuesto = 0;
@@ -793,7 +795,7 @@ export class FormSolpedMPComponent implements OnInit {
   }
 
   SeleccionarLinea(){
-    ////console.log(this.lineaSeleccionada);
+    //////console.log(this.lineaSeleccionada);
   }
 
   /************* */
@@ -808,7 +810,7 @@ filtrarProveedores(event:any){
       proveedores = this.proveedores[i];
          if((proveedores.CardCode.toLowerCase().indexOf(query.toLowerCase())>=0) ||
             (proveedores.CardName.toLowerCase().indexOf(query.toLowerCase())>=0)){
-            //////console.log(businessPartner);
+            ////////console.log(businessPartner);
             filtered.push(proveedores);
          }
     }
@@ -820,7 +822,7 @@ filtrarItems(event:any){
      let query = event.query;
      for(let i = 0; i < this.items.length; i++) {
          let items = this.items[i];
-          ////console.log(items);
+          //////console.log(items);
 
           if(items.ItemCode!=null && items.ItemName!=null){
             if((items.ItemCode.toLowerCase().indexOf(query.toLowerCase())>=0) ||
@@ -841,7 +843,7 @@ cuentasxDependencia(){
   /*this.sapService.cuentasPorDependenciaXE(this.authService.getToken(),this.dependencia.dependence)
       .subscribe({
           next: (cuentas) => {
-            ////console.log(cuentas);
+            //////console.log(cuentas);
             let arrayCuentasDep = [];
             for(let item in cuentas){
               arrayCuentasDep.push(cuentas[item].U_NF_CUENTA);
@@ -853,16 +855,16 @@ cuentasxDependencia(){
               cuenta = this.cuentas[i]; 
               for(let item of arrayCuentasDep){
                 if((cuenta.Code.indexOf(item)==0)){
-                //////console.log(businessPartner);
+                ////////console.log(businessPartner);
                 filtered.push(cuenta);
                 }
               }
             }
-            ////console.log(filtered);
+            //////console.log(filtered);
             this.cuentasDependencia = filtered;
           },
           error: (err) => {
-            ////console.log(err);
+            //////console.log(err);
           }
       });*/
 }
@@ -870,7 +872,7 @@ cuentasxDependencia(){
 filtrarCuentas(event:any){
   let filtered : any[] = [];
   let query = event.query;
-   ////console.log(this.cuentasDependencia);
+   //////console.log(this.cuentasDependencia);
 
   for(let i = 0; i < this.cuentasDependencia.length; i++) {
     let cuentaDependencia = this.cuentasDependencia[i];
@@ -878,7 +880,7 @@ filtrarCuentas(event:any){
       
       if((cuentaDependencia.Code.toLowerCase().indexOf(query.toLowerCase())>=0) ||
         (cuentaDependencia.Name.toLowerCase().indexOf(query.toLowerCase())>=0)){
-        ////console.log(cuentaDependencia);
+        //////console.log(cuentaDependencia);
         filtered.push(cuentaDependencia);
      }
     }
@@ -889,9 +891,9 @@ filtrarCuentas(event:any){
 }
 
 calcularSubtotalLinea(){
-  ////console.log(this.cantidad,this.precio,this.monedas, this.trm);
+  //////console.log(this.cantidad,this.precio,this.monedas, this.trm);
   let tasaMoneda = this.monedas.filter(item=>item.Currency === this.moneda)[0].TRM;
-  ////console.log(tasaMoneda);
+  //////console.log(tasaMoneda);
   if(!this.cantidad || !this.precio){
     this.subtotalLinea =0;
   }else{
@@ -902,7 +904,7 @@ calcularSubtotalLinea(){
 }
 
 resetearFormularioLinea(){
-  //////console.log(this.monedas);
+  ////////console.log(this.monedas);
   this.numeroLinea = -1;
   this.fechaRequerida = new Date();
   this.proveedor = {CardCode:"PE821401799",CardName:"NITRON GROUP"};
@@ -933,7 +935,7 @@ setearTRMSolped(currency:string){
   if(this.monedas.filter(moneda => moneda.Currency === currency).length >0){
     this.trm = this.monedas.filter(moneda => moneda.Currency === currency)[0].TRM;
     this.moneda = currency;
-    //console.log(this.moneda);
+    ////console.log(this.moneda);
   }else{
     this.trm = 0;
   }
@@ -944,7 +946,7 @@ calcularImpuesto(){
   if(!this.impuesto.tax || this.subtotalLinea ==0){
     this.valorImpuesto =0;
   }else{
-    /////console.log("Calcula impuesto")
+    ///////console.log("Calcula impuesto")
     this.valorImpuesto =this.subtotalLinea*(this.impuesto.tax/100);
   }
   this.calcularTotalLinea();
@@ -976,7 +978,7 @@ calculatTotales(){
   }
 
   adicionarlineaAnexo(){
-    ////console.log(this.tipoanexo,this.fileTmp);
+    //////console.log(this.tipoanexo,this.fileTmp);
     this.envioLineaanexo = true;
     if(this.tipoanexo && this.tipoanexo!="" &&  this.fileTmp && this.fileTmp!=""){
     
@@ -1001,7 +1003,7 @@ calculatTotales(){
     
     let body:any; 
 
-      ////console.log(anexo.file, anexo.file.name);
+      //////console.log(anexo.file, anexo.file.name);
       body = new FormData();
       body.append('myFile', anexo.file, anexo.file.name);
       body.append('anexotipo',anexo.tipo);
@@ -1011,14 +1013,14 @@ calculatTotales(){
         .subscribe({
            next:(result)=>{
               
-              ////console.log(result);
+              //////console.log(result);
               //this.anexosSolped.push({tipo:anexo.tipo, file: anexo.file,url:'#'});
               this.anexosSolped.push({tipo:anexo.tipo, file:anexo.file, url:result.ruta, idanexo:result.idanexo});
               this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
               
            },
            error:(err)=>{
-              //console.log(err);
+              ////console.log(err);
               this.messageService.add({severity:'error', summary: '!Error¡', detail: err});
            }
         });
@@ -1035,7 +1037,7 @@ calculatTotales(){
         //Recorrer el arreglo de tipos de anexo
         for(let tipo of this.tiposanexo){
           //validar tipo.name en el array de anexos
-          ////console.log(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name));
+          //////console.log(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name));
           if(tipo.name!='Otro'){
             if(this.anexosSolped.filter(anexo => anexo.tipo == tipo.name).length==0){
               tiposAnexosTMP.push({name:tipo.name});
@@ -1064,22 +1066,22 @@ calculatTotales(){
         lineasAnexoMP.push(linea);
       }
     }
-    ////console.log(this.anexosSolped,lineasAnexoMP);
+    //////console.log(this.anexosSolped,lineasAnexoMP);
     this.anexosSolped = lineasAnexoMP;
 
     if(this.solpedEditar){
       
       for(let anexo of this.lineaAnexoSeleccionada){
-        ////console.log();
+        //////console.log();
         let fileInfo = {ruta: anexo.url, name: anexo.file.name, tipo:anexo.tipo, idsolped:this.infoSolpedEditar.solped.id, idanexo:anexo.idanexo}
         this.comprasService.borrarAnexo(this.authService.getToken(),fileInfo)
             .subscribe({
                 next:(result)=>{
-                    ////console.log(result);
+                    //////console.log(result);
                     this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                 },
                 error:(err)=>{
-                  //console.log(err);
+                  ////console.log(err);
                   this.messageService.add({severity:'error', summary: '!Error', detail: err});
                 }
                 
@@ -1096,7 +1098,7 @@ calculatTotales(){
     
     let body:any; 
     for(let anexo of this.anexosSolped){
-      ////console.log=(anexo.file, anexo.file.name);
+      //////console.log=(anexo.file, anexo.file.name);
       body = new FormData();
       body.append('myFile', anexo.file, anexo.file.name);
       body.append('anexotipo',anexo.tipo);
@@ -1104,11 +1106,11 @@ calculatTotales(){
       this.comprasService.uploadAnexo(this.authService.getToken(),body)
         .subscribe({
            next:(result)=>{
-            ////console.log('upload service');
-              ////console.log(result)
+            //////console.log('upload service');
+              //////console.log(result)
            },
            error:(err)=>{
-              //console.log(err);
+              ////console.log(err);
            }
         });
       
@@ -1120,7 +1122,7 @@ calculatTotales(){
   onLoad($event:any){
 
     const [ file ] = $event.currentFiles;
-    ////console.log(file);
+    //////console.log(file);
     this.fileTmp = {
       fileRaw:file,
       fileName:file.name
@@ -1130,9 +1132,9 @@ calculatTotales(){
   }
 
   consultarAnexo(url:string){
-      ////console.log(url);
+      //////console.log(url);
       let urlFile= this.comprasService.downloadAnexo(url);
-      ////console.log(urlFile);
+      //////console.log(urlFile);
       window.open(urlFile,'blank');
 
   }
@@ -1175,7 +1177,7 @@ calculatTotales(){
                   if(this.lineasSolped.length > 0){
                     this.loadingSave = true;
                           //this.submittedBotton = true;
-                        ////console.log(this.solped, this.solpedDetLines);
+                        //////console.log(this.solped, this.solpedDetLines);
                 
                         const data:any = {
                           solped:  {
@@ -1215,7 +1217,7 @@ calculatTotales(){
                           data.solped.id = this.solpedEditar;
                         } 
                 
-                        ////console.log(data);      
+                        //////console.log(data);      
                         this.onNewSolped.emit(data);              
                 
                         this.registroSolped = true;
@@ -1240,7 +1242,7 @@ calculatTotales(){
 
   RegistrarLinea(){
     this.envioLinea = true;
-    ////console.log(this.numeroLinea, this.iteradorLinea);
+    //////console.log(this.numeroLinea, this.iteradorLinea);
     if(this.descripcion && 
       this.fechaRequerida && 
       //this.viceprecidencia.vicepresidency && 
@@ -1255,7 +1257,7 @@ calculatTotales(){
         let indexLineaDuplicada = this.LineaDuplicada();
         
         /*if(indexLineaDuplicada>=0 && this.lineasSolped[indexLineaDuplicada].linenum!==this.numeroLinea){
-          ////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
+          //////console.log(indexLineaDuplicada,this.lineasSolped[indexLineaDuplicada].linenum,this.numeroLinea);
           this.messageService.add({severity:'warn', 
                                    summary: '!Atención', 
                                    detail: `Los siguientes datos item: ${this.item.ItemCode}, 
@@ -1269,7 +1271,7 @@ calculatTotales(){
             
             this.asignarCamposLinea(this.lineaSeleccionada[0].linenum);
             this.lineasSolped.splice(this.lineasSolped.indexOf(this.lineaSeleccionada[0]),1,this.lineaSolped);
-            ////console.log(this.lineasSolped);
+            //////console.log(this.lineasSolped);
             this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente la actualización de la línea'});
             this.editarLinea = false;
           }else{
@@ -1280,7 +1282,7 @@ calculatTotales(){
             this.asignarCamposLinea(this.numeroLinea);
             this.lineasSolped.push(this.lineaSolped);
             this.iteradorLinea++;
-            ////console.log(this.lineasSolped);
+            //////console.log(this.lineasSolped);
             this.messageService.add({severity:'success', summary: '!OK¡', detail: 'Se realizo correctamente el registro de la línea'});
           }
           //realizar el proceso de registro de linea
@@ -1322,6 +1324,8 @@ calculatTotales(){
             unidad:this.unidad,
             zonacode:this.zonacode
             }
+
+           
             
   }
 
@@ -1332,12 +1336,12 @@ calculatTotales(){
                                                     //line.ocrcode2 === this.dependencia.dependence &&
                                                     //line.ocrcode3 === this.viceprecidencia.vicepresidency
                                                     );
-    ////console.log(this.lineasSolped.indexOf(sameLine[0]));
+    //////console.log(this.lineasSolped.indexOf(sameLine[0]));
     return this.lineasSolped.indexOf(sameLine[0]); 
   }
 
   EditarLinea(){
-    ////console.log(this.lineaSeleccionada[0]);
+    //console.log(this.lineaSeleccionada[0]);
     this.lineaSolped = this.lineaSeleccionada[0];
     
     this.editarLinea = true;
@@ -1350,7 +1354,10 @@ calculatTotales(){
     this.descripcion = this.lineaSolped.dscription;
 
     if(this.lineaSolped.linevendor){
+      
       this.proveedor = this.proveedores.filter(item =>item.CardCode === this.lineaSolped.linevendor)[0];
+
+      //console.log( this.lineaSolped.linevendor,this.proveedor,this.proveedores);
     }
     if(this.lineaSolped.acctcode){
       this.cuenta = this.cuentas.filter(item =>item.Code === this.lineaSolped.acctcode)[0];
@@ -1377,7 +1384,7 @@ calculatTotales(){
       if(this.almacenes.filter(item => item.store === this.lineaSolped.whscode).length>0){
         this.almacen = this.almacenes.filter(item => item.store === this.lineaSolped.whscode)[0];
         this.zonacode = this.almacen.zonacode;
-        console.log(this.zonacode);
+        //console.log(this.zonacode);
       }else{
         this.almacen ="";
       }
@@ -1397,7 +1404,7 @@ calculatTotales(){
     
     this.cantidad = this.lineaSolped.quantity || 1;
 
-    //console.log(this.monedas,this.lineaSolped.moneda);
+    ////console.log(this.monedas,this.lineaSolped.moneda);
     if(this.monedas.filter(item =>item.Currency === this.lineaSolped.moneda).length>0){
       this.moneda = this.monedas.filter(item =>item.Currency === this.lineaSolped.moneda)[0].Currency;
     }else{
@@ -1424,9 +1431,9 @@ calculatTotales(){
       for(let lineaSelect of this.lineaSeleccionada){
           if(linea === lineaSelect){
             existe = true;
-            ////console.log(linea,lineaSelect);
-            //////console.log(lineSelected);
-            //////console.log( this.solpedDetLines.indexOf(line));
+            //////console.log(linea,lineaSelect);
+            ////////console.log(lineSelected);
+            ////////console.log( this.solpedDetLines.indexOf(line));
             //this.lineasSolped.splice(this.lineasSolped.indexOf(linea),1);
             //this.lineaSeleccionada.splice(this.lineaSeleccionada.indexOf(linea),1);
           }
@@ -1435,7 +1442,7 @@ calculatTotales(){
         lineasSolpedTMP.push(linea);
       }
     }
-    ////console.log(this.lineasSolped,lineasSolpedTMP);
+    //////console.log(this.lineasSolped,lineasSolpedTMP);
     this.lineasSolped = lineasSolpedTMP;
   }
 

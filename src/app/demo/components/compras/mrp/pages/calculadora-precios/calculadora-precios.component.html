@@ -6,14 +6,14 @@
 		<div class="card">
 			
 			<p-table #dt1 
-					 [value]="listaPrecios" 
+					 [value]="infoCalculada" 
 					 dataKey="id" 
 					 [rows]="10" 
 					 [loading]="loading" 
 					 [rowHover]="true" 
 					 styleClass="p-datatable-gridlines p-datatable-sm" 
 					 [paginator]="true" 
-					 [globalFilterFields]="['id','ItemCode','ItemName','zona','semanaMes']" 
+					 [globalFilterFields]="['id','ItemCode','ItemName','semanaMes','semanaAnio','precioRef']" 
 					 selectionMode="multiple" 
 					 [(selection)]="selectedLine" 
 					 responsiveLayout="scroll">
@@ -33,7 +33,7 @@
 									class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
 									icon="pi pi-plus"
 									[disabled]="!permisosUsuarioPagina[0].create_accion"
-									(click)="nuevoPrecioItem()">
+									(click)="nuevoCalculoPrecioItem()">
 							</button>
 							<!--<button pButton 
 									*ngIf="permisosUsuarioPagina[0].create_accion"
@@ -45,20 +45,20 @@
 							</button>-->
 							<button pButton 
 									*ngIf="permisosUsuarioPagina[0].update_accion"
-									[pTooltip]="permisosUsuarioPagina[0].update_accion?'Editar':'Consultar'" tooltipPosition="bottom" placeholder="Bottom"   
+									[pTooltip]="'Consultar'" tooltipPosition="bottom" placeholder="Bottom"   
 									class="p-button-outlined mb-2 mr-2 p-button-info p-button-sm" 
-									[icon]="permisosUsuarioPagina[0].update_accion?'pi pi-pencil':'pi pi-search'" 
-									(click)="editarPrecioItem()" 
-									[disabled]="!permisosUsuarioPagina[0].read_accion || (!selectedLine || selectedLine.length!=1)">
+									[icon]="'pi pi-search'" 
+									(click)="editarPrecioItem(selectedLine)" 
+									[disabled]="!permisosUsuarioPagina[0].update_accion || (!selectedLine || selectedLine.length!=1)">
 							</button>
 							
 							<button pButton 
-									*ngIf="permisosUsuarioPagina[0].update_accion" 
+									*ngIf="permisosUsuarioPagina[0].delete_accion" 
 									pTooltip="Cancelar" tooltipPosition="bottom" placeholder="Bottom"   
 									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
 									icon="pi pi-trash" 
 									(click)="anularPrecioItem()" 
-									[disabled]="!permisosUsuarioPagina[0].update_accion || !selectedLine || selectedLine.length!=1">
+									[disabled]="!permisosUsuarioPagina[0].delete_accion || !selectedLine || selectedLine.length!=1">
 							</button>
 							
 
@@ -109,8 +109,8 @@
 
                         <th>
 							<div class="flex justify-content-between align-items-center">
-								Fecha mes
-								<p-columnFilter type="date" field="fechaMes" display="menu"></p-columnFilter>
+								Fecha
+								<p-columnFilter type="date" field="fecha" display="menu"></p-columnFilter>
 							</div>
 						</th>
 
@@ -121,8 +121,76 @@
 							</div>
 						</th>
 						
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Semana año
+								<p-columnFilter type="text" field="semanaAnio" display="menu" placeholder="Buscar por semana del año"></p-columnFilter>
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Precio mercado
+								
+							</div>
+						</th>
 						
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Precio referencia
+								<p-columnFilter type="text" field="precioRef" display="menu" placeholder="Buscar por precio referencia"></p-columnFilter>
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Precio base
+								
+							</div>
+						</th>
 						
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Bruto S0
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Neto S0
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Bruto S1
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Neto S1
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Bruto S2
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Neto S2
+								
+							</div>
+						</th>
+                        
                         
                         
 						
@@ -134,7 +202,7 @@
 						<td>
                             <p-tableCheckbox [value]="item"></p-tableCheckbox>
                         </td>
-						<td style="min-width: 6rem;">
+						<td style="min-width: 4rem;">
 							{{ item.id }}
 						</td>
 						<td style="min-width: 6rem;">
@@ -145,16 +213,51 @@
 							{{ item.ItemName  }}
 						</td>
 
-                        <td style="min-width: 12rem;">
-							{{ item.fechaMes | date }}
+                        <td style="min-width: 6rem;">
+							{{ item.fecha | date }}
 						</td>
-						<td style="min-width: 12rem;">
+						<td style="min-width: 6rem;">
 							{{ item.semanaMes }}
-						</td>	
-                        
-                     
+						</td>
+						
+						<td style="min-width: 6rem;">
+							{{ item.semanaAnio }}
+						</td>
+
 						<td>
-							{{ item.precio | number }}
+							{{ item.promMercado  }}
+						</td>
+
+						<td>
+							{{ item.precioRef  }}
+						</td>
+
+						<td>
+							{{ item.precioBase  }}
+						</td>
+
+						<td>
+							{{ item.brutoS0  | percent }}
+						</td>
+
+						<td>
+							{{ item.netoS0 | percent  }}
+						</td>
+
+						<td>
+							{{ item.brutoS1 | percent  }}
+						</td>
+
+						<td>
+							{{ item.netoS1 | percent  }}
+						</td>
+
+						<td>
+							{{ item.brutoS2 | percent  }}
+						</td>
+
+						<td>
+							{{ item.netoS2 | percent }}
 						</td>
 						
 					</tr>

@@ -38,6 +38,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   infoUsuario!:InfoUsuario;
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   
   //loading:boolean = true;
@@ -57,7 +58,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   cantidadkl!:any;
   comentarios:any;
   nf_tipocarga:string="";
-  agentes:any[] = [{tipo:'Multiport'},{tipo:'Pharo'},{tipo:'Deep Blue'},{tipo:'SCS'},{tipo:'TRANSMARES'}];
+  agentes:any[] = [{tipo:'Multiport'},{tipo:'Pharo'},{tipo:'Deep Blue'},{tipo:'SCS'},{tipo:'TRANSMARES'},{tipo:'BMA'},{tipo:'MSL'}];
   nf_agente:string="";
   nf_motonave:string="";
   nf_puertosalida:string ="";
@@ -96,30 +97,35 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService: SAPService) { }
 
   ngOnInit(): void {
 
     this.infoUsuario = this.authService.getInfoUsuario();
-    //console.log(this.infoUsuario);
+    ////console.log(this.infoUsuario);
      
-     //console.log(this.authService.getPerfilesUsuario());
+     ////console.log(this.authService.getPerfilesUsuario());
      this.perfilesUsuario = this.authService.getPerfilesUsuario();
 
-     //console.log(this.router.url);
-     //console.log(this.authService.getPermisosUsuario());
+     ////console.log(this.router.url);
+     ////console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
-     //console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     ////console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
 
-     //console.log(this.solpedList);
+     this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+
+     ////console.log(this.solpedList);
     //this.getSolpedList();
     
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log(changes['solpedList'].currentValue);
+    ////console.log(changes['solpedList'].currentValue);
     if(changes['documentList'].currentValue.length>0){
       this.getSolpedList();
     }else{
@@ -134,7 +140,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     this.loading = false;
     
     //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
-    //console.log(this.solpedList);
+    ////console.log(this.solpedList);
   }
  
 
@@ -144,7 +150,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   }
 
   editSolped(){
-    console.log(this.selectedItem); 
+    //console.log(this.selectedItem); 
     /*this.formulario = true;
     this.asignarCampos();*/
 
@@ -175,13 +181,13 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   }
 
   asignarCampos(){ 
-    console.log(this.selectedItem[0]);
+    //console.log(this.selectedItem[0]);
     let hora = 60 * 60000;
     this.tituloFormEditPedido = 'Editar pedido '+this.selectedItem[0].DocNum;
     
     //this.u_nf_status = this.estados.filter(estado=>estado.name.toLowerCase() === this.selectedItem[0].U_NF_STATUS.toLowerCase())[0].name;
     this.u_nf_status=this.selectedItem[0].U_NF_STATUS=='Solicitado'?'Por cargar':this.selectedItem[0].U_NF_STATUS;
-    console.log(this.u_nf_status);
+    //console.log(this.u_nf_status);
     this.u_nf_lastshippping = new Date (new Date(this.selectedItem[0].U_NF_LASTSHIPPPING).getTime()+(hora*5));
     this.u_nf_dateofshipping = new Date(new Date(this.selectedItem[0].U_NF_DATEOFSHIPPING).getTime()+(hora*5));
     this.RequriedDate = new Date(new Date(this.selectedItem[0].RequriedDate).getTime()+(hora*5));
@@ -228,12 +234,12 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
         }
         
       }
-      console.log(infoPedidoUpdate);
+      //console.log(infoPedidoUpdate);
   
       this.comprasService.actualizarPedidoSAP(this.authService.getToken(),infoPedidoUpdate)
           .subscribe({
               next: (result)=>{
-                console.log(result);
+                //console.log(result);
                 this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
                 this.onChangeTabla.emit(this.nombreLista);
                 this.selectedItem=[];
@@ -242,7 +248,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
                 this.formulario = false;
               },
               error: (err)=>{
-                console.log(err);
+                //console.log(err);
                 this.messageService.add({severity:'error', summary: '!Error', detail: err});
               }
           });
@@ -253,7 +259,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
   }
 
   envairSAP(){
-      //console.log('Envio a SAP',this.selectedSolped);
+      ////console.log('Envio a SAP',this.selectedSolped);
       this.loading = true;
       //this.onChangeLoading.emit({lista:this.nombreLista,estado:true});
       if(this.selectedItem[0].approved=='N'){
@@ -272,7 +278,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
                     //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
                 },
                 error:(err)=>{
-                  console.log(err);
+                  //console.log(err);
                   this.loading = false;
                   //this.onChangeLoading.emit({lista:this.nombreLista,estado:false});
                 }
@@ -293,11 +299,11 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     this.loading = true;
 
     let solpedsId:any[] = this.selectedItem.map(solped =>{ return solped.id})
-    console.log('Envio a SAP',solpedsId);
+    //console.log('Envio a SAP',solpedsId);
     this.comprasService.enviarSolpedSAP(this.authService.getToken(),{solpedsId})
         .subscribe({
               next: (result)=>{
-                console.log(result);
+                //console.log(result);
                 let severity = "success";
                 if(result.arrayErrors.length > 0){
                   severity = "error";
@@ -335,7 +341,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
       this.errorSolpedEnviada = false;
       this.arrayErrorSolpedEnviada = []; 
   
-      console.log(this.selectedItem);
+      //console.log(this.selectedItem);
   
       for(let item of this.selectedItem){
   
@@ -384,7 +390,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
   onRejectCancel(){
     this.messageService.clear('cdel');
-    //console.log(this.arrayIdSolped);
+    ////console.log(this.arrayIdSolped);
   }
   
   onConfirmCancel(){
@@ -410,7 +416,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
             }
           },
           error:(err)=>{
-            console.log(err);
+            //console.log(err);
             this.loading = false
             this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
           }

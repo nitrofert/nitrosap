@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { Table } from 'primeng/table';
+import { AuthService } from 'src/app/demo/service/auth.service';
 
 @Component({
   selector: 'app-dynamic-table',
@@ -36,7 +37,7 @@ export class DynamicTableComponent implements OnInit{
 
   objectKeys = Object.keys;
   
-  constructor(){}
+  constructor(public authService: AuthService){}
 
   ngOnInit(): void {
    

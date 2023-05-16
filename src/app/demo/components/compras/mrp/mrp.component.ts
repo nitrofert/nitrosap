@@ -168,6 +168,7 @@ export class MrpComponent implements OnInit {
   simulacionSinProyeciones:any=[];
   simulacionConProyeciones:any=[];
   simulacionSinTransitoMP:any=[];
+  simulacionesSinSolped:any= [];
 
   loadingGrabarSimulacion:boolean = false;
   
@@ -176,7 +177,7 @@ export class MrpComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService:SAPService) { }
 
 
@@ -596,7 +597,7 @@ export class MrpComponent implements OnInit {
     this. comprasService.getPresupuestosVenta(this.authService.getToken(), data)
         .subscribe({
             next: (result) =>{
-                ////console.log('presupuesto',result);
+                console.log('presupuesto',result);
                 this.presupuestoMPVenta = result;
                 this.getMaxMinItemZona();
             },
@@ -763,12 +764,16 @@ export class MrpComponent implements OnInit {
         let lineaid:number =0;
         let infoLinea:any;
         let infoLineaSimulacion:any;
+        let lineasCalculadora:any[] = this.lineasCalculadora;
+        //console.log('lineasCalculadora',lineasCalculadora);
         for(;fechaInicioCalculadora<=fechaFinalCalculadora; fechaInicioCalculadora.setDate(fechaInicioCalculadora.getDate()+1)){
-            
+            //console.log('fechaInicioCalculadora',fechaInicioCalculadora);
             semanaFecha = this.numeroDeSemana(fechaInicioCalculadora);
+            //console.log('semana',semanaFecha);
             fechasemana = fechaInicioCalculadora;
             //fechasemana = this.fechaInicioSemana(fechaInicioCalculadora);
-            if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
+            //if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
+            if(lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){  
              semanaMes = await this.semanaDelMes(new Date(fechaInicioCalculadora));
              //semanaMes =''; 
               inventarioSemanaMPTR = (await this.calcularInventarioSemanaTR(semanaFecha))+inventarioTramsitoMPPreFecha;
@@ -850,14 +855,15 @@ export class MrpComponent implements OnInit {
               inventarioSolicitadoMPPreFecha = 0;
               inventarioTramsitoMPPreFecha = 0;
 
-              this.lineasCalculadora.push(infoLinea);
+              //this.lineasCalculadora.push(infoLinea);
+              lineasCalculadora.push(infoLinea);
               ////console.log(infoLinea);
               lineaid++;
 
             }
         }
         ////console.log(this.lineasCalculadora);
-
+        this.lineasCalculadora=lineasCalculadora;
         this.lienas = lineaid;
         this.busqueda= false;  
         //this.envioForm = true;
@@ -1094,6 +1100,105 @@ async simulacionSinProyeccion(){
   this.simulacionSinProyeciones = lineasRecalculoSimulacionSP;
 }
 
+async simulacionSinSolped(){
+  let lineasRecalculo:any[] = [];
+  let lineasRecalculoSimulacionSS:any[] = [];
+  
+  let lineaid:number =0;
+  let infoLinea:any;
+  let infoLineaSimulacion:any;
+  let fechasemana:Date;
+  let semana:number = 0;
+  let semanaMes:string ='';
+  let inventarioSemanaMP:number = 0;
+  let inventarioSemanaMPTR:number = 0;
+
+  let compraSolicitadaMP:number = 0;
+  let presupuestoVentaMP:number = 0;
+  let presupuestoVentaMPOriginal =0;
+  let compraProyectadaMP:number = 0;
+  let inventarioFinalSemanaMP:number = 0;
+  let inventarioSemanaPT:number = 0;
+  let inventarioSemanaMPZF:number = 0;
+
+  let inventarioTransitoProxima:number=0;
+  let compraSolicitadaProximaSemana:number=0;
+  let compraProyectadaProximaSemana:number=0;
+  let presupuestoProximaSemana:number=0;
+  let inventarioFinalProximaSemana:number=0;
+  let necesidadCompra:string="";
+  let cantidadCompraSugerida:number = 0;
+  let inventarioFinalSemanaSugerido:number = 0;
+
+  ////console.log(this.lineasCalculadora.length);
+ 
+  for (let linea of this.lineasCalculadora){
+
+    ////console.log(linea);
+    fechasemana= new Date(linea.fechasemana);
+    semana = linea.semana;
+    semanaMes = linea.semanaMes;
+    inventarioSemanaMP = lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP>0?inventarioFinalSemanaMP:0;
+    inventarioSemanaPT = linea.inventarioSemanaPT;     
+    inventarioSemanaMPTR = linea.inventarioSemanaMPTR;
+    inventarioSemanaMPZF = linea.inventarioSemanaMPZF;
+    compraSolicitadaMP = 0;
+    compraProyectadaMP = 0;
+    presupuestoVentaMP = linea.presupuestoVentaMP;
+    presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
+    inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)-eval(linea.presupuestoVentaMP);
+    inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
+    ////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
+
+    //proxima semana
+    inventarioTransitoProxima =lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].inventarioSemanaMPTR:0;
+    compraSolicitadaProximaSemana = lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].compraSolicitadaMP:0;
+    compraProyectadaProximaSemana = 0;
+    presupuestoProximaSemana = lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].presupuestoVentaMP:0;
+    inventarioFinalProximaSemana = inventarioFinalSemanaMP+inventarioTransitoProxima+compraSolicitadaProximaSemana+compraProyectadaProximaSemana-presupuestoProximaSemana;
+    necesidadCompra = inventarioFinalProximaSemana<this.minMpZona?'Si':'No';
+    cantidadCompraSugerida = necesidadCompra=='Si'?(eval(this.maxMpZona)-inventarioFinalSemanaMP):0;
+    inventarioFinalSemanaSugerido = inventarioFinalSemanaMP+cantidadCompraSugerida;
+    ////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
+
+    infoLineaSimulacion ={
+      itemcode:this.item.ItemCode,
+      codigozona:this.zona.State,
+      itemname:this.descripcion,
+      zona:this.zonaSeleccionada,
+      fecha:fechasemana,
+      semana,
+      semanames:semanaMes,
+      inventarioMP:inventarioSemanaMP,
+      inventarioMPPT:inventarioSemanaPT,
+      inventarioMPZF:inventarioSemanaMPZF,
+      inventarioTransito:inventarioSemanaMPTR,
+      inventarioSolped:compraSolicitadaMP,
+      inventarioProyecciones:compraProyectadaMP,
+      presupuestoConsumo:presupuestoVentaMP,
+      inventarioFinal:inventarioFinalSemanaMP,
+      necesidadCompra:necesidadCompra,
+      cantidadSugerida:cantidadCompraSugerida,
+      inventarioFinalSugerido:inventarioFinalSemanaSugerido,
+      tipo:'SS',
+      tolerancia:this.tolerancia,
+      bodega:this.zona.State==900?'AD_SANTA':'AD_BVTA'
+
+    }
+
+
+    ////console.log(semana,linea.fechasemana);
+    //lineasRecalculo.push(infoLinea);
+    lineasRecalculoSimulacionSS.push(infoLineaSimulacion);
+    //Calcular inventario inicial siguiente semana
+    //inventarioSemanaMP = inventarioFinalSemanaMP;
+    lineaid++;
+  }
+  ////console.log(lineaid);
+  //this.lineasCalculadora = lineasRecalculo;
+  this.simulacionesSinSolped = lineasRecalculoSimulacionSS;
+}
+
 async simulacionSinTransito(){
   let lineasRecalculo:any[] = [];
   let lineasRecalculoSinTransito:any[] = [];
@@ -1246,7 +1351,8 @@ async simulacionSinTransito(){
     let data ={
       simulacionConProyeciones:this.simulacionConProyeciones,
       simulacionSinProyeciones:this.simulacionSinProyeciones,
-      simulacionSinTransitoMP:this.simulacionSinTransitoMP
+      simulacionSinTransitoMP:this.simulacionSinTransitoMP,
+      simulacionSinSolped:this.simulacionesSinSolped
     }
 
     //console.log(data);
@@ -1515,9 +1621,10 @@ async simulacionSinTransito(){
   
   calcularPresupuestoSemana(semanaFecha:number):number{
     let presupuestoVentaMP:number=0;
+    console.log('semanaFecha', semanaFecha,this.presupuestoMPVenta);
     if(this.presupuestoMPVenta.length >0 && this.presupuestoMPVenta.filter(item => item.semana ==  semanaFecha).length>0 ){
       let filas = this.presupuestoMPVenta.filter(item => item.semana ==  semanaFecha);
-      ////console.log(filas);
+      console.log('Presupuesto semana ',semanaFecha,filas);
       for(let fila of filas){
         presupuestoVentaMP = presupuestoVentaMP+eval(fila.cantidad);
       }

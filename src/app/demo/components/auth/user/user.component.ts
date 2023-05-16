@@ -18,6 +18,7 @@ export class UserComponent implements OnInit {
   infoUsuario!:InfoUsuario;
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
 
   empresasUsuario:any[]=[];
@@ -42,7 +43,7 @@ export class UserComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService) { }
+    public authService: AuthService) { }
 
   ngOnInit(): void {
 
@@ -60,7 +61,11 @@ export class UserComponent implements OnInit {
      //console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
      //console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+     this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
      this.urlBreadCrumb = this.router.url;
 
      this.getEmpresasUsuario();

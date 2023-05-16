@@ -117,7 +117,7 @@ export class EditarSolpedComponent implements OnInit {
   constructor(private rutaActiva: ActivatedRoute,
     private messageService: MessageService,
     private adminService: AdminService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService:SAPService,
     private router:Router,
     private comprasService: ComprasService) { 

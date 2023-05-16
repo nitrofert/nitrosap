@@ -51,6 +51,7 @@ export class FormSolpedComponent implements OnInit {
   infoUsuario!: InfoUsuario;
   perfilesUsuario: PerfilesUsuario[] = [];
   permisosUsuario: PermisosUsuario[] = [];
+  permisosPerfilesPagina!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
 
   dependenciasUsuario:DependenciasUsuario[] = [];
@@ -94,6 +95,22 @@ export class FormSolpedComponent implements OnInit {
   viceprecidencia!:DependenciasUsuario;
   dependencia!:DependenciasUsuario;
   localidad!:DependenciasUsuario;
+
+  allProyects:any[] =[];
+
+  proyectos:any[] = [];
+  proyecto:any = "";
+
+  subproyectos:any[]  = [];
+  subproyecto:any = "";
+
+  etapas:any[] = [];
+  etapa:any = "";
+
+  actividades:any[] = [];
+  actividad:any = "";
+
+
   almacen:any = "";
   cuenta!:CuentasSAP;
   cuentasDependencia!:CuentasSAP[];
@@ -170,7 +187,7 @@ export class FormSolpedComponent implements OnInit {
 
   /*********************************** */
 
-  constructor(private authService: AuthService,
+  constructor(public authService: AuthService,
               private sapService:SAPService,
               private comprasService: ComprasService,
               private router:Router,
@@ -200,6 +217,7 @@ export class FormSolpedComponent implements OnInit {
         //Cargar permisos usuario pagina
         this.getPermisosUsuarioPagina();
 
+        
 
         this.getConfigSolped();
 
@@ -227,6 +245,8 @@ export class FormSolpedComponent implements OnInit {
         //setTimeout(()=>{this.getInformacionSolped();},500);
         
         this.resetearFormularioLinea();
+
+
         
         //console.log(this.authService.getInfoUsuario().companyname.toLowerCase());
 
@@ -261,8 +281,12 @@ export class FormSolpedComponent implements OnInit {
       ////console.log("URL sin parametros: ",url);
     }
     this.urlBreadCrumb = url;
-    this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
+    //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
     ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+
+    this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===url); 
+    //console.log(url,this.permisosPerfilesPagina);
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
   }
 
   getConfigSolped(){
@@ -271,6 +295,8 @@ export class FormSolpedComponent implements OnInit {
     .subscribe({
       next: async (configSolped:any) => {
         console.log(configSolped);
+
+        
 
         await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
         await this.getSeries(configSolped.series);
@@ -282,6 +308,7 @@ export class FormSolpedComponent implements OnInit {
         await this.getMonedasMysql(configSolped.monedas);
         await this.getImpuestos(configSolped.impuestos);
         this.getClases();
+        this.getProyectos();
         this.getInformacionSolped();
 
       },
@@ -387,7 +414,7 @@ export class FormSolpedComponent implements OnInit {
             for(let item in items){
               this.items.push(items[item]);
             }
-           console.log(this.items,items);
+           //console.log(this.items,items);
            //////console.log(this.items);
   //        },
   //        error: (error) => {
@@ -412,6 +439,162 @@ export class FormSolpedComponent implements OnInit {
     //      }
     //    });
   }
+
+  getProyectos(){
+      this.comprasService.getProyectos(this.authService.getToken())
+          .subscribe({
+              next: (proyectos) => {
+                console.log(proyectos);
+                
+                for(let proyecto of proyectos){
+                  
+                  this.allProyects.push(proyecto);
+
+                  if(this.proyectos.filter(itemProyecto =>itemProyecto.IDPROYECTOFINANCIERO===proyecto.IDPROYECTOFINANCIERO).length==0){
+                     
+                      this.proyectos.push(proyecto);
+                  }
+                }
+                this.proyectos.sort((a, b) => {
+                  const nameA = a.PROYECTOFINANCIERO.toUpperCase(); // ignore upper and lowercase
+                  const nameB = b.PROYECTOFINANCIERO.toUpperCase(); // ignore upper and lowercase
+                  if (nameA < nameB) {
+                    return -1;
+                  }
+                  if (nameA > nameB) {
+                    return 1;
+                  }
+                
+                  // names must be equal
+                  return 0;
+                });
+              },
+
+              error:(err)=>{
+                console.error(err);
+              }
+          });
+
+  }
+
+
+  async SeleccionarProyecto(){
+    //console.log(this.proyecto);
+    let subproyectos = this.allProyects.filter(itemProyecto => itemProyecto.IDPROYECTOFINANCIERO === this.proyecto.IDPROYECTOFINANCIERO && itemProyecto.STATUSPROYECTO==='S');
+    //console.log(subproyectos, subproyectos.length);
+    this.subproyectos = [];
+    this.subproyecto = "";
+    this.etapas = [];
+    this.etapa = "";
+    this.actividades = [];
+    this.actividad = "";
+    if(subproyectos.length>0){
+      for(let subproyecto of subproyectos){
+        if(subproyecto.PROYECTOM !=null && this.subproyectos.filter(itemSubProyecto =>itemSubProyecto.PROYECTOM===subproyecto.PROYECTOM).length==0){
+         
+          this.subproyectos.push(subproyecto);
+         
+        }
+      }
+
+      this.subproyectos.sort((a, b) => {
+        const nameA = a.PROYECTOM.toUpperCase(); // ignore upper and lowercase
+        const nameB = b.PROYECTOM.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+      
+        // names must be equal
+        return 0;
+      });
+    }
+
+
+
+  }
+
+  async SeleccionarSubProyecto(){
+    this.etapas = [];
+    this.etapa = "";
+    this.actividades = [];
+    this.actividad = "";
+    console.log(this.subproyectos.length,this.etapa, this.actividad);
+
+    let etapas = this.allProyects.filter(itemProyecto => itemProyecto.IDPROYECTOFINANCIERO === this.proyecto.IDPROYECTOFINANCIERO && 
+                                         itemProyecto.STATUSPROYECTO==='S' && 
+                                         itemProyecto.PROYECTOM === this.subproyecto.PROYECTOM);
+    
+    if(etapas.length>0){
+      for(let etapa of etapas){
+        //console.log(etapa.ETAPA);
+        if(etapa.ETAPA!=null && this.etapas.filter(itemEtapa =>itemEtapa.ETAPA==etapa.ETAPA).length==0){
+         
+          this.etapas.push(etapa);
+         
+        }
+      }
+
+      this.etapas.sort((a, b) => {
+        const nameA = a.ETAPA.toUpperCase(); // ignore upper and lowercase
+        const nameB = b.ETAPA.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+      
+        // names must be equal
+        return 0;
+      });
+    }
+  }
+
+  async SeleccionarEtapa(){
+    //console.log(this.etapa);
+    let actividades = this.allProyects.filter(itemProyecto => itemProyecto.IDPROYECTOFINANCIERO === this.proyecto.IDPROYECTOFINANCIERO && 
+                                        itemProyecto.STATUSPROYECTO==='S' && 
+                                        itemProyecto.PROYECTOM === this.subproyecto.PROYECTOM &&
+                                        itemProyecto.ETAPA === this.etapa.ETAPA);
+    
+    this.actividades = [];
+    this.actividad = "";
+    if(actividades.length>0){
+    for(let actividad of actividades){
+      //console.log(actividad.ACTIVIDAD);
+      if(actividad.ACTIVIDAD!=null && this.actividades.filter(itemActividad =>itemActividad.ACTIVIDAD==actividad.ACTIVIDAD).length==0){
+
+      this.actividades.push(actividad);
+
+      }
+    }
+
+    //console.log(this.etapas, this.etapas.length);
+
+    this.actividades.sort((a, b) => {
+    const nameA = a.ACTIVIDAD.toUpperCase(); // ignore upper and lowercase
+    const nameB = b.ACTIVIDAD.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+    return -1;
+    }
+    if (nameA > nameB) {
+    return 1;
+    }
+
+    // names must be equal
+    return 0;
+    });
+    }
+  }
+
+  async SeleccionarActividad(){
+    console.log(this.actividad)
+  }
+
+  
 
   async getAlmacenes(stores:any){
     //this.authService.getAlmacenesUsuarioMysql()
@@ -1262,6 +1445,9 @@ async validarCuentaContable(cuenta:any){
         if(this.clase =='I' && arrayLinea[0]==''){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item de la linea ${linea}, es obligatorio para solicitudes de bienes`});
           valido = false;  
+        }else if(this.clase =='S' && arrayLinea[0]!=''){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item de la linea ${linea}, no es requerido para solicitudes cuya clase sea de servicio`});
+          valido = false;  
         }else if(arrayLinea[0]!='' && this.items.filter(item =>item.ItemCode==arrayLinea[0] ).length==0){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código del item  de la linea ${linea}, no existe en el listado de items de SAP`});
           valido = false;
@@ -1514,7 +1700,7 @@ async validarCuentaContable(cuenta:any){
 
   RegistrarLinea(){
     this.envioLinea = true;
-    //console.log(this.item.ItemCode, this.clase);
+    console.log(this.subproyectos.length,  this.subproyecto ,this.etapa,this.actividad);
     if(this.descripcion && 
       this.fechaRequerida && 
       this.viceprecidencia.vicepresidency && 
@@ -1524,7 +1710,8 @@ async validarCuentaContable(cuenta:any){
       this.precio &&
       this.impuesto &&
       ((this.cuenta.Code && this.validaCuenta) || (!this.cuenta.Code && !this.validaCuenta) )  &&
-      ((this.item.ItemCode && this.clase=='I') || (this.clase=='S'))
+      ((this.item.ItemCode && this.clase=='I') || (this.clase=='S')) &&
+      (this.subproyectos.length==0) || (this.subproyectos.length>0 && this.subproyecto && this.etapa && this.actividad)
       ){
 
         let indexLineaDuplicada = this.LineaDuplicada();
@@ -1596,6 +1783,11 @@ async validarCuentaContable(cuenta:any){
             tax : this.impuesto.Code,
             taxvalor : this.valorImpuesto,
             linegtotal : this.totalLinea,
+            proyecto:this.proyecto!=""?this.proyecto.IDPROYECTOFINANCIERO:"",
+            subproyecto:this.subproyecto!=""?this.subproyecto.IDPROYECTOM:"",
+            etapa:this.etapa!=""?this.etapa.IDETAPA:"",
+            actividad:this.actividad!=""?this.actividad.LINEA:""
+
             }
             
   }

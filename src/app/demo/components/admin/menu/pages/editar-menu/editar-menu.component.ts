@@ -42,7 +42,7 @@ export class EditarMenuComponent implements OnInit {
 
   constructor(private rutaActiva: ActivatedRoute,
               private adminService:AdminService,
-              private authService:AuthService) { }
+              public authService:AuthService) { }
 
   ngOnInit(): void {
     

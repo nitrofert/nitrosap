@@ -40,7 +40,7 @@ export class MenuComponent implements OnInit {
 
   constructor(private adminService:AdminService,
               private router:Router,
-              private authService:AuthService) { }
+              public authService:AuthService) { }
 
   ngOnInit(): void {
 

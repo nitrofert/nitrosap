@@ -41,7 +41,7 @@ registerLocaleData(localeES_CO);
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent,
+        AppComponent, NotfoundComponent, 
     ],
     imports: [
         AppRoutingModule,

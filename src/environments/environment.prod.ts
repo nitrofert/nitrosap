@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   //url: 'https://backend2.nitrofert.com.co',
-//url: 'http://backend-dev.nitrofert.com.co',
+ // url: 'http://backend-dev.nitrofert.com.co',
   url: 'https://backend.nitrofert.com.co',
  
   env:'prod',

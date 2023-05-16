@@ -19,16 +19,16 @@ export class NewSolpedComponent implements OnInit {
   idSolped!:any;
 
   constructor(private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router:Router,
     private rutaActiva: ActivatedRoute,
     private comprasService: ComprasService) { }
 
   ngOnInit(): void {
-    console.log(this.rutaActiva);
+    //console.log(this.rutaActiva);
     if(this.rutaActiva.snapshot.params){
       this.idSolped = this.rutaActiva.snapshot.params;
-      console.log(Object.keys(this.idSolped).length,this.idSolped);
+      //console.log(Object.keys(this.idSolped).length,this.idSolped);
 
       if(Object.keys(this.idSolped).length>0){
         this.displayModal= true;
@@ -52,7 +52,7 @@ export class NewSolpedComponent implements OnInit {
 
 
   registrarSolped(dataSolped:any){
-    console.log(dataSolped);
+    //console.log(dataSolped);
     const detalleSolped:any=dataSolped.solpedDet;
     const limit = 200
     const lineasDetSolped = dataSolped.solpedDet.length;
@@ -68,12 +68,12 @@ export class NewSolpedComponent implements OnInit {
       solped:dataSolped.solped
     }
 
-    console.log(newDataSolped);
+    //console.log(newDataSolped);
     
     this.comprasService.saveSolped(this.authService.getToken(),newDataSolped)
             .subscribe({
                 next: (result) =>{
-                    //console.log(result);
+                    ////console.log(result);
                     //this.submittedBotton = true;
                     if(result.status===501){
                       this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
@@ -86,7 +86,7 @@ export class NewSolpedComponent implements OnInit {
                       
                       
                       for(let i=1;i<=iteraciones;i++){
-                        console.log(dataSolped.solpedDet.slice(rangoinf,rangosup));
+                        //console.log(dataSolped.solpedDet.slice(rangoinf,rangosup));
                         let detailPartialSolped:any = dataSolped.solpedDet.slice(rangoinf,rangosup);
                         let data:any = {
                           id:solpedID,
@@ -95,7 +95,7 @@ export class NewSolpedComponent implements OnInit {
                         this.comprasService.saveDetailSolped(this.authService.getToken(),data)
                             .subscribe({
                                 next:(result)=>{
-                                    console.log(result);
+                                    //console.log(result);
                                     this.percentProgressBar += prcAdvance;
                                     if(i==iteraciones){
                                       this.displayModal =false;

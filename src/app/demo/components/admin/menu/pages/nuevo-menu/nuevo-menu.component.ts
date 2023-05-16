@@ -36,7 +36,7 @@ export class NuevoMenuComponent implements OnInit {
     ];
   constructor(private messageService: MessageService,
               private adminService:AdminService,
-              private authService:AuthService) { }
+              public authService:AuthService) { }
 
   ngOnInit(): void {
   }

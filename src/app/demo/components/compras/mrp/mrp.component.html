@@ -1022,13 +1022,13 @@
                     <ng-template pTemplate="selectedItem">
                         <div class="country-item country-item-value" *ngIf="almacen">
 
-                            <div>{{almacen.storename}}</div>
+                            <div>{{almacen.store}} - {{almacen.storename}}</div>
                         </div>
                     </ng-template>
                     <ng-template let-almacen pTemplate="item">
                         <div class="country-item">
 
-                            <div>{{almacen.storename}}</div>
+                            <div>{{almacen.store}} - {{almacen.storename}}</div>
                         </div>
                     </ng-template>
                 </p-dropdown>

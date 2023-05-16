@@ -6,7 +6,7 @@ import { LoginFormInterface } from '../api/frmlogin';
 import { InfoUsuario, ResponsWsLoginInterface } from '../api/responseloginws';
 import { JwtHelperService } from '@auth0/angular-jwt'
 import decode from 'jwt-decode';
-import { DecodeTokenInterface, DependenciasUsuario } from '../api/decodeToken';
+import { DecodeTokenInterface, DependenciasUsuario, PermisosUsuario } from '../api/decodeToken';
 import { UrlApiService } from './urlapi.service';
 
 
@@ -274,6 +274,57 @@ logOut(token:string): Observable<any>{
   ////console.log(url);
   return this.http.get<any>(url,requestOptions);
 
+}
+
+ permisosPagina(permisosPerfilesPagina:PermisosUsuario[]){
+
+  //console.log(permisosPerfilesPagina);
+
+  let permisosUsuarioPagina:PermisosUsuario[]=[];
+
+  if(permisosPerfilesPagina.length>0){
+
+    permisosUsuarioPagina.push({
+      read_accion: ( this.validaPermisoAccion2(permisosPerfilesPagina,'read_accion')),
+      create_accion: ( this.validaPermisoAccion2(permisosPerfilesPagina,'create_accion')),
+      delete_accion: ( this.validaPermisoAccion2(permisosPerfilesPagina,'delete_accion')),
+      update_accion: ( this.validaPermisoAccion2(permisosPerfilesPagina,'update_accion')),
+      aproved_accion: ( this.validaPermisoAccion2(permisosPerfilesPagina,'aproved_accion')),
+      id_menu: permisosPerfilesPagina[0].id_menu,
+      id_perfil: permisosPerfilesPagina[0].id_perfil,
+      perfil: permisosPerfilesPagina[0].perfil,
+      title: permisosPerfilesPagina[0].title,
+      url: permisosPerfilesPagina[0].url
+    })
+
+  }
+
+  
+
+
+  return permisosUsuarioPagina
+
+
+}
+
+ validaPermisoAccion2(permisosPagina:any[],accion:string){
+  let permisoAccion = 0;
+
+  if(permisosPagina.filter(permiso=>permiso[accion]===1).length>0){
+      permisoAccion = 1;
+  }
+
+  return permisoAccion
+}
+
+async validaPermisoAccion(permisosPagina:any[],accion:string):Promise<number>{
+    let permisoAccion = 0;
+
+    if(permisosPagina.filter(permiso=>permiso[accion]===1).length>0){
+        permisoAccion = 1;
+    }
+
+    return permisoAccion
 }
 
 

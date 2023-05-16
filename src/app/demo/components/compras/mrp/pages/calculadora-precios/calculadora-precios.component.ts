@@ -10,6 +10,7 @@ import { SAPService } from 'src/app/demo/service/sap.service';
 import { InfoUsuario, PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
 import { DialogService } from 'primeng/dynamicdialog';
 import { FormPrecioItemComponent } from '../form-precio-item/form-precio-item.component';
+import { FormCalculadoraPrecioComponent } from '../form-calculadora-precio/form-calculadora-precio.component';
 
 
 @Component({
@@ -22,12 +23,13 @@ export class CalculadoraPreciosComponent implements OnInit {
 
   @ViewChild('filter') filter!: ElementRef;
 
-  listaPrecios:any[] = [];
+  infoCalculada:any[] = [];
   selectedLine:any[] = [];
   loading:boolean = false;
 
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   urlBreadCrumb:string ="";
   infoUsuario!:InfoUsuario;
@@ -42,7 +44,7 @@ export class CalculadoraPreciosComponent implements OnInit {
     private router:Router,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-    private authService: AuthService,
+    public authService: AuthService,
     public dialogService: DialogService,) { }
 
   ngOnInit(): void {
@@ -56,20 +58,63 @@ export class CalculadoraPreciosComponent implements OnInit {
     //////console.logthis.authService.getPermisosUsuario());
     this.permisosUsuario = this.authService.getPermisosUsuario();
     //////console.log'Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-    this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+    //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+    this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+     this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+    
     this.urlBreadCrumb = this.router.url;
+
+   
+
+    this.listaPreciosCalculados();
 
   }
 
-  nuevoPrecioItem(){
+  listaPreciosCalculados(){
+      this.comprasService.listaPreciosCalculados(this.authService.getToken())
+          .subscribe({
+              next:(listaPreciosCalculados)=>{
+                this.infoCalculada = listaPreciosCalculados;
+              },
+              error:(err)=>{
+                  console.error(err);
+              }
+          });
+  }
 
- 
+  nuevoCalculoPrecioItem(){
+
+    /*const ref = this.dialogService.open(FormCalculadoraPrecioComponent, {
+      
+      header: `Nuevo calculo precio item ` ,
+      width: '80%',
+
+      height:'auto',
+      contentStyle: {"overflow": "auto"},
+      baseZIndex: 10000,
+      
+       
+    });
+
+    ref.onClose.subscribe(() => {
+      //this.getTurnosPorLocalidad(this.localidadSeleccionada.code)
+      //this.getCalendar();
+      //console.log(("Refresh calendar");
+    });*/
+
+    this.router.navigate(['/portal/compras/mrp/calculadora-precios/nuevo-calculo']);
+    //this.router.navigate(['/portal/compras/solped/nueva']);
 
   }
 
   
 
-  editarPrecioItem(){}
+  editarPrecioItem(linea:any){
+    console.log(linea);
+    this.router.navigate(['/portal/compras/mrp/calculadora-precios/editar-calculo/'+linea[0].id]);
+  }
 
   anularPrecioItem(){}
 
@@ -77,7 +122,7 @@ export class CalculadoraPreciosComponent implements OnInit {
 
   exportExcel() {
     import("xlsx").then(xlsx => {
-        const worksheet = xlsx.utils.json_to_sheet(this.listaPrecios);
+        const worksheet = xlsx.utils.json_to_sheet(this.infoCalculada);
         const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
         const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveAsExcelFile(excelBuffer, `solpeds`);

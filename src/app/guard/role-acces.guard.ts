@@ -10,7 +10,7 @@ import { DecodeTokenInterface } from '../demo/api/decodeToken';
 })
 export class RoleAccesGuard implements CanActivate {
 
-  constructor(private authService: AuthService,
+  constructor(public authService: AuthService,
     private router: Router){}
 
   canActivate(route:ActivatedRouteSnapshot):boolean  {

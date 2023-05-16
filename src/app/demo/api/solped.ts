@@ -71,6 +71,10 @@ export interface SolpedDet {
     updated_at?:   string;
     unidad?:string;
     zonacode?: string;
+    proyecto?: string;
+    subproyecto?:string;
+    etapa?: string;
+    actividad?: string;
 }
 
 export interface Anexos {

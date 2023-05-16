@@ -21,7 +21,7 @@ export class EditSolpedComponent implements OnInit {
   constructor(private rutaActiva: ActivatedRoute,
     private messageService: MessageService,
 
-    private authService: AuthService,
+    public authService: AuthService,
 
     private router:Router,
     private comprasService: ComprasService) { }

@@ -106,6 +106,7 @@ export class NuevaSolpedComponent implements OnInit {
 
   permisosUsuario!:PermisosUsuario[];
   permisosUsuarioPagina!:PermisosUsuario[];
+  permisosPerfilesPagina!:PermisosUsuario[];
 
   //ReadOnly 
   /*descripcionReadOnly:boolean = false;
@@ -116,7 +117,7 @@ export class NuevaSolpedComponent implements OnInit {
 
   constructor(private messageService: MessageService,
     private adminService: AdminService,
-    private authService: AuthService,
+    public authService: AuthService,
     private sapService:SAPService,
     private router:Router,
     private comprasService: ComprasService) { }
@@ -128,8 +129,12 @@ export class NuevaSolpedComponent implements OnInit {
     console.log(this.router.url);
      console.log(this.authService.getPermisosUsuario());
      this.permisosUsuario = this.authService.getPermisosUsuario();
-     console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
-     this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     //console.log('Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
+     this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
+     
+
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
    
     this.clearFormEncabezado();
     this.clearFormDetalle();

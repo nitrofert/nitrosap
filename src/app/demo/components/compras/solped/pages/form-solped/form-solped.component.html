@@ -406,6 +406,126 @@
                 </p-dropdown>
             </div>
         </div>
+        <!-- Proyecto-->    
+        <div class="grid">
+            <div class="field col">
+                <label for="proyecto">Proyecto</label>
+                <p-dropdown [options]="proyectos" 
+                            [(ngModel)]="proyecto" 
+                            optionLabel="PROYECTOFINANCIERO"
+                        
+                            placeholder="Seleccione un proyecto" 
+                            [filter]="true" 
+                            filterBy="PROYECTOFINANCIERO" 
+                            [showClear]="true"
+                            (onChange)="SeleccionarProyecto()"
+                            styleClass="w-full" inputId="proyecto">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="proyecto">
+
+                            <div>{{proyecto.PROYECTOFINANCIERO}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-proyecto pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{proyecto.PROYECTOFINANCIERO}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <div class="field col">
+                <label for="proyecto">Subproyecto</label>
+                <p-dropdown [options]="subproyectos" 
+                            [(ngModel)]="subproyecto" 
+                            optionLabel="PROYECTOM"
+                        
+                            placeholder="Seleccione un subproyecto" 
+                            [filter]="true" 
+                            filterBy="PROYECTOM" 
+                            [showClear]="true"
+                            (onChange)="SeleccionarSubProyecto()"
+                            styleClass="w-full" inputId="subproyecto"
+                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && subproyectos.length>0 && !subproyecto}">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="subproyecto">
+
+                            <div>{{subproyecto.PROYECTOM | slice: 0:50}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-subproyecto pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{subproyecto.PROYECTOM | slice: 0:50}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            
+        </div>
+        <div class="grid">
+            <div class="field col">
+                <label for="proyecto">Etapa</label>
+                <p-dropdown [options]="etapas" 
+                            [(ngModel)]="etapa" 
+                            optionLabel="ETAPA"
+                        
+                            placeholder="Seleccione una etapa" 
+                            [filter]="true" 
+                            filterBy="ETAPA" 
+                            [showClear]="true"
+                            (onChange)="SeleccionarEtapa()"
+                            styleClass="w-full" inputId="etapa"
+                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && subproyectos.length>0 &&  !etapa}">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="etapa">
+
+                            <div>{{etapa.ETAPA | slice: 0:100}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-etapa pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{etapa.ETAPA | slice: 0:100}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="field col">
+                <label for="proyecto">Actividad</label>
+                <p-dropdown [options]="actividades" 
+                            [(ngModel)]="actividad" 
+                            optionLabel="ACTIVIDAD"
+                        
+                            placeholder="Seleccione una etapa" 
+                            [filter]="true" 
+                            filterBy="ACTIVIDAD" 
+                            [showClear]="true"
+                            (onChange)="SeleccionarActividad()"
+                            styleClass="w-full" inputId="ACTIVIDAD"
+                            [ngClass]="{'ng-invalid ng-dirty' :  envioLinea && subproyectos.length>0 && !actividad}">
+
+                    <ng-template pTemplate="selectedItem">
+                        <div class="country-item country-item-value" *ngIf="actividad">
+
+                            <div>{{actividad.ACTIVIDAD | slice: 0:100}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-actividad pTemplate="item">
+                        <div class="country-item">
+
+                            <div>{{actividad.ACTIVIDAD | slice: 0:100}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <!-- Fin proyectos -->
         <!--Almacen-->
         <div class="grid">
             <div class="field col">

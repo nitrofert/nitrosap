@@ -8,7 +8,7 @@ import { AuthService } from '../demo/service/auth.service';
 })
 export class LoggedInGuard implements  CanActivate {
 
-  constructor(private authService: AuthService,
+  constructor(public authService: AuthService,
               private router: Router){}
   
   canActivate(): boolean {

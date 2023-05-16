@@ -22,7 +22,7 @@ export class AppTopBarComponent implements OnInit {
 
     constructor(public layoutService: LayoutService,
                 private router:Router,
-                private authService:AuthService) {
+                public authService:AuthService) {
         //obtener datos del usuario logueado
        
         
