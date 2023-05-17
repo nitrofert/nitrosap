@@ -126,9 +126,10 @@ prcLPrecio:number =0;
 
 recursoPT:number =0;
 administracion:number =0;
-
+cambioPrecioGerenteDB:Subject<number> = new Subject(); 
 cambioPrcGerenteDB:Subject<number> = new Subject(); 
 
+cambioPrecioLPDB:Subject<number> = new Subject(); 
 cambioPrcLPDB:Subject<number> = new Subject(); 
 
 formDetalleCalculo:boolean = false;
@@ -199,6 +200,15 @@ precioEntrega:number = 0;
     this.precioBase = this.opcionesPrecioBase.filter(precioBase => precioBase.code ==='LPVENDEDOR')[0];
     ////////console.log(this.precioBase);
 
+    this.cambioPrecioGerenteDB
+    .pipe(debounceTime(300))
+    .subscribe( value =>{
+      //////console.log('debouncerG: ',value);
+
+      let event = {value}
+      this.cambioPrecioGerente(event);
+    });
+
     this.cambioPrcGerenteDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
@@ -215,6 +225,15 @@ precioEntrega:number = 0;
 
       let event = {value}
       this.cambioPrcLP(event);
+    });
+
+    this.cambioPrecioLPDB
+    .pipe(debounceTime(300))
+    .subscribe( value =>{
+      //////console.log('debouncerLP: ',value);
+
+      let event = {value}
+      this.cambioPrecioLP(event);
     });
 
     
@@ -955,6 +974,24 @@ async getItems(items:any){
     }
   }
 
+  cambiarPrecioGerente(valor:number){
+    this.cambioPrecioGerenteDB.next(valor);
+  }
+
+  cambioPrecioGerente(event:any){
+    let prcGerente:number =0;
+
+    //////console.log(event);
+
+    if(this.precioVendedor!=0){
+      prcGerente =(100*(this.precioGerente-this.precioVendedor))/this.precioVendedor;
+    }
+
+    this.prcGerente = prcGerente;
+    this.SeleccionarPrecioBase();
+  }
+
+
   cambiarPrcGerente(valor:number){
     this.cambioPrcGerenteDB.next(valor);
   }
@@ -981,6 +1018,10 @@ async getItems(items:any){
     this.SeleccionarPrecioBase();
   }
 
+  cambiarPrecioLP(valor:number){
+    this.cambioPrecioLPDB.next(valor);
+  }
+
   cambiarPrcLP(valor:number){
     this.cambioPrcLPDB.next(valor);
   }
@@ -994,6 +1035,17 @@ async getItems(items:any){
 
     this.precioLista = precioLP;
     this.SeleccionarPrecioBase();
+}
+
+cambioPrecioLP(event:any){
+  let prcLP:number =0;
+
+  if(this.precioVendedor!=0){
+    prcLP = (100*(this.precioLista-this.precioVendedor))/this.precioVendedor;
+  }
+
+  this.prcLPrecio = prcLP;
+  this.SeleccionarPrecioBase();
 }
 
 guardarCalculo(){

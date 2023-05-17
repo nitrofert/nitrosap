@@ -155,7 +155,7 @@
                             pInputText 
                             [(ngModel)]="precioGerente" 
                             id="precioGerente" 
-                            disabled
+                            (input)="cambiarPrecioGerente(precioGerente)"
                             class="w-8"
                             [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
                     
@@ -193,7 +193,7 @@
                             pInputText 
                             [(ngModel)]="precioLista" 
                             id="precioLista" 
-                            disabled
+                            (input)="cambiarPrecioLP(precioLista)"
                             class="w-8"
                             [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
                     <input type="number" 
@@ -303,14 +303,14 @@
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number : '1.1-2' }}</td>
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number : '1.1-2' }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent  }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent : '1.1-2' }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent : '1.1-2' }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS1 | percent  }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS1 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS1 | percent : '1.1-2' }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS1 | percent : '1.1-2' }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS2 | percent  }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS2 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS2 | percent : '1.1-2' }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS2 | percent : '1.1-2' }}</td>
 
 
 
@@ -386,7 +386,7 @@
                     <th class="surface-200 text-center" colspan="3">Lista precios SAP</th>
                     <th class="surface-200 text-center" rowspan="2">Precio promedio mercado</th>
                     <th class="surface-200 text-center" rowspan="2">Precio promedio venta</th>
-                    <th class="bg-blue-200 text-center" colspan="2">Reposición semana 0</th>
+                    <th class="bg-blue-200 text-center" colspan="2">Costo SAP</th>
                    
                   
                 </tr>
@@ -420,8 +420,8 @@
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number: '1.1-2'  }}</td>
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number: '1.1-2'  }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent  }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent  }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent :'1.1-2' }}</td>
+                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent :'1.1-2' }}</td>
 
                 
 
