@@ -197,7 +197,7 @@ precioEntrega:number = 0;
     this.semanaAnio = await this.numeroDeSemana(new Date());
     this.semanaMes = await this.semanaDelMes(new Date());
 
-    this.precioBase = this.opcionesPrecioBase.filter(precioBase => precioBase.code ==='LPVENDEDOR')[0];
+    this.precioBase = this.opcionesPrecioBase.filter(precioBase => precioBase.code ==='LPGERENTE')[0];
     ////////console.log(this.precioBase);
 
     this.cambioPrecioGerenteDB
