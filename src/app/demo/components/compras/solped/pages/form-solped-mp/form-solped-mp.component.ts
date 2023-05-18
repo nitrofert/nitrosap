@@ -239,6 +239,7 @@ export class FormSolpedMPComponent implements OnInit {
       url= this.router.url;
       //////console.log("URL sin parametros: ",url);
     }
+    console.log("UR ",url);
     this.urlBreadCrumb = url;
     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
     this.permisosUsuarioPagina = this.authService.permisosPagina(this.permisosUsuario.filter(item => item.url===url))
