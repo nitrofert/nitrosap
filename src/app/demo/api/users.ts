@@ -6,5 +6,6 @@ export interface UserInterface {
     password?: string,
     codusersap: string,
     status: string,
-    created_at?: string
+    created_at?: string,
+    areas?: any[]
 }

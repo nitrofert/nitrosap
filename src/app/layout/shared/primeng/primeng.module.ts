@@ -42,6 +42,7 @@ import {TreeTableModule} from 'primeng/treetable';
 import {BreadcrumbModule} from 'primeng/breadcrumb';
 import {FileUploadModule} from 'primeng/fileupload';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {TabViewModule} from 'primeng/tabview';
 
 
 
@@ -86,6 +87,7 @@ import {DynamicDialogModule} from 'primeng/dynamicdialog';
     StyleClassModule,
     TableModule,
     TabMenuModule,
+    TabViewModule,
     TagModule,
     ToastModule,
     ToggleButtonModule,

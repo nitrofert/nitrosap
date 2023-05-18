@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/demo/service/auth.service';
 
 
 import {MenuItem} from 'primeng/api';
+import { Table } from 'primeng/table';
 
 
 @Component({
@@ -45,6 +46,13 @@ export class EditarUsuarioComponent implements OnInit {
 
     opciones:any[] = [];
 
+  
+    areas_user:any[] = [];
+    loading:boolean = false;
+    selectedAreasUser!:any;
+
+    @ViewChild('filter') filter!: ElementRef;
+
   /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
   token:string = "";*/
@@ -81,6 +89,7 @@ export class EditarUsuarioComponent implements OnInit {
           this.codusersap = user[0].codusersap;
           this.status = user[0].status;
           this.username = user[0].username;
+          this.areas_user = user[0].areas || [];
           this.getPerfiles();
           this.getCompanies();
           
@@ -211,6 +220,14 @@ export class EditarUsuarioComponent implements OnInit {
         });
   }
 
+  newArea(){
+
+  }
+
+  deleteArea(){
+
+  }
+
   clear(){
     this.submitBotton = false;
     this.fullname="";
@@ -220,6 +237,19 @@ export class EditarUsuarioComponent implements OnInit {
     this.codusersap="";
     this.password="";
     this.password2="";
+  }
+
+  formatCurrency(value: number) {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  }
+
+  onGlobalFilter(table: Table, event: Event) {
+      table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  cleart(table: Table) {
+    table.clear();
+    this.filter.nativeElement.value = '';
   }
 
 }
