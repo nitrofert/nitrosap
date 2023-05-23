@@ -1036,7 +1036,7 @@ export class FormEntradaComponent implements OnInit {
         this.localidad.location && 
         this.cantidad &&
         this.precio &&
-        (this.subtotalLinea <= this.lineaEntrada.total_pendiente || this.moneda!='COP') &&
+        //(this.subtotalLinea <= this.lineaEntrada.total_pendiente || this.moneda!='COP') &&
        
         this.impuesto &&
         //((this.cuenta!=undefined && !this.item.ItemCode && this.DocType=='dDocument_Items') || (this.cuenta==undefined && this.item.ItemCode)) && !this.validarCantidad()){
@@ -1084,9 +1084,9 @@ export class FormEntradaComponent implements OnInit {
             this.envioLinea = false;
   
           //}
-      }else if(this.precio > this.lineaEntrada.total_pendiente ){
+     /* }else if(this.precio > this.lineaEntrada.total_pendiente ){
         this.messageService.add({severity:'error', summary: '!Error', detail: 'El precio de la entrada no puede ser mayor al disponible del pedido'});
-      }else{
+     */}else{
           this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe diligenciar los campos resaltados en rojo'});
           
       }
