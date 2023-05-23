@@ -302,6 +302,76 @@ setPerfilUser(token:string,perfilUser:any): Observable<any>{
 }
 
 
+getDependenciasEmpresa(token:string):Observable<any[]>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/mysql/query/dependencias`;
+  //console.log(url);
+  return this.http.get<any[]>(url,requestOptions);
+}
+
+adicionarAreasUsuario(token:string,data:any): Observable<any>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/adicionar-areas`;
+  ////console.log(url);
+  return this.http.post<any>(url,data,requestOptions);
+
+}
+
+adicionarDependenciasUsuario(token:string,data:any): Observable<any>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/adicionar-dependencias`;
+  ////console.log(url);
+  return this.http.post<any>(url,data,requestOptions);
+
+}
+
+elimnarAreasUsuario(token:string,data:any): Observable<any>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/eliminar-areas`;
+  ////console.log(url);
+  return this.http.post<any>(url,data,requestOptions);
+
+}
+
+
+
+elimnarDependenciasUsuario(token:string,data:any): Observable<any>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/usuarios/eliminar-dependencias`;
+  ////console.log(url);
+  return this.http.post<any>(url,data,requestOptions);
+
+}
+
+
+
+
+
 
 
 }

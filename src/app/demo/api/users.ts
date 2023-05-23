@@ -7,5 +7,6 @@ export interface UserInterface {
     codusersap: string,
     status: string,
     created_at?: string,
-    areas?: any[]
+    areas?: any[],
+    dependencias?: any[]
 }

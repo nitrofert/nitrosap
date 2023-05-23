@@ -2,18 +2,19 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MessageService, ConfirmationService, Message } from 'primeng/api';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AdminService } from 'src/app/demo/service/admin.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserInterface } from 'src/app/demo/api/users';
 import { AuthService } from 'src/app/demo/service/auth.service';
 
 
 import {MenuItem} from 'primeng/api';
 import { Table } from 'primeng/table';
+import { PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/decodeToken';
 
 
 @Component({
   selector: 'app-editar-usuario',
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './editar-usuario.component.html',
   styleUrls: ['./editar-usuario.component.scss']
 })
@@ -46,23 +47,52 @@ export class EditarUsuarioComponent implements OnInit {
 
     opciones:any[] = [];
 
-  
+    areas_empresa:any[] = [];
+    dependencias_empresa:any[] = [];
+    
     areas_user:any[] = [];
+    areas_form:any[] = [];
     loading:boolean = false;
     selectedAreasUser!:any;
+    selectedAreasForm!:any;
+
+    dependencias_user:any[] = [];
+    selectedDependenciasUser!:any;
+
+    dependencias_form:any[] = [];
+    selectedDependenciasForm!:any;
 
     @ViewChild('filter') filter!: ElementRef;
+
+    formularioAreas:boolean = false;
+    envioAreas:boolean = false;
+
+    formularioDependencias:boolean = false;
+    envioDependencias:boolean = false;
 
   /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
   token:string = "";*/
 
+  infoUsuario!: InfoUsuario;
+  perfilesUsuario: PerfilesUsuario[] = [];
+  permisosUsuario: PermisosUsuario[] = [];
+  permisosPerfilesPagina!:PermisosUsuario[];
+  permisosUsuarioPagina!:PermisosUsuario[];
+  urlBreadCrumb:string ="";
+
+  displayModal:boolean = false;
+
+
   constructor(private rutaActiva: ActivatedRoute,
               private adminService:AdminService,
+              private confirmationService: ConfirmationService, 
+              private messageService: MessageService,
+              private router:Router,
               public authService:AuthService) { }
 
   ngOnInit(): void {
-
+    this.getPermisosUsuarioPagina();
     this.opciones = [{label: 'No', value: 0}, {label: 'Si', value: 1}];
 
     this.items = [
@@ -78,7 +108,12 @@ export class EditarUsuarioComponent implements OnInit {
     /*this.infoSessionStr = localStorage.getItem('infoSession') ||'';
     this.infoSession    =  JSON.parse(this.infoSessionStr);
     this.token = localStorage.getItem('token') || '';*/
+    this.getInfoUsuario();
+    
 
+  }
+
+  getInfoUsuario(){
     this.adminService.getUserById(this.authService.getToken(),this.userSelected.user)
     .subscribe({
       next:(user =>{
@@ -90,8 +125,11 @@ export class EditarUsuarioComponent implements OnInit {
           this.status = user[0].status;
           this.username = user[0].username;
           this.areas_user = user[0].areas || [];
+          this.dependencias_user = user[0].dependencias || [];
+          console.log(  this.dependencias_user);
           this.getPerfiles();
           this.getCompanies();
+          this.getDependenciasEmpresa();
           
           
           //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
@@ -101,7 +139,31 @@ export class EditarUsuarioComponent implements OnInit {
         console.error(err);
       })
     }); 
+  }
 
+  getPermisosUsuarioPagina(){
+    let url ="";
+    this.permisosUsuario = this.authService.getPermisosUsuario();
+    //////console.log("URL origen",this.router.url);
+    //console.log("URL params",this.rutaActiva.snapshot.params);
+    if(this.rutaActiva.snapshot.params['user']){
+      let idSolpedSelected = this.rutaActiva.snapshot.params;
+      if(this.router.url.indexOf("/"+idSolpedSelected['user'])>=0){
+        url = this.router.url.substring(0,this.router.url.indexOf("/"+idSolpedSelected['user']));
+      }
+      //////console.log("URL con parametros: ",url);
+    }else{
+      url= this.router.url;
+      //////console.log("URL sin parametros: ",url);
+    }
+    this.urlBreadCrumb = url;
+    //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
+    //console.log(this.permisosUsuario);
+
+    this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===url); 
+    //console.log(url,this.permisosPerfilesPagina);
+    this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+    //console.log(url,this.permisosUsuarioPagina);
   }
 
   saveUser(){
@@ -151,7 +213,7 @@ export class EditarUsuarioComponent implements OnInit {
           .subscribe({
             next:(perfilesUser =>{
                 
-                console.log(perfilesUser);
+                //console.log(perfilesUser);
                 this.perfiles = perfilesUser;
                 
                 //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
@@ -200,6 +262,34 @@ export class EditarUsuarioComponent implements OnInit {
     }); 
   }
 
+  getDependenciasEmpresa(){
+    this.adminService.getDependenciasEmpresa(this.authService.getToken())
+    .subscribe({
+      next:(dependencias) =>{
+          
+          
+          let areas_empresa:any[] = []
+
+          for(let dependencia of dependencias){
+           
+            if(areas_empresa.filter(area=>area.U_NF_DIM2_DEP === dependencia.U_NF_DIM2_DEP).length===0){
+                areas_empresa.push({U_NF_DIM2_DEP:dependencia.U_NF_DIM2_DEP});
+            }
+          }
+
+          this.areas_empresa = areas_empresa;
+          this.dependencias_empresa = dependencias;
+          console.log(this.dependencias_empresa);
+          
+          //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
+      },
+      error:(err) =>{
+        
+        console.error(err);
+      }
+    }); 
+  }
+
 
   setAccess(valor:number,idCompany:number){
     //console.log(valor,idCompany);
@@ -221,11 +311,194 @@ export class EditarUsuarioComponent implements OnInit {
   }
 
   newArea(){
+    
+    //console.log(this.areas_user);
+    let areas_empresa= this.areas_empresa;
+    for(let area_user of this.areas_user){
+      areas_empresa = areas_empresa.filter(area => area.U_NF_DIM2_DEP != area_user.area);
+    }
+
+    //console.log(areas_empresa);
+    this.areas_form = areas_empresa;
+    this.formularioAreas = true;
+    this.selectedAreasForm = [];
 
   }
 
   deleteArea(){
+    console.log(this.selectedAreasUser);
 
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de eliminar las areas seleccionadas?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              areas: this.selectedAreasUser,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.elimnarAreasUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioAreas = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+  });
+  }
+
+  newDependencia(){
+     console.log(this.dependencias_empresa);
+     let dependencias_empresa= this.dependencias_empresa;
+     for(let dependencia_user of this.dependencias_user){
+
+      console.log(dependencia_user.vicepresidency,dependencia_user.dependence,  dependencia_user.location);
+      dependencias_empresa = dependencias_empresa.filter(dependencia => dependencia.U_NF_DIM3_VICE !== dependencia_user.vicepresidency &&
+                                                                        dependencia.U_NF_DIM2_DEP !== dependencia_user.dependence &&
+                                                                        dependencia.U_NF_DIM1_LOC !== dependencia_user.location);
+                                                                        console.log(dependencias_empresa);
+     }
+ 
+     console.log(dependencias_empresa);
+     this.dependencias_form = dependencias_empresa;
+     this.formularioDependencias = true;
+     this.selectedDependenciasForm = [];
+  }
+
+  deleteDependencia(){
+    console.log(this.selectedDependenciasUser);
+    
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de eliminar las dependencias seleccionadas?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              dependencias: this.selectedDependenciasUser,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.elimnarDependenciasUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioDependencias = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+    });
+  }
+
+  RegistrarAreas(){
+    console.log(this.selectedAreasForm);
+    
+
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de registrar las areas seleccionadas?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              areas: this.selectedAreasForm,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.adicionarAreasUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioAreas = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+  });
+  }
+
+  RegistrarDependencias(){
+    console.log(this.selectedDependenciasForm);
+    
+
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de registrar las dependencias seleccionadas?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              dependencias: this.selectedDependenciasForm,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.adicionarDependenciasUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioAreas = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+  });
   }
 
   clear(){
