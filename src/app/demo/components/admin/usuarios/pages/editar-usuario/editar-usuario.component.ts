@@ -70,6 +70,18 @@ export class EditarUsuarioComponent implements OnInit {
     formularioDependencias:boolean = false;
     envioDependencias:boolean = false;
 
+    almacenes_form:any[] = [];
+    selectedAlmacenesForm!:any;
+
+    almacenes_empresa:any[] = [];
+    almacenes_user:any[] = [];
+
+    selectedAlmacenesUser!:any;
+
+
+    formularioAlmacenes:boolean = false;
+    envioAlmacenes:boolean = false;
+
   /*infoSessionStr:string = "";
   infoSession:InfoUsuario[]    =  [];
   token:string = "";*/
@@ -126,10 +138,12 @@ export class EditarUsuarioComponent implements OnInit {
           this.username = user[0].username;
           this.areas_user = user[0].areas || [];
           this.dependencias_user = user[0].dependencias || [];
-          console.log(  this.dependencias_user);
+          this.almacenes_user = user[0].almacenes || [];
+          //console.log(  this.dependencias_user);
           this.getPerfiles();
           this.getCompanies();
           this.getDependenciasEmpresa();
+          this.getAlmacenesEmpresa();
           
           
           //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
@@ -269,17 +283,21 @@ export class EditarUsuarioComponent implements OnInit {
           
           
           let areas_empresa:any[] = []
+          let dependencias_empresa:any[] = []
 
           for(let dependencia of dependencias){
-           
+            //Eliminar areas duplicadas
             if(areas_empresa.filter(area=>area.U_NF_DIM2_DEP === dependencia.U_NF_DIM2_DEP).length===0){
                 areas_empresa.push({U_NF_DIM2_DEP:dependencia.U_NF_DIM2_DEP});
             }
+
+          
+
           }
 
           this.areas_empresa = areas_empresa;
           this.dependencias_empresa = dependencias;
-          console.log(this.dependencias_empresa);
+          //console.log(this.dependencias_empresa,dependencias_empresa);
           
           //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
       },
@@ -289,6 +307,28 @@ export class EditarUsuarioComponent implements OnInit {
       }
     }); 
   }
+
+  getAlmacenesEmpresa(){
+    this.adminService.getAlmacenesEmpresa(this.authService.getToken())
+    .subscribe({
+      next:(almacenes) =>{
+          
+          
+      
+
+          this.almacenes_empresa = almacenes;
+          
+          console.log(this.almacenes_empresa);
+          
+          //this.messageForm = [{severity:'success', summary:'!Genial¡', detail:`Ha registrado en el menú la opción ${this.title}` , life: 3000}];
+      },
+      error:(err) =>{
+        
+        console.error(err);
+      }
+    }); 
+  }
+
 
 
   setAccess(valor:number,idCompany:number){
@@ -364,19 +404,69 @@ export class EditarUsuarioComponent implements OnInit {
   });
   }
 
+  newAlmacen(){
+    
+    console.log(this.almacenes_user);
+    let almacenes_empresa= this.almacenes_empresa;
+    for(let almacen_user of this.almacenes_user){
+      almacenes_empresa = almacenes_empresa.filter(almacen => almacen.U_NF_ALMACEN != almacen_user.store);
+    }
+
+    //console.log(areas_empresa);
+    this.almacenes_form = almacenes_empresa;
+    this.formularioAlmacenes = true;
+    this.selectedAlmacenesForm = [];
+
+  }
+
+  deleteAlmacen(){
+    console.log(this.selectedAlmacenesUser);
+
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de eliminar los almacenes seleccionados?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              almacenes: this.selectedAlmacenesUser,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.elimnarAlmacenUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioAlmacenes = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+  });
+  }
+
+
   newDependencia(){
      console.log(this.dependencias_empresa);
      let dependencias_empresa= this.dependencias_empresa;
      for(let dependencia_user of this.dependencias_user){
-
-      console.log(dependencia_user.vicepresidency,dependencia_user.dependence,  dependencia_user.location);
-      dependencias_empresa = dependencias_empresa.filter(dependencia => dependencia.U_NF_DIM3_VICE !== dependencia_user.vicepresidency &&
-                                                                        dependencia.U_NF_DIM2_DEP !== dependencia_user.dependence &&
-                                                                        dependencia.U_NF_DIM1_LOC !== dependencia_user.location);
-                                                                        console.log(dependencias_empresa);
+        dependencias_empresa = dependencias_empresa.filter(dependencia => (dependencia.U_NF_DIM1_LOC+dependencia.U_NF_DIM2_DEP+dependencia.U_NF_DIM3_VICE!= dependencia_user.location+dependencia_user.dependence+dependencia_user.vicepresidency));
      }
  
-     console.log(dependencias_empresa);
+     //console.log(dependencias_empresa);
      this.dependencias_form = dependencias_empresa;
      this.formularioDependencias = true;
      this.selectedDependenciasForm = [];
@@ -461,6 +551,46 @@ export class EditarUsuarioComponent implements OnInit {
   });
   }
 
+  RegistrarAlmacenes(){
+    console.log(this.selectedAlmacenesForm);
+    
+
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de registrar los almacenes seleccionados?`,
+
+      accept: () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          const data:any = {
+              almacenes: this.selectedAlmacenesForm,
+              usuario:this.codusersap,
+              userid: this.userSelected.user
+          }
+
+          this.adminService.adicionarAlmacenesUsuario(this.authService.getToken(),data)
+              .subscribe({
+                  next:(result)=>{
+
+                    console.log(result);
+                    this.displayModal = false;
+                    if(!result.error){
+                      this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                      this.getInfoUsuario();
+                      this.formularioAlmacenes = false;
+                    }else{
+                      this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
+                    }
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                  }
+
+              });
+          
+      }
+  });
+  }
+
   RegistrarDependencias(){
     console.log(this.selectedDependenciasForm);
     
@@ -486,7 +616,7 @@ export class EditarUsuarioComponent implements OnInit {
                     if(!result.error){
                       this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
                       this.getInfoUsuario();
-                      this.formularioAreas = false;
+                      this.formularioDependencias = false;
                     }else{
                       this.messageService.add({severity:'error', summary: '!Error', detail: result.message});
                     }

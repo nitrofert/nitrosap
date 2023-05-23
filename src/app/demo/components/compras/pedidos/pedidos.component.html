@@ -19,7 +19,7 @@
 					 responsiveLayout="scroll">
 				<ng-template pTemplate="caption">
 					<div class="flex justify-content-between flex-column sm:flex-row">
-						<div>
+						<div class="flex align-items-center">
 							
 							<button pButton 
 									pTooltip="Limpiar" tooltipPosition="bottom" placeholder="Bottom"  
@@ -35,8 +35,20 @@
 									[disabled]="!permisosUsuarioPagina[0].create_accion || (!pedidoSeleccionado || pedidoSeleccionado.length!=1)"
 									(click)="nuevaEntrada()">
 							</button>
+
+							
 							
 						</div>
+						<p-dropdown [options]="areas_user" 
+										optionLabel="area"
+										optionValue="area" 
+										[(ngModel)]="areas_user_selected"
+										id="areas_user"
+										name="areas_user"
+										placeholder="Seleccione un area"
+										[required]="true"
+										class="w-full p-inputtext-sm"
+										(onChange)="SeleccionarArea()"></p-dropdown>
 						<span class="p-input-icon-left mb-2">
 							<i class="pi pi-search"></i>
 							<input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Buscar por palabra clave" class="w-full p-inputtext-sm"/>

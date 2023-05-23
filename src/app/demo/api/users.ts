@@ -8,5 +8,6 @@ export interface UserInterface {
     status: string,
     created_at?: string,
     areas?: any[],
-    dependencias?: any[]
+    dependencias?: any[],
+    almacenes?:any[]
 }
