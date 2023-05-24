@@ -492,8 +492,8 @@
           </ng-template>
           <ng-template pTemplate="footer">
             <p-button   icon="pi pi-check" 
-                        (click)="RegistrarAreas()"                     
-                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
+                        (onClick)="RegistrarAreas()"                     
+                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || selectedAreasForm.length==0 " 
                         label="Ok"
                         styleClass="p-button-text">
             </p-button>
@@ -603,8 +603,8 @@
           </ng-template>
           <ng-template pTemplate="footer">
             <p-button   icon="pi pi-check" 
-                        (click)="RegistrarDependencias()"                     
-                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
+                        (onClick)="RegistrarDependencias()"                     
+                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || selectedDependenciasForm.length==0 " 
                         label="Ok"
                         styleClass="p-button-text">
             </p-button>
@@ -705,8 +705,9 @@
           </ng-template>
           <ng-template pTemplate="footer">
             <p-button   icon="pi pi-check" 
-                        (click)="RegistrarAlmacenes()"                     
-                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
+
+                        (onClick)="RegistrarAlmacenes()"                     
+                        [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || selectedAlmacenesForm.length==0" 
                         label="Ok"
                         styleClass="p-button-text">
             </p-button>

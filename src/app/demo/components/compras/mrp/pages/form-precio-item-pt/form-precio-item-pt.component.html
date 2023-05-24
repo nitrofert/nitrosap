@@ -311,7 +311,7 @@
 <div class="grid">
 	<div class="field col">
 		<div class="flex justify-content-end flex-wrap card-container">
-			<p-button icon="pi pi-check" (click)="grabarListaPreciosPT()" label="Grabar lista de precios PT" styleClass="p-button-text"></p-button>
+			<p-button icon="pi pi-check" (onClick)="grabarListaPreciosPT()" label="Grabar lista de precios PT" styleClass="p-button-text"></p-button>
 		</div>
 	</div>
 </div>
@@ -351,7 +351,7 @@
 		
         <p-button   icon="pi pi-check"
 					label="Crear autor" 
-                    (click)="crearAutor()"                     
+                    (onClick)="crearAutor()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">

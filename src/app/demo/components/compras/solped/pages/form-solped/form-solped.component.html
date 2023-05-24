@@ -735,7 +735,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="RegistrarLinea()"                     
+                    (onClick)="RegistrarLinea()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">
@@ -1001,7 +1001,7 @@
 
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="listadoLineas=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="listadoLineas=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -1120,7 +1120,7 @@
                 </td>
                 <td *ngIf="solpedEditar" style="min-width: 1rem;" class="flex justify-content-center flex-wrap">
                     <!--<i class="pi {{anexossolped.file.icon}} p-1" (click)="consultarAnexo(anexossolped.url)"></i>-->
-                    <p-button icon="pi pi-download" label=""  pTooltip="Descargar" class="w-full" (click)="consultarAnexo3(anexossolped.url)"></p-button>
+                    <p-button icon="pi pi-download" label=""  pTooltip="Descargar" class="w-full" (onClick)="consultarAnexo3(anexossolped.url)"></p-button>
                 </td>
                 
             </tr>
@@ -1140,7 +1140,7 @@
 
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="listadoAnexos=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="listadoAnexos=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -1214,7 +1214,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="adicionarlineaAnexo()"                     
+                    (onClick)="adicionarlineaAnexo()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">
@@ -1314,13 +1314,13 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-download" 
-                    (click)="descargarCSV()"                     
+                    (onClick)="descargarCSV()"                     
                     
                     label="Descargar plantilla para solped"
                     styleClass="p-button-text">
         </p-button>
         <p-button   icon="pi pi-check" 
-                    (click)="adicionarCSV()"                     
+                    (onClick)="adicionarCSV()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || !cargueValido" 
                     label="Ok"
                     styleClass="p-button-text">

@@ -552,6 +552,7 @@ export class EditarUsuarioComponent implements OnInit {
   }
 
   RegistrarAlmacenes(){
+    
     console.log(this.selectedAlmacenesForm);
     
 

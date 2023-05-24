@@ -516,7 +516,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="registrarLinea()"                     
+                    (onClick)="registrarLinea()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion || submittedBottonLine" 
                     label="Ok"
                     styleClass="p-button-text">
@@ -766,7 +766,7 @@
 
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="listDetalle=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="listDetalle=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->

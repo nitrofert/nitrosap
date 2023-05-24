@@ -323,13 +323,13 @@
     </ng-template>
     <ng-template pTemplate="footer">
 		<p-button   icon="pi pi-download" 
-                    (click)="descargarCSV()"                     
+                    (onClick)="descargarCSV()"                     
                     
                     label="Descargar plantilla de presupuesto"
                     styleClass="p-button-text">
         </p-button>
         <p-button   icon="pi pi-check" 
-                    (click)="adicionarCSV()"                     
+                    (onClick)="adicionarCSV()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">

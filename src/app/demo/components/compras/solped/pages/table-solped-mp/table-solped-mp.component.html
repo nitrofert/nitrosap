@@ -546,7 +546,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="ActualizarPedido()"                     
+                    (onClick)="ActualizarPedido()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].update_accion " 
                     label="Actualizar"
                     styleClass="p-button-text">

@@ -509,7 +509,7 @@
 
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="listadoLineas=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="listadoLineas=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle entrada -->
@@ -912,7 +912,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="RegistrarLinea()"                     
+                    (onClick)="RegistrarLinea()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">
@@ -1030,7 +1030,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="formularioEvaluacionProveedor=false"                     
+                    (onClick)="formularioEvaluacionProveedor=false"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Ok"
                     styleClass="p-button-text">

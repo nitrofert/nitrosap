@@ -680,16 +680,16 @@
             <div>
                 <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
                         icon="pi pi-save" 
-                        (click)="GuardarSimulacion()" 
+                        (onClick)="GuardarSimulacion()" 
                         label="Grabar simulación proyecciones de compra" 
                         styleClass="p-button-text">
                 </p-button>
             </div>
             <div>
-                <p-button icon="pi pi-close" (click)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
+                <p-button icon="pi pi-close" (onClick)="calculadora=false" label="Cerrar" styleClass="p-button-text"></p-button>
                 <p-button *ngIf="permisosUsuarioPagina[0].create_accion" 
                         icon="pi pi-save" 
-                        (click)="GuardarProyecciones()" 
+                        (onClick)="GuardarProyecciones()" 
                         label="Grabar proyecciones de compra" 
                         styleClass="p-button-text">
                 </p-button>
@@ -810,7 +810,7 @@
    
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="verdocumentos=false;editarproyeccion=false; " label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="verdocumentos=false;editarproyeccion=false; " label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -860,7 +860,7 @@
    
 
     <ng-template pTemplate="footer">
-        <p-button icon="pi pi-check" (click)="verUbicaciones=false" label="Ok" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-check" (onClick)="verUbicaciones=false" label="Ok" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
 <!---Fin Lista detalle Solped -->
@@ -1083,7 +1083,7 @@
     </ng-template>
     <ng-template pTemplate="footer">
         <p-button   icon="pi pi-check" 
-                    (click)="RegistrarLinea()"                     
+                    (onClick)="RegistrarLinea()"                     
                     [disabled]="permisosUsuarioPagina.length==0 || !permisosUsuarioPagina[0].create_accion " 
                     label="Grabar proyecciones"
                     styleClass="p-button-text">
