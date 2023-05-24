@@ -831,12 +831,20 @@ async getItems(items:any){
       lPrecio:this.preciosListaItem.length==0?0:this.preciosListaItem[0].LP/(this.trm_moneda),
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
-      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana0)/this.costoVentaPTsemana0,
+      /*brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana0)/this.costoVentaPTsemana0,
       totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana0)/this.costoTotalPTsemana0,
       brutoS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana1)/this.costoVentaPTsemana1,
       totalS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana1)/this.costoTotalPTsemana1,
       brutoS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana2)/this.costoVentaPTsemana2,
-      totalS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,
+      totalS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,*/
+      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
+
+
     },
     {
       linea:2,
@@ -847,12 +855,18 @@ async getItems(items:any){
       lPrecio:this.precioLista,
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
-      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.costoVentaPTsemana0,
+      /*brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.costoVentaPTsemana0,
       totalS0: (this.precioBaseCalculo2 - this.costoTotalPTsemana0)/this.costoTotalPTsemana0,
       brutoS1: (this.precioBaseCalculo2 - this.costoVentaPTsemana1)/this.costoVentaPTsemana1,
       totalS1: (this.precioBaseCalculo2 - this.costoTotalPTsemana1)/this.costoTotalPTsemana1,
       brutoS2: (this.precioBaseCalculo2 - this.costoVentaPTsemana2)/this.costoVentaPTsemana2,
-      totalS2: (this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,
+      totalS2: (this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,*/
+      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.precioBaseCalculo2,
+      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTsemana0)/this.precioBaseCalculo2,
+      brutoS1: (this.precioBaseCalculo2 - this.costoVentaPTsemana1)/this.precioBaseCalculo2,
+      totalS1: (this.precioBaseCalculo2 - this.costoTotalPTsemana1)/this.precioBaseCalculo2,
+      brutoS2: (this.precioBaseCalculo2 - this.costoVentaPTsemana2)/this.precioBaseCalculo2,
+      totalS2: (this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.precioBaseCalculo2,
     });
 
     this.tablaCalculadoraCostos.push({
@@ -864,8 +878,10 @@ async getItems(items:any){
       lPrecio:this.preciosListaItem.length==0?0:this.preciosListaItem[0].LP/(this.trm_moneda),
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
-      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/this.costoVentaPTSAP,
-      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/this.costoTotalPTSAP,
+      /*brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/this.costoVentaPTSAP,
+      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/this.costoTotalPTSAP,*/
+      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
    
     },
     {
@@ -877,8 +893,11 @@ async getItems(items:any){
       lPrecio:this.precioLista,
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
-      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.costoVentaPTSAP,
-      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.costoTotalPTSAP,
+      /*brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.costoVentaPTSAP,
+      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.costoTotalPTSAP,*/
+      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.precioBaseCalculo2,
+      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.precioBaseCalculo2,
+
   
     });
   }
