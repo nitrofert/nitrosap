@@ -5,6 +5,7 @@ import { PedidosComponent } from './pedidos.component';
 import { PedidosRoutingModule } from './pedidos-routing.module';
 import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -17,7 +18,8 @@ import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.mo
     PrimengModule,
     PedidosRoutingModule,
     ApplicationPipesModule,
-    BreadCrumbModule
+    BreadCrumbModule,
+    FormsModule
 
   ]
 })

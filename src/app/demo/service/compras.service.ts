@@ -222,10 +222,10 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
-  ordenesAbiertasUsuarioXE(token:string):Observable<any[]>{
+  ordenesAbiertasUsuarioXE(token:string, area:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
-    const url:string = `${this.api_url}/api/wssap/Xengine/ordenes-open-usuario`;
+    const url:string = `${this.api_url}/api/wssap/Xengine/ordenes-open-usuario/${area}`;
     return this.http.get<any[]>(url,requestOptions);
   }
 

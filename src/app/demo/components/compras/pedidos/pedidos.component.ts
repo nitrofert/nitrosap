@@ -8,6 +8,7 @@ import { InfoUsuario, PerfilesUsuario, PermisosUsuario } from 'src/app/demo/api/
 import { ActivatedRoute, Router } from '@angular/router';
 import { SAPService } from 'src/app/demo/service/sap.service';
 import {MenuItem} from 'primeng/api';
+import { AdminService } from 'src/app/demo/service/admin.service';
 
 
 interface expandedRows {
@@ -52,9 +53,13 @@ export class PedidosComponent implements OnInit {
 
   pedidoSeleccionado:any[]= [];
 
+  areas_user:any[] = [];
+  areas_user_selected:string ="";
+
 
   constructor(private comprasService:ComprasService,
               public authService: AuthService,
+              private adminService:AdminService,
               private router:Router,
               private sapService:SAPService,
               private rutaActiva: ActivatedRoute) { }
@@ -71,7 +76,8 @@ export class PedidosComponent implements OnInit {
      //Cargar permisos usuario pagina
      this.getPermisosUsuarioPagina();
      //Cargar listado de pedidos pendientes por realizar entradas y que estan asociados a una solped
-    this.getListado();
+     this.getAreasByUserSAP();
+   
     
   }
 
@@ -108,10 +114,29 @@ export class PedidosComponent implements OnInit {
     console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
+  getAreasByUserSAP(){
+    this.adminService.getAreasByUserSAP(this.authService.getToken())
+        .subscribe({
+          next: (areas)=>{
+              console.log(areas);
+              if(areas.length>0){
+                this.areas_user = areas;
+                this.areas_user_selected = this.areas_user[0].area
+                this.getListado();
+              }
+              
+          },
+          error: (err)=>{
+            console.error(err);
+          }
+      });
+  }
+  
+
 
 
   getListado(){
-    this.comprasService.ordenesAbiertasUsuarioXE(this.authService.getToken())
+    this.comprasService.ordenesAbiertasUsuarioXE(this.authService.getToken(),this.areas_user_selected)
     //this.comprasService.ordenesAbiertasUsuarioSL(this.authService.getToken())
     
         .subscribe({
@@ -131,6 +156,11 @@ export class PedidosComponent implements OnInit {
               console.log(err);
             }
         });
+  }
+
+  SeleccionarArea(){
+    console.log(this.areas_user_selected);
+    this.getListado();
   }
 
 

@@ -241,7 +241,9 @@ export class FormSolpedMPComponent implements OnInit {
     }
     console.log("UR ",url);
     this.urlBreadCrumb = url;
-    //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
+    ////this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
+    this.permisosUsuarioPagina = this.authService.permisosPagina(this.permisosUsuario.filter(item => item.url===url))
+
     this.permisosUsuarioPagina = this.authService.permisosPagina(this.permisosUsuario.filter(item => item.url===url))
    ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
