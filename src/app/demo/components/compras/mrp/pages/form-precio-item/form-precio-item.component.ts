@@ -143,6 +143,7 @@ export class FormPrecioItemComponent implements OnInit{
             next: (items) => {
               let itemsMP:any[] =[];
               for(let item in items){
+                console.log(items[item]);
                 let precioExtItemSemana = 0;
                 let precioNacItemSemana = 0;
                 let tendenciaItemSemana = 'Neutro';

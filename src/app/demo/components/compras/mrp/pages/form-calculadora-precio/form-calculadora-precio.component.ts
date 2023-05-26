@@ -538,8 +538,10 @@ async getItems(items:any){
                       lPrecio:detalle_calculo.precioLP,
                       precioMercado:detalle_calculo.promMercado,
                       precioVentaPT:detalle_calculo.promVentaSap,
-                      brutoS0: (precioBase - this.costoVentaPTSAP)/this.costoVentaPTSAP,
-                      totalS0: (precioBase - this.costoTotalPTSAP)/this.costoTotalPTSAP,
+                      //brutoS0: (precioBase - this.costoVentaPTSAP)/this.costoVentaPTSAP,
+                      //totalS0: (precioBase - this.costoTotalPTSAP)/this.costoTotalPTSAP,
+                      brutoS0: (precioBase - this.costoVentaPTSAP)/precioBase,
+                      totalS0: (precioBase - this.costoTotalPTSAP)/precioBase,
                     
                     });
 
