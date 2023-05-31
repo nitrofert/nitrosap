@@ -123,16 +123,19 @@ precioBase!:any;
 
 prcGerente:number =0;
 prcLPrecio:number =0;
+prcVendedor:number =0;
 
 recursoPT:number =0;
 administracion:number =0;
-cambioPrecioGerenteDB:Subject<number> = new Subject(); 
-cambioPrcGerenteDB:Subject<number> = new Subject(); 
+recursoPTSAP:number =0;
+cambioPrecioVendedorDB:Subject<number> = new Subject(); 
+cambioPrcVendedorDB:Subject<number> = new Subject(); 
 
 cambioPrecioLPDB:Subject<number> = new Subject(); 
 cambioPrcLPDB:Subject<number> = new Subject(); 
 
 formDetalleCalculo:boolean = false;
+formCrreateDetalleCalculo:boolean = false;
 
 formParametrosG:boolean = false;
 
@@ -144,7 +147,7 @@ prcInteres:number =0;
 
 precioEntrega:number = 0;
 
-  mesesAnio:any[] = [ {mes:1, mesStr:'Enero'},
+mesesAnio:any[] = [ {mes:1, mesStr:'Enero'},
                       {mes:2, mesStr:'Febrero'},
                       {mes:3, mesStr:'Marzo'},
                       {mes:4, mesStr:'Abril'},
@@ -156,6 +159,13 @@ precioEntrega:number = 0;
                       {mes:10, mesStr:'Octubre'},
                       {mes:11, mesStr:'Noviembre'},
                       {mes:12, mesStr:'Diciembre'}];
+  
+empaques:any[] = [];
+selectedEmpaque!:any;
+
+itemsMP:any[] = [];
+selecteditemMP!:any;
+
 
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -200,22 +210,22 @@ precioEntrega:number = 0;
     this.precioBase = this.opcionesPrecioBase.filter(precioBase => precioBase.code ==='LPGERENTE')[0];
     ////////console.log(this.precioBase);
 
-    this.cambioPrecioGerenteDB
+    this.cambioPrecioVendedorDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
       //////console.log('debouncerG: ',value);
 
       let event = {value}
-      this.cambioPrecioGerente(event);
+      this.cambioPrecioVendedor(event);
     });
 
-    this.cambioPrcGerenteDB
+    this.cambioPrcVendedorDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
       //////console.log('debouncerG: ',value);
 
       let event = {value}
-      this.cambioPrcGerente(event);
+      this.cambioPrcVendedor(event);
     });
 
     this.cambioPrcLPDB
@@ -258,6 +268,8 @@ precioEntrega:number = 0;
         await this.getPromediosLocalidades(config.tabla_promedios_localidad);
         await this.getCostosLocalidades(config.tabla_costos_localidad);
         await this.getPresentacionItems(config.tabla_presentacion_items);
+        await this.getItemsMP(config.itemsMP2);
+        await this.getItemsEP(config.itemsEmpaqueMP2)
         //this.getInformacionSolped();
         
         if(Object.keys(this.rutaActiva.snapshot.params).length >0){
@@ -324,9 +336,9 @@ async getCostosLocalidades(costos_localidad:any){
 
 
 async getPresentacionItems(presentacion_items:any){
-for (let item in presentacion_items){
-this.presentacion_items.push(presentacion_items[item]);
-}
+  for (let item in presentacion_items){
+    this.presentacion_items.push(presentacion_items[item]);
+  }
 
 }
 
@@ -337,6 +349,25 @@ async getItems(items:any){
               this.items.push(items[item]);
              
            }
+}
+
+async getItemsMP(itemsMP:any){
+  ////console.log(items);
+  for(let item in itemsMP){
+    itemsMP[item].label = itemsMP[item].ItemCode+' - '+itemsMP[item].ItemName;
+    this.itemsMP.push(itemsMP[item]);
+   
+ }
+}
+
+
+async getItemsEP(itemsEP:any){
+  ////console.log(items);
+  for(let item in itemsEP){
+    itemsEP[item].label = itemsEP[item].ItemCode+' - '+itemsEP[item].ItemName;
+    this.empaques.push(itemsEP[item]);
+   
+ }
 }
 
   filtrarItems(event:any){
@@ -360,10 +391,8 @@ async getItems(items:any){
   }
 
   SeleccionarItem(){
+    console.log(this.item);
    this.getPreciosListaItemSAP(this.item.ItemCode);
-   
-
-
    this.getPrecioVentaItemSAP(this.item.ItemCode);
   }
 
@@ -413,7 +442,7 @@ async getItems(items:any){
       this.comprasService.getInfoCalculoItem(this.authService.getToken(), idCalculo)
           .subscribe({
              next:(infoCalculoItem)=>{
-                ////console.log(infoCalculoItem);
+                console.log(infoCalculoItem);
 
                 this.fecha = new Date(infoCalculoItem.calculo_precio_item[0].fecha);
                 this.semanaAnio = infoCalculoItem.calculo_precio_item[0].semanaAnio;
@@ -424,11 +453,17 @@ async getItems(items:any){
                 this.item = this.items.find(item =>item.ItemCode === infoCalculoItem.calculo_precio_item[0].ItemCode);
                 this.observacion = infoCalculoItem.calculo_precio_item[0].observacion;
                 this.precioBase = this.opcionesPrecioBase.find(opcionPbase => opcionPbase.code === infoCalculoItem.calculo_precio_item[0].precioRef);
-                this.precioVendedor = infoCalculoItem.calculo_precio_item[0].precioBase;
+                
+                this.precioGerente = infoCalculoItem.calculo_precio_item[0].precioBase;
                 this.prcGerente = infoCalculoItem.calculo_precio_item[0].prcGerente;
-                this.precioGerente = (this.precioVendedor*(this.prcGerente/100))+this.precioVendedor;
+
+                this.prcVendedor = infoCalculoItem.calculo_precio_item[0].prcVendedor;
+                this.precioVendedor = (this.precioGerente*(this.prcVendedor/100))+this.precioGerente;
+                
+                //this.precioGerente = (this.precioVendedor*(this.prcGerente/100))+this.precioVendedor;
                 this.prcLPrecio = infoCalculoItem.calculo_precio_item[0].prcLP;
-                this.precioLista = (this.precioVendedor*(this.prcLPrecio/100))+this.precioVendedor
+                this.precioLista = (this.precioGerente*(this.prcLPrecio/100))+this.precioGerente;
+
                 this.recursoPT = infoCalculoItem.calculo_precio_item[0].promRecurso;
                 this.administracion = infoCalculoItem.calculo_precio_item[0].promAdmin;
 
@@ -443,6 +478,8 @@ async getItems(items:any){
                 let totalCostoEmpaqueMPS0 =0;
                 let totalCostoEmpaqueMPS1 =0;
                 let totalCostoEmpaqueMPS2 =0;
+
+                this.recursoPTSAP = infoCalculoItem.calculo_precio_item[0].costoRecursoSAP;
 
                 this.totalCostoPTSAP = 0;
 
@@ -501,7 +538,7 @@ async getItems(items:any){
                 this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+this.recursoPT;
                 this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+this.recursoPT;
                 this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+this.recursoPT;
-                this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPT;
+                this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
               
                 this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
                 this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
@@ -540,8 +577,8 @@ async getItems(items:any){
                       precioVentaPT:detalle_calculo.promVentaSap,
                       //brutoS0: (precioBase - this.costoVentaPTSAP)/this.costoVentaPTSAP,
                       //totalS0: (precioBase - this.costoTotalPTSAP)/this.costoTotalPTSAP,
-                      brutoS0: (precioBase - this.costoVentaPTSAP)/precioBase,
-                      totalS0: (precioBase - this.costoTotalPTSAP)/precioBase,
+                      brutoS0: precioBase==0?0:(precioBase - this.costoVentaPTSAP)/precioBase,
+                      totalS0: precioBase==0?0:(precioBase - this.costoTotalPTSAP)/precioBase,
                     
                     });
 
@@ -624,205 +661,208 @@ async getItems(items:any){
     });
   } 
    
-  getItemsMPbyItemPT(ItemCode:string){
-    this.comprasService.getItemsMPbyItemPT(this.authService.getToken(),this.item.ItemCode)
-    .subscribe({
-        next:async (itemsMP)=>{
-            
-            //console.log('Receta',itemsMP);
+  async getItemsMPbyItemPT(ItemCode:string){
 
-            this.trm_dia;
-            let recursoPT:number = (parseFloat(this.promedios_localidad[0].promedio_recurso)/this.trm_moneda);
-            let administracion:number =  parseFloat(this.promedios_localidad[0].promedio_administracion)/(this.trm_moneda);
-
-            this.recursoPT = recursoPT;
-            this.administracion = administracion;
-
-            console.log( this.recursoPT , this.administracion);
-
-
-            this.setPrecioBase();
-            /*
-            let costo_itemMP_semana0:number =0;
-            let costo_itemMP_semana1:number =0;
-            let costo_itemMP_semana2:number =0;
-            let costo_empaqueMP_item:number = 0;
-            */
-            this.costoVentaPTsemana0 = 0;
-            this.costoVentaPTsemana1 = 0;
-            this.costoVentaPTsemana2 = 0;
-
-            this.costoTotalPTsemana0 = 0;
-            this.costoTotalPTsemana1 = 0;
-            this.costoTotalPTsemana2 = 0;
-
-            this.totalEmpaque=0;
-            this.totalMPsemana0=0;
-            this.totalMPsemana1=0;
-            this.totalMPsemana2=0;
-
-            this.totalCostoPTSAP = 0;
-
-         
-
-            let detalle_receta:any[] = [];
-
-            for(let item of itemsMP){
-             ////console.log(item);
-
-
-             let costoEmpaque =0;
-             let costoMPseman0 =0;
-             let costoMPseman1 =0;
-             let costoMPseman2=0;
-             let precioEmpaque=0;
+    if(ItemCode!='ME2070005'){
+      this.comprasService.getItemsMPbyItemPT(this.authService.getToken(),this.item.ItemCode)
+      .subscribe({
+          next:async (itemsMP)=>{
               
-              let presentacion_item:any[any] = this.presentacion_items.filter(data => data.presentacion == item.EMPAQUE);
-              ////////console.log('presentacion_item',item.Code,presentacion_item)
-              if(presentacion_item.length>0){
-                ////////console.log(presentacion_item[0].valor,item.Quantity,trm_dia);
-                //costo_empaqueMP_item +=(parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
-                costoEmpaque = (parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
-                precioEmpaque = (parseFloat(presentacion_item[0].valor)/this.trm_moneda);
-              } 
-
-              let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(item.Code);
-              ////console.log('preciosMPItemUltimasSemanas',item.Code,preciosMPItemUltimasSemanas)
-              if(preciosMPItemUltimasSemanas.length>0){
-
-                if(preciosMPItemUltimasSemanas.length==1){
-                  this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${item.ItemName} no se encontraron precios para la semana 1 y 2`});
-                  preciosMPItemUltimasSemanas.push({
-                    anio:0,
-                    semanaAnioLista:0,
-                    precioNac:0
-                  },
-                  {
-                    anio:0,
-                    semanaAnioLista:0,
-                    precioNac:0
-                  })
-                }
-                if(preciosMPItemUltimasSemanas.length==2){
-                  this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${item.ItemName} no se encontraron precios para la semana  2`});
-                  preciosMPItemUltimasSemanas.push({
-                    anio:0,
-                    semanaAnioLista:0,
-                    precioNac:0
-                  })
-                }
-                /*
-                costo_itemMP_semana0 +=parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*parseFloat(item.Quantity);
-                costo_itemMP_semana1 +=parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*parseFloat(item.Quantity);
-                costo_itemMP_semana2 +=parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*parseFloat(item.Quantity);
-                */
+              //console.log('Receta',itemsMP);
+  
+  
+              //this.trm_dia;
+              let recursoPT:number = (parseFloat(this.promedios_localidad[0].promedio_recurso)/this.trm_moneda);
+              let administracion:number =  parseFloat(this.promedios_localidad[0].promedio_administracion)/(this.trm_moneda);
+              this.recursoPTSAP = parseFloat(this.item.RECURSOPONDE)/(this.trm_moneda);
+              this.recursoPT = recursoPT;
+              this.administracion = administracion;
+  
+              console.log( this.recursoPT , this.administracion);  
+  
+  
+              this.setPrecioBase();
+              /*
+              let costo_itemMP_semana0:number =0;
+              let costo_itemMP_semana1:number =0;
+              let costo_itemMP_semana2:number =0;
+              let costo_empaqueMP_item:number = 0;
+              */
+              this.costoVentaPTsemana0 = 0;
+              this.costoVentaPTsemana1 = 0;
+              this.costoVentaPTsemana2 = 0;
+  
+              this.costoTotalPTsemana0 = 0;
+              this.costoTotalPTsemana1 = 0;
+              this.costoTotalPTsemana2 = 0;
+  
+              this.totalEmpaque=0;
+              this.totalMPsemana0=0;
+              this.totalMPsemana1=0;
+              this.totalMPsemana2=0;
+  
+              this.totalCostoPTSAP = 0;
+  
+           
+  
+              let detalle_receta:any[] = [];
+  
+              for(let item of itemsMP){
+               ////console.log(item);
+  
+  
+               let costoEmpaque =0;
+               let costoMPseman0 =0;
+               let costoMPseman1 =0;
+               let costoMPseman2=0;
+               let precioEmpaque=0;
                 
-                costoMPseman0 =(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
-                costoMPseman1 =(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
-                costoMPseman2 =(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
-
-              } 
-
-              this.totalCostoPTSAP+=(parseFloat(item.Quantity)*parseFloat(item.COSTO))/this.trm_moneda;
-
-               this.totalEmpaque+=costoEmpaque;
-               this.totalMPsemana0+=costoMPseman0;
-               this.totalMPsemana1+=costoMPseman1;
-               this.totalMPsemana2+=costoMPseman2;
+                let presentacion_item:any[any] = this.presentacion_items.filter(data => data.presentacion == item.EMPAQUE);
+                ////////console.log('presentacion_item',item.Code,presentacion_item)
+                if(presentacion_item.length>0){
+                  ////////console.log(presentacion_item[0].valor,item.Quantity,trm_dia);
+                  //costo_empaqueMP_item +=(parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
+                  costoEmpaque = (parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
+                  precioEmpaque = (parseFloat(presentacion_item[0].valor)/this.trm_moneda);
+                } 
+  
+                let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(item.Code);
+                ////console.log('preciosMPItemUltimasSemanas',item.Code,preciosMPItemUltimasSemanas)
+                if(preciosMPItemUltimasSemanas.length>0){
+  
+                  if(preciosMPItemUltimasSemanas.length==1){
+                    this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${item.ItemName} no se encontraron precios para la semana 1 y 2`});
+                    preciosMPItemUltimasSemanas.push({
+                      anio:0,
+                      semanaAnioLista:0,
+                      precioNac:0
+                    },
+                    {
+                      anio:0,
+                      semanaAnioLista:0,
+                      precioNac:0
+                    })
+                  }
+                  if(preciosMPItemUltimasSemanas.length==2){
+                    this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${item.ItemName} no se encontraron precios para la semana  2`});
+                    preciosMPItemUltimasSemanas.push({
+                      anio:0,
+                      semanaAnioLista:0,
+                      precioNac:0
+                    })
+                  }
+                 
+                  
+                  costoMPseman0 =(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
+                  costoMPseman1 =(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
+                  costoMPseman2 =(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia)*parseFloat(item.Quantity))/this.trm_moneda;
+  
+                } 
+  
+                this.totalCostoPTSAP+=(parseFloat(item.Quantity)*parseFloat(item.COSTO))/this.trm_moneda;
+  
+                 this.totalEmpaque+=costoEmpaque;
+                 this.totalMPsemana0+=costoMPseman0;
+                 this.totalMPsemana1+=costoMPseman1;
+                 this.totalMPsemana2+=costoMPseman2;
+                
+                 item.costoSAP=(parseFloat(item.Quantity)*parseFloat(item.COSTO))/this.trm_moneda;
+                
+                detalle_receta.push({
+                  itemMP: item,
+                  costosItemMP: {
+                    semana0: {
+                      anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].anio:0,
+                      semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].semanaAnioLista:0,
+                      precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia)/this.trm_moneda):0,
+                      precioEmpaque,
+                      costoMP:costoMPseman0,
+                      empaqueMP:costoEmpaque,
+                      recursoMP:recursoPT,
+                      costoVentaMP:costoMPseman0+costoEmpaque+recursoPT,
+                      administracionMP: administracion,
+                      costoTotalMP:costoMPseman0+costoEmpaque+recursoPT+administracion
+                      
+                    },
+                    semana1: {
+                      anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].anio:0,
+                      semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].semanaAnioLista:0,
+                      precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia)/this.trm_moneda):0,
+                      precioEmpaque,
+                      costoMP:costoMPseman1,
+                      empaqueMP:costoEmpaque,
+                      recursoMP:recursoPT,
+                      costoVentaMP:costoMPseman1+costoEmpaque+recursoPT,
+                      administracionMP: administracion,
+                      costoTotalMP:costoMPseman1+costoEmpaque+recursoPT+administracion
+                    },
+                    semana2: {
+                      anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].anio:0,
+                      semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].semanaAnioLista:0,
+                      precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia)/this.trm_moneda):0,
+                      precioEmpaque,
+                      costoMP:costoMPseman2,
+                      empaqueMP:costoEmpaque,
+                      recursoMP:recursoPT,
+                      costoVentaMP:costoMPseman2+costoEmpaque+recursoPT,
+                      administracionMP: administracion,
+                      costoTotalMP:costoMPseman2+costoEmpaque+recursoPT+administracion
+                    },
+  
+                  }
+                })
+              }
+  
+              /*//////console.log(`Costo MP de PT ${ItemCode}:`,costo_itemMP_semana0);
+              //////console.log(`Costo Empaque MP de PT ${ItemCode}:`,costo_empaqueMP_item);
+              //////console.log(`Costo Recurso de PT ${ItemCode}:`,recursoPT);
+              let costoVentaPT:number = (costo_itemMP_semana0+costo_empaqueMP_item+recursoPT);
+              //////console.log(`Costo Venta PT ${ItemCode}:`,costoVentaPT);
+              let costoTotalPT:number = (costoVentaPT+administracion);
+              //////console.log(`Costo Total PT ${ItemCode}:`,costoTotalPT);
+              //////console.log('detalle_receta',detalle_receta);
+              */
+  
+              this.detalle_receta = detalle_receta;
+  
+              this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+recursoPT;
+              this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+recursoPT;
+              this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+recursoPT;
+              this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
+  
+              this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + administracion;
+              this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + administracion;
+              this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + administracion;
+              this.costoTotalPTSAP = this.costoVentaPTSAP+ administracion;
+  
+  
               
-               item.costoSAP=(parseFloat(item.Quantity)*parseFloat(item.COSTO))/this.trm_moneda;
+  
+  
+  
+  
+              this.checkItemsMPbyItemPT = true;
+  
               
-              detalle_receta.push({
-                itemMP: item,
-                costosItemMP: {
-                  semana0: {
-                    anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].anio:0,
-                    semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].semanaAnioLista:0,
-                    precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia)/this.trm_moneda):0,
-                    precioEmpaque,
-                    costoMP:costoMPseman0,
-                    empaqueMP:costoEmpaque,
-                    recursoMP:recursoPT,
-                    costoVentaMP:costoMPseman0+costoEmpaque+recursoPT,
-                    administracionMP: administracion,
-                    costoTotalMP:costoMPseman0+costoEmpaque+recursoPT+administracion
-                    
-                  },
-                  semana1: {
-                    anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].anio:0,
-                    semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].semanaAnioLista:0,
-                    precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia)/this.trm_moneda):0,
-                    precioEmpaque,
-                    costoMP:costoMPseman1,
-                    empaqueMP:costoEmpaque,
-                    recursoMP:recursoPT,
-                    costoVentaMP:costoMPseman1+costoEmpaque+recursoPT,
-                    administracionMP: administracion,
-                    costoTotalMP:costoMPseman1+costoEmpaque+recursoPT+administracion
-                  },
-                  semana2: {
-                    anio:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].anio:0,
-                    semana:preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].semanaAnioLista:0,
-                    precioMP:preciosMPItemUltimasSemanas.length>0?(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia)/this.trm_moneda):0,
-                    precioEmpaque,
-                    costoMP:costoMPseman2,
-                    empaqueMP:costoEmpaque,
-                    recursoMP:recursoPT,
-                    costoVentaMP:costoMPseman2+costoEmpaque+recursoPT,
-                    administracionMP: administracion,
-                    costoTotalMP:costoMPseman2+costoEmpaque+recursoPT+administracion
-                  },
+  
+              //////console.log(this.tablaCalculadora);
+              
+          },
+          error:(err)=>{
+            console.error(err);
+          }
+      });
+    }
 
-                }
-              })
-            }
-
-            /*//////console.log(`Costo MP de PT ${ItemCode}:`,costo_itemMP_semana0);
-            //////console.log(`Costo Empaque MP de PT ${ItemCode}:`,costo_empaqueMP_item);
-            //////console.log(`Costo Recurso de PT ${ItemCode}:`,recursoPT);
-            let costoVentaPT:number = (costo_itemMP_semana0+costo_empaqueMP_item+recursoPT);
-            //////console.log(`Costo Venta PT ${ItemCode}:`,costoVentaPT);
-            let costoTotalPT:number = (costoVentaPT+administracion);
-            //////console.log(`Costo Total PT ${ItemCode}:`,costoTotalPT);
-            //////console.log('detalle_receta',detalle_receta);
-            */
-
-            this.detalle_receta = detalle_receta;
-
-            this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+recursoPT;
-            this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+recursoPT;
-            this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+recursoPT;
-            this.costoVentaPTSAP = this.totalCostoPTSAP+recursoPT;
-
-            this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + administracion;
-            this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + administracion;
-            this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + administracion;
-            this.costoTotalPTSAP = this.costoVentaPTSAP+ administracion;
-
-
-            
-
-
-
-
-            this.checkItemsMPbyItemPT = true;
-
-            await this.setTablaCalculadora()
-
-            //////console.log(this.tablaCalculadora);
-            
-        },
-        error:(err)=>{
-          console.error(err);
-        }
-    });
+    await this.setTablaCalculadora()
+    
   }
 
   async setTablaCalculadora(){
     this.tablaCalculadora = [];
     this.tablaCalculadoraCostos = [];
 
-    ////console.log(this.precioBaseCalculo, this.precioBaseCalculo2);
+    console.log(this.precioBaseCalculo, this.precioBaseCalculo2);
 
     this.tablaCalculadora.push({
       linea:1,
@@ -839,12 +879,12 @@ async getItems(items:any){
       totalS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana1)/this.costoTotalPTsemana1,
       brutoS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana2)/this.costoVentaPTsemana2,
       totalS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,*/
-      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
-      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
-      brutoS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
-      totalS1: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
-      brutoS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
-      totalS2: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS0: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS0: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana0)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS1: this.precioBaseCalculo==0?0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS1: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana1)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS2: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS2: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTsemana2)/(this.precioBaseCalculo/(this.trm_moneda)),
 
 
     },
@@ -863,12 +903,12 @@ async getItems(items:any){
       totalS1: (this.precioBaseCalculo2 - this.costoTotalPTsemana1)/this.costoTotalPTsemana1,
       brutoS2: (this.precioBaseCalculo2 - this.costoVentaPTsemana2)/this.costoVentaPTsemana2,
       totalS2: (this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.costoTotalPTsemana2,*/
-      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.precioBaseCalculo2,
-      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTsemana0)/this.precioBaseCalculo2,
-      brutoS1: (this.precioBaseCalculo2 - this.costoVentaPTsemana1)/this.precioBaseCalculo2,
-      totalS1: (this.precioBaseCalculo2 - this.costoTotalPTsemana1)/this.precioBaseCalculo2,
-      brutoS2: (this.precioBaseCalculo2 - this.costoVentaPTsemana2)/this.precioBaseCalculo2,
-      totalS2: (this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.precioBaseCalculo2,
+      brutoS0: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.precioBaseCalculo2,
+      totalS0: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoTotalPTsemana0)/this.precioBaseCalculo2,
+      brutoS1: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoVentaPTsemana1)/this.precioBaseCalculo2,
+      totalS1: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoTotalPTsemana1)/this.precioBaseCalculo2,
+      brutoS2: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoVentaPTsemana2)/this.precioBaseCalculo2,
+      totalS2: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoTotalPTsemana2)/this.precioBaseCalculo2,
     });
 
     this.tablaCalculadoraCostos.push({
@@ -882,8 +922,8 @@ async getItems(items:any){
       precioVentaPT:this.precioVentaSAPPT,
       /*brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/this.costoVentaPTSAP,
       totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/this.costoTotalPTSAP,*/
-      brutoS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
-      totalS0: ((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
+      brutoS0: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoVentaPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
+      totalS0: this.precioBaseCalculo==0?0:((this.precioBaseCalculo/(this.trm_moneda)) - this.costoTotalPTSAP)/(this.precioBaseCalculo/(this.trm_moneda)),
    
     },
     {
@@ -897,11 +937,13 @@ async getItems(items:any){
       precioVentaPT:this.precioVentaSAPPT,
       /*brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.costoVentaPTSAP,
       totalS0: (this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.costoTotalPTSAP,*/
-      brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.precioBaseCalculo2,
-      totalS0: (this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.precioBaseCalculo2,
+      brutoS0: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.precioBaseCalculo2,
+      totalS0: this.precioBaseCalculo2==0?0:(this.precioBaseCalculo2 - this.costoTotalPTSAP)/this.precioBaseCalculo2,
 
   
     });
+
+    console.log(this.tablaCalculadoraCostos);
   }
 
   async getPreciosMPItemUltimasSemanas(ItemCode:string,semanaAnio?:number,anio?:number):Promise<any>{
@@ -996,11 +1038,16 @@ async getItems(items:any){
   }
 
   cambiarPrecioGerente(valor:number){
-    this.cambioPrecioGerenteDB.next(valor);
+    
+    this. precioVendedor = ((this.precioGerente*this.prcVendedor)/100)+this.precioGerente;
+
+    this.precioLista = ((this.precioGerente*this.prcLPrecio)/100)+this.precioGerente;
+
+    this.SeleccionarPrecioBase();
   }
 
   cambioPrecioGerente(event:any){
-    let prcGerente:number =0;
+    /*let prcGerente:number =0;
 
     //////console.log(event);
 
@@ -1009,16 +1056,16 @@ async getItems(items:any){
     }
 
     this.prcGerente = prcGerente;
-    this.SeleccionarPrecioBase();
+    this.SeleccionarPrecioBase();*/
   }
 
 
   cambiarPrcGerente(valor:number){
-    this.cambioPrcGerenteDB.next(valor);
+    //this.cambioPrcGerenteDB.next(valor);
   }
 
   cambioPrcGerente(event:any){
-      let precioGerente:number =0;
+      /*let precioGerente:number =0;
 
       //////console.log(event);
 
@@ -1027,17 +1074,49 @@ async getItems(items:any){
       }
 
       this.precioGerente = precioGerente;
+      this.SeleccionarPrecioBase();*/
+      
+  }
+
+
+  cambiarPrecioVendedor(valor:number){
+    
+    this.cambioPrecioVendedorDB.next(valor);
+  }
+
+  cambioPrecioVendedor(event:any){
+    let prcVendedor:number =0;
+
+    //////console.log(event);
+
+    if(this.precioGerente!=0){
+      prcVendedor =(100*(this.precioVendedor-this.precioGerente))/this.precioGerente;
+    }
+
+    this.prcVendedor = prcVendedor;
+    this.SeleccionarPrecioBase();
+  }
+
+
+  cambiarPrcVendedor(valor:number){
+    this.cambioPrcVendedorDB.next(valor);
+  }
+
+  cambioPrcVendedor(event:any){
+      let precioVendedor:number =0;
+
+      //////console.log(event);
+
+      if(this.precioGerente!=0){
+        precioVendedor = ((this.precioGerente*event.value)/100)+this.precioGerente;
+      }
+
+      this.precioVendedor = precioVendedor;
       this.SeleccionarPrecioBase();
       
   }
 
-  cambioPrecioVendedor(precioVendedor:number){
-    
-    this. precioGerente = ((this.precioVendedor*this.prcGerente)/100)+this.precioVendedor;
-
-    this.precioLista = ((this.precioVendedor*this.prcLPrecio)/100)+this.precioVendedor;
-    this.SeleccionarPrecioBase();
-  }
+  
 
   cambiarPrecioLP(valor:number){
     this.cambioPrecioLPDB.next(valor);
@@ -1050,8 +1129,8 @@ async getItems(items:any){
   cambioPrcLP(event:any){
     let precioLP:number =0;
 
-    if(this.precioVendedor!=0){
-      precioLP = ((this.precioVendedor*event.value)/100)+this.precioVendedor;
+    if(this.precioGerente!=0){
+      precioLP = ((this.precioGerente*event.value)/100)+this.precioGerente;
     }
 
     this.precioLista = precioLP;
@@ -1061,8 +1140,8 @@ async getItems(items:any){
 cambioPrecioLP(event:any){
   let prcLP:number =0;
 
-  if(this.precioVendedor!=0){
-    prcLP = (100*(this.precioLista-this.precioVendedor))/this.precioVendedor;
+  if(this.precioGerente!=0){
+    prcLP = (100*(this.precioLista-this.precioGerente))/this.precioGerente;
   }
 
   this.prcLPrecio = prcLP;
@@ -1083,11 +1162,13 @@ guardarCalculo(){
       moneda:this.moneda.Currency,
       trmMoneda:this.trm_moneda,
       precioRef:this.precioBase.code,
-      precioBase:this.precioVendedor,
+      precioBase:this.precioGerente,
       prcGerente:this.prcGerente,
       prcLP:this.prcLPrecio,
+      prcVendedor:this.prcVendedor,
       promAdmin:this.administracion,
       promRecurso:this.recursoPT,
+      costoRecursoSAP:this.recursoPTSAP,
       observacion:this.observacion,
       detalle_calculo_mp:this.detalle_receta,
       detalle_calculo_precio_item:this.tablaCalculadora
@@ -1196,6 +1277,8 @@ cambioMP(event:any,itemCode:string){
   this.recalcularCostosLineaItemMP(event.target.value,itemCode);
 }
 
+
+
   async recalcularCostosLineaItemMP(cantidad:number, itemCode:string){
 
   let indexDetalleReceta = this.detalle_receta.findIndex(item=>item.itemMP.Code == itemCode);
@@ -1260,12 +1343,357 @@ cambioMP(event:any,itemCode:string){
  
 }
 
+
+
 parametrosGlobales(){
     this.formParametrosG= true;
 }
 
   detalleMP(){
     this.formDetalleCalculo = true;
+
+   
+  }
+
+  crearDetalleMP(){
+    
+    
+    this.formCrreateDetalleCalculo = true;
+    if(this.detalle_receta.length===0){
+
+      let recursoPT:number = (parseFloat(this.promedios_localidad[0].promedio_recurso)/this.trm_moneda);
+      let administracion:number =  parseFloat(this.promedios_localidad[0].promedio_administracion)/(this.trm_moneda);
+      //this.recursoPTSAP = parseFloat(this.item.RECURSOPONDE)/(this.trm_moneda);
+      this.recursoPT = recursoPT;
+      this.administracion = administracion;
+
+      let detalle_receta:any[] = [];
+
+      detalle_receta.push({
+        itemMP:{
+          Code:'',
+          ItemName:'',
+          EMPAQUE:0,
+          Quantity:0,
+          costo:0,
+          costoSAP:0,
+          tipo:'empaque',
+          index:1,
+        },
+        costosItemMP:{
+          semana0:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+  
+          },
+          semana1:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+          },
+          semana2:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+          }
+        }
+  
+      });
+  
+      detalle_receta.push({
+        itemMP:{
+          Code:'',
+          ItemName:'',
+          EMPAQUE:0,
+          Quantity:0,
+          costo:0,
+          costoSAP:0,
+          tipo:'articulo',
+          index:2,
+        },
+        costosItemMP:{
+          semana0:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          },
+          semana1:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          },
+          semana2:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          }
+        }
+  
+      });
+  
+      this.detalle_receta = detalle_receta;
+    }
+    
+   
+
+    ///console.log(this.detalle_receta);
+
+  }
+
+
+  async seleccionarItemDetalle(index:number, itemSeleccionado:any){
+      
+      const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+     
+      this.detalle_receta[indexDetalle].itemMP.Code = itemSeleccionado.ItemCode;
+      this.detalle_receta[indexDetalle].itemMP.ItemName = itemSeleccionado.ItemName;
+      let costoItem =itemSeleccionado.COSTOUINVET==null?0:parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda;
+      this.detalle_receta[indexDetalle].itemMP.costo = costoItem;
+      //let costoSAP = parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity)*costoItem;
+      //this.detalle_receta[indexDetalle].itemMP.costoSAP = costoSAP;
+
+      if(this.detalle_receta[indexDetalle].itemMP.tipo=='empaque'){
+        /*this.detalle_receta[indexDetalle].costosItemMP.semana0.empaqueMP = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity);
+        this.detalle_receta[indexDetalle].costosItemMP.semana1.empaqueMP = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity);
+        this.detalle_receta[indexDetalle].costosItemMP.semana2.empaqueMP = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity);*/
+
+        this.detalle_receta[indexDetalle].costosItemMP.semana0.precioEmpaque = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda);
+        this.detalle_receta[indexDetalle].costosItemMP.semana1.precioEmpaque = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda);
+        this.detalle_receta[indexDetalle].costosItemMP.semana2.precioEmpaque = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda);
+      }
+
+      if(this.detalle_receta[indexDetalle].itemMP.tipo=='articulo'){
+         
+
+
+
+          let precioMPseman0 =0;
+          let precioMPseman1 =0;
+          let precioMPseman2 =0;
+
+          let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(itemSeleccionado.ItemCode);
+              console.log('preciosMPItemUltimasSemanas',itemSeleccionado.ItemCode,preciosMPItemUltimasSemanas)
+            if(preciosMPItemUltimasSemanas.length>0){
+
+              if(preciosMPItemUltimasSemanas.length==1){
+                this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${itemSeleccionado.ItemName} no se encontraron precios para la semana 1 y 2`});
+                preciosMPItemUltimasSemanas.push({
+                  anio:0,
+                  semanaAnioLista:0,
+                  precioNac:0
+                },
+                {
+                  anio:0,
+                  semanaAnioLista:0,
+                  precioNac:0
+                })
+              }
+              if(preciosMPItemUltimasSemanas.length==2){
+                this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `Para la materia prima ${itemSeleccionado.ItemName} no se encontraron precios para la semana  2`});
+                preciosMPItemUltimasSemanas.push({
+                  anio:0,
+                  semanaAnioLista:0,
+                  precioNac:0
+                })
+              }
+
+              this.detalle_receta[indexDetalle].costosItemMP.semana0.anio = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].anio:0;
+              this.detalle_receta[indexDetalle].costosItemMP.semana1.anio = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].anio:0;
+              this.detalle_receta[indexDetalle].costosItemMP.semana2.anio = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].anio:0;
+
+              this.detalle_receta[indexDetalle].costosItemMP.semana0.semana = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[0].semanaAnioLista:0;
+              this.detalle_receta[indexDetalle].costosItemMP.semana1.semana = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[1].semanaAnioLista:0;
+              this.detalle_receta[indexDetalle].costosItemMP.semana2.semana = preciosMPItemUltimasSemanas.length>0?preciosMPItemUltimasSemanas[2].semanaAnioLista:0;
+  
+              
+              
+              /*costoMPseman0 =(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity))/this.trm_moneda;
+              costoMPseman1 =(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity))/this.trm_moneda;
+              costoMPseman2 =(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia)*parseFloat(this.detalle_receta[indexDetalle].itemMP.Quantity))/this.trm_moneda;*/
+
+              precioMPseman0 =(parseFloat(preciosMPItemUltimasSemanas[0].precioNac)*(this.trm_dia))/this.trm_moneda;
+              precioMPseman1 =(parseFloat(preciosMPItemUltimasSemanas[1].precioNac)*(this.trm_dia))/this.trm_moneda;
+              precioMPseman2 =(parseFloat(preciosMPItemUltimasSemanas[2].precioNac)*(this.trm_dia))/this.trm_moneda;
+
+
+            } 
+
+           
+            this.detalle_receta[indexDetalle].costosItemMP.semana0.precioMP = precioMPseman0;
+            this.detalle_receta[indexDetalle].costosItemMP.semana1.precioMP = precioMPseman1;
+            this.detalle_receta[indexDetalle].costosItemMP.semana2.precioMP = precioMPseman2;
+         
+      }
+
+      console.log(this.detalle_receta);
+      await this.calcularCostosLinea(index);
+
+     
+
+  }
+
+  PresionaEnterCantidadMP(event:any,index:number){
+    
+    if (event.key === "Enter") {
+      
+      ////////console.log('ENTER PRESS');
+      if(event.target.value ===''){
+        event.target.value =0;
+      }
+      
+    }
+  }
+  
+  cambioCantidadMP(event:any,index:number){
+    ////////console.log(event.target.value);
+    if(event.target.value ===''){
+      event.target.value =0;
+    }
+  
+    this.calcularCostosLinea(index);
+    
+  }
+
+  async calcularCostosLinea(index:number){
+    const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+
+    let cantidadItem = this.detalle_receta[indexDetalle].itemMP.Quantity;
+    let costoItem = this.detalle_receta[indexDetalle].itemMP.costo;
+    
+    let costoSAP = parseFloat(cantidadItem)*costoItem;
+    this.detalle_receta[indexDetalle].itemMP.costoSAP = costoSAP
+
+ 
+    let costoEmpaque = parseFloat(this.detalle_receta[indexDetalle].costosItemMP.semana0.precioEmpaque)*cantidadItem;
+    let costoItemSemana0 = parseFloat(this.detalle_receta[indexDetalle].costosItemMP.semana0.precioMP)*cantidadItem;
+    let costoItemSemana1  = parseFloat(this.detalle_receta[indexDetalle].costosItemMP.semana1.precioMP)*cantidadItem;
+    let costoItemSemana2 = parseFloat(this.detalle_receta[indexDetalle].costosItemMP.semana2.precioMP)*cantidadItem;
+
+    this.detalle_receta[indexDetalle].costosItemMP.semana0.costoMP = costoItemSemana0;
+    this.detalle_receta[indexDetalle].costosItemMP.semana1.costoMP = costoItemSemana1;
+    this.detalle_receta[indexDetalle].costosItemMP.semana2.costoMP = costoItemSemana2;
+
+    this.detalle_receta[indexDetalle].costosItemMP.semana0.empaqueMP = costoEmpaque;
+    this.detalle_receta[indexDetalle].costosItemMP.semana1.empaqueMP = costoEmpaque;
+    this.detalle_receta[indexDetalle].costosItemMP.semana2.empaqueMP = costoEmpaque;
+
+    await this.calcularTotalesDetalleCalculo();
+
+  }
+
+
+ async calcularTotalesDetalleCalculo(){
+
+      let costoEmpaque =0;
+      let costoMPseman0 =0;
+      let costoMPseman1 =0;
+      let costoMPseman2=0;
+      let costoSAP =0;
+      
+      for(let linea of this.detalle_receta){
+
+        console.log(linea);
+
+        costoSAP+=parseFloat(linea.itemMP.costoSAP);
+        costoEmpaque+= parseFloat(linea.costosItemMP.semana0.empaqueMP);
+        costoMPseman0+=parseFloat(linea.costosItemMP.semana0.costoMP);
+        costoMPseman1+=parseFloat(linea.costosItemMP.semana1.costoMP);
+        costoMPseman2+=parseFloat(linea.costosItemMP.semana2.costoMP);
+      }
+
+      this.totalMPsemana0 = costoMPseman0;
+      this.totalMPsemana1 = costoMPseman1;
+      this.totalMPsemana2 = costoMPseman2;
+
+      this.totalEmpaque = costoEmpaque;
+
+      let costoTotalPTSemana0 =costoEmpaque+costoMPseman0;
+      let costoTotalPTSemana1 =costoEmpaque+costoMPseman1;
+      let costoTotalPTSemana2 =costoEmpaque+costoMPseman2;
+
+      this.totalCostoPTSAP = costoSAP;
+
+      this.costoVentaPTsemana0 = costoTotalPTSemana0+this.recursoPT;
+      this.costoVentaPTsemana1 = costoTotalPTSemana1+this.recursoPT;
+      this.costoVentaPTsemana2 = costoTotalPTSemana2+this.recursoPT;
+      this.costoVentaPTSAP = costoSAP+this.recursoPT;
+
+      this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
+      this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
+      this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + this.administracion;
+      this.costoTotalPTSAP = this.costoVentaPTSAP+ this.administracion;
+
+
+
+      await this.setTablaCalculadora()
+
+  }
+
+  adicionarLinea(){
+    
+    
+    this.detalle_receta.push({
+      itemMP:{
+        Code:'',
+        ItemName:'',
+        EMPAQUE:0,
+        Quantity:0,
+        costo:0,
+        costoSAP:0,
+        tipo:'articulo',
+        index:this.detalle_receta.length+1,
+      },
+      costosItemMP:{
+        semana0:{
+          anio:0,
+          semana:0,
+          costoMP:0,
+          empaqueMP:0,
+          precioMP:0,
+          precioEmpaque:0,
+        },
+        semana1:{
+          anio:0,
+          semana:0,
+          costoMP:0,
+          empaqueMP:0,
+          precioMP:0,
+          precioEmpaque:0,
+        },
+        semana2:{
+          anio:0,
+          semana:0,
+          costoMP:0,
+          empaqueMP:0,
+          precioMP:0,
+          precioEmpaque:0,
+        }
+      }
+
+    });
+
+   
+
+    console.log(this.detalle_receta);
   }
 
   async calcularSemana(){

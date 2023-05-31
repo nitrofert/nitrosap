@@ -144,7 +144,21 @@
 
 						<th>
 							<div class="flex justify-content-between align-items-center">
-								Precio base
+								Precio Gerente
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Precio Vendedor
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Precio Lista
 								
 							</div>
 						</th>
@@ -225,7 +239,7 @@
 						</td>
 
 						<td>
-							{{ item.promMercado  }}
+							{{ item.promMercado | number }}
 						</td>
 
 						<td>
@@ -233,7 +247,15 @@
 						</td>
 
 						<td>
-							{{ item.precioBase  }}
+							{{ item.precioGerente | number }}
+						</td>
+
+						<td>
+							{{ item.precioVendedor | number }}
+						</td>
+
+						<td>
+							{{ item.precioLP | number }}
 						</td>
 
 						<td>

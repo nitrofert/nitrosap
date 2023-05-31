@@ -76,6 +76,7 @@ export class CalculadoraPreciosComponent implements OnInit {
       this.comprasService.listaPreciosCalculados(this.authService.getToken())
           .subscribe({
               next:(listaPreciosCalculados)=>{
+                console.log(listaPreciosCalculados);
                 this.infoCalculada = listaPreciosCalculados;
               },
               error:(err)=>{
