@@ -63,6 +63,8 @@ export class CalculadoraPreciosComponent implements OnInit {
      
 
      this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+
+     console.log( this.permisosUsuarioPagina);
     
     this.urlBreadCrumb = this.router.url;
 

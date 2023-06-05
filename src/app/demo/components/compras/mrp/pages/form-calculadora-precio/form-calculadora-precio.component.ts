@@ -76,6 +76,7 @@ export class FormCalculadoraPrecioComponent implements OnInit {
   precioVentaSAPPT:number = 0;
 
   detalle_receta:any[] = [];
+  selectedDetalleReceta:any[] = [];
 
   totalEmpaque:number =0;
   totalMPsemana0:number =0;
@@ -289,6 +290,173 @@ selecteditemMP!:any;
     });
   }
 
+  getInfoCalculoItem(idCalculo:any){
+    this.displayModal = true;
+    this.loadingCargue = true;
+
+    this.comprasService.getInfoCalculoItem(this.authService.getToken(), idCalculo)
+        .subscribe({
+           next:(infoCalculoItem)=>{
+              console.log(infoCalculoItem);
+
+              this.fecha = new Date(infoCalculoItem.calculo_precio_item[0].fecha);
+              this.semanaAnio = infoCalculoItem.calculo_precio_item[0].semanaAnio;
+              this.semanaMes = infoCalculoItem.calculo_precio_item[0].semanaMes;
+              this.trm_dia = infoCalculoItem.calculo_precio_item[0].trmDia;
+              this.moneda = this.monedas.find(moneda => moneda.Currency === infoCalculoItem.calculo_precio_item[0].moneda);
+              this.trm_moneda = infoCalculoItem.calculo_precio_item[0].trmMoneda;
+              this.item = this.items.find(item =>item.ItemCode === infoCalculoItem.calculo_precio_item[0].ItemCode);
+              this.observacion = infoCalculoItem.calculo_precio_item[0].observacion;
+              this.precioBase = this.opcionesPrecioBase.find(opcionPbase => opcionPbase.code === infoCalculoItem.calculo_precio_item[0].precioRef);
+              
+              this.precioGerente = infoCalculoItem.calculo_precio_item[0].precioBase;
+              this.prcGerente = infoCalculoItem.calculo_precio_item[0].prcGerente;
+
+              this.prcVendedor = infoCalculoItem.calculo_precio_item[0].prcVendedor;
+              this.precioVendedor = (this.precioGerente*(this.prcVendedor/100))+this.precioGerente;
+              
+              //this.precioGerente = (this.precioVendedor*(this.prcGerente/100))+this.precioVendedor;
+              this.prcLPrecio = infoCalculoItem.calculo_precio_item[0].prcLP;
+              this.precioLista = (this.precioGerente*(this.prcLPrecio/100))+this.precioGerente;
+
+              this.recursoPT = infoCalculoItem.calculo_precio_item[0].promRecurso;
+              this.administracion = infoCalculoItem.calculo_precio_item[0].promAdmin;
+
+              console.log( this.recursoPT , this.administracion);
+
+              
+              
+              let detalle_receta:any[] = [];
+              let totalCostoMPS0 = 0;
+              let totalCostoMPS1 = 0;
+              let totalCostoMPS2 = 0;
+              let totalCostoEmpaqueMPS0 =0;
+              let totalCostoEmpaqueMPS1 =0;
+              let totalCostoEmpaqueMPS2 =0;
+
+              this.recursoPTSAP = infoCalculoItem.calculo_precio_item[0].costoRecursoSAP==0?this.recursoPT:infoCalculoItem.calculo_precio_item[0].costoRecursoSAP;
+
+              this.totalCostoPTSAP = 0;
+
+              for(let detalle_receta_pt of infoCalculoItem.detalle_calculo_mp){
+                detalle_receta.push({
+                  itemMP:{
+                    Code:detalle_receta_pt.ItemCode,
+                    ItemName:detalle_receta_pt.ItemName,
+                    EMPAQUE:detalle_receta_pt.empaque,
+                    Quantity:detalle_receta_pt.cantidad,
+                    costoSAP:detalle_receta_pt.costoSAP,
+                    costo:detalle_receta_pt.costoSAP/detalle_receta_pt.cantidad
+                  },
+                  costosItemMP:{
+                    semana0:{
+                      anio:detalle_receta_pt.anioS0,
+                      semana:detalle_receta_pt.semanaS0,
+                      costoMP:detalle_receta_pt.costoMPS0,
+                      empaqueMP:detalle_receta_pt.costoEmpaqueS0,
+                    },
+                    semana1:{
+                      anio:detalle_receta_pt.anioS1,
+                      semana:detalle_receta_pt.semanaS1,
+                      costoMP:detalle_receta_pt.costoMPS1,
+                      empaqueMP:detalle_receta_pt.costoEmpaqueS1,
+                    },
+                    semana2:{
+                      anio:detalle_receta_pt.anioS2,
+                      semana:detalle_receta_pt.semanaS2,
+                      costoMP:detalle_receta_pt.costoMPS2,
+                      empaqueMP:detalle_receta_pt.costoEmpaqueS2,
+                    }
+                  }
+
+                });
+
+                totalCostoMPS0+=detalle_receta_pt.costoMPS0;
+                totalCostoMPS1+=detalle_receta_pt.costoMPS1;
+                totalCostoMPS2+=detalle_receta_pt.costoMPS2;
+                totalCostoEmpaqueMPS0+=detalle_receta_pt.costoEmpaqueS0;
+                totalCostoEmpaqueMPS2+=detalle_receta_pt.costoEmpaqueS1;
+                totalCostoEmpaqueMPS1+=detalle_receta_pt.costoEmpaqueS2;
+
+                this.totalCostoPTSAP+=detalle_receta_pt.costoSAP
+
+
+               
+
+              }
+
+              this.totalMPsemana0 = totalCostoMPS0;
+              this.totalMPsemana1 = totalCostoMPS1;
+              this.totalMPsemana2 = totalCostoMPS2;
+            
+              this.totalEmpaque = totalCostoEmpaqueMPS0;
+            
+              this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
+            
+              this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
+              this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
+              this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + this.administracion;
+              this.costoTotalPTSAP = this.costoVentaPTSAP+ this.administracion;
+
+              for(let detalle_calculo of infoCalculoItem.detalle_precio_calculo_item){
+
+                ////console.log(detalle_calculo);
+                
+                  this.tablaCalculadora.push({
+                    ItemCode:detalle_calculo.ItemCode,
+                    ItemName:detalle_calculo.ItemName,
+                    lpGerente:detalle_calculo.precioGerente,
+                    lpVendedor:detalle_calculo.precioVendedor,
+                    lPrecio:detalle_calculo.precioLP,
+                    precioMercado:detalle_calculo.promMercado,
+                    precioVentaPT:detalle_calculo.promVentaSap,
+                    brutoS0:detalle_calculo.brutoS0,
+                    totalS0:detalle_calculo.netoS0,
+                    brutoS1:detalle_calculo.brutoS1,
+                    totalS1:detalle_calculo.netoS1,
+                    brutoS2:detalle_calculo.brutoS2,
+                    totalS2:detalle_calculo.netoS2
+                  });
+
+                  let precioBase = this.precioBase.code=='LPGERENTE'?detalle_calculo.precioGerente:this.precioBase.code=='LPVENDEDOR'?detalle_calculo.precioVendedor:this.precioBase.code=='LP'?detalle_calculo.precioLP:0;
+
+                  this.tablaCalculadoraCostos.push({
+                    ItemCode:detalle_calculo.ItemCode,
+                    ItemName:detalle_calculo.ItemName,
+                    lpGerente:detalle_calculo.precioGerente,
+                    lpVendedor:detalle_calculo.precioVendedor,
+                    lPrecio:detalle_calculo.precioLP,
+                    precioMercado:detalle_calculo.promMercado,
+                    precioVentaPT:detalle_calculo.promVentaSap,
+                    //brutoS0: (precioBase - this.costoVentaPTSAP)/this.costoVentaPTSAP,
+                    //totalS0: (precioBase - this.costoTotalPTSAP)/this.costoTotalPTSAP,
+                    brutoS0: precioBase==0?0:(precioBase - this.costoVentaPTSAP)/precioBase,
+                    totalS0: precioBase==0?0:(precioBase - this.costoTotalPTSAP)/precioBase,
+                  
+                  });
+
+              }
+
+              ////console.log(this.tablaCalculadora);
+
+              this.detalle_receta = detalle_receta;
+
+              
+
+              this.displayModal = false;
+              this.loadingCargue = false;
+           },
+           error:(err)=>{
+              console.error(err);
+           }
+        });
+
+  }
+
+
   async  getMonedasMysql(monedas:any){
  
     for(let item in monedas){
@@ -332,8 +500,6 @@ async getCostosLocalidades(costos_localidad:any){
   }
 
 }
-
-
 
 async getPresentacionItems(presentacion_items:any){
   for (let item in presentacion_items){
@@ -396,11 +562,37 @@ async getItemsEP(itemsEP:any){
    this.getPrecioVentaItemSAP(this.item.ItemCode);
   }
 
-  async sumarDias(fecha:Date, dias:number):Promise<Date>{
-    fecha.setDate(fecha.getDate() + dias);
-    ////console.log(fecha);
-    return fecha;
+  async clearItem(){
+    this.detalle_receta = [];
+    this.tablaCalculadora = [];
+    this.tablaCalculadoraCostos = [];
+    //await this.setTablaCalculadora()
+
+    this.costoVentaPTsemana0 = 0;
+    this.costoVentaPTsemana1 = 0;
+    this.costoVentaPTsemana2 = 0;
+    this.costoVentaPTSAP = 0;
+
+    this.costoTotalPTsemana0 = 0;
+    this.costoTotalPTsemana1 = 0;
+    this.costoTotalPTsemana2 = 0;
+    this.costoTotalPTSAP = 0;
+
+    this.totalMPsemana0 =0;
+    this.totalMPsemana1 =0;
+    this.totalMPsemana2 =0;
+
+    this.totalEmpaque = 0;
+
+    this.totalCostoPTSAP =0;
+
+    this.precioVentaSAPPT =0;
+
+    this.precioPromedioMercadoPT =0;
+
   }
+
+ 
 
   async getPrecioVentaItemSAP(item: string){
 
@@ -434,173 +626,6 @@ async getItemsEP(itemsEP:any){
             }
         });
   }
-
-  getInfoCalculoItem(idCalculo:any){
-      this.displayModal = true;
-      this.loadingCargue = true;
-
-      this.comprasService.getInfoCalculoItem(this.authService.getToken(), idCalculo)
-          .subscribe({
-             next:(infoCalculoItem)=>{
-                console.log(infoCalculoItem);
-
-                this.fecha = new Date(infoCalculoItem.calculo_precio_item[0].fecha);
-                this.semanaAnio = infoCalculoItem.calculo_precio_item[0].semanaAnio;
-                this.semanaMes = infoCalculoItem.calculo_precio_item[0].semanaMes;
-                this.trm_dia = infoCalculoItem.calculo_precio_item[0].trmDia;
-                this.moneda = this.monedas.find(moneda => moneda.Currency === infoCalculoItem.calculo_precio_item[0].moneda);
-                this.trm_moneda = infoCalculoItem.calculo_precio_item[0].trmMoneda;
-                this.item = this.items.find(item =>item.ItemCode === infoCalculoItem.calculo_precio_item[0].ItemCode);
-                this.observacion = infoCalculoItem.calculo_precio_item[0].observacion;
-                this.precioBase = this.opcionesPrecioBase.find(opcionPbase => opcionPbase.code === infoCalculoItem.calculo_precio_item[0].precioRef);
-                
-                this.precioGerente = infoCalculoItem.calculo_precio_item[0].precioBase;
-                this.prcGerente = infoCalculoItem.calculo_precio_item[0].prcGerente;
-
-                this.prcVendedor = infoCalculoItem.calculo_precio_item[0].prcVendedor;
-                this.precioVendedor = (this.precioGerente*(this.prcVendedor/100))+this.precioGerente;
-                
-                //this.precioGerente = (this.precioVendedor*(this.prcGerente/100))+this.precioVendedor;
-                this.prcLPrecio = infoCalculoItem.calculo_precio_item[0].prcLP;
-                this.precioLista = (this.precioGerente*(this.prcLPrecio/100))+this.precioGerente;
-
-                this.recursoPT = infoCalculoItem.calculo_precio_item[0].promRecurso;
-                this.administracion = infoCalculoItem.calculo_precio_item[0].promAdmin;
-
-                console.log( this.recursoPT , this.administracion);
-
-                
-                
-                let detalle_receta:any[] = [];
-                let totalCostoMPS0 = 0;
-                let totalCostoMPS1 = 0;
-                let totalCostoMPS2 = 0;
-                let totalCostoEmpaqueMPS0 =0;
-                let totalCostoEmpaqueMPS1 =0;
-                let totalCostoEmpaqueMPS2 =0;
-
-                this.recursoPTSAP = infoCalculoItem.calculo_precio_item[0].costoRecursoSAP;
-
-                this.totalCostoPTSAP = 0;
-
-                for(let detalle_receta_pt of infoCalculoItem.detalle_calculo_mp){
-                  detalle_receta.push({
-                    itemMP:{
-                      Code:detalle_receta_pt.ItemCode,
-                      ItemName:detalle_receta_pt.ItemName,
-                      EMPAQUE:detalle_receta_pt.empaque,
-                      Quantity:detalle_receta_pt.cantidad,
-                      costoSAP:detalle_receta_pt.costoSAP
-                    },
-                    costosItemMP:{
-                      semana0:{
-                        anio:detalle_receta_pt.anioS0,
-                        semana:detalle_receta_pt.semanaS0,
-                        costoMP:detalle_receta_pt.costoMPS0,
-                        empaqueMP:detalle_receta_pt.costoEmpaqueS0,
-                      },
-                      semana1:{
-                        anio:detalle_receta_pt.anioS1,
-                        semana:detalle_receta_pt.semanaS1,
-                        costoMP:detalle_receta_pt.costoMPS1,
-                        empaqueMP:detalle_receta_pt.costoEmpaqueS1,
-                      },
-                      semana2:{
-                        anio:detalle_receta_pt.anioS2,
-                        semana:detalle_receta_pt.semanaS2,
-                        costoMP:detalle_receta_pt.costoMPS2,
-                        empaqueMP:detalle_receta_pt.costoEmpaqueS2,
-                      }
-                    }
-
-                  });
-
-                  totalCostoMPS0+=detalle_receta_pt.costoMPS0;
-                  totalCostoMPS1+=detalle_receta_pt.costoMPS1;
-                  totalCostoMPS2+=detalle_receta_pt.costoMPS2;
-                  totalCostoEmpaqueMPS0+=detalle_receta_pt.costoEmpaqueS0;
-                  totalCostoEmpaqueMPS2+=detalle_receta_pt.costoEmpaqueS1;
-                  totalCostoEmpaqueMPS1+=detalle_receta_pt.costoEmpaqueS2;
-
-                  this.totalCostoPTSAP+=detalle_receta_pt.costoSAP
-
-
-                 
-
-                }
-
-                this.totalMPsemana0 = totalCostoMPS0;
-                this.totalMPsemana1 = totalCostoMPS1;
-                this.totalMPsemana2 = totalCostoMPS2;
-              
-                this.totalEmpaque = totalCostoEmpaqueMPS0;
-              
-                this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+this.recursoPT;
-                this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+this.recursoPT;
-                this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+this.recursoPT;
-                this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
-              
-                this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
-                this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
-                this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + this.administracion;
-                this.costoTotalPTSAP = this.costoVentaPTSAP+ this.administracion;
-
-                for(let detalle_calculo of infoCalculoItem.detalle_precio_calculo_item){
-
-                  ////console.log(detalle_calculo);
-                  
-                    this.tablaCalculadora.push({
-                      ItemCode:detalle_calculo.ItemCode,
-                      ItemName:detalle_calculo.ItemName,
-                      lpGerente:detalle_calculo.precioGerente,
-                      lpVendedor:detalle_calculo.precioVendedor,
-                      lPrecio:detalle_calculo.precioLP,
-                      precioMercado:detalle_calculo.promMercado,
-                      precioVentaPT:detalle_calculo.promVentaSap,
-                      brutoS0:detalle_calculo.brutoS0,
-                      totalS0:detalle_calculo.netoS0,
-                      brutoS1:detalle_calculo.brutoS1,
-                      totalS1:detalle_calculo.netoS1,
-                      brutoS2:detalle_calculo.brutoS2,
-                      totalS2:detalle_calculo.netoS2
-                    });
-
-                    let precioBase = this.precioBase.code=='LPGERENTE'?detalle_calculo.precioGerente:this.precioBase.code=='LPVENDEDOR'?detalle_calculo.precioVendedor:this.precioBase.code=='LP'?detalle_calculo.precioLP:0;
-
-                    this.tablaCalculadoraCostos.push({
-                      ItemCode:detalle_calculo.ItemCode,
-                      ItemName:detalle_calculo.ItemName,
-                      lpGerente:detalle_calculo.precioGerente,
-                      lpVendedor:detalle_calculo.precioVendedor,
-                      lPrecio:detalle_calculo.precioLP,
-                      precioMercado:detalle_calculo.promMercado,
-                      precioVentaPT:detalle_calculo.promVentaSap,
-                      //brutoS0: (precioBase - this.costoVentaPTSAP)/this.costoVentaPTSAP,
-                      //totalS0: (precioBase - this.costoTotalPTSAP)/this.costoTotalPTSAP,
-                      brutoS0: precioBase==0?0:(precioBase - this.costoVentaPTSAP)/precioBase,
-                      totalS0: precioBase==0?0:(precioBase - this.costoTotalPTSAP)/precioBase,
-                    
-                    });
-
-                }
-
-                ////console.log(this.tablaCalculadora);
-
-                this.detalle_receta = detalle_receta;
-
-                
-
-                this.displayModal = false;
-                this.loadingCargue = false;
-             },
-             error:(err)=>{
-                console.error(err);
-             }
-          });
-
-  }
-
-  clearItem(){}
 
   getPreciosListaItemSAP(ItemCode:string){
       //Obtener precios de lista
@@ -1182,7 +1207,7 @@ guardarCalculo(){
               this.displayModal = false;
               this.loadingCargue = false;
               this.messageService.add({severity:'success', summary: '!Notificación', detail: `Se registro correctamente el calculo de precios realizado para el item seleccionado.`});
-
+              this.router.navigate(['portal/compras/mrp/calculadora-precios']);
             },
             error:(err)=>{
               console.error(err);
@@ -1559,6 +1584,8 @@ parametrosGlobales(){
       if(event.target.value ===''){
         event.target.value =0;
       }
+
+      this.calcularCostosLinea(index);
       
     }
   }
@@ -1694,6 +1721,26 @@ parametrosGlobales(){
    
 
     console.log(this.detalle_receta);
+  }
+
+  borrarLinea(){
+    console.log(this.selectedDetalleReceta);
+
+    for(let lineaSeleccionada of this.selectedDetalleReceta){
+      let indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===lineaSeleccionada.itemMP.index);
+      console.log(indexDetalle);
+      this.detalle_receta.splice(indexDetalle,1);
+    }
+
+    this.selectedDetalleReceta=[];
+
+    this.calcularTotalesDetalleCalculo();
+  }
+
+  async sumarDias(fecha:Date, dias:number):Promise<Date>{
+    fecha.setDate(fecha.getDate() + dias);
+    ////console.log(fecha);
+    return fecha;
   }
 
   async calcularSemana(){

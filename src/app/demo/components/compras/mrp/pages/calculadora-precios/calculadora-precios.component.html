@@ -114,6 +114,13 @@
 							</div>
 						</th>
 
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Observación
+								<p-columnFilter type="text" field="observacion" display="menu" placeholder="Buscar por observación"></p-columnFilter>
+							</div>
+						</th>
+						<!--
                         <th>
 							<div class="flex justify-content-between align-items-center">
 								Semana mes
@@ -126,7 +133,7 @@
 								Semana año
 								<p-columnFilter type="text" field="semanaAnio" display="menu" placeholder="Buscar por semana del año"></p-columnFilter>
 							</div>
-						</th>
+						</th>-->
 
 						<th>
 							<div class="flex justify-content-between align-items-center">
@@ -230,13 +237,18 @@
                         <td style="min-width: 6rem;">
 							{{ item.fecha | date }}
 						</td>
+
 						<td style="min-width: 6rem;">
+							{{ item.observacion }}
+						</td>
+
+						<!--<td style="min-width: 6rem;">
 							{{ item.semanaMes }}
 						</td>
 						
 						<td style="min-width: 6rem;">
 							{{ item.semanaAnio }}
-						</td>
+						</td>-->
 
 						<td>
 							{{ item.promMercado | number }}
@@ -286,12 +298,12 @@
 				</ng-template>
 				<ng-template pTemplate="emptymessage">
 					<tr>
-						<td colspan="8" class="text-center">No se econtraron precios de items.</td>
+						<td colspan="7" class="text-center">No se econtraron precios de items.</td>
 					</tr>
 				</ng-template>
 				<ng-template pTemplate="loadingbody">
 					<tr>
-						<td colspan="8" class="text-center">Cargando lista de precios. Por favor espere</td>
+						<td colspan="7" class="text-center">Cargando lista de precios. Por favor espere</td>
 					</tr>
 				</ng-template>
     		</p-table>
