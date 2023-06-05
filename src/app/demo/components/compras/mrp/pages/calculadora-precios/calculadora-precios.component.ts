@@ -63,6 +63,8 @@ export class CalculadoraPreciosComponent implements OnInit {
      
 
      this.permisosUsuarioPagina =  this.authService.permisosPagina(this.permisosPerfilesPagina);
+
+     console.log( this.permisosUsuarioPagina);
     
     this.urlBreadCrumb = this.router.url;
 
@@ -76,6 +78,7 @@ export class CalculadoraPreciosComponent implements OnInit {
       this.comprasService.listaPreciosCalculados(this.authService.getToken())
           .subscribe({
               next:(listaPreciosCalculados)=>{
+                console.log(listaPreciosCalculados);
                 this.infoCalculada = listaPreciosCalculados;
               },
               error:(err)=>{
