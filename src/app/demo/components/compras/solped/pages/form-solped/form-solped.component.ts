@@ -180,6 +180,23 @@ export class FormSolpedComponent implements OnInit {
 
   cargueValido:boolean = false;
   loadingCargueCSV:boolean =false;
+
+  U_NF_MES_REAL:string = "";
+
+  meses:any[] = [
+    {id:1,fullname:'Enero', shortName:'ENE'},
+    {id:2,fullname:'Febrero', shortName:'FEB'},
+    {id:3,fullname:'Marzo', shortName:'MAR'},
+    {id:4,fullname:'Abril', shortName:'ABR'},
+    {id:5,fullname:'Mayo', shortName:'MAY'},
+    {id:6,fullname:'Junio', shortName:'JUN'},
+    {id:7,fullname:'Julio', shortName:'JUL'},
+    {id:8,fullname:'Agosto', shortName:'AGO'},
+    {id:9,fullname:'Septiembre', shortName:'SEP'},
+    {id:10,fullname:'Octubre', shortName:'OCT'},
+    {id:11,fullname:'Noviembre', shortName:'NOV'},
+    {id:12,fullname:'Diciembre', shortName:'DIC'},
+ ];
   
 
   //arregloej:any[] = [1,2,3,4,5,6,7,8,9,10,11,12,13];
@@ -245,6 +262,11 @@ export class FormSolpedComponent implements OnInit {
         //setTimeout(()=>{this.getInformacionSolped();},500);
         
         this.resetearFormularioLinea();
+
+       
+        this.U_NF_MES_REAL = this.meses.find(item=>item.id == (this.fechaContable.getMonth()+1)).fullname;
+
+        //console.log(this.fechaContable.getMonth()+1,  this.U_NF_MES_REAL);
 
 
         
@@ -677,7 +699,7 @@ export class FormSolpedComponent implements OnInit {
       this.comprasService.solpedById(this.authService.getToken(),this.solpedEditar)
           .subscribe({
                 next:  (solped)=>{
-                  ////console.log(solped);
+                  console.log(solped);
                   this.infoSolpedEditar = solped;
                   this.lineasSolped = this.infoSolpedEditar.solpedDet;
                   ////console.log(this.lineasSolped);
@@ -716,6 +738,10 @@ export class FormSolpedComponent implements OnInit {
                   this.currency = this.infoSolpedEditar.solped.currency || this.trm ===1?'COP':'USD';
                   this.iteradorLinea = (this.lineasSolped[this.lineasSolped.length-1].linenum)+1;
                   this.solpedAprobada = this.infoSolpedEditar.solped.approved || 'N';
+
+                  
+
+                  this.U_NF_MES_REAL = this.infoSolpedEditar.solped.U_NF_MES_REAL==''? this.meses.find(item=>item.id == (this.fechaContable.getMonth()+1)).fullname: this.meses.find(item=>item.fullname.toLowerCase() == (this.infoSolpedEditar.solped.U_NF_MES_REAL?.toLowerCase())).fullname;
                   //////console.log( this.areas);
 
                   if(this.areas.length > 0 && this.areas.filter(item => item.area === this.infoSolpedEditar.solped.u_nf_depen_solped ).length>0){
@@ -1651,7 +1677,8 @@ async validarCuentaContable(cuenta:any){
                             u_nf_depen_solped:this.area,
                             comments:this.comentarios,
                             trm:this.monedas.filter(moneda => moneda.Currency == 'USD')[0].TRM,
-                            currency:this.currency
+                            currency:this.currency,
+                            U_NF_MES_REAL:this.U_NF_MES_REAL
                           },
                           solpedDet:this.lineasSolped,
                           anexos:this.anexosSolped
@@ -1659,7 +1686,7 @@ async validarCuentaContable(cuenta:any){
 
                         if(this.solpedEditar) data.solped.id = this.solpedEditar;
                 
-                        //////console.log(data);      
+                        console.log(data);      
                         this.onNewSolped.emit(data);              
                 
                         

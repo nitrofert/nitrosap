@@ -131,6 +131,34 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid">
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="comentarios">Mes real del gasto</label>
+                        <p-dropdown [options]="meses" 
+                                    optionLabel="fullname" 
+                                    optionValue="fullname"
+                                    [(ngModel)]="U_NF_MES_REAL" 
+                                    id="U_NF_MES_REAL" 
+                                    name="U_NF_MES_REAL"
+                                    placeholder="Mes real del gasto"
+                                    styleClass="p-dropdown-sm "
+                                    [required]="true" 
+                                    [readonly]="lineasSolped.length > 0">
+                                    <ng-template pTemplate="selectedItem">
+                                        {{U_NF_MES_REAL | titlecase}}
+                                    </ng-template>
+                                    <ng-template let-mes pTemplate="mes">
+                                        {{mes.fullname | titlecase }}
+                                    </ng-template>
+                                    
+                        </p-dropdown>
+                        
+                    </div>
+                </div>
+            </div>
+
             <div class="grid">
                 <div class="col">
                     <div class="field">

@@ -41,6 +41,7 @@ export interface Solped {
     nf_tipocarga?:string;
     nf_puertosalida?:string;
     nf_motonave?:string;
+    U_NF_MES_REAL?:string;
 
 }
 
