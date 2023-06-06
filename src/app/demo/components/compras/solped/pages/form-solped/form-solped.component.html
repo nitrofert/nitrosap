@@ -5,19 +5,22 @@
     <div class="col-12">
         <div class="card p-fluid">
             <div class="grid">
+
                 <div class="col">
-                    <div class="field">
+                    <div class="field ">
                         <label htmlFor="nombreusuario">Nombre solicitante</label>
                         <input pInputText 
-                                [(ngModel)]="infoUsuario.fullname" 
-                                id="nombreusuario" 
-                                name="nombreusuario" 
-                                class="p-inputtext-sm"
-                                type="text"
-                                required 
-                                readonly/>
+                                    [(ngModel)]="infoUsuario.fullname" 
+                                    id="nombreusuario" 
+                                    name="nombreusuario" 
+                                    class="p-inputtext-sm"
+                                    type="text"
+                                    required 
+                                    readonly/>
+
                     </div>
-                    <div class="field">
+
+                    <div class="field ">
                         <label htmlFor="area">Área aprobación</label>
                         <p-dropdown [options]="areas" 
                                     optionLabel="area" 
@@ -30,6 +33,7 @@
                                     [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !area) || (nuevaLinea && !area)}">
                         </p-dropdown>
                     </div>
+
                     <div class="field">
                         <label htmlFor="clase">Clase</label>
                         <p-dropdown [options]="clases" 
@@ -47,10 +51,12 @@
                                     [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !clase) || (nuevaLinea && !clase)}">
                         </p-dropdown>
                     </div>
+                    
                 </div>
+
                 <div class="col">
                     <div class="flex">
-                        <div class="field">
+                        <div class="field w-6">
                             <label htmlFor="serie">Tipo</label>
                             <p-dropdown [options]="series" 
                                         optionLabel="name" optionValue="code"
@@ -65,7 +71,8 @@
                                         [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !serie) || (nuevaLinea && !serie)}">
                             </p-dropdown>
                         </div>
-                        <div class="field">
+
+                        <div class="field w-6">
                             <label htmlFor="codigoSap">Código SAP</label>
                             <input pInputText 
                                     [(ngModel)]="codigoSap" 
@@ -74,10 +81,11 @@
                                     class="p-inputtext-sm"
                                     styleClass="w-full " 
                                     type="text" required readonly />
+
                         </div>
                     </div>
                     <div class="flex">
-                        <div class="field">
+                        <div class="field w-6 ">
                             <label for="fechaContable">Fecha contable</label>
                             <p-calendar [(ngModel)]="fechaContable" 
                                         (onSelect)="SeleccionarFechaContable()" 
@@ -91,7 +99,7 @@
                             </p-calendar>
                         </div>
 
-                        <div class="field">
+                        <div class="field w-6 ">
                             <label for="fechaCaducidad">Válido hasta</label>
                             <p-calendar [(ngModel)]="fechaCaducidad" 
                                         [showIcon]="true" 
@@ -102,10 +110,10 @@
                                         [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !fechaCaducidad) || (nuevaLinea && !fechaCaducidad)}">
                             </p-calendar>
                         </div>
-
                     </div>
+
                     <div class="flex">
-                        <div class="field">
+                        <div class="field  w-6">
                             <label for="fechaDocumento">Fecha documento</label>
                             <p-calendar [(ngModel)]="fechaDocumento" 
                                         [showIcon]="true" 
@@ -117,7 +125,7 @@
                             </p-calendar>
                         </div>
 
-                        <div class="field">
+                        <div class="field  w-6">
                             <label for="fechaNecesidad">Fecha necesaria</label>
                             <p-calendar [(ngModel)]="fechaNecesidad" 
                                         [showIcon]="true" 
@@ -174,7 +182,9 @@
                     </div>
                 </div>
             </div>
+
             <p-divider></p-divider>
+
             <div class="grid">
                 <div class="col">
                     <div class="grid align-content-center">

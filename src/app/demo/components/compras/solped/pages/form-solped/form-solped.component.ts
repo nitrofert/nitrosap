@@ -794,6 +794,7 @@ export class FormSolpedComponent implements OnInit {
   SeleccionarFechaContable(){
     //////console.log(this.fechaContable);
     //this.getMonedas(this.fechaContable);
+    this.U_NF_MES_REAL = this.meses.find(item=>item.id == (this.fechaContable.getMonth()+1)).fullname;
   }
 
   SeleccionarProveedor(){
