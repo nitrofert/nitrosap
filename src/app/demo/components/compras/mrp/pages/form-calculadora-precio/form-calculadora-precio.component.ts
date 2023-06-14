@@ -1775,7 +1775,9 @@ parametrosGlobales(){
         this.calcularCostosLinea(index);
       }else{
         this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad del articulo debe ser mayor o igual a 0.1 y menor o igual a 1`});
+        const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
         event.target.value =0;
+        this.detalle_receta[indexDetalle].itemMP.Quantity =0;
       }
       
     }

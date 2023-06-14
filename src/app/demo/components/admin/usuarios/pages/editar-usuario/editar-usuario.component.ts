@@ -373,6 +373,8 @@ export class EditarUsuarioComponent implements OnInit {
             console.log(acces);
             if(acces.error){
               this.messageService.add({severity:'error', summary: '!Error', detail: acces.messageError});
+            }else{
+              this.messageService.add({severity:'success', summary: '!Ok', detail: valor==0?`Se inactivo el acceso a la compañia seleccionada`:`Se activo el acceso a la compañia seleccionada`});
             }
             this.displayModal = false;
           },
