@@ -314,6 +314,18 @@ getDependenciasEmpresa(token:string):Observable<any[]>{
   return this.http.get<any[]>(url,requestOptions);
 }
 
+getAreasEmpresa(token:string):Observable<any[]>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/mysql/query/areas`;
+  //console.log(url);
+  return this.http.get<any[]>(url,requestOptions);
+}
+
 getAlmacenesEmpresa(token:string):Observable<any[]>{
   /*const headers = new HttpHeaders({
     'Content-Type': 'application/json',

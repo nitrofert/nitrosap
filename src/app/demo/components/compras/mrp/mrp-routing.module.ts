@@ -8,6 +8,7 @@ import { ListaPreciosItemPtComponent } from './pages/lista-precios-item-pt/lista
 import { MaximosMinimosComponent } from './pages/maximos-minimos/maximos-minimos.component';
 import { PresupuestoVentaComponent } from './pages/presupuesto-venta/presupuesto-venta.component';
 import { SimulacionAutomaticaComponent } from './pages/simulacion-automatica/simulacion-automatica.component';
+import { ListaPreciosItemSugeridoComponent } from './pages/lista-precios-item-sugerido/lista-precios-item-sugerido.component';
 
 
 
@@ -21,7 +22,7 @@ import { SimulacionAutomaticaComponent } from './pages/simulacion-automatica/sim
         { path: 'calculadora-precios/editar-calculo/:id', component: FormCalculadoraPrecioComponent }, 
         { path: 'lista-precios-mp', component: ListaPreciosItemMpComponent }, 
         { path: 'lista-precios-pt', component: ListaPreciosItemPtComponent },
-
+        { path: 'lista-precios-sugeridos', component: ListaPreciosItemSugeridoComponent },
 
         { path: 'presupuesto', component: PresupuestoVentaComponent }, 
         { path: 'maximos-minimos', component: MaximosMinimosComponent },

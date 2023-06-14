@@ -24,6 +24,7 @@ import { FormCalculadoraPrecioComponent } from './pages/form-calculadora-precio/
 import { ListaPreciosItemPtComponent } from './pages/lista-precios-item-pt/lista-precios-item-pt.component';
 import { FormPrecioItemPtComponent } from './pages/form-precio-item-pt/form-precio-item-pt.component';
 import { FormAutoresComponent } from './pages/form-autores/form-autores.component';
+import { ListaPreciosItemSugeridoComponent } from './pages/lista-precios-item-sugerido/lista-precios-item-sugerido.component';
 
 
 
@@ -41,6 +42,7 @@ import { FormAutoresComponent } from './pages/form-autores/form-autores.componen
     ListaPreciosItemPtComponent,
     FormCalculadoraPrecioComponent,
     FormAutoresComponent,
+    ListaPreciosItemSugeridoComponent,
 
   ],
   imports: [

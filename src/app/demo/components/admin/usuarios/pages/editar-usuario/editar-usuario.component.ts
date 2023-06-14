@@ -94,6 +94,7 @@ export class EditarUsuarioComponent implements OnInit {
   urlBreadCrumb:string ="";
 
   displayModal:boolean = false;
+  loadingCargue:boolean = false;
 
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -142,6 +143,7 @@ export class EditarUsuarioComponent implements OnInit {
           //console.log(  this.dependencias_user);
           this.getPerfiles();
           this.getCompanies();
+          this.getAreasEmpresa();
           this.getDependenciasEmpresa();
           this.getAlmacenesEmpresa();
           
@@ -276,6 +278,33 @@ export class EditarUsuarioComponent implements OnInit {
     }); 
   }
 
+  getAreasEmpresa(){
+    this.adminService.getAreasEmpresa(this.authService.getToken())
+    .subscribe({
+      next:(areas) =>{
+          
+          
+          let areas_empresa:any[] = []
+          
+
+          for(let area of areas){
+            //Eliminar areas duplicadas
+            if(areas_empresa.filter(areaemp=>areaemp.U_NF_DIM2_DEP === area.Code).length===0){
+                areas_empresa.push({U_NF_DIM2_DEP:area.Code});
+            }
+          }
+
+          this.areas_empresa = areas_empresa;
+          
+      },
+      error:(err) =>{
+        
+        console.error(err);
+      }
+    }); 
+  }
+
+
   getDependenciasEmpresa(){
     this.adminService.getDependenciasEmpresa(this.authService.getToken())
     .subscribe({
@@ -285,17 +314,14 @@ export class EditarUsuarioComponent implements OnInit {
           let areas_empresa:any[] = []
           let dependencias_empresa:any[] = []
 
-          for(let dependencia of dependencias){
+          /*for(let dependencia of dependencias){
             //Eliminar areas duplicadas
             if(areas_empresa.filter(area=>area.U_NF_DIM2_DEP === dependencia.U_NF_DIM2_DEP).length===0){
                 areas_empresa.push({U_NF_DIM2_DEP:dependencia.U_NF_DIM2_DEP});
             }
+          }*/
 
-          
-
-          }
-
-          this.areas_empresa = areas_empresa;
+          //this.areas_empresa = areas_empresa;
           this.dependencias_empresa = dependencias;
           //console.log(this.dependencias_empresa,dependencias_empresa);
           
@@ -332,20 +358,28 @@ export class EditarUsuarioComponent implements OnInit {
 
 
   setAccess(valor:number,idCompany:number){
-    //console.log(valor,idCompany);
+    console.log(this.userSelected);
+    this.displayModal = true;
     let accessCompany = {
       id_company:idCompany,
       id_user:this.userSelected.user,
       valor
     }
     console.log(accessCompany);
+
     this.adminService.setAccess(this.authService.getToken(),accessCompany)
         .subscribe({
           next: (acces) => {
-            //console.log(acces);
+            console.log(acces);
+            if(acces.error){
+              this.messageService.add({severity:'error', summary: '!Error', detail: acces.messageError});
+            }
+            this.displayModal = false;
           },
           error: (err) => {
             console.error(err);
+            this.messageService.add({severity:'error', summary: '!Error', detail: err});
+            this.displayModal = false;
           }
         });
   }

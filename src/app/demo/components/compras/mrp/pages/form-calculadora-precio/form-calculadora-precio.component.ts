@@ -56,6 +56,10 @@ export class FormCalculadoraPrecioComponent implements OnInit {
 
   preciosListaItem:any[] = [];
   checkPreciosListaItem:boolean = false;
+
+  preciosListSugeridosItem:any[] = [];
+  checkPreciosListaSugeridosItem:boolean = false;
+
   preciosMPItemUltimasSemanas:any[] = [];
   checkPreciosMPItemUltimasSemanas:boolean = false;
   precioMercadoItemSemana:any[] = []
@@ -77,6 +81,8 @@ export class FormCalculadoraPrecioComponent implements OnInit {
 
   detalle_receta:any[] = [];
   selectedDetalleReceta:any[] = [];
+
+  totalCantidadArticulos:number =0;
 
   totalEmpaque:number =0;
   totalMPsemana0:number =0;
@@ -101,6 +107,8 @@ export class FormCalculadoraPrecioComponent implements OnInit {
 
   tablaCalculadora:any[] =[];
   tablaCalculadoraCostos:any[] =[];
+
+  merma:number =0.01;
 
   opcionesPrecioBase:any[] = [
     {
@@ -164,6 +172,10 @@ mesesAnio:any[] = [ {mes:1, mesStr:'Enero'},
 empaques:any[] = [];
 selectedEmpaque!:any;
 
+protectores:any[] = [];
+selectedProtector!:any;
+
+
 itemsMP:any[] = [];
 selecteditemMP!:any;
 
@@ -182,17 +194,17 @@ selecteditemMP!:any;
 
   async ngOnInit(): Promise<void> {
 
-    //console.log(this.fecha);
+    ////console.log(this.fecha);
     
     this.infoUsuario = this.authService.getInfoUsuario();
      
-    ////////////console.logthis.authService.getPerfilesUsuario());
+    //////////////console.logthis.authService.getPerfilesUsuario());
     this.perfilesUsuario = this.authService.getPerfilesUsuario();
 
-    ////////////console.logthis.router.url);
-    ////////////console.logthis.authService.getPermisosUsuario());
+    //////////////console.logthis.router.url);
+    //////////////console.logthis.authService.getPermisosUsuario());
     this.permisosUsuario = this.authService.getPermisosUsuario();
-    ////////////console.log'Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
+    //////////////console.log'Permisos pagina',this.permisosUsuario.filter(item => item.url===this.router.url));
     //this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===this.router.url);
 
     this.permisosPerfilesPagina = this.permisosUsuario.filter(item => item.url===this.router.url); 
@@ -209,12 +221,12 @@ selecteditemMP!:any;
     this.semanaMes = await this.semanaDelMes(new Date());
 
     this.precioBase = this.opcionesPrecioBase.filter(precioBase => precioBase.code ==='LPGERENTE')[0];
-    ////////console.log(this.precioBase);
+    //////////console.log(this.precioBase);
 
     this.cambioPrecioVendedorDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
-      //////console.log('debouncerG: ',value);
+      ////////console.log('debouncerG: ',value);
 
       let event = {value}
       this.cambioPrecioVendedor(event);
@@ -223,7 +235,7 @@ selecteditemMP!:any;
     this.cambioPrcVendedorDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
-      //////console.log('debouncerG: ',value);
+      ////////console.log('debouncerG: ',value);
 
       let event = {value}
       this.cambioPrcVendedor(event);
@@ -232,7 +244,7 @@ selecteditemMP!:any;
     this.cambioPrcLPDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
-      //////console.log('debouncerLP: ',value);
+      ////////console.log('debouncerLP: ',value);
 
       let event = {value}
       this.cambioPrcLP(event);
@@ -241,7 +253,7 @@ selecteditemMP!:any;
     this.cambioPrecioLPDB
     .pipe(debounceTime(300))
     .subscribe( value =>{
-      //////console.log('debouncerLP: ',value);
+      ////////console.log('debouncerLP: ',value);
 
       let event = {value}
       this.cambioPrecioLP(event);
@@ -259,7 +271,7 @@ selecteditemMP!:any;
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: async (config:any) => {
-        //////console.log(config);
+        ////////console.log(config);
 
         await this.getItems(config.items);
         //await this.getCuentas(configSolped.cuentas);
@@ -270,18 +282,19 @@ selecteditemMP!:any;
         await this.getCostosLocalidades(config.tabla_costos_localidad);
         await this.getPresentacionItems(config.tabla_presentacion_items);
         await this.getItemsMP(config.itemsMP2);
-        await this.getItemsEP(config.itemsEmpaqueMP2)
+        //await this.getItemsEP(config.itemsEmpaqueMP2)
+        await this.getItemsEP(config.tabla_presentacion_items)
         //this.getInformacionSolped();
         
         if(Object.keys(this.rutaActiva.snapshot.params).length >0){
-          ////console.log(this.rutaActiva.snapshot.params);
+          //////console.log(this.rutaActiva.snapshot.params);
           this.idCalculo = this.rutaActiva.snapshot.params;
           this.editarCalculo = true;
           this.getInfoCalculoItem(this.idCalculo);
 
         }
 
-        //console.log(this.editarCalculo);
+        ////console.log(this.editarCalculo);
 
       },
       error: (error) => {
@@ -297,7 +310,7 @@ selecteditemMP!:any;
     this.comprasService.getInfoCalculoItem(this.authService.getToken(), idCalculo)
         .subscribe({
            next:(infoCalculoItem)=>{
-              console.log(infoCalculoItem);
+              //console.log(infoCalculoItem);
 
               this.fecha = new Date(infoCalculoItem.calculo_precio_item[0].fecha);
               this.semanaAnio = infoCalculoItem.calculo_precio_item[0].semanaAnio;
@@ -322,7 +335,7 @@ selecteditemMP!:any;
               this.recursoPT = infoCalculoItem.calculo_precio_item[0].promRecurso;
               this.administracion = infoCalculoItem.calculo_precio_item[0].promAdmin;
 
-              console.log( this.recursoPT , this.administracion);
+              //console.log( this.recursoPT , this.administracion);
 
               
               
@@ -334,11 +347,19 @@ selecteditemMP!:any;
               let totalCostoEmpaqueMPS1 =0;
               let totalCostoEmpaqueMPS2 =0;
 
+              let cantidadArticulos =0;
+
               this.recursoPTSAP = infoCalculoItem.calculo_precio_item[0].costoRecursoSAP==0?this.recursoPT:infoCalculoItem.calculo_precio_item[0].costoRecursoSAP;
 
               this.totalCostoPTSAP = 0;
 
+              this.merma = infoCalculoItem.detalle_calculo_mp[0].merma;
+
               for(let detalle_receta_pt of infoCalculoItem.detalle_calculo_mp){
+
+                if(detalle_receta_pt.ItemCode.startsWith('MP')){
+                  cantidadArticulos+=detalle_receta_pt.cantidad;
+                }
                 detalle_receta.push({
                   itemMP:{
                     Code:detalle_receta_pt.ItemCode,
@@ -346,7 +367,8 @@ selecteditemMP!:any;
                     EMPAQUE:detalle_receta_pt.empaque,
                     Quantity:detalle_receta_pt.cantidad,
                     costoSAP:detalle_receta_pt.costoSAP,
-                    costo:detalle_receta_pt.costoSAP/detalle_receta_pt.cantidad
+                    costo:detalle_receta_pt.costoSAP/detalle_receta_pt.cantidad,
+                    merma: detalle_receta_pt.merma
                   },
                   costosItemMP:{
                     semana0:{
@@ -380,6 +402,9 @@ selecteditemMP!:any;
 
                 this.totalCostoPTSAP+=detalle_receta_pt.costoSAP
 
+               
+
+
 
                
 
@@ -390,11 +415,18 @@ selecteditemMP!:any;
               this.totalMPsemana2 = totalCostoMPS2;
             
               this.totalEmpaque = totalCostoEmpaqueMPS0;
-            
-              this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+this.recursoPT;
-              this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+this.recursoPT;
-              this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+this.recursoPT;
-              this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
+              
+              let costoMermaSAP= this.merma*this.totalCostoPTSAP;
+              let costoMermaS0 = (this.merma)*(this.totalMPsemana0+this.totalEmpaque);
+              let costoMermaS1 = (this.merma)*(this.totalMPsemana1+this.totalEmpaque);
+              let costoMermaS2 = (this.merma)*this.totalMPsemana2+this.totalEmpaque;
+
+              this.costoVentaPTsemana0 = costoMermaS0+this.totalMPsemana0+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTsemana1 = costoMermaS1+this.totalMPsemana1+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTsemana2 = costoMermaS2+this.totalMPsemana2+this.totalEmpaque+this.recursoPT;
+              this.costoVentaPTSAP = costoMermaSAP+this.totalCostoPTSAP+this.recursoPTSAP;
+
+              this.totalCantidadArticulos = cantidadArticulos;
             
               this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
               this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
@@ -403,7 +435,7 @@ selecteditemMP!:any;
 
               for(let detalle_calculo of infoCalculoItem.detalle_precio_calculo_item){
 
-                ////console.log(detalle_calculo);
+                //////console.log(detalle_calculo);
                 
                   this.tablaCalculadora.push({
                     ItemCode:detalle_calculo.ItemCode,
@@ -440,7 +472,7 @@ selecteditemMP!:any;
 
               }
 
-              ////console.log(this.tablaCalculadora);
+              //////console.log(this.tablaCalculadora);
 
               this.detalle_receta = detalle_receta;
 
@@ -509,7 +541,7 @@ async getPresentacionItems(presentacion_items:any){
 }
 
 async getItems(items:any){
-            ////console.log(items);
+            //////console.log(items);
             for(let item in items){
               items[item].label = items[item].ItemCode+' - '+items[item].ItemName;
               this.items.push(items[item]);
@@ -518,22 +550,39 @@ async getItems(items:any){
 }
 
 async getItemsMP(itemsMP:any){
-  ////console.log(items);
+  //////console.log(items);
+  let articulos:any[] = [];
+  
+
   for(let item in itemsMP){
     itemsMP[item].label = itemsMP[item].ItemCode+' - '+itemsMP[item].ItemName;
-    this.itemsMP.push(itemsMP[item]);
+    articulos.push(itemsMP[item]);
    
- }
+  }
+  this.itemsMP = articulos.filter(articulo => articulo.ItemCode.startsWith('IN')==false );
+  this.protectores = articulos.filter(articulo => articulo.ItemCode.startsWith('IN') );
+
 }
 
 
 async getItemsEP(itemsEP:any){
-  ////console.log(items);
-  for(let item in itemsEP){
+  //////console.log(items);
+  /*for(let item in itemsEP){
     itemsEP[item].label = itemsEP[item].ItemCode+' - '+itemsEP[item].ItemName;
     this.empaques.push(itemsEP[item]);
    
- }
+  }*/
+
+  for(let item in itemsEP){
+    itemsEP[item].label = itemsEP[item].id+' - '+itemsEP[item].descripcion;
+    itemsEP[item].COSTOUINVET = itemsEP[item].valor;
+    itemsEP[item].ItemName = itemsEP[item].descripcion;
+    itemsEP[item].ItemCode = itemsEP[item].id;
+    this.empaques.push(itemsEP[item]);
+   
+  }
+
+
 }
 
   filtrarItems(event:any){
@@ -557,9 +606,12 @@ async getItemsEP(itemsEP:any){
   }
 
   SeleccionarItem(){
-    console.log(this.item);
-   this.getPreciosListaItemSAP(this.item.ItemCode);
+    this.clearItem();
+    //console.log(this.item);
+    this.getPreciosListaSugeridos(this.item.ItemCode);
+   //this.getPreciosListaItemSAP(this.item.ItemCode);
    this.getPrecioVentaItemSAP(this.item.ItemCode);
+   
   }
 
   async clearItem(){
@@ -590,6 +642,21 @@ async getItemsEP(itemsEP:any){
 
     this.precioPromedioMercadoPT =0;
 
+
+    this.merma =0.01;
+
+    this.precioGerente = 0;
+
+    this.prcGerente = 0;
+
+    this.precioVendedor =0;
+
+    this.prcVendedor =0;
+
+    this.precioLista = 0 ;
+
+    this.prcLPrecio =0;
+
   }
 
  
@@ -598,7 +665,7 @@ async getItemsEP(itemsEP:any){
 
     let fechaFin = new Date(this.fecha);
     let fechaInicio = await this.sumarDias(fechaFin,-14);
-    ////console.log(this.fecha,fechaFin);
+    //////console.log(this.fecha,fechaFin);
 
    
     let data = {
@@ -607,11 +674,11 @@ async getItemsEP(itemsEP:any){
       fechaFin:this.fecha.toISOString()
     }
 
-    ////console.log(data);
+    //////console.log(data);
     this.comprasService.getPrecioVentaItemSAP(this.authService.getToken(),data)
         .subscribe({
             next:(precioVentaItem)=>{
-              //console.log('precioVentaItem',precioVentaItem);
+              ////console.log('precioVentaItem',precioVentaItem);
               if(precioVentaItem.length>0){
                 this.precioVentaSAPPT = precioVentaItem[0].Precio;
                 
@@ -632,7 +699,7 @@ async getItemsEP(itemsEP:any){
       this.comprasService.getPreciosListaItemSAP(this.authService.getToken(),ItemCode)
       .subscribe({
           next:(preciosListaItem)=>{
-              ////console.log('preciosListaItem',preciosListaItem);
+              //////console.log('preciosListaItem',preciosListaItem);
               this.preciosListaItem = preciosListaItem;
               this.checkPreciosListaItem = true;
               if(preciosListaItem.length==0){
@@ -655,6 +722,41 @@ async getItemsEP(itemsEP:any){
       });
   }
 
+  getPreciosListaSugeridos(ItemCode:string){
+    //Obtener precios de lista
+    this.comprasService.getPreciosListaSugeridos(this.authService.getToken(),ItemCode)
+    .subscribe({
+        next:(preciosListaItem)=>{
+            console.log('preciosListSugeridosItem',preciosListaItem);
+            this.preciosListSugeridosItem = preciosListaItem;
+            this.checkPreciosListaSugeridosItem = true;
+            if(preciosListaItem.length==0){
+              this.messageService.add({severity:'warn', summary: '!Error', detail: "No se encontro lista de precios sugeridos para el item seleccionado"});
+              this.preciosListSugeridosItem.push({
+
+                precioGerente:0,
+                precioVendedor:0,
+                precioLista:0
+
+              })
+              
+            }else{
+              this.precioGerente = preciosListaItem[0].precioGerente;
+              this.precioVendedor = preciosListaItem[0].precioVendedor;
+              this.cambioPrecioVendedor(this.precioVendedor)
+              this.precioLista = preciosListaItem[0].precioLista;
+              this.cambioPrecioLP(this.precioLista);
+            }
+            this.getPreciosListaItemSAP(this.item.ItemCode);
+            //this.getPrecioMercadoItemSemana(this.item.ItemCode, this.semanaAnio, this.fecha.getFullYear()) ; 
+            
+        },
+        error:(err)=>{
+          console.error(err);
+        }
+    });
+}
+
   async getPrecioMercadoItemSemana(ItemCode:string,semanaAnio:number,anio:number){
     //Obtener precio promedio del mercado del item PT  de la semana del año seleccionado
     let fechaFin = new Date(this.fecha);
@@ -663,7 +765,7 @@ async getItemsEP(itemsEP:any){
     this.comprasService.getPrecioMercadoItemSemana(this.authService.getToken(),ItemCode, semanaAnio, anio, fechaInicio.toISOString(), this.fecha.toISOString())
     .subscribe({
         next:(precioMercadoItemSemana)=>{
-            //////console.log('preciosMercadoItemSemana',precioMercadoItemSemana);
+            ////////console.log('preciosMercadoItemSemana',precioMercadoItemSemana);
             this.precioMercadoItemSemana = precioMercadoItemSemana;
             this.checkPrecioMercadoItemSemana = true;
 
@@ -693,7 +795,7 @@ async getItemsEP(itemsEP:any){
       .subscribe({
           next:async (itemsMP)=>{
               
-              //console.log('Receta',itemsMP);
+              ////console.log('Receta',itemsMP);
   
   
               //this.trm_dia;
@@ -702,8 +804,10 @@ async getItemsEP(itemsEP:any){
               this.recursoPTSAP = parseFloat(this.item.RECURSOPONDE)/(this.trm_moneda);
               this.recursoPT = recursoPT;
               this.administracion = administracion;
+
+              this.merma =0;
   
-              console.log( this.recursoPT , this.administracion);  
+              //console.log( this.recursoPT , this.administracion);  
   
   
               this.setPrecioBase();
@@ -725,6 +829,7 @@ async getItemsEP(itemsEP:any){
               this.totalMPsemana0=0;
               this.totalMPsemana1=0;
               this.totalMPsemana2=0;
+              let cantidadArticulos =0;
   
               this.totalCostoPTSAP = 0;
   
@@ -733,8 +838,25 @@ async getItemsEP(itemsEP:any){
               let detalle_receta:any[] = [];
   
               for(let item of itemsMP){
-               ////console.log(item);
-  
+              
+                
+               item.merma=0;
+
+               if(item.COSTO ===null || isNaN(item.COSTO)){
+                item.COSTO=0;
+               }
+
+               if(item.costoSAP ===null || isNaN(item.costoSAP)){
+                item.costoSAP=0;
+               }
+
+               item.precioItem = item.costoSAP/parseFloat(item.Quantity)
+
+               console.log(item);
+
+               if(item.Code.startsWith('MP')){
+                cantidadArticulos+=parseFloat(item.Quantity);
+              }
   
                let costoEmpaque =0;
                let costoMPseman0 =0;
@@ -743,16 +865,16 @@ async getItemsEP(itemsEP:any){
                let precioEmpaque=0;
                 
                 let presentacion_item:any[any] = this.presentacion_items.filter(data => data.presentacion == item.EMPAQUE);
-                ////////console.log('presentacion_item',item.Code,presentacion_item)
+                //////////console.log('presentacion_item',item.Code,presentacion_item)
                 if(presentacion_item.length>0){
-                  ////////console.log(presentacion_item[0].valor,item.Quantity,trm_dia);
+                  //////////console.log(presentacion_item[0].valor,item.Quantity,trm_dia);
                   //costo_empaqueMP_item +=(parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
                   costoEmpaque = (parseFloat(presentacion_item[0].valor)*parseFloat(item.Quantity))/(this.trm_moneda);
                   precioEmpaque = (parseFloat(presentacion_item[0].valor)/this.trm_moneda);
                 } 
   
                 let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(item.Code);
-                ////console.log('preciosMPItemUltimasSemanas',item.Code,preciosMPItemUltimasSemanas)
+                //////console.log('preciosMPItemUltimasSemanas',item.Code,preciosMPItemUltimasSemanas)
                 if(preciosMPItemUltimasSemanas.length>0){
   
                   if(preciosMPItemUltimasSemanas.length==1){
@@ -838,22 +960,29 @@ async getItemsEP(itemsEP:any){
                 })
               }
   
-              /*//////console.log(`Costo MP de PT ${ItemCode}:`,costo_itemMP_semana0);
-              //////console.log(`Costo Empaque MP de PT ${ItemCode}:`,costo_empaqueMP_item);
-              //////console.log(`Costo Recurso de PT ${ItemCode}:`,recursoPT);
+              /*////////console.log(`Costo MP de PT ${ItemCode}:`,costo_itemMP_semana0);
+              ////////console.log(`Costo Empaque MP de PT ${ItemCode}:`,costo_empaqueMP_item);
+              ////////console.log(`Costo Recurso de PT ${ItemCode}:`,recursoPT);
               let costoVentaPT:number = (costo_itemMP_semana0+costo_empaqueMP_item+recursoPT);
-              //////console.log(`Costo Venta PT ${ItemCode}:`,costoVentaPT);
+              ////////console.log(`Costo Venta PT ${ItemCode}:`,costoVentaPT);
               let costoTotalPT:number = (costoVentaPT+administracion);
-              //////console.log(`Costo Total PT ${ItemCode}:`,costoTotalPT);
-              //////console.log('detalle_receta',detalle_receta);
+              ////////console.log(`Costo Total PT ${ItemCode}:`,costoTotalPT);
+              ////////console.log('detalle_receta',detalle_receta);
               */
+
+              this.totalCantidadArticulos = cantidadArticulos;
   
               this.detalle_receta = detalle_receta;
+
+              let costoMermaSAP= this.merma*this.totalCostoPTSAP;
+              let costoMermaS0 = (this.merma)*(this.totalMPsemana0+this.totalEmpaque);
+              let costoMermaS1 = (this.merma)*(this.totalMPsemana1+this.totalEmpaque);
+              let costoMermaS2 = (this.merma)*this.totalMPsemana2+this.totalEmpaque;
   
-              this.costoVentaPTsemana0 = this.totalMPsemana0+this.totalEmpaque+recursoPT;
-              this.costoVentaPTsemana1 = this.totalMPsemana1+this.totalEmpaque+recursoPT;
-              this.costoVentaPTsemana2 = this.totalMPsemana2+this.totalEmpaque+recursoPT;
-              this.costoVentaPTSAP = this.totalCostoPTSAP+this.recursoPTSAP;
+              this.costoVentaPTsemana0 = costoMermaS0+this.totalMPsemana0+this.totalEmpaque+recursoPT;
+              this.costoVentaPTsemana1 = costoMermaS1+this.totalMPsemana1+this.totalEmpaque+recursoPT;
+              this.costoVentaPTsemana2 = costoMermaS2+this.totalMPsemana2+this.totalEmpaque+recursoPT;
+              this.costoVentaPTSAP = costoMermaSAP+this.totalCostoPTSAP+this.recursoPTSAP;
   
               this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + administracion;
               this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + administracion;
@@ -870,7 +999,7 @@ async getItemsEP(itemsEP:any){
   
               
   
-              //////console.log(this.tablaCalculadora);
+              ////////console.log(this.tablaCalculadora);
               
           },
           error:(err)=>{
@@ -887,7 +1016,9 @@ async getItemsEP(itemsEP:any){
     this.tablaCalculadora = [];
     this.tablaCalculadoraCostos = [];
 
-    console.log(this.precioBaseCalculo, this.precioBaseCalculo2);
+    //console.log(this.precioBaseCalculo, this.precioBaseCalculo2);
+
+    console.log('setTablaCalculadora',this.precioGerente,this.preciosListSugeridosItem[0].precioGerente);
 
     this.tablaCalculadora.push({
       linea:1,
@@ -913,13 +1044,18 @@ async getItemsEP(itemsEP:any){
 
 
     },
+
+    
     {
       linea:2,
       ItemCode:this.item.ItemCode,
       ItemName:this.item.ItemName,
-      lpGerente:this.precioGerente,
+      /*lpGerente:this.precioGerente,
       lpVendedor:this.precioVendedor,
-      lPrecio:this.precioLista,
+      lPrecio:this.precioLista,*/
+      lpGerente:this.precioGerente==0?this.preciosListSugeridosItem[0].precioGerente:this.precioGerente,
+      lpVendedor:this.precioVendedor==0?this.preciosListSugeridosItem[0].precioVendedor:this.precioVendedor,
+      lPrecio:this.precioLista==0?this.preciosListSugeridosItem[0].precioLista:this.precioLista,
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
       /*brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTsemana0)/this.costoVentaPTsemana0,
@@ -955,9 +1091,13 @@ async getItemsEP(itemsEP:any){
       linea:2,
       ItemCode:this.item.ItemCode,
       ItemName:this.item.ItemName,
-      lpGerente:this.precioGerente,
+      /*lpGerente:this.precioGerente,
       lpVendedor:this.precioVendedor,
-      lPrecio:this.precioLista,
+      lPrecio:this.precioLista,*/
+      lpGerente:this.precioGerente==0?this.preciosListSugeridosItem[0].precioGerente:this.precioGerente,
+      lpVendedor:this.precioVendedor==0?this.preciosListSugeridosItem[0].precioVendedor:this.precioVendedor,
+      lPrecio:this.precioLista==0?this.preciosListSugeridosItem[0].precioLista:this.precioLista,
+      
       precioMercado:this.precioPromedioMercadoPT,
       precioVentaPT:this.precioVentaSAPPT,
       /*brutoS0: (this.precioBaseCalculo2 - this.costoVentaPTSAP)/this.costoVentaPTSAP,
@@ -968,7 +1108,7 @@ async getItemsEP(itemsEP:any){
   
     });
 
-    console.log(this.tablaCalculadoraCostos);
+    //console.log(this.tablaCalculadoraCostos);
   }
 
   async getPreciosMPItemUltimasSemanas(ItemCode:string,semanaAnio?:number,anio?:number):Promise<any>{
@@ -984,7 +1124,7 @@ async getItemsEP(itemsEP:any){
       this.comprasService.getPreciosMPItemUltimasSemanas(this.authService.getToken(),ItemCode, semanaAnio, anio)
       .subscribe({
           next:(preciosMPItemUltimasSemanas)=>{
-              //////console.log('preciosMPItemUltimasSemanas',preciosMPItemUltimasSemanas);
+              ////////console.log('preciosMPItemUltimasSemanas',preciosMPItemUltimasSemanas);
               this.preciosMPItemUltimasSemanas = preciosMPItemUltimasSemanas;
               this.checkPreciosMPItemUltimasSemanas = true;
           },
@@ -995,7 +1135,7 @@ async getItemsEP(itemsEP:any){
       **/
 
     }catch(err){
-      //////console.log(err);
+      console.error(err);
     }
       
   }
@@ -1032,7 +1172,7 @@ async getItemsEP(itemsEP:any){
   
   SeleccionarPrecioBase(){
 
-    //////console.log(this.precioBase);
+    ////////console.log(this.precioBase);
     this.setPrecioBase();
     
 
@@ -1074,7 +1214,7 @@ async getItemsEP(itemsEP:any){
   cambioPrecioGerente(event:any){
     /*let prcGerente:number =0;
 
-    //////console.log(event);
+    ////////console.log(event);
 
     if(this.precioVendedor!=0){
       prcGerente =(100*(this.precioGerente-this.precioVendedor))/this.precioVendedor;
@@ -1092,7 +1232,7 @@ async getItemsEP(itemsEP:any){
   cambioPrcGerente(event:any){
       /*let precioGerente:number =0;
 
-      //////console.log(event);
+      ////////console.log(event);
 
       if(this.precioVendedor!=0){
         precioGerente = ((this.precioVendedor*event.value)/100)+this.precioVendedor;
@@ -1112,7 +1252,7 @@ async getItemsEP(itemsEP:any){
   cambioPrecioVendedor(event:any){
     let prcVendedor:number =0;
 
-    //////console.log(event);
+    ////////console.log(event);
 
     if(this.precioGerente!=0){
       prcVendedor =(100*(this.precioVendedor-this.precioGerente))/this.precioGerente;
@@ -1130,7 +1270,7 @@ async getItemsEP(itemsEP:any){
   cambioPrcVendedor(event:any){
       let precioVendedor:number =0;
 
-      //////console.log(event);
+      ////////console.log(event);
 
       if(this.precioGerente!=0){
         precioVendedor = ((this.precioGerente*event.value)/100)+this.precioGerente;
@@ -1199,7 +1339,7 @@ guardarCalculo(){
       detalle_calculo_precio_item:this.tablaCalculadora
     }
 
-    ////console.log(data);
+    //////console.log(data);
 
     this.comprasService.grabarCalculoPreciosItem(this.authService.getToken(),data)
         .subscribe({
@@ -1218,7 +1358,7 @@ guardarCalculo(){
 }
 
 grabarCambiosParametros(){
-    ////console.log(this.parametros,this.costos_localidad,this.presentacion_items);
+    //////console.log(this.parametros,this.costos_localidad,this.presentacion_items);
     let error:boolean = false;
     if(this.parametros.filter(parametro=>parametro.valor === null).length>0){
       this.messageService.add({severity:'error', summary: '!Error', detail: `En la tabla de parametros existen valores en blanco`});
@@ -1246,7 +1386,7 @@ grabarCambiosParametros(){
         this.comprasService.updateParametrosCalculadora(this.authService.getToken(),data)
             .subscribe({
                 next:(result)=>{
-                    ////console.log('result',result)
+                    //////console.log('result',result)
                     if(!result){
                       this.messageService.add({severity:'success', summary: '!Notificación', detail: `Se ha realizado correctamente la actualización de los parametros`});  
                     }
@@ -1264,7 +1404,7 @@ PresionaEnter(event:any){
     
   if (event.key === "Enter") {
     
-    ////////console.log('ENTER PRESS');
+    //////////console.log('ENTER PRESS');
     if(event.target.value ===''){
       event.target.value =0;
     }
@@ -1273,7 +1413,7 @@ PresionaEnter(event:any){
 }
 
 cambio(event:any){
-  ////////console.log(event.target.value);
+  //////////console.log(event.target.value);
   if(event.target.value ===''){
     event.target.value =0;
   }
@@ -1285,7 +1425,7 @@ PresionaEnterMP(event:any,itemCode:string){
     
   if (event.key === "Enter") {
     
-    ////////console.log('ENTER PRESS');
+    //////////console.log('ENTER PRESS');
     if(event.target.value ===''){
       event.target.value =0;
     }
@@ -1294,7 +1434,7 @@ PresionaEnterMP(event:any,itemCode:string){
 }
 
 cambioMP(event:any,itemCode:string){
-  ////////console.log(event.target.value);
+  //////////console.log(event.target.value);
   if(event.target.value ===''){
     event.target.value =0;
   }
@@ -1307,7 +1447,7 @@ cambioMP(event:any,itemCode:string){
   async recalcularCostosLineaItemMP(cantidad:number, itemCode:string){
 
   let indexDetalleReceta = this.detalle_receta.findIndex(item=>item.itemMP.Code == itemCode);
-  ////console.log(itemCode,this.detalle_receta,indexDetalleReceta,this.detalle_receta[indexDetalleReceta]);
+  //////console.log(itemCode,this.detalle_receta,indexDetalleReceta,this.detalle_receta[indexDetalleReceta]);
 
   let precioMPNacS0 = parseFloat(this.detalle_receta[indexDetalleReceta].costosItemMP.semana0.precioMP);
   let precioMPNacS1 = parseFloat(this.detalle_receta[indexDetalleReceta].costosItemMP.semana1.precioMP);
@@ -1404,6 +1544,49 @@ parametrosGlobales(){
           costoSAP:0,
           tipo:'empaque',
           index:1,
+          merma:this.merma
+        },
+        costosItemMP:{
+          semana0:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+  
+          },
+          semana1:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+          },
+          semana2:{
+            anio:0,
+            semana:0,
+            precioMP:0,
+            precioEmpaque:0,
+            costoMP:0,
+            empaqueMP:0,
+          }
+        }
+  
+      });
+
+      detalle_receta.push({
+        itemMP:{
+          Code:'',
+          ItemName:'',
+          EMPAQUE:0,
+          Quantity:0,
+          costo:0,
+          costoSAP:0,
+          tipo:'protector',
+          index:2,
+          merma:this.merma
         },
         costosItemMP:{
           semana0:{
@@ -1444,7 +1627,8 @@ parametrosGlobales(){
           costo:0,
           costoSAP:0,
           tipo:'articulo',
-          index:2,
+          index:3,
+          merma:this.merma
         },
         costosItemMP:{
           semana0:{
@@ -1480,13 +1664,13 @@ parametrosGlobales(){
     
    
 
-    ///console.log(this.detalle_receta);
+    /////console.log(this.detalle_receta);
 
   }
 
 
   async seleccionarItemDetalle(index:number, itemSeleccionado:any){
-      
+      console.log(itemSeleccionado);
       const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
      
       this.detalle_receta[indexDetalle].itemMP.Code = itemSeleccionado.ItemCode;
@@ -1506,7 +1690,7 @@ parametrosGlobales(){
         this.detalle_receta[indexDetalle].costosItemMP.semana2.precioEmpaque = itemSeleccionado.COSTOUINVET==null?0:(parseFloat(itemSeleccionado.COSTOUINVET)/this.trm_moneda);
       }
 
-      if(this.detalle_receta[indexDetalle].itemMP.tipo=='articulo'){
+      if(this.detalle_receta[indexDetalle].itemMP.tipo=='articulo' || this.detalle_receta[indexDetalle].itemMP.tipo=='protector'){
          
 
 
@@ -1516,7 +1700,7 @@ parametrosGlobales(){
           let precioMPseman2 =0;
 
           let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(itemSeleccionado.ItemCode);
-              console.log('preciosMPItemUltimasSemanas',itemSeleccionado.ItemCode,preciosMPItemUltimasSemanas)
+              //console.log('preciosMPItemUltimasSemanas',itemSeleccionado.ItemCode,preciosMPItemUltimasSemanas)
             if(preciosMPItemUltimasSemanas.length>0){
 
               if(preciosMPItemUltimasSemanas.length==1){
@@ -1569,36 +1753,53 @@ parametrosGlobales(){
          
       }
 
-      console.log(this.detalle_receta);
+      //console.log(this.detalle_receta);
       await this.calcularCostosLinea(index);
 
      
 
   }
 
-  PresionaEnterCantidadMP(event:any,index:number){
+  PresionaEnterCantidadMP(event:any,index:number,tipo:string){
     
     if (event.key === "Enter") {
-      
-      ////////console.log('ENTER PRESS');
+    
+      //////////console.log('ENTER PRESS');
       if(event.target.value ===''){
         event.target.value =0;
       }
 
-      this.calcularCostosLinea(index);
+      if(tipo!='articulo'){
+        this.calcularCostosLinea(index);
+      }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
+        this.calcularCostosLinea(index);
+      }else{
+        this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad del articulo debe ser mayor o igual a 0.1 y menor o igual a 1`});
+        event.target.value =0;
+      }
       
     }
   }
   
-  cambioCantidadMP(event:any,index:number){
-    ////////console.log(event.target.value);
+  cambioCantidadMP(event:any,index:number,tipo:string){
     if(event.target.value ===''){
       event.target.value =0;
     }
+
+    if(tipo!='articulo'){
+      this.calcularCostosLinea(index);
+    }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
+      this.calcularCostosLinea(index);
+    }else{
+      this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad del articulo debe ser mayor o igual a 0.1 y menor o igual a 1`});
+      event.target.value =0;
+    }
   
-    this.calcularCostosLinea(index);
+    
     
   }
+
+
 
   async calcularCostosLinea(index:number){
     const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
@@ -1623,28 +1824,37 @@ parametrosGlobales(){
     this.detalle_receta[indexDetalle].costosItemMP.semana1.empaqueMP = costoEmpaque;
     this.detalle_receta[indexDetalle].costosItemMP.semana2.empaqueMP = costoEmpaque;
 
-    await this.calcularTotalesDetalleCalculo();
+    await this.calcularTotalesDetalleCalculo(index);
 
   }
 
 
- async calcularTotalesDetalleCalculo(){
+ async calcularTotalesDetalleCalculo(index: number=0){
+
+    console.log(this.merma);
 
       let costoEmpaque =0;
       let costoMPseman0 =0;
       let costoMPseman1 =0;
       let costoMPseman2=0;
       let costoSAP =0;
+      let cantidadArticulos =0;
       
       for(let linea of this.detalle_receta){
 
-        console.log(linea);
+        //console.log(linea.itemMP);
+
+        linea.itemMP.merma = this.merma;
 
         costoSAP+=parseFloat(linea.itemMP.costoSAP);
         costoEmpaque+= parseFloat(linea.costosItemMP.semana0.empaqueMP);
         costoMPseman0+=parseFloat(linea.costosItemMP.semana0.costoMP);
         costoMPseman1+=parseFloat(linea.costosItemMP.semana1.costoMP);
         costoMPseman2+=parseFloat(linea.costosItemMP.semana2.costoMP);
+        if(linea.itemMP.tipo=='articulo'){
+          cantidadArticulos+=parseFloat(linea.itemMP.Quantity);
+        }
+        
       }
 
       this.totalMPsemana0 = costoMPseman0;
@@ -1659,87 +1869,110 @@ parametrosGlobales(){
 
       this.totalCostoPTSAP = costoSAP;
 
-      this.costoVentaPTsemana0 = costoTotalPTSemana0+this.recursoPT;
-      this.costoVentaPTsemana1 = costoTotalPTSemana1+this.recursoPT;
-      this.costoVentaPTsemana2 = costoTotalPTSemana2+this.recursoPT;
-      this.costoVentaPTSAP = costoSAP+this.recursoPT;
+      let costoMermaSAP = (this.merma)*costoSAP;
+      let costoMermaS0 = (this.merma)*costoTotalPTSemana0;
+      let costoMermaS1 = (this.merma)*costoTotalPTSemana1;
+      let costoMermaS2 = (this.merma)*costoTotalPTSemana2;
+
+      this.costoVentaPTsemana0 = costoMermaS0+costoTotalPTSemana0+this.recursoPT;
+      this.costoVentaPTsemana1 = costoMermaS1+costoTotalPTSemana1+this.recursoPT;
+      this.costoVentaPTsemana2 = costoMermaS2+costoTotalPTSemana2+this.recursoPT;
+      
+      this.costoVentaPTSAP = costoMermaSAP+costoSAP+this.recursoPT;
 
       this.costoTotalPTsemana0 = this.costoVentaPTsemana0 + this.administracion;
       this.costoTotalPTsemana1 = this.costoVentaPTsemana1 + this.administracion;
       this.costoTotalPTsemana2 = this.costoVentaPTsemana2 + this.administracion;
       this.costoTotalPTSAP = this.costoVentaPTSAP+ this.administracion;
 
+      
 
+      if(cantidadArticulos>1){
+        const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+        
+        let oldQuantity = this.detalle_receta[indexDetalle].itemMP.Quantity;
+        this.messageService.add({severity:'error', summary: '!Error', detail: `La sumatoria total de los articulos mas la cantidad ingresada del item ${this.detalle_receta[indexDetalle].itemMP.ItemName}  es mayor  a 1`});
+        this.detalle_receta[indexDetalle].itemMP.Quantity = 0;
+        this.calcularCostosLinea(index);
+      }else{
+        this.totalCantidadArticulos = cantidadArticulos;
+        await this.setTablaCalculadora()
 
-      await this.setTablaCalculadora()
+      }
 
+      
   }
 
   adicionarLinea(){
     
-    
-    this.detalle_receta.push({
-      itemMP:{
-        Code:'',
-        ItemName:'',
-        EMPAQUE:0,
-        Quantity:0,
-        costo:0,
-        costoSAP:0,
-        tipo:'articulo',
-        index:this.detalle_receta.length+1,
-      },
-      costosItemMP:{
-        semana0:{
-          anio:0,
-          semana:0,
-          costoMP:0,
-          empaqueMP:0,
-          precioMP:0,
-          precioEmpaque:0,
+    if(this.totalCantidadArticulos >= 1 ){
+      this.messageService.add({severity:'error', summary: '!Error', detail: `No puede adicionar mas lineas si la suma de la cantidad de los articlos es mayor o igual a 1`});
+    }else{
+      this.detalle_receta.push({
+        itemMP:{
+          Code:'',
+          ItemName:'',
+          EMPAQUE:0,
+          Quantity:0,
+          costo:0,
+          costoSAP:0,
+          tipo:'articulo',
+          index:this.detalle_receta.length+1,
+          merma:this.merma
         },
-        semana1:{
-          anio:0,
-          semana:0,
-          costoMP:0,
-          empaqueMP:0,
-          precioMP:0,
-          precioEmpaque:0,
-        },
-        semana2:{
-          anio:0,
-          semana:0,
-          costoMP:0,
-          empaqueMP:0,
-          precioMP:0,
-          precioEmpaque:0,
+        costosItemMP:{
+          semana0:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          },
+          semana1:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          },
+          semana2:{
+            anio:0,
+            semana:0,
+            costoMP:0,
+            empaqueMP:0,
+            precioMP:0,
+            precioEmpaque:0,
+          }
         }
-      }
-
-    });
+  
+        });
+    }
+   
 
    
 
-    console.log(this.detalle_receta);
+    //console.log(this.detalle_receta);
   }
 
   borrarLinea(){
-    console.log(this.selectedDetalleReceta);
+    //console.log(this.selectedDetalleReceta);
 
     for(let lineaSeleccionada of this.selectedDetalleReceta){
       let indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===lineaSeleccionada.itemMP.index);
-      console.log(indexDetalle);
+      //console.log(indexDetalle);
       this.detalle_receta.splice(indexDetalle,1);
     }
 
     this.selectedDetalleReceta=[];
 
-    this.calcularTotalesDetalleCalculo();
+    this.calcularTotalesDetalleCalculo(0);
   }
 
   async sumarDias(fecha:Date, dias:number):Promise<Date>{
     fecha.setDate(fecha.getDate() + dias);
-    ////console.log(fecha);
+    //////console.log(fecha);
     return fecha;
   }
 
@@ -1756,16 +1989,16 @@ parametrosGlobales(){
 
     
 
-    //////////console.log(fecha, diaDeLaSemana,fecha.getDate(),numeroDiasRestar,fechaTMP);
+    ////////////console.log(fecha, diaDeLaSemana,fecha.getDate(),numeroDiasRestar,fechaTMP);
     return fechaTMP;
   }
 
   async siguienteMes(fecha:Date){
-    //////////console.log(fecha,fecha.getFullYear(),fecha.getMonth());
+    ////////////console.log(fecha,fecha.getFullYear(),fecha.getMonth());
 
     let anioMesSiguiente:number = fecha.getMonth()==11?fecha.getFullYear()+1:fecha.getFullYear();
     let mesMesSiguiente:number = fecha.getMonth()==11?0:fecha.getMonth()+1;
-    //////////console.log('año',anioMesSiguiente,'mes',mesMesSiguiente);
+    ////////////console.log('año',anioMesSiguiente,'mes',mesMesSiguiente);
     let fechaInicioMesSiguiente = new Date(anioMesSiguiente, mesMesSiguiente,1);
 
     return fechaInicioMesSiguiente;
@@ -1777,16 +2010,16 @@ parametrosGlobales(){
     //let fechaInicioSemana = await this.fechaInicioSemana(new Date(fecha));
     let fechaInicioSemana = ((fecha));
     fechaInicioSemana.setHours(0,0,0);
-    ////////console.log('Inicio semana',fechaInicioSemana);
+    //////////console.log('Inicio semana',fechaInicioSemana);
     //let siguienteMes = await this.siguienteMes(new Date(fecha));
     let siguienteMes = await this.siguienteMes((fecha));
     siguienteMes.setHours(0,0,0);
-    ////////console.log('Siguiente mes',siguienteMes);
+    //////////console.log('Siguiente mes',siguienteMes);
 
     let fechaInicioSemanaSiguienteMes = await this.fechaInicioSemana((siguienteMes));
     fechaInicioSemanaSiguienteMes.setHours(0,0,0);
-    ////////console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
-    //await //////console.log(fechaInicioSemana.getFullYear(),fechaInicioSemanaSiguienteMes.getFullYear(),fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth(),fechaInicioSemana.getDate(),fechaInicioSemanaSiguienteMes.getDate());
+    //////////console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
+    //await ////////console.log(fechaInicioSemana.getFullYear(),fechaInicioSemanaSiguienteMes.getFullYear(),fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth(),fechaInicioSemana.getDate(),fechaInicioSemanaSiguienteMes.getDate());
 
     
     let diaDelMes = fechaInicioSemana.getDate();
@@ -1794,7 +2027,7 @@ parametrosGlobales(){
 
     
     let weekOfMonth = Math.ceil((diaDelMes - 1 - diaFecha) / 7);
-    //////////console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
+    ////////////console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
     let mesStr = this.mesesAnio.filter(mes =>mes.mes === (fechaInicioSemana.getMonth()+1))[0].mesStr.substring(0,3).toUpperCase();
     
     if(fechaInicioSemana.getFullYear()===fechaInicioSemanaSiguienteMes.getFullYear() && fechaInicioSemana.getMonth() === fechaInicioSemanaSiguienteMes.getMonth() && fechaInicioSemana.getDate()===fechaInicioSemanaSiguienteMes.getDate()){

@@ -486,6 +486,14 @@ export class ComprasService {
 
   
 
+  cargarLPSugerido(token:string,data:FormData):Observable<any[]>{
+    let headers = this.urlApiService.getHeadersAPI(token);
+    headers=headers.delete('content-type');
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/cargar-lp-sugerido`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
   cargarMaxMinCVS(token:string,data:any):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -543,6 +551,15 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  
+
+  getListaPreciosSugeridos(token:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-sugeridos`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
   grabarListaPreciosPT(token:string,dataListaPreciosPT:any):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -568,6 +585,13 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/mrp/lista-precios-item/${itemCode}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  getPreciosListaSugeridos(token:string,itemCode:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-sugeridos/${itemCode}`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
