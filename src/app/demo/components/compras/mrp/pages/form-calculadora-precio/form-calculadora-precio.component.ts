@@ -39,9 +39,15 @@ export class FormCalculadoraPrecioComponent implements OnInit {
 
   envioForm:boolean = false;
 
+  categoriasItemPT:any[] = [];
+  categoriaItemsPT!:any;
 
+  bkitems:any[] = [];
   items:any[] = [];
   item!:any;
+  
+  arrayCalculadoraMultiple:any[] = [];
+
   itemsFiltrados:any[] = [];
 
   monedas:any[] =[];
@@ -179,6 +185,8 @@ selectedProtector!:any;
 itemsMP:any[] = [];
 selecteditemMP!:any;
 
+optionSelectItemPT:boolean = false;
+
 
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -267,11 +275,14 @@ selecteditemMP!:any;
   
 
   getConfigCalculadora(){
+    this.displayModal = true;
+    this.loadingCargue = true
     this.comprasService.getConfigCalculadora(this.authService.getToken())
+    
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: async (config:any) => {
-        ////////console.log(config);
+        //console.log(config.categoriasPT);
 
         await this.getItems(config.items);
         //await this.getCuentas(configSolped.cuentas);
@@ -281,10 +292,13 @@ selecteditemMP!:any;
         await this.getPromediosLocalidades(config.tabla_promedios_localidad);
         await this.getCostosLocalidades(config.tabla_costos_localidad);
         await this.getPresentacionItems(config.tabla_presentacion_items);
+        await this.getCategoriasItemsPT(config.categoriasPT);
+        
         await this.getItemsMP(config.itemsMP2);
         //await this.getItemsEP(config.itemsEmpaqueMP2)
         await this.getItemsEP(config.tabla_presentacion_items)
         //this.getInformacionSolped();
+
         
         if(Object.keys(this.rutaActiva.snapshot.params).length >0){
           //////console.log(this.rutaActiva.snapshot.params);
@@ -293,6 +307,9 @@ selecteditemMP!:any;
           this.getInfoCalculoItem(this.idCalculo);
 
         }
+
+        this.displayModal = false;
+        this.loadingCargue = false;
 
         ////console.log(this.editarCalculo);
 
@@ -304,8 +321,7 @@ selecteditemMP!:any;
   }
 
   getInfoCalculoItem(idCalculo:any){
-    this.displayModal = true;
-    this.loadingCargue = true;
+    
 
     this.comprasService.getInfoCalculoItem(this.authService.getToken(), idCalculo)
         .subscribe({
@@ -547,6 +563,17 @@ async getItems(items:any){
               this.items.push(items[item]);
              
            }
+
+           this.bkitems = this.items;
+}
+
+async getCategoriasItemsPT(categorias:any){
+  //////console.log(items);
+  for(let item in categorias){
+    categorias[item].label = categorias[item].U_NF_Categoria+' - '+categorias[item].NOMBRECATEGORIA;
+    this.categoriasItemPT.push(categorias[item]);
+   
+ }
 }
 
 async getItemsMP(itemsMP:any){
@@ -605,19 +632,127 @@ async getItemsEP(itemsEP:any){
     //this.getPreciosListaItemSAP(this.item.ItemCode);
   }
 
-  SeleccionarItem(){
+  SeleccionarCategoria(){
+    //console.log(this.categoriaItemsPT.U_NF_Categoria);
     this.clearItem();
-    //console.log(this.item);
-    this.getPreciosListaSugeridos(this.item.ItemCode);
-   //this.getPreciosListaItemSAP(this.item.ItemCode);
-   this.getPrecioVentaItemSAP(this.item.ItemCode);
+    this.items = this.bkitems;
+    //Buscar todos los items PT segun la categoria seleccionada
+    if(this.categoriaItemsPT && this.categoriaItemsPT.U_NF_Categoria!=''){
+      let itemsPTXCategoria = this.items.filter(item => item.U_NF_Categoria===this.categoriaItemsPT.U_NF_Categoria);
+      console.log(itemsPTXCategoria);
+      let indexMG = itemsPTXCategoria.findIndex(item=>item.ItemCode==='ME2070005');
+      console.log(indexMG);
+      if(indexMG>=0){
+        //Eliminar item ME2070005
+        itemsPTXCategoria.splice(indexMG,1);
+      }
+      console.log(itemsPTXCategoria);
+      this.optionSelectItemPT = true;
+      this.items = itemsPTXCategoria;
+      this.item = itemsPTXCategoria;
+      this.setCalculosItems();
+      //this.item = [];
+    }else{
+      this.item = [];
+      this.optionSelectItemPT = false;
+    }
+    
+    
+    
+  }
+
+  clearCategoria(){
+    console.log(this.categoriaItemsPT);
+    this.optionSelectItemPT = false;
+    this.items = this.bkitems;
+    this.item = [];
+    
+  }
+
+   SeleccionarItem(){
+    this.clearItem();
+    console.log(this.item);
+    if(this.optionSelectItemPT){
+      
+
+    }else{
+      //Single selection
+      this.getPreciosListaSugeridos(this.item.ItemCode);
+      this.getPrecioVentaItemSAP(this.item.ItemCode);
+    }
+    
    
   }
 
+  async setCalculosItems(){
+    //Multiple selection
+    //this.displayModal = true;
+    //this.loadingCargue = true
+    this.setPrecioBase();
+
+    let arrayCalculadora:any[] = [];
+
+    for(let itemPT of this.item){
+      
+      let listaPreciosSAP = await this.getPreciosListaItemSAP2(itemPT.ItemCode);
+      //console.log('listaPreciosSAP',listaPreciosSAP);
+      let listaPrecioSugerido = await this.getPreciosListaSugeridos2(itemPT.ItemCode);
+      //console.log('listaPrecioSugerido',listaPrecioSugerido);
+      let precioVentaSAP = await this.getPrecioVentaItemSAP2(itemPT.ItemCode)
+      //console.log('precioVentaSAP',precioVentaSAP);
+      let precioMercado = await this.getPrecioMercadoItemSemana2(itemPT.ItemCode,this.semanaAnio, this.fecha.getFullYear())
+      //console.log('precioMercado',precioMercado);
+      let receta_itemPT = await this.getItemsMPbyItemPT2(itemPT.ItemCode);
+      //console.log('receta_itemPT',receta_itemPT);
+
+      let tablaCostosItemPT = await this.setTablaCostosItemPT(receta_itemPT,itemPT);
+
+
+
+      let itemArray:any = {
+        COSTOUINVET:itemPT.COSTOUINVET,
+        EMPAQUE:itemPT.EMPAQUE,
+        FrgnName:itemPT.FrgnName,
+        FrozenComm:itemPT.FrozenComm,
+        INACTIVO:itemPT.INACTIVO,
+        InvntItem:itemPT.InvntItem,
+        InvntryUom:itemPT.InvntryUom,
+        ItemCode:itemPT.ItemCode,
+        ItemName:itemPT.ItemName,
+        ItmsGrpCod:itemPT.ItmsGrpCod,
+        ItmsGrpNam:itemPT.ItmsGrpNam,
+        NOMBRECATEGORIA:itemPT.NOMBRECATEGORIA,
+        NOMBRESUBCATEGORIA:itemPT.NOMBRESUBCATEGORIA,
+        NOPENTREGA:itemPT.NOPENTREGA,
+        RECURSOPONDE:itemPT.RECURSOPONDE,
+        TIPOPROD:itemPT.TIPOPROD,
+        U_NF_Categoria:itemPT.U_NF_Categoria,
+        U_NF_MARCA:itemPT.U_NF_MARCA,
+        U_NF_REGICA:itemPT.U_NF_REGICA,
+        U_NF_SubCategoria:itemPT.U_NF_SubCategoria,
+        label:itemPT.label
+
+      };
+      
+
+      itemArray.listaPreciosSAP = listaPreciosSAP;
+      itemArray.listaPrecioSugerido = listaPrecioSugerido;
+      itemArray.precioVentaSAP = precioVentaSAP;
+      itemArray.precioMercado = precioMercado;
+
+
+      console.log(itemArray);
+
+    }
+  }
+
   async clearItem(){
+    
     this.detalle_receta = [];
     this.tablaCalculadora = [];
     this.tablaCalculadoraCostos = [];
+    
+
     //await this.setTablaCalculadora()
 
     this.costoVentaPTsemana0 = 0;
@@ -659,70 +794,13 @@ async getItemsEP(itemsEP:any){
 
   }
 
- 
+  async getPreciosListaSugeridos2(ItemCode:string):Promise<any>{
+      let listaPreciosSugerido$ = this.comprasService.getPreciosListaSugeridos(this.authService.getToken(),ItemCode);
+      let listaPreciosSugerido = await lastValueFrom(listaPreciosSugerido$);
+      return listaPreciosSugerido;
+  } 
 
-  async getPrecioVentaItemSAP(item: string){
-
-    let fechaFin = new Date(this.fecha);
-    let fechaInicio = await this.sumarDias(fechaFin,-14);
-    //////console.log(this.fecha,fechaFin);
-
-   
-    let data = {
-      item,
-      fechaInicio:fechaInicio.toISOString(),
-      fechaFin:this.fecha.toISOString()
-    }
-
-    //////console.log(data);
-    this.comprasService.getPrecioVentaItemSAP(this.authService.getToken(),data)
-        .subscribe({
-            next:(precioVentaItem)=>{
-              ////console.log('precioVentaItem',precioVentaItem);
-              if(precioVentaItem.length>0){
-                this.precioVentaSAPPT = precioVentaItem[0].Precio;
-                
-              }else{
-                this.messageService.add({severity:'warn', summary: '!Error', detail: "No se encontraron  precios de venta en SAP para el item seleccionado"});
-              }
-             
-
-            },
-            error:(err)=>{
-              console.error(err);
-            }
-        });
-  }
-
-  getPreciosListaItemSAP(ItemCode:string){
-      //Obtener precios de lista
-      this.comprasService.getPreciosListaItemSAP(this.authService.getToken(),ItemCode)
-      .subscribe({
-          next:(preciosListaItem)=>{
-              //////console.log('preciosListaItem',preciosListaItem);
-              this.preciosListaItem = preciosListaItem;
-              this.checkPreciosListaItem = true;
-              if(preciosListaItem.length==0){
-                this.messageService.add({severity:'warn', summary: '!Error', detail: "No se encontro lista de precios en SAP para el item seleccionado"});
-                this.preciosListaItem.push({
-
-                  LPGERENTE:0,
-                  LPVENDEDOR:0,
-                  LP:0
-
-                })
-              }
-              
-              this.getPrecioMercadoItemSemana(this.item.ItemCode, this.semanaAnio, this.fecha.getFullYear()) ; 
-              
-          },
-          error:(err)=>{
-            console.error(err);
-          }
-      });
-  }
-
-  getPreciosListaSugeridos(ItemCode:string){
+   getPreciosListaSugeridos(ItemCode:string){
     //Obtener precios de lista
     this.comprasService.getPreciosListaSugeridos(this.authService.getToken(),ItemCode)
     .subscribe({
@@ -757,6 +835,118 @@ async getItemsEP(itemsEP:any){
     });
 }
 
+  async getPrecioVentaItemSAP2(item: string):Promise<any>{  
+    let fechaFin = new Date(this.fecha);
+    let fechaInicio = await this.sumarDias(fechaFin,-14);
+    //////console.log(this.fecha,fechaFin);
+
+   
+    let data = {
+      item,
+      fechaInicio:fechaInicio.toISOString(),
+      fechaFin:this.fecha.toISOString()
+    }
+    //Webservice XE SAP
+    //let precioVentaItemSAP$ = this.comprasService.getPrecioVentaItemSAP(this.authService.getToken(),data);
+
+    //Webservice Mysql
+    let precioVentaItemSAP$ = this.comprasService.getPrecioVentaItemSAP2(this.authService.getToken(),data);
+
+    let precioVentaItemSAP = await lastValueFrom(precioVentaItemSAP$);
+
+    return precioVentaItemSAP;
+  } 
+
+  async getPrecioVentaItemSAP(item: string){
+
+    let fechaFin = new Date(this.fecha);
+    let fechaInicio = await this.sumarDias(fechaFin,-14);
+    //////console.log(this.fecha,fechaFin);
+
+   
+    let data = {
+      item,
+      fechaInicio:fechaInicio.toISOString(),
+      fechaFin:this.fecha.toISOString()
+    }
+
+    //////console.log(data);
+    this.comprasService.getPrecioVentaItemSAP(this.authService.getToken(),data)
+        .subscribe({
+            next:(precioVentaItem)=>{
+              ////console.log('precioVentaItem',precioVentaItem);
+              if(precioVentaItem.length>0){
+                this.precioVentaSAPPT = precioVentaItem[0].Precio;
+                
+              }else{
+                this.messageService.add({severity:'warn', summary: '!Error', detail: "No se encontraron  precios de venta en SAP para el item seleccionado"});
+              }
+             
+
+            },
+            error:(err)=>{
+              console.error(err);
+            }
+        });
+  }
+
+  async getPreciosListaItemSAP2(ItemCode:string):Promise<any>{
+      let listaPreciosSAP$ =  this.comprasService.getPreciosListaItemSAP(this.authService.getToken(),ItemCode);
+      let listaPreciosSAP = await lastValueFrom(listaPreciosSAP$);
+      return listaPreciosSAP;
+  }
+
+  getPreciosListaItemSAP(ItemCode:string){
+      //Obtener precios de lista
+      this.comprasService.getPreciosListaItemSAP(this.authService.getToken(),ItemCode)
+      .subscribe({
+          next:(preciosListaItem)=>{
+              //////console.log('preciosListaItem',preciosListaItem);
+              this.preciosListaItem = preciosListaItem;
+              this.checkPreciosListaItem = true;
+              if(preciosListaItem.length==0){
+                this.messageService.add({severity:'warn', summary: '!Error', detail: "No se encontro lista de precios en SAP para el item seleccionado"});
+                this.preciosListaItem.push({
+
+                  LPGERENTE:0,
+                  LPVENDEDOR:0,
+                  LP:0
+
+                })
+              }
+              
+              this.getPrecioMercadoItemSemana(this.item.ItemCode, this.semanaAnio, this.fecha.getFullYear()) ; 
+              
+          },
+          error:(err)=>{
+            console.error(err);
+          }
+      });
+  }
+
+  async getPrecioMercadoItemSemana2(ItemCode:string,semanaAnio:number,anio:number): Promise<any>{
+      
+      let fechaFin = new Date(this.fecha);
+      let fechaInicio = await this.sumarDias(fechaFin,-14);
+
+      let precioMercadoItemSemana$ = this.comprasService.getPrecioMercadoItemSemana(this.authService.getToken(),ItemCode, semanaAnio, anio, fechaInicio.toISOString(), this.fecha.toISOString());
+      let precioMercadoItemSemana = await lastValueFrom(precioMercadoItemSemana$);
+
+      let total_precio = 0;
+      let iterador = 1;
+      for(let item of precioMercadoItemSemana){
+          total_precio+=item.precio;
+          iterador++;
+      }
+
+      let precioPromedioMercadoPT = ((total_precio/iterador)/this.trm_moneda);
+
+      return precioPromedioMercadoPT;
+
+  }
+
+
+
   async getPrecioMercadoItemSemana(ItemCode:string,semanaAnio:number,anio:number){
     //Obtener precio promedio del mercado del item PT  de la semana del año seleccionado
     let fechaFin = new Date(this.fecha);
@@ -786,7 +976,25 @@ async getItemsEP(itemsEP:any){
           console.error(err);
         }
     });
-  } 
+  }
+  
+  async getItemsMPbyItemPT2(ItemCode:string){
+    let receta_itemPT$ =  this.comprasService.getItemsMPbyItemPT(this.authService.getToken(),ItemCode);
+    let receta_itemPT = lastValueFrom(receta_itemPT$);
+
+    return receta_itemPT;
+  }
+
+  async setTablaCostosItemPT(receta_itemPT:any[],item:any):Promise<any[]>{
+    let tablaCostosItemPT:any[] = [];
+
+    let costoRecursoEstandar:number =  (parseFloat(this.promedios_localidad[0].promedio_recurso)/this.trm_moneda);
+    let costoAdministraciónEstandar:number = parseFloat(this.promedios_localidad[0].promedio_administracion)/(this.trm_moneda);
+    let costoRecursoItemPT:number = parseFloat(item.RECURSOPONDE)/(this.trm_moneda);
+    let merma:number = 0;
+
+    return tablaCostosItemPT;
+  }
    
   async getItemsMPbyItemPT(ItemCode:string){
 
@@ -795,7 +1003,7 @@ async getItemsEP(itemsEP:any){
       .subscribe({
           next:async (itemsMP)=>{
               
-              ////console.log('Receta',itemsMP);
+              //console.log('Receta',itemsMP);
   
   
               //this.trm_dia;

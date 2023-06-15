@@ -79,15 +79,60 @@
 
             <div class="grid">
                 <div class="field col">
+                    <label for="nombreCuenta">Categorias</label>
+                    <p-dropdown [options]="categoriasItemPT" 
+                                optionLabel="label" 
+                                [(ngModel)]="categoriaItemsPT" 
+                                id="categoriaItemsPT" 
+                                name="categoriaItemsPT" 
+                                [required]="true"
+                                [disabled]="editarCalculo"
+                                [showClear]="true" 
+                                (onClear)="clearCategoria()"
+                                (onChange)="SeleccionarCategoria()">
+                    </p-dropdown>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="field col">
                     <label for="itemCode">Código ítem</label>
-                    <p-autoComplete [(ngModel)]="item" 
+                    <p-autoComplete *ngIf="optionSelectItemPT" 
+                                    [(ngModel)]="item" 
                                     [showEmptyMessage]="true" 
                                     [suggestions]="itemsFiltrados"
                                     (completeMethod)="filtrarItems($event)" 
                                     field="label" 
                                     [minLength]="1" 
                                     [delay]="1000"
-                                    
+                                    [multiple]="true"
+                                    (onSelect)="SeleccionarItem()"
+                                    (onClear)="clearItem()" 
+                                    [showClear]="true" 
+                                    inputStyleClass="w-full" 
+                                    styleClass="w-full" 
+                                    inputId="itemCode" [autofocus]="true"
+                                    panelStyleClass="text-sm sm:ml-2" 
+                                    placeholder="Escriba el código o nombre del ítem para buscar"
+                                    [disabled]="editarCalculo" 
+                                    [ngClass]="{'ng-invalid ng-dirty' :  envioForm && item==''}">
+    
+                        <ng-template let-item pTemplate="item">
+                            <div>{{item.ItemCode}} - {{item.ItemName}}</div>
+                        </ng-template>
+                       
+    
+                    </p-autoComplete>
+
+                    <p-autoComplete *ngIf="!optionSelectItemPT" 
+                                    [(ngModel)]="item" 
+                                    [showEmptyMessage]="true" 
+                                    [suggestions]="itemsFiltrados"
+                                    (completeMethod)="filtrarItems($event)" 
+                                    field="label" 
+                                    [minLength]="1" 
+                                    [delay]="1000"
+                                    [multiple]="false"
                                     (onSelect)="SeleccionarItem()"
                                     (onClear)="clearItem()" 
                                     [showClear]="true" 

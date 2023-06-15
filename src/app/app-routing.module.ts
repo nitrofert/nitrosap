@@ -23,7 +23,7 @@ import { ResponseApprovedComponent } from './demo/components/compras/solped/page
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
-                    { path: 'admin',canActivate:[RoleAccesGuard], data:{expectedRole:'Administrador'}, loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
+                    { path: 'admin',canActivate:[RoleAccesGuard], data:{expectedRole:['Administrador','Creador Usuario']}, loadChildren: () => import('./demo/components/admin/admin.module').then(m => m.AdminModule) },
                     { path: 'compras',  loadChildren: () => import('./demo/components/compras/compras.module').then(m => m.ComprasModule) },
                     { path: 'perfil',  loadChildren: () => import('./demo/components/auth/user/user.module').then(m => m.UserModule) },
                 ],
