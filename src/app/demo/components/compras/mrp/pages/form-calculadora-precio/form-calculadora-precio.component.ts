@@ -2566,7 +2566,7 @@ parametrosGlobales(){
       if(event.target.value ===''){
         event.target.value =0;
       }
-
+      /*
       if(tipo!='articulo'){
         this.calcularCostosLinea(index);
       }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
@@ -2577,6 +2577,8 @@ parametrosGlobales(){
         event.target.value =0;
         this.detalle_receta[indexDetalle].itemMP.Quantity =0;
       }
+      */
+      this.calcularCostosLinea(index);
       
     }
   }
@@ -2586,14 +2588,15 @@ parametrosGlobales(){
       event.target.value =0;
     }
 
-    if(tipo!='articulo'){
+    /*if(tipo!='articulo'){
       this.calcularCostosLinea(index);
     }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
       this.calcularCostosLinea(index);
     }else{
       this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad del articulo debe ser mayor o igual a 0.1 y menor o igual a 1`});
       event.target.value =0;
-    }
+    }*/
+    this.calcularCostosLinea(index);
   
     
     
