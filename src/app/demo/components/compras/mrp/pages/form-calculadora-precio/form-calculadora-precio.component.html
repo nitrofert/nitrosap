@@ -114,7 +114,7 @@
                                     inputId="itemCode" [autofocus]="true"
                                     panelStyleClass="text-sm sm:ml-2" 
                                     placeholder="Escriba el código o nombre del ítem para buscar"
-                                    [disabled]="editarCalculo" 
+                                    [disabled]="editarCalculo || optionSelectItemPT" 
                                     [ngClass]="{'ng-invalid ng-dirty' :  envioForm && item==''}">
     
                         <ng-template let-item pTemplate="item">
@@ -202,6 +202,7 @@
                             id="precioGerente" 
                             (input)="cambiarPrecioGerente(precioGerente)"
                             class="w-8"
+                            [disabled]="optionSelectItemPT"
                             [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
                     
                     <input type="number" 
@@ -229,20 +230,20 @@
                             id="precioVendedor" 
                             (change)="cambiarPrecioVendedor(precioVendedor)"
                             class="w-8"
-                            [disabled]="editarCalculo"
+                            [disabled]="editarCalculo || optionSelectItemPT"
                             [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
                     
                     <input type="number" 
                             pInputText id="prcGerente" 
                             [(ngModel)]="prcVendedor"
-                            [disabled]="editarCalculo"  
+                            [disabled]="editarCalculo || optionSelectItemPT"  
                             (input)="cambiarPrcVendedor(prcVendedor)"
                             class="w-4"/>
  
                      <p-slider [(ngModel)]="prcVendedor" 
                                [min]="-100" 
                                [max]="100"
-                               [disabled]="editarCalculo"
+                               [disabled]="editarCalculo || optionSelectItemPT"
                                (onSlideEnd)="cambioPrcVendedor($event)">
                      </p-slider>
                 </div>
@@ -257,22 +258,44 @@
                             id="precioLista" 
                             (input)="cambiarPrecioLP(precioLista)"
                             class="w-8"
+                            [disabled]="editarCalculo || optionSelectItemPT"
                             [ngClass]="{'ng-invalid ng-dirty' : envioForm && !fecha}">
                     <input type="number" 
                             pInputText 
                             id="prcLPrecio" 
                             [(ngModel)]="prcLPrecio"  
                             class="w-4"
-                            [disabled]="editarCalculo"
+                            [disabled]="editarCalculo || optionSelectItemPT"
                             (input)="cambiarPrcLP(prcLPrecio)"/>
                     <p-slider [(ngModel)]="prcLPrecio" 
                                 [min]="-100" 
                                 [max]="100"
-                                [disabled]="editarCalculo"
+                                [disabled]="editarCalculo || optionSelectItemPT"
                                 (onSlideEnd)="cambioPrcLP($event)">
                     </p-slider>
             </div>
                     
+        </div>
+        <div class="field col">
+            <label for="prcNeto">% Neto deseado</label>
+            <div>
+                <input type="number" 
+                    pInputText 
+                    id="prcNeto" 
+                    [(ngModel)]="prcNeto"  
+                    class="w-full"
+                    [disabled]="editarCalculo || !optionSelectItemPT"
+                    (input)="cambiarPrcNeto(prcNeto)"/>
+            <p-slider [(ngModel)]="prcNeto" 
+                        [min]="-100" 
+                        [max]="100"
+                        [disabled]="editarCalculo || !optionSelectItemPT"
+                        (onSlideEnd)="cambioPrcNeto($event)">
+            </p-slider>
+            </div>
+            
+            
+            
         </div>
     </div>
     <!------------------------------------------------------------->
@@ -290,7 +313,7 @@
                                 pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
                                 class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
                                 icon="pi pi-file-excel" 
-                                (click)="exportExcel()">
+                                (click)="exportExcel(tablaCalculadora)">
                                 </button>
 
                                 <button *ngIf="detalle_receta.length>0 && (item.ItemCode != 'ME2070005' || editarCalculo)" pButton 
@@ -298,6 +321,15 @@
                                 class="p-button-outlined mb-2 mr-2 p-button-warn p-button-sm" 
                                 icon="pi pi-bars" 
                                 (click)="detalleMP()">
+                                </button>
+
+
+                                
+                                <button *ngIf="optionSelectItemPT || editarCalculo" pButton 
+                                    pTooltip="ver detalle calculo" tooltipPosition="bottom" placeholder="Bottom"   
+                                    class="p-button-outlined mb-2 mr-2 p-button-warn p-button-sm" 
+                                    icon="pi pi-bars" 
+                                    (click)="detalleMPItems()">
                                 </button>
 
                                 <button *ngIf="item && item.ItemCode == 'ME2070005' && !editarCalculo"  pButton 
@@ -361,17 +393,74 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-lineaCalculadora>
-                <tr>
+                <tr [class]="lineaCalculadora.linea==1?'bg-bluegray-50':''">
                     
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.ItemCode }}</td>
                     <td style="min-width: 10rem; text-align: left;">{{ lineaCalculadora.ItemName }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpGerente | number : '1.1-2'}}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
+                    <td *ngIf="lineaCalculadora.linea==1 && optionSelectItemPT && !editarCalculo" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpGerente | number : '1.1-2'}}</td>
+                    <td *ngIf="lineaCalculadora.linea==2 && optionSelectItemPT && !editarCalculo" pEditableColumn style="min-width: 2rem; text-align: center;">
+                        
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText 
+                                       type="number" 
+                                       class="w-full"
+                                       style="width: 12rem;"
+                                       [(ngModel)]="lineaCalculadora.lpGerente"
+                                       (keydown.enter)="PresionaEnterPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LPGERENTE')"
+                                       (blur)="cambioPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LPGERENTE')">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ lineaCalculadora.lpGerente | number : '1.1-2'}}
+                            </ng-template>
+                        </p-cellEditor>
+                    </td>
+                    <td *ngIf="editarCalculo || !optionSelectItemPT" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpGerente | number : '1.1-2'}}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number : '1.1-2' }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number : '1.1-2' }}</td>
+                    <td *ngIf="lineaCalculadora.linea==1 && optionSelectItemPT && !editarCalculo" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
+                    <td *ngIf="lineaCalculadora.linea==2 && optionSelectItemPT && !editarCalculo" pEditableColumn style="min-width: 2rem; text-align: center;">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText 
+                                       type="number" 
+                                       class="w-full"
+                                       style="width: 12rem;"
+                                       [(ngModel)]="lineaCalculadora.lpVendedor"
+                                       (keydown.enter)="PresionaEnterPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LPVENDEDOR')"
+                                       (blur)="cambioPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LPVENDEDOR')">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ lineaCalculadora.lpVendedor | number : '1.1-2'}}
+                            </ng-template>
+                        </p-cellEditor>
+                        
+                    </td>
+                    <td *ngIf="editarCalculo || !optionSelectItemPT" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
+
+
+                    <td *ngIf="lineaCalculadora.linea==1 && optionSelectItemPT && !editarCalculo" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
+                    <td *ngIf="lineaCalculadora.linea==2 && optionSelectItemPT && !editarCalculo" pEditableColumn style="min-width: 2rem; text-align: center;">
+                        <p-cellEditor>
+                            <ng-template pTemplate="input">
+                                <input pInputText 
+                                       type="number" 
+                                       class="w-full"
+                                       style="width: 12rem;"
+                                       [(ngModel)]="lineaCalculadora.lPrecio"
+                                       (keydown.enter)="PresionaEnterPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LP')"
+                                       (blur)="cambioPrecioSugeridoCalculadora($event,lineaCalculadora.ItemCode,'LP')">
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                {{ lineaCalculadora.lPrecio | number : '1.1-2' }}
+                            </ng-template>
+                        </p-cellEditor>
+                        
+                    </td>
+                    <td *ngIf="editarCalculo || !optionSelectItemPT" style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
+
+                    <td style="min-width: 6rem;  text-align: center; width: 6rem;">{{ lineaCalculadora.precioMercado | number : '1.1-2' }}</td>
+                    <td style="min-width: 6rem;  text-align: center; width: 6rem;">{{ lineaCalculadora.precioVentaPT | number : '1.1-2' }}</td>
 
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent : '1.1-2' }}</td>
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent : '1.1-2' }}</td>
@@ -420,7 +509,7 @@
                                 pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
                                 class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
                                 icon="pi pi-file-excel" 
-                                (click)="exportExcel()">
+                                (click)="exportExcel(tablaCalculadoraCostos)">
                                 </button>
 
                                 <!--<button *ngIf="detalle_receta.length>0" pButton 
@@ -479,7 +568,7 @@
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-lineaCalculadora>
-                <tr>
+                <tr [class]="lineaCalculadora.linea==1?'bg-bluegray-50':''">
                     
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.ItemCode }}</td>
                     <td style="min-width: 10rem; text-align: left;">{{ lineaCalculadora.ItemName }}</td>
@@ -488,8 +577,8 @@
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lpVendedor | number : '1.1-2'}}</td>
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.lPrecio | number : '1.1-2' }}</td>
 
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioMercado | number: '1.1-2'  }}</td>
-                    <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.precioVentaPT | number: '1.1-2'  }}</td>
+                    <td style="min-width: 6rem;  text-align: center; width: 6rem;">{{ lineaCalculadora.precioMercado | number: '1.1-2'  }}</td>
+                    <td style="min-width: 6rem;  text-align: center; width: 6rem;">{{ lineaCalculadora.precioVentaPT | number: '1.1-2'  }}</td>
 
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.brutoS0 | percent :'1.1-2' }}</td>
                     <td style="min-width: 2rem; text-align: center;">{{ lineaCalculadora.totalS0 | percent :'1.1-2' }}</td>
@@ -528,8 +617,6 @@
 <!-- Fin Calculadora de precios -->
 
 
-
-
 <!---Dilalog FORM detalle calculo-->
     <p-dialog [header]="'Detalle calculo MP '+!item?'':item.ItemName" 
           [(visible)]="formDetalleCalculo" 
@@ -560,7 +647,7 @@
                                     pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
                                     class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
                                     icon="pi pi-file-excel" 
-                                    (click)="exportExcel()">
+                                    (click)="exportExcel(detalle_receta)">
                                     </button>
 
                                
@@ -793,15 +880,292 @@
     </p-dialog>
 <!---Fin dialog Form detalle -->
 
-<!---Dilalog FORM Create detalle calculo-->
-<p-dialog [header]="'Detalle calculo MP '+!item?'':item.ItemName" 
-[(visible)]="formCrreateDetalleCalculo" 
+
+
+
+
+<!---Dilalog FORM detalle calculo-->
+<p-dialog [header]="'Detalle calculos MP Items '" 
+[(visible)]="formDetalleCalculosItems" 
 [modal]="true"
 [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
 [style]="{width: '50vw'}" 
 [maximizable]="true"
 [draggable]="false" 
 [resizable]="false">
+
+<ng-template pTemplate="content">
+
+<!-- Detalle de materia prima-->
+
+
+<div *ngFor="let itemArrayPT of arrayCalculadoraMultiple" class="card p-10">
+  
+  <p-table #dt7 
+          [value]="itemArrayPT.tablaCostosItemPT.detalle_receta" 
+          [rowHover]="true"
+          styleClass="p-datatable-gridlines p-datatable-sm" 
+          responsiveLayout="scroll">
+      <ng-template pTemplate="caption">
+          <div class="flex justify-content-between flex-column sm:flex-row">
+              <div>
+                  <button pButton 
+                          
+                          pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
+                          class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+                          icon="pi pi-file-excel" 
+                          (click)="exportExcel(itemArrayPT.tablaCostosItemPT.detalle_receta)">
+                  </button>
+
+                  
+
+                     
+                          
+              </div>
+
+              <div>
+                <span>
+                    {{ itemArrayPT.label }}
+                </span>
+              </div>
+
+          </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+              <th class="surface-200 text-center" colspan="6">Info MP</th>
+              <th class="bg-blue-200 text-center" colspan="4">Semana 0</th>
+              <th class="bg-green-200 text-center" colspan="4">Semana 1</th>
+              <th class="bg-yellow-200 text-center" colspan="4">semana 2</th>
+          </tr>
+          <tr>
+              <th class="surface-200 text-center"><div class="text-center">Código item</div></th>
+              <th class="surface-200 text-left"><div class="text-left">Descripción</div></th>
+              <th class="surface-200 text-center"><div class="text-center">Empaque</div></th>
+              <th class="surface-200 text-center"><div class="text-center">Costo</div></th>
+              <th class="surface-200 text-center"><div class="text-center">Cantidad</div></th>
+              <th class="surface-200 text-center"><div class="text-center">Costo SAP</div></th>
+
+              <th class="bg-blue-200 text-center"><div class="text-center">Año</div></th>
+              <th class="bg-blue-200 text-center"><div class="text-center">Semana</div></th>
+              <th class="bg-blue-200 text-right"><div class="text-right">Costo MP</div></th>
+              <th class="bg-blue-200 text-right"><div class="text-right">Costo Empaque</div></th>
+       
+             
+              <th class="bg-green-200 text-center"><div class="text-center">Año</div></th>
+              <th class="bg-green-200 text-center"><div class="text-center">Semana</div></th>
+              <th class="bg-green-200 text-right"><div class="text-right">Costo MP</div></th>
+              <th class="bg-green-200 text-right"><div class="text-right">Costo Empaque</div></th>
+
+              <th class="bg-yellow-200 text-center"><div class="text-center">Año</div></th>
+              <th class="bg-yellow-200 text-center"><div class="text-center">Semana</div></th>
+              <th class="bg-yellow-200 text-right"><div class="text-right">Costo MP</div></th>
+              <th class="bg-yellow-200 text-right" style="text-align: right;"><div class="text-right">Costo Empaque</div></th>
+              
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;">{{ product.itemMP.Code }}</td>
+              <td style="min-width: 10rem; text-align: left;">{{ product.itemMP.ItemName }}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.itemMP.EMPAQUE }}</td>
+              
+              <td style="min-width: 4rem; text-align: center;">{{ (product.itemMP.precioItem) | number  : '1.1-2'}}</td>
+              <td style="min-width: 4rem; text-align: center;">{{ product.itemMP.Quantity | number  : '1.1-2'}}</td>
+             
+              <td style="min-width: 4rem; text-align: right;">{{ product.itemMP.costoSAP | number : '1.1-2'}}</td>
+
+
+
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana0.anio  }}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana0.semana | number  }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana0.costoMP | number : '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana0.empaqueMP | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana1.anio  }}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana1.semana | number  }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana1.costoMP | number : '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana1.empaqueMP | number : '1.1-2'}}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana2.anio  }}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ product.costosItemMP.semana2.semana | number  }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana2.costoMP | number : '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ product.costosItemMP.semana2.empaqueMP | number : '1.1-2'}}</td>
+           
+              
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+          <tr>
+              <td style="min-width: 2rem; text-align: center;" colspan="4">Totales</td>
+              <td style="min-width: 2rem; text-align: center;">{{ itemArrayPT.tablaCostosItemPT.totalArticulos | number : '1.1-2'}}</td>
+              <td style="min-width: 2rem; text-align: center;">{{ itemArrayPT.tablaCostosItemPT.totalCostoPTSAP | number : '1.1-2'}}</td>
+              <td class="bg-blue-200" colspan="2">{{(itemArrayPT.tablaCostosItemPT.totalMPsemana0+itemArrayPT.tablaCostosItemPT.totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalMPsemana0 | number : '1.1-2'}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalEmpaque | number : '1.1-2'}}</td>
+              <td class="bg-green-200" colspan="2">{{(itemArrayPT.tablaCostosItemPT.totalMPsemana1+itemArrayPT.tablaCostosItemPT.totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalMPsemana1 | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalEmpaque | number : '1.1-2'}}</td>
+              <td class="bg-yellow-200" colspan="2">{{(itemArrayPT.tablaCostosItemPT.totalMPsemana2+itemArrayPT.tablaCostosItemPT.totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalMPsemana2 | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ itemArrayPT.tablaCostosItemPT.totalEmpaque | number: '1.1-2' }}</td>
+
+          </tr>
+          <tr>
+            
+            <td style="min-width: 2rem; text-align: center;" colspan="4" >Merma</td>
+            <td style="min-width: 2rem; text-align: center;"  >{{itemArrayPT.tablaCostosItemPT.merma | number: '1.1-2'}}</td>
+            <td style="min-width: 2rem; text-align: center;"  >{{itemArrayPT.tablaCostosItemPT.merma*itemArrayPT.tablaCostosItemPT.totalCostoPTSAP | number: '1.1-2'}}</td>
+            <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana0+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+            <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="6"></td>
+            <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana1+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+            <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="6"></td>
+            <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana2+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+            <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="6"></td>
+        </tr>
+
+        <tr>
+            
+            <td style="min-width: 2rem; text-align: center;" colspan="4">Costo</td>
+            <td style="min-width: 2rem; text-align: center;"  >{{itemArrayPT.tablaCostosItemPT.merma+itemArrayPT.tablaCostosItemPT.totalArticulos | number: '1.1-2'}}</td>
+            <td style="min-width: 2rem; text-align: center;"  >{{(itemArrayPT.tablaCostosItemPT.merma*itemArrayPT.tablaCostosItemPT.totalCostoPTSAP)+itemArrayPT.tablaCostosItemPT.totalCostoPTSAP | number: '1.1-2'}}</td>
+            <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ (itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana0+itemArrayPT.tablaCostosItemPT.totalEmpaque))+(itemArrayPT.tablaCostosItemPT.totalMPsemana0+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+            <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ (itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana1+itemArrayPT.tablaCostosItemPT.totalEmpaque))+(itemArrayPT.tablaCostosItemPT.totalMPsemana1+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+            <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ (itemArrayPT.tablaCostosItemPT.merma*(itemArrayPT.tablaCostosItemPT.totalMPsemana2+itemArrayPT.tablaCostosItemPT.totalEmpaque))+(itemArrayPT.tablaCostosItemPT.totalMPsemana2+itemArrayPT.tablaCostosItemPT.totalEmpaque) | number: '1.1-2' }}</td>
+        </tr>
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;" colspan="5" >Recurso</td>
+              <td style="min-width: 2rem; text-align: center;">{{itemArrayPT.tablaCostosItemPT.costoRecursoItemPT | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoRecursoItemPT | number: '1.1-2' }}</td>
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoRecursoItemPT | number: '1.1-2' }}</td>
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoRecursoItemPT | number: '1.1-2' }}</td>
+          </tr>
+          <tr>
+              <td style="min-width: 2rem; text-align: center;" colspan="5">Costo venta</td>
+              <td style="min-width: 2rem; text-align: center;">{{ itemArrayPT.tablaCostosItemPT.costoVentaPTSAP | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoVentaPTsemana0 | number: '1.1-2' }}</td>
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoVentaPTsemana1 | number: '1.1-2' }}</td>
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoVentaPTsemana2 | number: '1.1-2' }}</td>
+          </tr>
+
+          <tr>
+              <td style="min-width: 2rem; text-align: center;" colspan="5">Administración</td>
+              <td style="min-width: 2rem; text-align: center;">{{ itemArrayPT.tablaCostosItemPT.costoAdministracionEstandar | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoAdministracionEstandar | number: '1.1-2' }}</td>
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoAdministracionEstandar | number: '1.1-2' }}</td>
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoAdministracionEstandar | number: '1.1-2' }}</td>
+          </tr>
+
+          <tr>
+              <td style="min-width: 2rem; text-align: center;" colspan="5">Costo total</td>
+              <td style="min-width: 2rem; text-align: center;">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTSAP | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTsemana0 | number: '1.1-2' }}</td>
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTsemana1 | number: '1.1-2' }}</td>
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTsemana2 | number: '1.1-2' }}</td>
+          </tr>          
+          <!--<tr>
+              <td style="min-width: 2rem; text-align: center;" colspan="4" rowspan="5">Totales</td>
+              <td style="min-width: 2rem; text-align: center;">Costo</td>
+              <td style="min-width: 2rem; text-align: center;">{{ totalCostoPTSAP | number : '1.1-2'}}</td>
+              <td class="bg-blue-200" colspan="2">{{(totalMPsemana0+totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana0 | number : '1.1-2'}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
+
+              <td class="bg-green-200" colspan="2">{{(totalMPsemana1+totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana1 | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
+
+              <td class="bg-yellow-200" colspan="2">{{(totalMPsemana2+totalEmpaque | number: '1.1-2')}}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana2 | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number: '1.1-2' }}</td>
+
+          </tr>
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;">Recurso</td>
+              <td style="min-width: 2rem; text-align: center;">{{recursoPTSAP | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
+              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
+          </tr>
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;">Costo venta</td>
+              <td style="min-width: 2rem; text-align: center;">{{ costoVentaPTSAP | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana0 | number: '1.1-2' }}</td>
+              
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana1 | number: '1.1-2' }}</td>
+              
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana2 | number: '1.1-2' }}</td>
+              
+          </tr>
+
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;">Administración</td>
+              <td style="min-width: 2rem; text-align: center;">{{ administracion | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
+              
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
+              
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
+              
+          </tr>
+
+          <tr>
+              
+              <td style="min-width: 2rem; text-align: center;">Costo total</td>
+              <td style="min-width: 2rem; text-align: center;">{{ costoTotalPTSAP | number: '1.1-2' }}</td>
+              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana0 | number: '1.1-2' }}</td>
+              
+              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana1 | number: '1.1-2' }}</td>
+              
+              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana2 | number: '1.1-2' }}</td>
+              
+          </tr>-->
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="16" class="text-center">No se econtraron materias primas asociadas al producto terminado seleccionado.</td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+          <tr>
+              <td colspan="16" class="text-center">Cargando materias primas asociadas al producto terminado. Por favor espere</td>
+          </tr>
+      </ng-template>
+  </p-table>
+  
+</div>
+
+<!-- Fin detalle de materia prima-->
+
+
+</ng-template>
+<ng-template pTemplate="footer">
+<p-button   icon="pi pi-check" 
+          (onClick)="formDetalleCalculo=false"                     
+          
+          label="Cerrar"
+          styleClass="p-button-text">
+</p-button>
+</ng-template>
+</p-dialog>
+<!---Fin dialog Form detalle -->
+
+
+<!---Dilalog FORM Create detalle calculo-->
+<p-dialog [header]="'Detalle calculo MP '+!item?'':item.ItemName" 
+            [(visible)]="formCrreateDetalleCalculo" 
+            [modal]="true"
+            [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+            [style]="{width: '50vw'}" 
+            [maximizable]="true"
+            [draggable]="false" 
+            [resizable]="false">
 
 <ng-template pTemplate="content">
 
@@ -825,7 +1189,7 @@
                           pTooltip="Exportar a excel" tooltipPosition="bottom" placeholder="Bottom"   
                           class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
                           icon="pi pi-file-excel" 
-                          (click)="exportExcel()">
+                          (click)="exportExcel(detalle_receta)">
                           </button>
                     
                           <button pButton 
