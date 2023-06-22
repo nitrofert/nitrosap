@@ -1769,8 +1769,9 @@ parametrosGlobales(){
         event.target.value =0;
       }
 
-      if(tipo!='articulo'){
+      /*if(tipo!='articulo'){
         this.calcularCostosLinea(index);
+      
       }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
         this.calcularCostosLinea(index);
       }else{
@@ -1778,7 +1779,8 @@ parametrosGlobales(){
         const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
         event.target.value =0;
         this.detalle_receta[indexDetalle].itemMP.Quantity =0;
-      }
+      }*/
+      this.calcularCostosLinea(index);
       
     }
   }
