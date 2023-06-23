@@ -1,5 +1,6 @@
 <app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
 <p-toast></p-toast>
+<!-- CAbecera calculadora-->
 <div class="grid">
     <div class="col-12">
         <div class="card p-fluid">
@@ -169,7 +170,7 @@
         </div>
     </div>
 </div>
-
+<!-- Fin cabecera calculadora -->
 
 <!--  Calculadora de precios -->
 
@@ -325,14 +326,14 @@
 
 
                                 
-                                <button *ngIf="optionSelectItemPT || editarCalculo" pButton 
+                                <button *ngIf="optionSelectItemPT || editarCalculo || (itemSeleted && !optionSelectItemPT && itemSeleted.ItemCode != 'ME2070005')" pButton  
                                     pTooltip="ver detalle calculo" tooltipPosition="bottom" placeholder="Bottom"   
                                     class="p-button-outlined mb-2 mr-2 p-button-warn p-button-sm" 
                                     icon="pi pi-bars" 
                                     (click)="detalleMPItems()">
                                 </button>
 
-                                <button *ngIf="item && item.ItemCode == 'ME2070005' && !editarCalculo"  pButton 
+                                <button *ngIf="itemSeleted && itemSeleted.ItemCode == 'ME2070005' && !editarCalculo"  pButton 
                                     pTooltip="Crear detalle" tooltipPosition="bottom" placeholder="Bottom"   
                                     class="p-button-outlined mb-2 mr-2 p-button-warning p-button-sm" 
                                     icon="pi pi-bars" 
@@ -881,9 +882,6 @@
 <!---Fin dialog Form detalle -->
 
 
-
-
-
 <!---Dilalog FORM detalle calculo-->
 <p-dialog [header]="'Detalle calculos MP Items '" 
 [(visible)]="formDetalleCalculosItems" 
@@ -1063,69 +1061,7 @@
               <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTsemana1 | number: '1.1-2' }}</td>
               <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ itemArrayPT.tablaCostosItemPT.costoTotalPTsemana2 | number: '1.1-2' }}</td>
           </tr>          
-          <!--<tr>
-              <td style="min-width: 2rem; text-align: center;" colspan="4" rowspan="5">Totales</td>
-              <td style="min-width: 2rem; text-align: center;">Costo</td>
-              <td style="min-width: 2rem; text-align: center;">{{ totalCostoPTSAP | number : '1.1-2'}}</td>
-              <td class="bg-blue-200" colspan="2">{{(totalMPsemana0+totalEmpaque | number: '1.1-2')}}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana0 | number : '1.1-2'}}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
-
-              <td class="bg-green-200" colspan="2">{{(totalMPsemana1+totalEmpaque | number: '1.1-2')}}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana1 | number: '1.1-2' }}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number : '1.1-2'}}</td>
-
-              <td class="bg-yellow-200" colspan="2">{{(totalMPsemana2+totalEmpaque | number: '1.1-2')}}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalMPsemana2 | number: '1.1-2' }}</td>
-              <td style="min-width: 2rem; text-align: right;">{{ totalEmpaque | number: '1.1-2' }}</td>
-
-          </tr>
-          <tr>
-              
-              <td style="min-width: 2rem; text-align: center;">Recurso</td>
-              <td style="min-width: 2rem; text-align: center;">{{recursoPTSAP | number: '1.1-2' }}</td>
-              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
-              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
-              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
-              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
-              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ recursoPT | number: '1.1-2' }}</td>
-              <td style="min-width: 2rem; text-align: center;" colspan="2" rowspan="4"></td>
-          </tr>
-          <tr>
-              
-              <td style="min-width: 2rem; text-align: center;">Costo venta</td>
-              <td style="min-width: 2rem; text-align: center;">{{ costoVentaPTSAP | number: '1.1-2' }}</td>
-              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana0 | number: '1.1-2' }}</td>
-              
-              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana1 | number: '1.1-2' }}</td>
-              
-              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoVentaPTsemana2 | number: '1.1-2' }}</td>
-              
-          </tr>
-
-          <tr>
-              
-              <td style="min-width: 2rem; text-align: center;">Administración</td>
-              <td style="min-width: 2rem; text-align: center;">{{ administracion | number: '1.1-2' }}</td>
-              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
-              
-              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
-              
-              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ administracion | number: '1.1-2' }}</td>
-              
-          </tr>
-
-          <tr>
-              
-              <td style="min-width: 2rem; text-align: center;">Costo total</td>
-              <td style="min-width: 2rem; text-align: center;">{{ costoTotalPTSAP | number: '1.1-2' }}</td>
-              <td class="bg-blue-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana0 | number: '1.1-2' }}</td>
-              
-              <td class="bg-green-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana1 | number: '1.1-2' }}</td>
-              
-              <td class="bg-yellow-200" style="min-width: 2rem; text-align: center;" colspan="2">{{ costoTotalPTsemana2 | number: '1.1-2' }}</td>
-              
-          </tr>-->
+         
       </ng-template>
       <ng-template pTemplate="emptymessage">
           <tr>
@@ -1147,7 +1083,7 @@
 </ng-template>
 <ng-template pTemplate="footer">
 <p-button   icon="pi pi-check" 
-          (onClick)="formDetalleCalculo=false"                     
+          (onClick)="formDetalleCalculosItems=false"                     
           
           label="Cerrar"
           styleClass="p-button-text">
