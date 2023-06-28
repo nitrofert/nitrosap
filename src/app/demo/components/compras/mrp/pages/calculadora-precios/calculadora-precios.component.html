@@ -13,7 +13,7 @@
 					 [rowHover]="true" 
 					 styleClass="p-datatable-gridlines p-datatable-sm" 
 					 [paginator]="true" 
-					 [globalFilterFields]="['id','ItemCode','ItemName','semanaMes','semanaAnio','precioRef']" 
+					 [globalFilterFields]="['id','ItemCode','ItemName','semanaMes','semanaAnio','precioRef, categoria']" 
 					 selectionMode="multiple" 
 					 [(selection)]="selectedLine" 
 					 responsiveLayout="scroll">
@@ -104,6 +104,13 @@
 							<div class="flex justify-content-between align-items-center">
 								Nombre item
 								<p-columnFilter type="text" field="ItemName" display="menu" placeholder="Buscar por nombre item"></p-columnFilter>
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Categoria
+								<p-columnFilter type="text" field="categoria" display="menu" placeholder="Buscar por nombre categoria"></p-columnFilter>
 							</div>
 						</th>
 
@@ -232,6 +239,10 @@
 						
 						<td style="min-width: 12rem;">
 							{{ item.ItemName  }}
+						</td>
+
+						<td style="min-width: 12rem;">
+							{{ item.categoria  }}
 						</td>
 
                         <td style="min-width: 6rem;">
