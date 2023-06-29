@@ -130,6 +130,7 @@ export class ListaPreciosItemMpComponent  implements OnInit {
       fileRaw:file,
       fileName:file.name
     }
+    //console.log(file);
     this.readDocument(file);
   
   }
@@ -141,7 +142,7 @@ export class ListaPreciosItemMpComponent  implements OnInit {
       let text:any =fileReader.result ;
       var lines = text.split('\n') ;
       for(let line of lines){
-        console.log(line);
+        //console.log(line);
         //arrayTexto.push(this.reemplazarCaracteresEspeciales(line));
 
         let arrayLinea = line.split(";");
@@ -178,7 +179,7 @@ adicionarCSV(){
         this.comprasService.cargarLPMP(this.authService.getToken(),body)
         .subscribe({
           next: (result:any)=>{
-            console.log(result);
+            //console.log(result);
             this.messageService.add({severity:'success', summary: '!Ok', detail: result.message});
             this.formularioCSV = false;
             this.getListaPreciosMP();

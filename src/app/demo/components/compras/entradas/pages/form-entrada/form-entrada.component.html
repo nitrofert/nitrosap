@@ -841,10 +841,11 @@
                                 [filter]="true" 
                                 filterBy="Code" [showClear]="true"
                                 class="w-full" styleClass="w-full"
-                                [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !impuesto}" 
+                                 
                                 inputId="impuesto"
                                 [disabled]="true"
                                 (onChange)="SeleccionarImpuesto()">
+                                <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !impuesto}"-->
 
                         <ng-template pTemplate="selectedItem">
                             <div class="country-item country-item-value" *ngIf="impuesto">
@@ -864,8 +865,8 @@
                                     [readonly]="true" 
                                     inputStyleClass="text-center w-6"
                                     styleClass="text-center" 
-                                    [disabled]="true"
-                                    [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !impuesto}">
+                                    [disabled]="true">
+                                    <!--[ngClass]="{'ng-invalid ng-dirty' : envioLinea && !impuesto}"-->
                     </p-inputNumber>
 
                 </div>

@@ -69,16 +69,16 @@ export class ImpresionComponent implements OnInit {
 
     this.comprasService.impresionEntradaByIdSL(this.authService.getToken(),this.idEntrada.entrada)
         .subscribe({
-          next:(infoEntrada)=>{
+          next:async (infoEntrada)=>{
               console.log(infoEntrada);
               this.proveedor = infoEntrada.value[0].BusinessPartners;
               this.encabezado = infoEntrada.value[0].PurchaseDeliveryNotes;
-              console.log(this.encabezado.DocCurrency);
+              //console.log(this.encabezado.DocCurrency);
               //this.detalle = infoEntrada.value[0]['PurchaseDeliveryNotes/DocumentLines'];
               
              
               this.userdoc = infoEntrada.value[0].Users;
-              console.log(this.userdoc);
+              //console.log(this.userdoc);
 
               this.nit =this.proveedor.FederalTaxID;
               this.ciudad = this.proveedor.City;
@@ -109,24 +109,25 @@ export class ImpresionComponent implements OnInit {
                 this.detalle.push(linea['PurchaseDeliveryNotes/DocumentLines']);
                 this.espacio = this.espacio  - 10;
               }
-              console.log(this.detalle)
+              //console.log(this.detalle)
 
-              //console.log(this.proveedor,this.encabezado,this.detalle)
-              this.setInfoPdf();
+              ////console.log(this.proveedor,this.encabezado,this.detalle)
+              await this.setInfoPdf();
+              console.log(this.infoPDF);
           },
           error:(err)=>{
-              console.log(err);
+              //console.log(err);
           }
         });
   }
 
-  setInfoPdf(){
+ async setInfoPdf():Promise<void> {
 
     this.marginBottom =this.tipodoc==='S'?50:0;
 
     let newObjeto = Object.assign({}, this.detalle)
 
-    console.log(newObjeto);
+    ////console.log(newObjeto);
 
     this.infoPDF ={
       marginBottom: this.marginBottom,
@@ -166,6 +167,7 @@ export class ImpresionComponent implements OnInit {
     }
 
     }
+    
     
   }
 

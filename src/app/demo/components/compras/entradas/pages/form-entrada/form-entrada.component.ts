@@ -921,7 +921,7 @@ export class FormEntradaComponent implements OnInit {
         EntradaDet:this.lineasEntrada.filter(item =>item.cantidad !==0 && item.LineStatus==='bost_Open')
       }
 
-      //console.log(data);
+      console.log(data);
 
       //if(this.lineasEntrada) data.entrada.id = this.entradaEditar;
 
@@ -1038,7 +1038,7 @@ export class FormEntradaComponent implements OnInit {
         this.precio &&
         //(this.subtotalLinea <= this.lineaEntrada.total_pendiente || this.moneda!='COP') &&
        
-        this.impuesto &&
+        //this.impuesto &&
         //((this.cuenta!=undefined && !this.item.ItemCode && this.DocType=='dDocument_Items') || (this.cuenta==undefined && this.item.ItemCode)) && !this.validarCantidad()){
         //((this.cuenta!=undefined && !this.item.ItemCode) || (this.cuenta==undefined && this.item.ItemCode)) && 
         this.cuenta &&
