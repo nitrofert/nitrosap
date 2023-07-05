@@ -26,7 +26,7 @@ export class NuevaEntradaComponent implements OnInit {
 
   ngOnInit(): void {
     this.pedido = JSON.parse(localStorage.getItem("pedidoSeleccionado") ||'');
-    //console.log(this.pedido);
+    console.log(this.pedido);
     
   }
 

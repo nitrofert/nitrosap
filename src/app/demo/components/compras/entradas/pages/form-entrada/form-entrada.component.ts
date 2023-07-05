@@ -119,6 +119,8 @@ export class FormEntradaComponent implements OnInit {
   loading:boolean = false; // Controla el spiner de cargue del listado de lineas de la solped
   entradaEnviadaSAP: string = "N";
 
+  U_NF_DEPEN_SOLPED:string ="";
+
   formularioEvaluacionProveedor:boolean = false; //
 
   tiposEvaluacion:any[]=[{label:"Servicio"},{label:"Bienes"}];
@@ -409,7 +411,7 @@ export class FormEntradaComponent implements OnInit {
             this.comprasService.pedidoByIdSL(this.authService.getToken(),this.pedido)
                 .subscribe({
                     next: (pedido:any)=>{
-                        //console.log('by pedido',pedido);
+                        console.log('by pedido',pedido);
                         
                         this.getEntradasPedido(pedido);
                     },
@@ -479,6 +481,7 @@ export class FormEntradaComponent implements OnInit {
         this.pedidonumsap = pedido.DocNum;
         this.DocType =pedido.DocType;
         this.DocCurrency = pedido.DocCurrency;
+        this.U_NF_DEPEN_SOLPED = pedido.U_NF_DEPEN_SOLPED;
         
 
         if(!this.entradaEditar){
@@ -908,6 +911,7 @@ export class FormEntradaComponent implements OnInit {
           //currency:this.moneda==='COP'?'$':this.moneda,
           currency:this.DocCurrency,
           pedidonumsap:this.pedidonumsap,
+          u_nf_depen_solped:this.U_NF_DEPEN_SOLPED,
           U_NF_BIEN_OPORTUNIDAD:this.U_NF_BIEN_OPORTUNIDAD,
           U_NF_SERVICIO_CALIDAD:this.U_NF_SERVICIO_CALIDAD,
           U_NF_SERVICIO_TIEMPO:this.U_NF_SERVICIO_TIEMPO,

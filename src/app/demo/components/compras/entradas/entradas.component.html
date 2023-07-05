@@ -35,6 +35,14 @@
 									[disabled]="permisosUsuarioPagina.length===0 || !permisosUsuarioPagina[0].create_accion"
 									(click)="nuevaEntrada()">
 							</button>
+							<!--<button pButton 
+									*ngIf="permisosUsuarioPagina[0].update_accion"
+									pTooltip="Enviar a aprobación" tooltipPosition="bottom" placeholder="Bottom"   
+									class="p-button-outlined mb-2 mr-2 p-button-warning p-button-sm" 
+									icon="pi pi-send" 
+									(click)="solicitudAprobacion(entradaSeleccionada)" 
+									[disabled]="!permisosUsuarioPagina[0].update_accion || !entradaSeleccionada || entradaSeleccionada.length==0">
+							</button>-->
 							<button pButton 
 									*ngIf="permisosUsuarioPagina.length>0  && permisosUsuarioPagina[0].read_accion"
 									[pTooltip]="'Consultar'" tooltipPosition="bottom" placeholder="Bottom"   
@@ -42,6 +50,14 @@
 									[icon]="'pi pi-search'" 
 									(click)="VerEntrada()" 
 									[disabled]="!permisosUsuarioPagina[0].read_accion || (!entradaSeleccionada || entradaSeleccionada.length!=1)">
+							</button>
+							<button pButton
+									*ngIf="permisosUsuarioPagina[0].aproved_accion" 
+									pTooltip="Aprobar" tooltipPosition="bottom" placeholder="Bottom" 
+									class="p-button-outlined mb-2 mr-2 p-button-help p-button-sm" 
+									icon="pi pi-check-circle" 
+									(click)="aprobar(entradaSeleccionada)" 
+									[disabled]="!permisosUsuarioPagina[0].aproved_accion || !entradaSeleccionada || entradaSeleccionada.length==0">
 							</button>
 							<button pButton 
 									*ngIf="permisosUsuarioPagina[0].delete_accion" 
@@ -163,6 +179,28 @@
 								</p-columnFilter>
 							</div>
 						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Aprobación
+								<p-columnFilter field="approved" 
+												matchMode="equals" 
+												display="menu" 
+												placeholder="Buscar por estado"
+												[showMatchModes]="false" 
+												[showOperator]="false">
+
+												<ng-template pTemplate="filter" let-value let-filter="filterCallback">
+													<p-dropdown [ngModel]="value" [options]="approveds" (onChange)="filter($event.value)" placeholder="Any">
+														<ng-template let-option pTemplate="item">
+															<span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+														</ng-template>
+													</p-dropdown>
+												</ng-template>
+
+								</p-columnFilter>
+							</div>
+						</th>
 						
                         
 
@@ -218,6 +256,10 @@
                         
                         <td style="min-width: 12rem;">
 							{{ entradaitem.status | estados :'entrada' }}
+						</td>
+
+						<td style="min-width: 12rem;">
+							{{ entradaitem.approved | estados :'entrada' }}
 						</td>
                         
                         <td style="min-width: 12rem;">

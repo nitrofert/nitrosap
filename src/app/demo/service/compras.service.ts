@@ -250,6 +250,14 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
+  aprobarEntradas(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/entrada/aprobar-entradas`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+
   listEntrada(token:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };

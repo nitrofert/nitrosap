@@ -34,6 +34,7 @@ export class EntradasComponent implements OnInit {
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   statuses:any = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
+  approveds:any = [{label:'Pendiente', value:'P'},{label:'Aprobada', value:'A'}];
 
   
   series:any[] = [];
@@ -122,6 +123,8 @@ export class EntradasComponent implements OnInit {
 
         console.log(entradas);
         this.loading = false;
+
+
          
           /*for(let lineaEntrada of entradas){
             lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
@@ -197,6 +200,46 @@ export class EntradasComponent implements OnInit {
     console.log(id);
     //window.open('portal/compras/entradas/impresion/'+id,'_blank')
     this.router.navigate(['portal/compras/entradas/impresion/'+id]);
+  }
+
+  solicitudAprobacion(entradas:any){
+    console.log(entradas);
+  }
+
+  aprobar(entradas:any){
+    console.log(entradas);
+    let arrayEntradasAprobar:any[] = [];
+
+    for(let entrada of entradas){
+      if(entrada.approved != 'P'){
+        this.messageService.add({severity:'error', summary: '!Error', detail: `La entrada ${entrada.id} no puede ser enviada a aprobación. Ya fue aprobada` });
+      }else{
+        arrayEntradasAprobar.push(entrada.id);
+      }
+    }
+
+    if(arrayEntradasAprobar.length>0){
+      this.comprasService.aprobarEntradas(this.authService.getToken(),arrayEntradasAprobar)
+    .subscribe({
+      next:(entradas =>{
+
+        console.log(entradas);
+        this.loading = false;
+
+
+         
+          /*for(let lineaEntrada of entradas){
+            lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
+          }*/
+          this.entradas = entradas;
+          console.log(this.entradas);
+          this.loading = false;
+      }),
+      error:(err =>{
+        console.log(err);
+      })
+    });
+    }
   }
 
   formatCurrency(value: number) {
