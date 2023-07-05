@@ -245,7 +245,7 @@ export class FormSolpedMPComponent implements OnInit {
     this.permisosUsuarioPagina = this.authService.permisosPagina(this.permisosUsuario.filter(item => item.url===url))
 
     this.permisosUsuarioPagina = this.authService.permisosPagina(this.permisosUsuario.filter(item => item.url===url))
-   ////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+    //console.log(this.permisosUsuario,this.permisosUsuarioPagina);
   }
 
   getConfigSolpedMP(){
@@ -253,7 +253,7 @@ export class FormSolpedMPComponent implements OnInit {
     //this.authService.getDependeciasUsuarioXE()
     .subscribe({
       next: async (configSolped:any) => {
-        //console.log(configSolped);
+       // console.log(configSolped);
 
         await this.getDependenciasUsuario(configSolped.dependenciasUsuario);
         await this.getSeries(configSolped.series);
@@ -364,6 +364,7 @@ export class FormSolpedMPComponent implements OnInit {
                   
                 }
                 //this.series = series.filter(item => item.)
+                ///console.log(this.series);
                 this.serie = this.series[0].code;
                 this.serieName =this.series[0].name;
                 this.clase ='I';
@@ -1142,10 +1143,17 @@ calculatTotales(){
       window.open(urlFile,'blank');
 
   }
+
+  AdicionarLinea2(){
+    console.log('Adicionar linea2');
+  }
   
 
   AdicionarLinea(){
+    //console.log('Adicionar linea');
+    console.log(this.clase ,  this.serie ,  this.area , this.fechaContable , this.fechaCaducidad , this.fechaDocumento , this.fechaNecesidad);
     this.nuevaLinea =true;
+   
 
     if( this.clase &&  this.serie &&  this.area && this.fechaContable && this.fechaCaducidad && this.fechaDocumento && this.fechaNecesidad){
       
