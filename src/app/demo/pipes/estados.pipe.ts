@@ -48,8 +48,12 @@ export class EstadosPipe implements PipeTransform {
                 return 'Aprobada';
               break;
 
-              case 'N':
-                return 'Aprobada';
+              case 'R':
+                return 'Rechazada';
+              break;
+
+              case 'F':
+                return 'Cerrada';
               break;
 
               default: return value

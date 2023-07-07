@@ -346,6 +346,16 @@ export class SAPService {
     return this.http.patch<any>(url,data,requestOptions);
   }
 
+  rechazarEntrada(token:string,idEntrada:number,data:any):Observable<any>{
+   
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+  
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/compras/entrada/rechazo/${idEntrada}`;
+    return this.http.patch<any>(url,data,requestOptions);
+  }
+
   
 
 }

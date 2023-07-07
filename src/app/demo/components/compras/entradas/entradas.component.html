@@ -60,11 +60,19 @@
 									[disabled]="!permisosUsuarioPagina[0].aproved_accion || !entradaSeleccionada || entradaSeleccionada.length==0">
 							</button>
 							<button pButton 
+									*ngIf="permisosUsuarioPagina[0].aproved_accion"
+									pTooltip="Rechazar" tooltipPosition="bottom" placeholder="Bottom" 
+									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
+									icon="pi pi-times-circle" 
+									(click)="dialogRechazo=true" 
+									[disabled]="!permisosUsuarioPagina[0].aproved_accion || !entradaSeleccionada || entradaSeleccionada.length!=1">
+							</button>
+							<button pButton 
 									*ngIf="permisosUsuarioPagina[0].delete_accion" 
 									pTooltip="Cancelar" tooltipPosition="bottom" placeholder="Bottom"   
 									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
 									icon="pi pi-trash" 
-									(click)="dialogCancel=true" 
+									(click)="cancelar()" 
 									[disabled]="!permisosUsuarioPagina[0].delete_accion || !entradaSeleccionada || entradaSeleccionada.length!=1">
 							</button>
 							<!--<button pButton 
@@ -329,6 +337,31 @@
 		<p-button icon="pi pi-save" (onClick)="cancelarEntrada()" label="Cancelar entrada" styleClass="p-button-text p-button-success"></p-button>
     </ng-template>
 </p-dialog>
+<!-- Fin dialog  cancelacion entrada-->
 
-
+<!--Dialog rechazo Entrada-->
+<p-dialog header="Header" [(visible)]="dialogRechazo" [style]="{ width: '50vw' }">
+    <ng-template pTemplate="header">
+        <span class="text-xl font-bold">Rechazar entrada {{entradaSeleccionada[0].id}} - {{entradaSeleccionada[0].sapdocnum}}</span>
+    </ng-template>
+	<div class="grid">
+		<div class="col">
+			<div class="field">
+				<label htmlFor="comentarios">Comentarios</label>
+				<textarea rows="3" 
+						  pInputTextarea
+						  [(ngModel)]="comentariosCancel"
+						  class="w-full"
+						  id="comments"
+						  [ngClass]="{'ng-invalid ng-dirty' : (dialogRechazo && !comentariosCancel) }">
+				</textarea>
+				
+			</div>
+		</div>
+	</div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-close" (onClick)="dialogRechazo = false; comentariosCancel=''" label="Salir" styleClass="p-button-text"></p-button>
+		<p-button icon="pi pi-save" (onClick)="rechazarEntrada()" label="Rechazar entrada" styleClass="p-button-text p-button-success"></p-button>
+    </ng-template>
+</p-dialog>
 <!-- Fin dialog  cancelacion entrada-->

@@ -142,7 +142,22 @@ export class FormEntradaComponent implements OnInit {
   DocType:any="";
 
 
+  U_NF_MES_REAL:string = "";
 
+  meses:any[] = [
+    {id:1,fullname:'Enero', shortName:'ENE'},
+    {id:2,fullname:'Febrero', shortName:'FEB'},
+    {id:3,fullname:'Marzo', shortName:'MAR'},
+    {id:4,fullname:'Abril', shortName:'ABR'},
+    {id:5,fullname:'Mayo', shortName:'MAY'},
+    {id:6,fullname:'Junio', shortName:'JUN'},
+    {id:7,fullname:'Julio', shortName:'JUL'},
+    {id:8,fullname:'Agosto', shortName:'AGO'},
+    {id:9,fullname:'Septiembre', shortName:'SEP'},
+    {id:10,fullname:'Octubre', shortName:'OCT'},
+    {id:11,fullname:'Noviembre', shortName:'NOV'},
+    {id:12,fullname:'Diciembre', shortName:'DIC'},
+ ];
 
 
   constructor(public authService: AuthService,
@@ -185,6 +200,8 @@ export class FormEntradaComponent implements OnInit {
      this.getImpuestos();
 
      this.getInfoPedido();
+
+     this.U_NF_MES_REAL = this.meses.find(item=>item.id == (this.fechaContable.getMonth()+1)).fullname;
 
 
   }
@@ -920,12 +937,13 @@ export class FormEntradaComponent implements OnInit {
           U_NF_TIPO_HE:this.U_NF_TIPO_HE,
           U_NF_PUNTAJE_HE:this.U_NF_PUNTAJE_HE,
           U_NF_CALIFICACION:this.U_NF_CALIFICACION,
-          footer:this.footer
+          footer:this.footer,
+          U_NF_MES_REAL:this.U_NF_MES_REAL
         },
         EntradaDet:this.lineasEntrada.filter(item =>item.cantidad !==0 && item.LineStatus==='bost_Open')
       }
 
-      //console.log(data);
+      console.log(data);
 
       //if(this.lineasEntrada) data.entrada.id = this.entradaEditar;
 
