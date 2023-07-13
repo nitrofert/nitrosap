@@ -3020,9 +3020,8 @@ parametrosGlobales(){
       }
 
       /*
-      /*if(tipo!='articulo'){
+      if(tipo!='articulo'){
         this.calcularCostosLinea(index);
-      
       }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
         this.calcularCostosLinea(index);
       }else{
@@ -3031,6 +3030,19 @@ parametrosGlobales(){
         event.target.value =0;
         this.detalle_receta[indexDetalle].itemMP.Quantity =0;
       }
+      */
+      /*if(tipo!='articulo'){
+        this.calcularCostosLinea(index);
+      }else if(tipo=='articulo' && (this.totalCantidadArticulos+ event.target.value) >1){
+        this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad ingresada del articulo seleccionado mas la cantidad total de articulos en la receta supera el maximo permitid`});
+        const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+        event.target.value =0;
+        this.detalle_receta[indexDetalle].itemMP.Quantity =0;
+      }else{
+        this.calcularCostosLinea(index);
+      }*/
+      
+      
       
     }
   }
@@ -3040,17 +3052,49 @@ parametrosGlobales(){
       event.target.value =0;
     }
 
-    if(tipo!='articulo'){
+    let error:boolean = await this.validarCantidad(parseFloat(event.target.value),tipo);
+
+      if(!error){
+        this.calcularCostosLinea(index);
+      }else{
+        const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+        event.target.value =0;
+        this.detalle_receta[indexDetalle].itemMP.Quantity =0;
+      }
+
+    /*if(tipo!='articulo'){
       this.calcularCostosLinea(index);
     }else if(tipo==='articulo' && event.target.value>=0.1 && event.target.value<=1 ){
       this.calcularCostosLinea(index);
     }else{
       this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad del articulo debe ser mayor o igual a 0.1 y menor o igual a 1`});
       event.target.value =0;
-    }
+    }*/
+    /*if(tipo!='articulo'){
+      this.calcularCostosLinea(index);
+    }else if(tipo=='articulo' && (this.totalCantidadArticulos+ event.target.value) >1){
+      this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad ingresada del articulo seleccionado mas la cantidad total de articulos en la receta supera el maximo permitid`});
+      const indexDetalle =this.detalle_receta.findIndex((item: { itemMP: { index: number; }; })  => item.itemMP.index ===index);
+      event.target.value =0;
+      this.detalle_receta[indexDetalle].itemMP.Quantity =0;
+    }else{
+      this.calcularCostosLinea(index);
+    }*/
   
     
     
+  }
+
+
+  async validarCantidad(cantidad:number, tipo:string): Promise<boolean>{
+      let error = false;
+      if(tipo=='articulo' && (this.totalCantidadArticulos+cantidad)>1){
+          //////console.log(this.totalCantidadArticulos,'-',cantidad);
+          this.messageService.add({severity:'warn', summary: '!Advertencia', detail: `La cantidad ingresada del articulo seleccionado mas la cantidad total de articulos en la receta supera el maximo permitido`});
+          error = true;
+      }
+
+      return error;
   }
 
 
