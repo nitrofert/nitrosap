@@ -42,7 +42,7 @@
                 </div>
                 <div class="col">
                     <div class="flex">
-                        <div class="field">
+                        <div class="field w-6">
                             <label htmlFor="serie">Tipo</label>
                             <p-dropdown [options]="series" 
                                         optionLabel="name" optionValue="code"
@@ -57,7 +57,7 @@
                                         [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !serie) || (nuevaLinea && !serie)}">
                             </p-dropdown>
                         </div>
-                        <div class="field">
+                        <div class="field w-6">
                             <label htmlFor="codigoSap">Codigo SAP</label>
                             <input pInputText 
                                     [(ngModel)]="codigoSap" 
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div class="flex">
-                        <div class="field">
+                        <div class="field w-6">
                             <label for="fechaContable">Fecha Contable</label>
                             <p-calendar [(ngModel)]="fechaContable" 
                                         (onSelect)="SeleccionarFechaContable()" 
@@ -83,7 +83,7 @@
                             </p-calendar>
                         </div>
 
-                        <div class="field">
+                        <div class="field w-6">
                             <label for="fechaCaducidad">Válido hasta</label>
                             <p-calendar [(ngModel)]="fechaCaducidad" 
                                         [showIcon]="true" 
@@ -97,7 +97,7 @@
 
                     </div>
                     <div class="flex">
-                        <div class="field">
+                        <div class="field w-full">
                             <label for="fechaDocumento">Fecha documento</label>
                             <p-calendar [(ngModel)]="fechaDocumento" 
                                         [showIcon]="true" 
@@ -123,6 +123,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid">
+                <div class="col">
+                    <div class="field">
+                        <label htmlFor="comentarios">Mes real del gasto</label>
+                        <p-dropdown [options]="meses" 
+                                    optionLabel="fullname" 
+                                    optionValue="fullname"
+                                    [(ngModel)]="U_NF_MES_REAL" 
+                                    id="U_NF_MES_REAL" 
+                                    name="U_NF_MES_REAL"
+                                    placeholder="Mes real del gasto"
+                                    styleClass="p-dropdown-sm "
+                                    [required]="true">
+                                    <ng-template pTemplate="selectedItem">
+                                        {{U_NF_MES_REAL | titlecase}}
+                                    </ng-template>
+                                    <ng-template let-mes pTemplate="mes">
+                                        {{mes.fullname | titlecase }}
+                                    </ng-template>
+                                    
+                        </p-dropdown>
+                        
+                    </div>
+                </div>
+            </div>
+
             <div class="grid">
                 <div class="col">
                     <div class="field">

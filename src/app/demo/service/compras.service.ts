@@ -250,6 +250,14 @@ export class ComprasService {
     return this.http.post<any[]>(url,data,requestOptions);
   }
 
+  aprobarEntradas(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/entrada/aprobar-entradas`;
+    return this.http.post<any[]>(url,data,requestOptions);
+  }
+
+
   listEntrada(token:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -584,7 +592,8 @@ export class ComprasService {
   getPreciosListaItemSAP(token:string,itemCode:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
-    const url:string = `${this.api_url}/api/compras/mrp/lista-precios-item/${itemCode}`;
+    //const url:string = `${this.api_url}/api/compras/mrp/lista-precios-item/${itemCode}`;
+    const url:string = `${this.api_url}/api/mysql/query/lista-precios-sap-item/${itemCode}`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -598,7 +607,9 @@ export class ComprasService {
   getItemsMPbyItemPT(token:string,itemCode:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
-    const url:string = `${this.api_url}/api/compras/mrp/items-mp-by-item-pt/${itemCode}`;
+    //const url:string = `${this.api_url}/api/compras/mrp/items-mp-by-item-pt/${itemCode}`;
+
+    const url:string = `${this.api_url}/api/mysql/query/receta-item/${itemCode}`;
     return this.http.get<any[]>(url,requestOptions);
   }
 
@@ -686,6 +697,15 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers,  params: data  };
     const url:string = `${this.api_url}/api/compras/mrp/precio-venta-item`;
+    
+    return this.http.get<any>(url,requestOptions);
+  }
+
+  getPrecioVentaItemSAP2(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers};
+    const url:string = `${this.api_url}/api/mysql/query/lista-precios-venta-item/${data.item}`;
+    
     return this.http.get<any>(url,requestOptions);
   }
 

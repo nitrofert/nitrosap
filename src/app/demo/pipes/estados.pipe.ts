@@ -40,6 +40,22 @@ export class EstadosPipe implements PipeTransform {
                 return 'Cancelada';
               break;
 
+              case 'P':
+                return 'Pendiente';
+              break;
+
+              case 'A':
+                return 'Aprobada';
+              break;
+
+              case 'R':
+                return 'Rechazada';
+              break;
+
+              case 'F':
+                return 'Cerrada';
+              break;
+
               default: return value
           }
       break;

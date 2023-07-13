@@ -34,12 +34,15 @@ export class EntradasComponent implements OnInit {
   permisosUsuarioPagina!:PermisosUsuario[];
   perfilesUsuario!:PerfilesUsuario[];
   statuses:any = [{label:'Abierta', value:'O'},{label:'Cerrada', value:'C'}];
+  approveds:any = [{label:'Pendiente', value:'P'},{label:'Aprobada', value:'A'}];
 
   
   series:any[] = [];
   displayModal:boolean = false;
   dialogCancel:boolean = false;
   comentariosCancel:string = "";
+
+  dialogRechazo:boolean = false;
  
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -116,12 +119,15 @@ export class EntradasComponent implements OnInit {
 
 
   getEntradas(){
+    this.displayModal = true;
     this.comprasService.listEntrada(this.authService.getToken())
     .subscribe({
       next:(entradas =>{
 
         console.log(entradas);
         this.loading = false;
+
+
          
           /*for(let lineaEntrada of entradas){
             lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
@@ -129,6 +135,7 @@ export class EntradasComponent implements OnInit {
           this.entradas = entradas;
           console.log(this.entradas);
           this.loading = false;
+          this.displayModal = false;
       }),
       error:(err =>{
         console.log(err);
@@ -145,9 +152,20 @@ export class EntradasComponent implements OnInit {
     this.router.navigate(['portal/compras/entradas/consultar/'+this.entradaSeleccionada[0].id]);
   }
 
+  cancelar(){
+    if(this.entradaSeleccionada[0].status == 'C' ){
+      this.messageService.add({severity:'warn', summary: '!Error', detail: "La entrada seleccionada ya se encuentra cancelada"});
+    }else if(this.entradaSeleccionada[0].approved == 'P'){
+      this.messageService.add({severity:'warn', summary: '!Error', detail: "La entrada seleccionada se encuentra en un proceso de aprobación"});
+    }else{
+      this.dialogCancel=true;
+    }
+  }
+
   cancelarEntrada(){
 
-    console.log(this.entradaSeleccionada);
+    
+      console.log(this.entradaSeleccionada);
 
       if(this.comentariosCancel!=""){
 
@@ -187,6 +205,9 @@ export class EntradasComponent implements OnInit {
       }else{
         this.messageService.add({severity:'error', summary: '!Error', detail: "Debe ingresar un comentario para cancelar la entrada"});
       }
+    
+
+    
 
       
   
@@ -197,6 +218,107 @@ export class EntradasComponent implements OnInit {
     console.log(id);
     //window.open('portal/compras/entradas/impresion/'+id,'_blank')
     this.router.navigate(['portal/compras/entradas/impresion/'+id]);
+  }
+
+  solicitudAprobacion(entradas:any){
+    console.log(entradas);
+  }
+
+ 
+
+  rechazarEntrada(){
+    console.log(this.entradaSeleccionada);
+    if(this.comentariosCancel!=""){
+
+      this.confirmationService.confirm({
+        message: `Esta usted seguro de rechazar la entrada número ${this.entradaSeleccionada[0].id}?`,
+
+        accept: () => {
+            //Actual logic to perform a confirmation
+            const data:any = {
+                comment: this.comentariosCancel,
+                sapdocnum: this.entradaSeleccionada[0].id
+            }
+            this.displayModal= true;
+            this.sapService.rechazarEntrada(this.authService.getToken(),this.entradaSeleccionada[0].id,data)
+                .subscribe({
+                      next:(result)=>{
+                          console.log('next',result)
+                          if(result.status ===200){
+                            this.messageService.add({severity:'success', summary: 'Ok', detail: result.message});
+                            this.getEntradas();
+                            this.comentariosCancel="";
+                            this.dialogRechazo = false;
+                          }else{
+                            this.messageService.add({severity:'error', summary: '!Error', detail: result.err});
+                          }
+                          this.displayModal= false;
+                      },
+                      error:(err)=>{
+                        console.error(err)
+                        this.displayModal= false;
+                        this.messageService.add({severity:'error', summary: '!Error', detail: err});
+                      }
+                });
+        }
+    });
+
+    }else{
+      this.messageService.add({severity:'error', summary: '!Error', detail: "Debe ingresar un comentario para rechazar la entrada"});
+    }
+  }
+
+  aprobar(entradas:any[]){
+
+    
+    this.confirmationService.confirm({
+      message: entradas.length>1?`¿Esta usted seguro de aprobar las entradas seleccionadas ?`:`¿Esta usted seguro de aprobar la entrada seleccionada?`,
+
+      accept: () => {
+        console.log(entradas);
+        let arrayEntradasAprobar:any[] = [];
+        this.displayModal = true;
+        for(let entrada of entradas){
+          if(entrada.approved != 'P'){
+            this.messageService.add({severity:'error', summary: '!Error', detail: `La entrada ${entrada.id} no puede ser enviada a aprobación. Ya fue aprobada` });
+          }else{
+            arrayEntradasAprobar.push(entrada.id);
+          }
+        }
+    
+        if(arrayEntradasAprobar.length>0){
+          this.comprasService.aprobarEntradas(this.authService.getToken(),arrayEntradasAprobar)
+        .subscribe({
+          next:(entradas =>{
+    
+       
+            for(let entradaApproved of entradas.arrayAproved){
+              this.messageService.add({severity:'success', summary: '!Ok', detail: entradaApproved.message });
+            }
+
+            for(let entradaError of entradas.arrayErrors){
+              this.messageService.add({severity:'error', summary: '!Error', detail: entradaError.message });
+            }
+    
+             
+              /*for(let lineaEntrada of entradas){
+                lineaEntrada.serieStr = this.series.filter(data => data.code == lineaEntrada.serie)[0].name;
+              }*/
+              
+              this.loading = false;
+              
+
+              this.getEntradas();
+              
+          }),
+          error:(err =>{
+            console.log(err);
+          })
+        });
+        }
+      }
+    });
+    
   }
 
   formatCurrency(value: number) {

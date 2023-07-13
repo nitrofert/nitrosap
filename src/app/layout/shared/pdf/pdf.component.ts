@@ -127,15 +127,15 @@ for (var key in rows)
                     alignment:'center',
                     border: [false, false, false, false]} );
         //row.push( {text:data.Quantity.toString(),
-        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(data.Price),
+        row.push( {text:new Intl.NumberFormat('es-CO', { minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.Quantity),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]}  );
-        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(data.Price),//data.Price.toString(),
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.Price),//data.Price.toString(),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]} );
-        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(data.LineTotal),//data.LineTotal.toString(),
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.LineTotal),//data.LineTotal.toString(),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]} );
@@ -685,7 +685,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(this.infoPDF.content.subtotal)}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4, minimumFractionDigits: 4}).format(this.infoPDF.content.subtotal)}`,
                       fontSize:8,
                       alignment:'right',
                       border: [false, false, false, false],
@@ -706,7 +706,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(this.infoPDF.content.iva)}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4, minimumFractionDigits: 4 }).format(this.infoPDF.content.iva)}`,
                       fontSize:8,
                       alignment:'right',
                       border: [false, false, false, false],
@@ -727,7 +727,7 @@ for (var key in rows)
                       border: [false, false, false, false],
                     },
                     {
-                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4,minimumFractionDigits: 4 }).format(this.infoPDF.content.total)}`,
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: this.infoPDF.content.DocCurrency=='$'?'COP':this.infoPDF.content.DocCurrency,maximumFractionDigits: 4, minimumFractionDigits: 4 }).format(this.infoPDF.content.total)}`,
                       style:'subheader',
                       alignment:'right',
                       border: [false, true, false, false],

@@ -26,7 +26,7 @@ export class NuevaEntradaComponent implements OnInit {
 
   ngOnInit(): void {
     this.pedido = JSON.parse(localStorage.getItem("pedidoSeleccionado") ||'');
-    //console.log(this.pedido);
+    console.log(this.pedido);
     
   }
 
@@ -36,18 +36,21 @@ export class NuevaEntradaComponent implements OnInit {
     this.comprasService.saveEntrada(this.authService.getToken(),dataEntrada)
             .subscribe({
                 next: (result) =>{
-                    //console.log(result);
+                    console.log('Resultado Registro entrada',result);
                     //this.submittedBotton = true;
                     this.envioForm = false;
                     if(result.status===501){
-                      this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err),life:5000});
+                      this.messageService.add({severity:'error', summary: '!Error', detail: JSON.stringify(result.err)});
                      
                     }else{
-                      this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message,life:5000});
+                     this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+
+                   
+                    
                      
                       setTimeout(()=>{
                         this.router.navigate(['portal/compras/entradas']);
-                      },2000);
+                      },6000);
                       
                     }
                 },
