@@ -618,11 +618,6 @@ export class FormEntradaComponent implements OnInit {
                 valor_impuesto:0,
                 trm:lineaPedido.Rate
 
-
-           
-                
-
-
             });
 
             ////console.log(lineaPedido.LineNum,totalEntradasLinea);

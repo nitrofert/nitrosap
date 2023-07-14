@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
+import { SAPService } from 'src/app/demo/service/sap.service';
 
 @Component({
   selector: 'app-impresion',
@@ -50,10 +51,12 @@ export class ImpresionComponent implements OnInit {
   U_NF_PUNTAJE_HE:number =0;
   U_NF_CALIFICACION:string ="";
   DocCurrency:string="";
-
+  monedas:any[] = [];
+  trm:number = 0;
 
   constructor(private rutaActiva: ActivatedRoute,
               private comprasService: ComprasService,
+              private sapService:SAPService,
               public authService: AuthService,) { }
 
   ngOnInit(): void {
@@ -64,61 +67,90 @@ export class ImpresionComponent implements OnInit {
     this.nombreEmpresa = this.authService.getInfoUsuario().companyname;
     this.direccionEmpresa = this.authService.getInfoUsuario().direccion;
     this.telefonoEmpresa = this.authService.getInfoUsuario().telefono;
-
+    this.getMonedasMysql();
  
 
+    
+  }
+
+
+
+  getMonedasMysql(){
+    this.sapService.monedasMysql(this.authService.getToken())
+       .subscribe({
+         next: (monedas) => {
+            //console.log('Monedas Mysql',monedas);
+           //this.monedas = [{Currency:  'COP',TRM:1}];
+           for(let item in monedas){
+              this.monedas.push({
+                Currency:monedas[item].Code,
+                TRM:monedas[item].TRM,
+              });
+           }
+           console.log('Monedas Mysql',this.monedas);
+          // this.setearTRMSolped('USD');
+          this.getInfoEntrada();
+         },
+         error: (error) => {
+             //////console.log(error);      
+         }
+       });
+  }
+
+  getInfoEntrada(){
     this.comprasService.impresionEntradaByIdSL(this.authService.getToken(),this.idEntrada.entrada)
-        .subscribe({
-          next:async (infoEntrada)=>{
-              console.log(infoEntrada);
-              this.proveedor = infoEntrada.value[0].BusinessPartners;
-              this.encabezado = infoEntrada.value[0].PurchaseDeliveryNotes;
-              //console.log(this.encabezado.DocCurrency);
-              //this.detalle = infoEntrada.value[0]['PurchaseDeliveryNotes/DocumentLines'];
-              
-             
-              this.userdoc = infoEntrada.value[0].Users;
-              //console.log(this.userdoc);
+    .subscribe({
+      next:async (infoEntrada)=>{
+          console.log('infoEntrada',infoEntrada);
+          this.proveedor = infoEntrada.value[0].BusinessPartners;
+          this.encabezado = infoEntrada.value[0].PurchaseDeliveryNotes;
+          //console.log(this.encabezado.DocCurrency);
+          //this.detalle = infoEntrada.value[0]['PurchaseDeliveryNotes/DocumentLines'];
+          
+         
+          this.userdoc = infoEntrada.value[0].Users;
+          //console.log(this.userdoc);
 
-              this.nit =this.proveedor.FederalTaxID;
-              this.ciudad = this.proveedor.City;
-              this.nombreProveedor = this.proveedor.CardName;
-              this.fechaDoc =this.encabezado.DocDate;
-              this.noRef = this.encabezado.NumAtCard;
-              this.attn = this.proveedor.ContactPerson;
-              this.telefono = this.proveedor.Phone1;
-              //this.bodega = this.encabezado.;
-              this.direccion = this.proveedor.MailAddress;
-              this.email = this.proveedor.EmailAdddress;
-              this.usuario = this.userdoc.fullname==""?this.userdoc.UserName:this.userdoc.fullname;
-              this.total =this.encabezado.DocTotal;
-              this.impuesto=this.encabezado.VatSum;
-              this.comentario= this.encabezado.Comments;
-              this.tipodoc = this.encabezado.DocType;
-              this.footer = this.encabezado.ClosingRemarks;
-              this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
-              this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
-              
+          this.nit =this.proveedor.FederalTaxID;
+          this.ciudad = this.proveedor.City;
+          this.nombreProveedor = this.proveedor.CardName;
+          this.fechaDoc =this.encabezado.DocDate;
+          this.noRef = this.encabezado.NumAtCard;
+          this.attn = this.proveedor.ContactPerson;
+          this.telefono = this.proveedor.Phone1;
+          //this.bodega = this.encabezado.;
+          this.direccion = this.proveedor.MailAddress;
+          this.email = this.proveedor.EmailAdddress;
+          this.usuario = this.userdoc.fullname==""?this.userdoc.UserName:this.userdoc.fullname;
+          this.total =this.encabezado.DocTotal;
+          this.impuesto=this.encabezado.VatSum;
+          this.comentario= this.encabezado.Comments;
+          this.tipodoc = this.encabezado.DocType;
+          this.footer = this.encabezado.ClosingRemarks;
+          this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
+          this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
+          this.DocCurrency = this.encabezado.DocCurrency=='$'?'COP':this.encabezado.DocCurrency;
+          this.trm = this.monedas.filter(moneda=>moneda.Currency === this.DocCurrency)[0].TRM;
 
-              if(this.tipodoc=='S'){ 
-                this.espacio = this.espacio  - 100;
-                this.labelTipoDoc = "HOJA DE ENTRADA";
-              }
-
-              for(let linea of infoEntrada.value){
-                this.detalle.push(linea['PurchaseDeliveryNotes/DocumentLines']);
-                this.espacio = this.espacio  - 10;
-              }
-              //console.log(this.detalle)
-
-              ////console.log(this.proveedor,this.encabezado,this.detalle)
-              await this.setInfoPdf();
-              console.log(this.infoPDF);
-          },
-          error:(err)=>{
-              //console.log(err);
+          if(this.tipodoc=='S'){ 
+            this.espacio = this.espacio  - 100;
+            this.labelTipoDoc = "HOJA DE ENTRADA";
           }
-        });
+
+          for(let linea of infoEntrada.value){
+            this.detalle.push(linea['PurchaseDeliveryNotes/DocumentLines']);
+            this.espacio = this.espacio  - 10;
+          }
+          //console.log(this.detalle)
+
+          ////console.log(this.proveedor,this.encabezado,this.detalle)
+          await this.setInfoPdf();
+          console.log(this.infoPDF);
+      },
+      error:(err)=>{
+          //console.log(err);
+      }
+    });
   }
 
  async setInfoPdf():Promise<void> {
@@ -154,10 +186,11 @@ export class ImpresionComponent implements OnInit {
         U_NF_CALIFICACION:this.U_NF_CALIFICACION==null?'':this.U_NF_CALIFICACION=='E'?'Excelente':this.U_NF_CALIFICACION=='B'?'Bueno':'Regular',
         detalle:newObjeto,
         comentario:this.comentario==null?'':this.comentario,
-        DocCurrency:this.encabezado.DocCurrency,
-        subtotal:this.total - this.impuesto,
-        iva:this.impuesto,
-        total:this.total,
+        DocCurrency:this.DocCurrency,
+        trm:this.trm,
+        subtotal:(this.total - this.impuesto)/this.trm,
+        iva:this.impuesto/this.trm,
+        total:this.total/this.trm,
       },
 
     footer:{

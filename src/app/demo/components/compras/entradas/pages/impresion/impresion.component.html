@@ -112,7 +112,7 @@
                         <td align="left" width="30%" class="p-2 border-right-2 border-900">{{linea.ItemDescription}}</td>
                         <td align="right" width="15%" class="p-2 border-right-2 border-900">{{linea.Quantity}}</td>
                         <td align="right" width="20%" class="p-2 border-right-2 border-900">{{linea.Currency=='COP'?'$':linea.Currency}} {{linea.Price | number}}</td>
-                        <td align="right" width="20%" class="p-2">$ {{linea.LineTotal | number }}</td>
+                        <td align="right" width="20%" class="p-2">{{DocCurrency}} {{linea.LineTotal/trm | number }}</td>
                 </tr>
             </table>
             <p-fieldset legend="Observaciones" styleClass="w-full border-solid border-900">
@@ -120,15 +120,15 @@
                     <tr>
                         <td rowspan="3" width="60%">{{ comentario }}</td>
                         <td align="right" class="text-sm text-900 font-semibold">SUBTOTAL:</td>
-                        <td align="right" >$ {{ (total - impuesto) | number}}</td>
+                        <td align="right" >{{DocCurrency}} {{ (total - impuesto)/trm | number}}</td>
                     </tr>
                     <tr>
                         <td align="right" class="text-sm text-900 font-semibold">IVA:</td>
-                        <td align="right" class="border-bottom-2">$ {{ impuesto | number }}</td>
+                        <td align="right" class="border-bottom-2">{{DocCurrency}} {{ impuesto/trm | number }}</td>
                     </tr>
                     <tr>
                         <td align="right" class="text-sm text-900 font-semibold">TOTAL:</td>
-                        <td align="right" class="text-sm text-900 font-semibold">$ {{ total | number }}</td>
+                        <td align="right" class="text-sm text-900 font-semibold">{{DocCurrency}} {{ total/trm | number }}</td>
                     </tr>
                 </table>
             </p-fieldset>
