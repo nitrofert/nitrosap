@@ -130,7 +130,9 @@ export class ImpresionComponent implements OnInit {
           this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
           this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
           this.DocCurrency = this.encabezado.DocCurrency=='$'?'COP':this.encabezado.DocCurrency;
-          this.trm = this.monedas.filter(moneda=>moneda.Currency === this.DocCurrency)[0].TRM;
+          //this.trm = this.monedas.filter(moneda=>moneda.Currency === this.DocCurrency)[0].TRM;
+          this.trm = this.encabezado.DocRate;
+
 
           if(this.tipodoc=='S'){ 
             this.espacio = this.espacio  - 100;

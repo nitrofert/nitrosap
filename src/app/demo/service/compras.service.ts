@@ -42,7 +42,7 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
-  getConfigSolpedMP(token:string):Observable<any[]>{
+  getConfigSolpedMP(token:string):Observable<any[]>{ 
     
     let headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };

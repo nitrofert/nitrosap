@@ -420,6 +420,19 @@
                         
                     </div>
                 </th>
+
+                <!---Costos -->
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Costo Unitario inicial
+                        
+                    </div>
+                </th>
+
+               
+
+                <!------------>
                 <th>
                     <div class="flex justify-content-between align-items-center">
                         Inventario MP - PT
@@ -442,7 +455,21 @@
 
                 <th>
                     <div class="flex justify-content-between align-items-center">
+                        Costo unitario transito
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
                         Compras Solicitadas
+                        
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Costo unitario compras solicitadas
                         
                     </div>
                 </th>
@@ -495,6 +522,13 @@
                        
                     </div>
                 </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Costo unitario
+                       
+                    </div>
+                </th>
                 
 
                
@@ -526,6 +560,18 @@
                         
                     </div>
                 </td>
+                <!----Costos -->
+
+                <td style="min-width: 7rem;">
+                    
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.costoUnitarioInicialMP | number:'1.0-0'}}
+                    </div>
+                </td>
+
+
+                <!------------->
+
                 <td style="min-width: 7rem;">
                     
                     <div class="flex justify-content-between">
@@ -565,6 +611,14 @@
                     </div>
                 </td>
 
+                <td style="min-width: 7rem;">
+                    
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.costoUnitarioInventarioTRMPP | number:'1.0-0'}}
+                    </div>
+                </td>
+
+
                 <td id="solicitud" style="min-width: 10rem;"  >
                     <div class="flex justify-content-between">
                         <div class=" pt-2">{{ lineaCalculadora.compraSolicitadaMP | number:'1.0-0'}}</div>
@@ -575,6 +629,13 @@
                                 pTooltip="Ver solicitudes"></i>
                         </div>
                             
+                    </div>
+                </td>
+
+                <td style="min-width: 7rem;">
+                    
+                    <div class="flex justify-content-between">
+                        {{ lineaCalculadora.costoUnitarioInventarioComprasSol | number:'1.0-0'}}
                     </div>
                 </td>
 
@@ -651,6 +712,9 @@
                     {{ lineaCalculadora.inventarioFinalSemanaSugerido | number:'1.0-0'}}
                 </td>
                 
+                <td style="min-width: 7rem;">
+                    {{ lineaCalculadora.costoUnitarioInventarioMPSemana | number:'1.0-0'}}
+                </td>
             </tr>
         </ng-template>
        

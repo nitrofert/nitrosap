@@ -594,6 +594,7 @@ export class FormEntradaComponent implements OnInit {
                 cantidad:!this.entradaEditar?0:lineaPedido.cantidad,
 
                 precio:!this.entradaEditar?0:lineaPedido.Price,
+                precioUnidad:lineaPedido.Price,
                 
                 moneda:lineaPedido.Currency==='$'?'COP':lineaPedido.Currency,
                 tax:lineaPedido.TaxCode,
@@ -805,7 +806,9 @@ export class FormEntradaComponent implements OnInit {
       if(!this.cantidad || !this.precio){
         this.subtotalLinea =0;
       }else{
-        this.subtotalLinea = this.cantidad * (this.precio*(tasaMoneda || 0));
+        //this.subtotalLinea = this.cantidad * (this.precio*(tasaMoneda || 0));
+        
+        this.subtotalLinea = this.DocCurrency=='$'?this.cantidad * (this.precio*(tasaMoneda || 0)):this.cantidad * (this.precio);
       }
       this.calcularImpuesto(); 
     }
@@ -1012,9 +1015,9 @@ export class FormEntradaComponent implements OnInit {
       let tasa = this.moneda=='COP'?1:this.lineaEntrada.trm
      
       //this.precio = this.lineaEntrada.precio || 0;
-      this.precio = ((this.lineaEntrada.total_pendiente/this.cantidad_pendiente)/(tasa)) || 0;
+      this.precio = this.clase=='S'?((this.lineaEntrada.total_pendiente/this.cantidad_pendiente)/(tasa)) || 0:this.lineaEntrada.precioUnidad;
       //this.subtotalLinea = this.lineaEntrada.linetotal;
-      this.subtotalLinea = this.lineaEntrada.total_pendiente;
+      this.subtotalLinea = this.clase=='S'?this.lineaEntrada.total_pendiente:this.cantidad*this.precio;
      
   
      

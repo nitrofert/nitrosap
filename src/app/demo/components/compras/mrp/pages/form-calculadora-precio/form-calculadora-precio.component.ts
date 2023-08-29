@@ -421,8 +421,8 @@ tabla_lista_precios_mp:any[] = [];
                     ItemCode:infoItem.ItemCode,
                     ItemName:infoItem.ItemName,
                     precioGerente:infoCalculoItem.detalle_precio_calculo_item.find((item: { linea: number; ItemCode:any }) => item.linea === 2 && item.ItemCode === itemPT.ItemCode).precioGerente,
-                    precioLista:infoCalculoItem.detalle_precio_calculo_item.find((item: { linea: number; ItemCode:any }) => item.linea === 2 && item.ItemCode === itemPT.ItemCode).precioVendedor,
-                    precioVendedor:infoCalculoItem.detalle_precio_calculo_item.find((item: { linea: number; ItemCode:any }) => item.linea === 2 && item.ItemCode === itemPT.ItemCode).precioLP
+                    precioLista:infoCalculoItem.detalle_precio_calculo_item.find((item: { linea: number; ItemCode:any }) => item.linea === 2 && item.ItemCode === itemPT.ItemCode).precioLP,
+                    precioVendedor:infoCalculoItem.detalle_precio_calculo_item.find((item: { linea: number; ItemCode:any }) => item.linea === 2 && item.ItemCode === itemPT.ItemCode).precioVendedor
                 }];
 
                 ////console.log(infoCalculoItem.detalle_calculo_mp.filter((item: { fatherItemCode: any; })=>item.fatherItemCode === itemPT.ItemCode));
@@ -1332,12 +1332,17 @@ async getItemsEP(itemsEP:any){
     let costoMermaS1 = (merma)*(totalMPsemana1+totalEmpaque);
     let costoMermaS2 = (merma)*(totalMPsemana2+totalEmpaque);
 
-    costoVentaPTsemana0 = costoMermaS0+totalMPsemana0+totalEmpaque+costoRecursoEstandar;
-    costoVentaPTsemana1 = costoMermaS1+totalMPsemana1+totalEmpaque+costoRecursoEstandar;
-    costoVentaPTsemana2 = costoMermaS2+totalMPsemana2+totalEmpaque+costoRecursoEstandar;
+    //costoVentaPTsemana0 = costoMermaS0+totalMPsemana0+totalEmpaque+costoRecursoEstandar;
+    //costoVentaPTsemana1 = costoMermaS1+totalMPsemana1+totalEmpaque+costoRecursoEstandar;
+    //costoVentaPTsemana2 = costoMermaS2+totalMPsemana2+totalEmpaque+costoRecursoEstandar;
+
+    costoVentaPTsemana0 = costoMermaS0+totalMPsemana0+totalEmpaque+costoRecursoItemPT;
+    costoVentaPTsemana1 = costoMermaS1+totalMPsemana1+totalEmpaque+costoRecursoItemPT;
+    costoVentaPTsemana2 = costoMermaS2+totalMPsemana2+totalEmpaque+costoRecursoItemPT;
+
     costoVentaPTSAP = costoMermaSAP+totalCostoPTSAP+costoRecursoItemPT;
 
-    ////console.log(costoMermaSAP,totalCostoPTSAP,costoRecursoItemPT);
+    //console.log(costoMermaS0,totalMPsemana0,totalEmpaque,costoRecursoItemPT);
 
     costoTotalPTsemana0 = costoVentaPTsemana0 + costoAdministracionEstandar;
     costoTotalPTsemana1 = costoVentaPTsemana1 + costoAdministracionEstandar;
