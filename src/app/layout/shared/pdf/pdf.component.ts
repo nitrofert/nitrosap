@@ -81,6 +81,12 @@ export class PdfComponent implements OnInit {
           border: [false, false, false, true],
         },
         col6:{
+          text:'Descuento',
+          style:'subheader',
+          alignment:'right',
+          border: [false, false, false, true],
+        },
+        col7:{
           
           text:'Total',
           style:'subheader',
@@ -101,6 +107,7 @@ for (var key in headersTable){
         row.push( header.col4 );
         row.push( header.col5 );
         row.push( header.col6 );
+        row.push( header.col7 );
         body.push(row);
     }
 }
@@ -133,7 +140,11 @@ for (var key in rows)
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]}  );
-        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.Price),//data.Price.toString(),
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.UnitPrice),//data.Price.toString(),
+                    fontSize:8,
+                    alignment:'right',
+                    border: [false, false, false, false]} );
+        row.push( {text:new Intl.NumberFormat('es-CO', { style: 'currency', currency: data.Currency=='$'?'COP':data.Currency,minimumFractionDigits: 4,maximumFractionDigits: 4 }).format(data.UnitPrice-data.Price),//data.Price.toString(),
                     fontSize:8,
                     alignment:'right',
                     border: [false, false, false, false]} );
@@ -541,7 +552,7 @@ for (var key in rows)
               table:{
                
                 
-                widths: [ '5%','15%','35%','15%','15%','15%' ],
+                widths: [ '5%','15%','25%','10%','15%','15%','15%' ],
                 body:/*[
                   //Cabecera detalle
                   [
@@ -688,6 +699,27 @@ for (var key in rows)
                     },
                     {
                       text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: DocCurrency,maximumFractionDigits: 4, minimumFractionDigits: 4}).format(this.infoPDF.content.subtotal)}`,
+                      fontSize:8,
+                      alignment:'right',
+                      border: [false, false, false, false],
+                    },
+                   
+                  
+                  ],
+                  [
+                    {
+                     
+                      text:'',
+                      
+                    },
+                    {
+                      text:'DESCUENTO:',
+                      fontSize:8,
+                      alignment:'right',
+                      border: [false, false, false, false],
+                    },
+                    {
+                      text:`${new Intl.NumberFormat('es-CO', { style: 'currency', currency: DocCurrency,maximumFractionDigits: 4, minimumFractionDigits: 4}).format(this.infoPDF.content.TotalDiscount)}`,
                       fontSize:8,
                       alignment:'right',
                       border: [false, false, false, false],

@@ -53,6 +53,8 @@ export class ImpresionComponent implements OnInit {
   DocCurrency:string="";
   monedas:any[] = [];
   trm:number = 0;
+  DiscountPercent:number = 0;
+  TotalDiscount:number=0;
 
   constructor(private rutaActiva: ActivatedRoute,
               private comprasService: ComprasService,
@@ -130,6 +132,8 @@ export class ImpresionComponent implements OnInit {
           this.U_NF_PUNTAJE_HE = this.encabezado.U_NF_PUNTAJE_HE;
           this.U_NF_CALIFICACION = this.encabezado.U_NF_CALIFICACION;
           this.DocCurrency = this.encabezado.DocCurrency=='$'?'COP':this.encabezado.DocCurrency;
+          this.DiscountPercent = this.encabezado.DiscountPercent==null?0:this.encabezado.DiscountPercent
+          this.TotalDiscount = this.encabezado.TotalDiscount;
           //this.trm = this.monedas.filter(moneda=>moneda.Currency === this.DocCurrency)[0].TRM;
           this.trm = this.encabezado.DocRate;
 
@@ -189,8 +193,9 @@ export class ImpresionComponent implements OnInit {
         detalle:newObjeto,
         comentario:this.comentario==null?'':this.comentario,
         DocCurrency:this.DocCurrency,
+        TotalDiscount:this.TotalDiscount,
         trm:this.trm,
-        subtotal:(this.total - this.impuesto)/this.trm,
+        subtotal:(this.total - this.impuesto + this.TotalDiscount)/this.trm,
         iva:this.impuesto/this.trm,
         total:this.total/this.trm,
       },

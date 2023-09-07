@@ -101,8 +101,9 @@
                         <td align="center" width="10%" class="p-2">Código</td>
                         <td align="left" width="30%" class="p-2">Descripción</td>
                         <td align="right" width="15%" class="p-2">Cant.</td>
-                        <td align="right" width="20%" class="p-2">Precio Unitario</td>
-                        <td align="right" width="20%" class="p-2">Total</td>
+                        <td align="right" width="13%" class="p-2">Precio Unitario</td>
+                        <td align="right" width="13%" class="p-2">Descuento</td>
+                        <td align="right" width="14%" class="p-2">Total</td>
                 </tr>
             </table>
             <table *ngFor="let linea of detalle; let i = index"  style="width: 100%; margin-bottom: 3px;" class="border-round border-2 border-900 text-sm text-900  bg-white">
@@ -111,16 +112,22 @@
                         <td align="center" width="10%" class="p-2 border-right-2 border-900">{{linea.ItemCode}}</td>
                         <td align="left" width="30%" class="p-2 border-right-2 border-900">{{linea.ItemDescription}}</td>
                         <td align="right" width="15%" class="p-2 border-right-2 border-900">{{linea.Quantity}}</td>
-                        <td align="right" width="20%" class="p-2 border-right-2 border-900">{{linea.Currency=='COP'?'$':linea.Currency}} {{linea.Price | number}}</td>
-                        <td align="right" width="20%" class="p-2">{{DocCurrency}} {{linea.LineTotal/trm | number }}</td>
+                        <td align="right" width="13%" class="p-2 border-right-2 border-900">{{linea.Currency=='COP'?'$':linea.Currency}} {{linea.UnitPrice | number}}</td>
+                        <td align="right" width="13%" class="p-2 border-right-2 border-900">{{linea.Currency=='COP'?'$':linea.Currency}} {{linea.UnitPrice-linea.Price | number}}</td>
+                        <td align="right" width="14%" class="p-2">{{DocCurrency}} {{linea.LineTotal/trm | number }}</td>
                 </tr>
             </table>
             <p-fieldset legend="Observaciones" styleClass="w-full border-solid border-900">
-                <table>
+                <table width="100%">
                     <tr>
-                        <td rowspan="3" width="60%">{{ comentario }}</td>
+                        <td rowspan="4" width="60%">{{ comentario }}</td>
                         <td align="right" class="text-sm text-900 font-semibold">SUBTOTAL:</td>
-                        <td align="right" >{{DocCurrency}} {{ (total - impuesto)/trm | number}}</td>
+
+                        <td align="right" >{{DocCurrency}} {{ (total - impuesto + TotalDiscount)/trm | number}}</td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="text-sm text-900 font-semibold">Descuento:</td>
+                        <td align="right" >{{DocCurrency}} {{ TotalDiscount | number }}</td>
                     </tr>
                     <tr>
                         <td align="right" class="text-sm text-900 font-semibold">IVA:</td>
