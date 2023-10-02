@@ -19,6 +19,7 @@
         </div>
     </ng-template>
 </p-toast>
+<!-- Tabla info solped-ordenes-->
 <div class="grid">
 	<div class="col-12">
 		<div class="card">
@@ -289,14 +290,14 @@
 						</td>
                         
 						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 10rem;">
-							{{ solpeditem.U_NF_LASTSHIPPPING |  date: 'dd/MM/yyyy':'+0500' }}
+							{{ solpeditem.U_NF_LASTSHIPPPING |  date: 'MMM-dd-yy':'+0500' }}
 						</td>
 
                         <td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 10rem;">
-							{{ solpeditem.U_NF_DATEOFSHIPPING |  date: 'dd/MM/yyyy':'+0500' }}
+							{{ solpeditem.U_NF_DATEOFSHIPPING |  date: 'MMM-dd-yy':'+0500' }}
 						</td>
 						<td style="min-width: 10rem;">
-							{{ solpeditem.RequriedDate | date: 'dd/MM/yyyy':'+0500' }}
+							{{ solpeditem.RequriedDate | date: 'MMM-dd-yy':'+0500' }}
 						</td>	
 
 						<td *ngIf="documento!='Proyecciones' && documento!='Entrada'" style="min-width: 12rem;">
@@ -352,7 +353,8 @@
 
 	</div>
 </div>
-
+<!-- Fin tabla-->
+<!-- Formulario actualización de pedido -->
 <p-dialog [header]="tituloFormEditPedido" 
           [(visible)]="formulario" 
           [modal]="true"
@@ -553,3 +555,4 @@
         </p-button>
     </ng-template>
 </p-dialog>
+<!-- Fin formulario-->

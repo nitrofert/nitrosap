@@ -119,7 +119,39 @@ export class CalculadoraPreciosComponent implements OnInit {
     this.router.navigate(['/portal/compras/mrp/calculadora-precios/editar-calculo/'+linea[0].id]);
   }
 
-  anularPrecioItem(){}
+  anularPrecioItem(){
+    console.log(this.selectedLine);
+    this.confirmationService.confirm({
+      message: `Esta usted seguro de anular ${this.selectedLine.length>1?'los calculos seleccionados':'el calculo seleccionado'}`,
+  
+      accept: async () => {
+          //Actual logic to perform a confirmation
+          this.displayModal = true;
+          this.loadingCargue = true;
+  
+         let idCalculos = this.selectedLine.map((line)=>{
+          return line.id;
+         });
+
+         this.comprasService.anularCalculoPrecio(this.authService.getToken(),idCalculos)
+             .subscribe({
+                  next:(result)=>{
+                    console.log(result);
+                    this.displayModal = false;
+                    this.loadingCargue = false;
+                    this.messageService.add({severity:'success', summary: '!Notificación', detail: `${result.message}`});
+                    this.listaPreciosCalculados();
+                  },
+                  error:(err)=>{
+                    console.error(err);
+                    this.messageService.add({severity:'error', summary: '!Error', detail: `${err}`});
+                  }
+             });
+         
+  
+      }
+  });
+  }
 
 
 

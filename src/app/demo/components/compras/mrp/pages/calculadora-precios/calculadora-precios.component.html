@@ -1,5 +1,6 @@
 <app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
-
+<p-confirmDialog header="Confirmaión" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-toast></p-toast>
 <!-- Tabla de lista precios -->
 <div class="grid">
 	<div class="col-12">
@@ -58,7 +59,7 @@
 									class="p-button-outlined mb-2 mr-2 p-button-danger p-button-sm" 
 									icon="pi pi-trash" 
 									(click)="anularPrecioItem()" 
-									[disabled]="!permisosUsuarioPagina[0].delete_accion || !selectedLine || selectedLine.length!=1">
+									[disabled]="!permisosUsuarioPagina[0].delete_accion || !selectedLine || selectedLine.length==0">
 							</button>
 							
 
@@ -176,6 +177,20 @@
 								
 							</div>
 						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Costo bruto S0
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Costo Neto S0
+								
+							</div>
+						</th>
 						
 						<th>
 							<div class="flex justify-content-between align-items-center">
@@ -191,6 +206,36 @@
 							</div>
 						</th>
 
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Costo bruto SAP
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Costo neto SAP
+								
+							</div>
+						</th>
+
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Bruto SAP
+								
+							</div>
+						</th>
+
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								% Neto SAP
+								
+							</div>
+						</th>
+
+<!--
 						<th>
 							<div class="flex justify-content-between align-items-center">
 								% Bruto S1
@@ -219,7 +264,7 @@
 							</div>
 						</th>
                         
-                        
+-->                        
                         
 						
 
@@ -262,7 +307,7 @@
 						</td>-->
 
 						<td>
-							{{ item.promMercado | number }}
+							{{ item.promMercado | number: '1.1-2' }}
 						</td>
 
 						<td>
@@ -270,25 +315,51 @@
 						</td>
 
 						<td>
-							{{ item.precioGerente | number }}
+							{{ item.precioGerente | number: '1.1-2' }}
 						</td>
 
 						<td>
-							{{ item.precioVendedor | number }}
+							{{ item.precioVendedor | number: '1.1-2' }}
 						</td>
 
 						<td>
-							{{ item.precioLP | number }}
+							{{ item.precioLP | number: '1.1-2' }}
 						</td>
 
 						<td>
-							{{ item.brutoS0  | percent }}
+							{{ item.costoVentaPTsemana0==0?item.costoBrutoS0:item.costoVentaPTsemana0 | number: '1.1-2' }}
 						</td>
 
 						<td>
-							{{ item.netoS0 | percent  }}
+							{{ item.costoTotalPTsemana0==0?item.costoNetoS0:item.costoTotalPTsemana0 | number: '1.1-2' }}
 						</td>
 
+						<td>
+							{{ item.brutoS0  | percent: '1.1-2' }}
+						</td>
+
+						<td>
+							{{ item.netoS0 | percent: '1.1-2'  }}
+						</td>
+
+						<td>
+							{{ item.costoVentaPTSAP==0?0:item.costoVentaPTSAP | number: '1.1-2'  }}
+						</td>
+
+						<td>
+							{{ item.costoTotalPTSAP==0?0:item.costoTotalPTSAP | number: '1.1-2'  }}
+						</td>
+
+						<td>
+							{{  item.brutoS0SAP==0?0:item.brutoS0SAP | percent: '1.1-2'  }}
+						</td>
+
+						<td>
+							{{  item.totalS0SAP==0?0:item.totalS0SAP | percent: '1.1-2' }}
+						</td>
+
+
+						<!--
 						<td>
 							{{ item.brutoS1 | percent  }}
 						</td>
@@ -304,17 +375,19 @@
 						<td>
 							{{ item.netoS2 | percent }}
 						</td>
+
+						-->
 						
 					</tr>
 				</ng-template>
 				<ng-template pTemplate="emptymessage">
 					<tr>
-						<td colspan="7" class="text-center">No se econtraron precios de items.</td>
+						<td colspan="20" class="text-center">No se econtraron precios de items.</td>
 					</tr>
 				</ng-template>
 				<ng-template pTemplate="loadingbody">
 					<tr>
-						<td colspan="7" class="text-center">Cargando lista de precios. Por favor espere</td>
+						<td colspan="20" class="text-center">Cargando lista de precios. Por favor espere</td>
 					</tr>
 				</ng-template>
     		</p-table>

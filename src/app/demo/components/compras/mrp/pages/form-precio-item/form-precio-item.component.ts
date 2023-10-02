@@ -141,9 +141,10 @@ export class FormPrecioItemComponent implements OnInit{
  
           .subscribe({
             next: (items) => {
+              //console.log(items);
               let itemsMP:any[] =[];
               for(let item in items){
-                console.log(items[item]);
+                //console.log(items[item]);
                 let precioExtItemSemana = 0;
                 let precioNacItemSemana = 0;
                 let tendenciaItemSemana = 'Neutro';
@@ -161,7 +162,8 @@ export class FormPrecioItemComponent implements OnInit{
                   tendencia:tendenciaItemSemana,
                   class1: tendenciaItemSemana=='Alza'?'p-button-rounded p-button-text p-button-success ':'p-button-rounded p-button-text p-button-secondary',
                   class2: tendenciaItemSemana=='Neutro'?'p-button-rounded p-button-text p-button-info ':'p-button-rounded p-button-text p-button-secondary',
-                  class3: tendenciaItemSemana=='Baja'?'p-button-rounded p-button-text p-button-danger ':'p-button-rounded p-button-text p-button-secondary'
+                  class3: tendenciaItemSemana=='Baja'?'p-button-rounded p-button-text p-button-danger ':'p-button-rounded p-button-text p-button-secondary',
+                  NOPENTREGA:items[item].NOPENTREGA
                 });
               }
 
@@ -279,10 +281,12 @@ export class FormPrecioItemComponent implements OnInit{
     
     let interesMP = 0;
     let precioMPNT = 0;
+
+    console.log(this.listaItemsMP.find(item => item.ItemCode == itemCode));
     
     if(precio!=0){
       interesMP = parseFloat(precio)*((this.interesDia/365)*this.prcInteres);
-      precioMPNT = parseFloat(precio) + this.precioEntregaMP + interesMP;
+      precioMPNT = parseFloat(precio) + (this.listaItemsMP.find(item => item.ItemCode == itemCode).NOPENTREGA=='Y'?this.precioEntregaMP:0) + interesMP;
     }
 
     let indexItemsMP = this.listaItemsMP.findIndex(item => item.ItemCode == itemCode);

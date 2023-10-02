@@ -121,6 +121,7 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
 
      ////console.log(this.solpedList);
     //this.getSolpedList();
+    this.getAgentes();
     
   }
 
@@ -131,6 +132,23 @@ export class TableSolpedMPComponent implements OnInit, OnChanges {
     }else{
       setTimeout(()=>{this.getSolpedList();},5000)
     }
+  }
+
+  getAgentes(){
+    this.comprasService.getAgentes(this.authService.getToken())
+        .subscribe({
+            next:(agentes)=>{
+                //console.log(agentes);
+                let agentesTmp:any[] = [];
+                for(let agente of agentes){
+                  agentesTmp.push({tipo:agente.nombre});
+                }
+                this.agentes = agentesTmp;
+            },
+            error:(err)=>{
+              console.error(err);
+            }
+        })
   }
   
 

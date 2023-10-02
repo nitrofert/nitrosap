@@ -679,6 +679,13 @@ export class ComprasService {
     return this.http.post<any>(url,data,requestOptions);
   }
 
+  anularCalculoPrecio(token:string,data:any):Observable<any>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/compras/mrp/anular-calculo-precios-item`;
+    return this.http.post<any>(url,data,requestOptions);
+  }
+
   listaPreciosCalculados(token:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
@@ -720,6 +727,15 @@ export class ComprasService {
     const headers = this.urlApiService.getHeadersAPI(token);
     const requestOptions = { headers: headers };
     const url:string = `${this.api_url}/api/compras/solped/proyectos`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+
+  getAgentes(token:string):Observable<any[]>{ 
+    
+    let headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/mysql/query/agentes-aduana`;
     return this.http.get<any[]>(url,requestOptions);
   }
  

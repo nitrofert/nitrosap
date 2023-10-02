@@ -240,6 +240,15 @@ export class SAPService {
     return this.http.get<any[]>(url,requestOptions);
   }
 
+  
+  getHistorial_trm_monedas(token:string):Observable<any[]>{
+
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url3}/api/mysql/query/historial-trm-monedas`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
 
   BusinessPartnersXE(token:string, proveedorId:string=''):Observable<any[]>{
    
