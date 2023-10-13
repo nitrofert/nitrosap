@@ -100,9 +100,9 @@ export class NewSolpedComponent implements OnInit {
                                     if(i==iteraciones){
                                       this.displayModal =false;
                                       this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
-                                      setTimeout(()=>{
+                                     /* setTimeout(()=>{
                                         this.router.navigate(['portal/compras/solped']);
-                                      },2000);
+                                      },2000);*/
                                     }
                                 },
                                 error:(error)=>{
@@ -113,9 +113,13 @@ export class NewSolpedComponent implements OnInit {
                             });                            
                         rangoinf+=limit;
                         rangosup+=limit;
+
+                        if(i==iteraciones){
+                          this.loadFiles(solpedID,dataSolped.anexos);
+                        }
                       }  
                       
-                      this.loadFiles(solpedID,dataSolped.anexos);
+                      
                       
                     }
                 },
@@ -142,7 +146,9 @@ export class NewSolpedComponent implements OnInit {
               
               //console.log(result);
               this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
-              
+              setTimeout(()=>{
+                this.router.navigate(['portal/compras/solped']);
+              },2000);
            },
            error:(err)=>{
               //console.log(err);

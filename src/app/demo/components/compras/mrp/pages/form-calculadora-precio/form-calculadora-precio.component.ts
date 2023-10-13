@@ -2385,23 +2385,25 @@ cambio(event:any){
      
 }
 
-PresionaEnterCosto(event:any){
+PresionaEnterCosto(event:any,costo:any){
+
   if (event.key === "Enter") {
-    
-    //////////////////////////////////////////console.log('ENTER PRESS');
-    if(event.target.value ===''){
+   
+    if(event.target.value =='' ){
+      //console.log(event.target,event.target.value.length);
       event.target.value =0;
+      costo.valor =0
     }
-
-    this.cambioCosto(event);
-
-    
-    
+    this.cambioCosto(event,costo);
   }
 }
 
-  async cambioCosto(event:any){
-  if(event.target.value ===''){
+  async cambioCosto(event:any,costo:any){
+    
+  if(event.target.value.length ==0){
+    //console.log(costo ,event.target.value.length);
+    //this.arrayOtrosCostos.find(cost =>cost.label === costo.label)
+    costo.valor =0
     event.target.value =0;
   }
 
@@ -3313,7 +3315,7 @@ parametrosGlobales(){
         costoMPseman0+=parseFloat(linea.costosItemMP.semana0.costoMP);
         costoMPseman1+=parseFloat(linea.costosItemMP.semana1.costoMP);
         costoMPseman2+=parseFloat(linea.costosItemMP.semana2.costoMP);
-        if(linea.itemMP.tipo=='articulo' || linea.itemMP.Code.toString().startsWith('MP')){
+        if(linea.itemMP.tipo=='articulo' && linea.itemMP.Code.toString().startsWith('MP')){
           cantidadArticulos+=parseFloat(linea.itemMP.Quantity);
         }
         //////////////console.log(linea.itemMP);

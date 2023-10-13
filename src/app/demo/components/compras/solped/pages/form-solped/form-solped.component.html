@@ -311,7 +311,7 @@
             </div>
         </div>
         <div class="grid">
-            <div class="field col">
+            <div class="field col-5">
                 <label for="itemCode">Código ítem</label>
                 <p-autoComplete [(ngModel)]="item" 
                                 [showEmptyMessage]="true" 
@@ -336,7 +336,7 @@
 
                 </p-autoComplete>
             </div>
-            <div class="field col">
+            <div class="field col-5">
                 <label for="descripcion">Descripción</label>
                 <div class="p-inputgroup">
                     <input  pInputText 
@@ -349,6 +349,22 @@
                         class="w-full"
                         [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !descripcion}" />
                         <span class="p-inputgroup-addon"><p-badge [value]="descripcion.length.toString()"></p-badge></span>
+                </div>
+                
+            </div>
+
+            <div class="field col-2">
+                <label for="unidad">Unidad</label>
+                <div class="p-inputgroup">
+                    <input  pInputText 
+                        [(ngModel)]="unidad" 
+                        id="unidad" 
+                        name="unidad" 
+                        type="text"
+                        disabled 
+                        maxlength="200"
+                        class="w-full"/>
+                        
                 </div>
                 
             </div>
@@ -800,7 +816,7 @@
             [rowHover]="true"
             styleClass="p-datatable-gridlines p-datatable-sm" 
             [paginator]="true"
-            [globalFilterFields]="['itemcode','dscription','linevendor','acctcodename','acctcode','ocrcode','ocrcode2','ocrcode3']"
+            [globalFilterFields]="['itemcode','dscription','linevendor','acctcodename','acctcode','ocrcode','ocrcode2','ocrcode3','unidad']"
             selectionMode="multiple" 
             [(selection)]="lineaSeleccionada" responsiveLayout="scroll">
         <ng-template pTemplate="caption">
@@ -872,6 +888,14 @@
                         Descripción
                         <p-columnFilter type="text" field="dscription" display="menu"
                             placeholder="Buscar por descripción"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Unidad
+                        <p-columnFilter type="text" field="unidad" display="menu"
+                            placeholder="Buscar por unidad"></p-columnFilter>
                     </div>
                 </th>
 
@@ -972,6 +996,10 @@
                 </td>
                 <td style="min-width: 12rem;">
                     {{ solpeditem.dscription }}
+                </td>
+
+                <td style="min-width: 12rem;">
+                    {{ solpeditem.unidad }}
                 </td>
 
                 <td style="min-width: 12rem;">

@@ -921,7 +921,7 @@
                 </span>
 
                 <div class="flex justify-content-between align-content-end">
-                    <p-button label="Otos costos" icon="pi pi-dollar" styleClass="p-button-rounded p-button-sm p-button-text p-button-raised" (onClick)="formOtrosCostos=true" ></p-button>
+                    <p-button label="Otros costos" icon="pi pi-dollar" styleClass="p-button-rounded p-button-sm p-button-text p-button-raised" (onClick)="formOtrosCostos=true" ></p-button>
                     
                 </div>
               </div>
@@ -1143,8 +1143,8 @@
                                                class="w-full"
                                                style="width: 12rem;"
                                                [(ngModel)]="costo.valor"
-                                               (keydown.enter)="PresionaEnterCosto($event)"
-                                               (blur)="cambioCosto($event)">
+                                               (keydown.enter)="PresionaEnterCosto($event,costo)"
+                                               (blur)="cambioCosto($event,costo)">
                                     </ng-template>
                                     <ng-template #elseBlock pTemplate="output">
                                         {{ costo.valor | number  }}
@@ -1262,7 +1262,7 @@
                     </div>
 
                     <div class="flex justify-content-between align-content-end">
-                        <p-button label="Otos costos" icon="pi pi-dollar" styleClass="p-button-rounded p-button-sm p-button-text p-button-raised" (onClick)="formOtrosCostos=true" ></p-button>
+                        <p-button label="Otros costos" icon="pi pi-dollar" styleClass="p-button-rounded p-button-sm p-button-text p-button-raised" (onClick)="formOtrosCostos=true" ></p-button>
                         
                     </div>
 

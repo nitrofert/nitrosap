@@ -199,6 +199,8 @@ export class FormSolpedComponent implements OnInit {
  ];
   
 
+ unidad:string = ";"
+
   //arregloej:any[] = [1,2,3,4,5,6,7,8,9,10,11,12,13];
  
 
@@ -802,8 +804,9 @@ export class FormSolpedComponent implements OnInit {
   }
 
   SeleccionarItemCode(){
-    ////console.log(this.item);
+    console.log(this.item);
     this.descripcion = this.item.ItemName;
+    this.unidad = this.item.BuyUnitMsr || '';
     if(this.item.ApTaxCode){
       
       this.impuesto = this.impuestos.filter(item => item.Code === this.item.ApTaxCode)[0];
@@ -1816,7 +1819,8 @@ async validarCuentaContable(cuenta:any){
             proyecto:this.proyecto!=""?this.proyecto.IDPROYECTOFINANCIERO:"",
             subproyecto:this.subproyecto!=""?this.subproyecto.IDPROYECTOM:"",
             etapa:this.etapa!=""?this.etapa.IDETAPA:"",
-            actividad:this.actividad!=""?this.actividad.ACTIVIDAD:""
+            actividad:this.actividad!=""?this.actividad.ACTIVIDAD:"",
+            unidad:this.unidad
 
             }
             
@@ -1844,6 +1848,7 @@ async validarCuentaContable(cuenta:any){
       this.item = this.items.filter(item => item.ItemCode ===this.lineaSolped.itemcode)[0];
     }
     this.descripcion = this.lineaSolped.dscription;
+    this.unidad = this.lineaSolped.unidad || '';
 
     if(this.lineaSolped.linevendor){
       this.proveedor = this.proveedores.filter(item =>item.CardCode === this.lineaSolped.linevendor)[0];

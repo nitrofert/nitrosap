@@ -265,7 +265,7 @@
             [rowHover]="true"
             styleClass="p-datatable-gridlines p-datatable-sm" 
             [paginator]="true"
-            [globalFilterFields]="['itemcode','dscription','linevendor','acctcodename','acctcode','ocrcode','ocrcode2','ocrcode3']"
+            [globalFilterFields]="['itemcode','dscription','linevendor','acctcodename','acctcode','ocrcode','ocrcode2','ocrcode3','unidad']"
             selectionMode="multiple" 
             [(selection)]="lineaSeleccionada" responsiveLayout="scroll">
         <ng-template pTemplate="caption">
@@ -344,6 +344,14 @@
                         Descripción
                         <p-columnFilter type="text" field="ItemDescription" display="menu"
                             placeholder="Buscar por descripción"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-between align-items-center">
+                        Unidad
+                        <p-columnFilter type="text" field="unidad" display="menu"
+                            placeholder="Buscar por unidad"></p-columnFilter>
                     </div>
                 </th>
 
@@ -462,7 +470,9 @@
                     {{ pedido.dscription }}
                 </td>
 
-                
+                <td style="min-width: 12rem;">
+                    {{ pedido.unidad }}
+                </td>
 
                 <td style="min-width: 12rem;">
                     {{ pedido.acctcode }}
@@ -585,7 +595,7 @@
             </div>
         </div>-->
         <div class="grid">
-            <div class="field col">
+            <div class="field col-5">
                 <label for="itemCode">Código ítem</label>
                 <p-autoComplete [(ngModel)]="item" 
                                 [showEmptyMessage]="true" 
@@ -610,7 +620,7 @@
 
                 </p-autoComplete>
             </div>
-            <div class="field col">
+            <div class="field col-5">
                 <label for="descripcion">Descripción</label>
                 <input  pInputText 
                         [(ngModel)]="descripcion" 
@@ -621,6 +631,22 @@
                         disabled
                         [readonly]="true" class="w-full"
                         [ngClass]="{'ng-invalid ng-dirty' : envioLinea && !descripcion}" />
+            </div>
+
+            <div class="field col-2">
+                <label for="unidad">Unidad</label>
+                <div class="p-inputgroup">
+                    <input  pInputText 
+                        [(ngModel)]="unidad" 
+                        id="unidad" 
+                        name="unidad" 
+                        type="text"
+                        disabled 
+                        maxlength="200"
+                        class="w-full"/>
+                        
+                </div>
+                
             </div>
 
         </div>
