@@ -100,6 +100,9 @@ export class NewSolpedComponent implements OnInit {
                                     if(i==iteraciones){
                                       this.displayModal =false;
                                       this.messageService.add({severity:'success', summary: '!Ok¡', detail: result.message});
+                                      //if(i==iteraciones){
+                                        this.loadFiles(solpedID,dataSolped.anexos);
+                                      //}
                                      /* setTimeout(()=>{
                                         this.router.navigate(['portal/compras/solped']);
                                       },2000);*/
@@ -114,9 +117,7 @@ export class NewSolpedComponent implements OnInit {
                         rangoinf+=limit;
                         rangosup+=limit;
 
-                        if(i==iteraciones){
-                          this.loadFiles(solpedID,dataSolped.anexos);
-                        }
+                        
                       }  
                       
                       

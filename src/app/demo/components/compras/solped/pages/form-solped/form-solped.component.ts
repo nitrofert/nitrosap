@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/demo/service/auth.service';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 import { SAPService } from 'src/app/demo/service/sap.service';
 import * as download from 'downloadjs';
+import { AdminService } from 'src/app/demo/service/admin.service';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -65,6 +66,7 @@ export class FormSolpedComponent implements OnInit {
   items:ItemsSAP[] = [];
   cuentas:CuentasSAP[]=[];
   almacenes:any[] = [];
+  bodegas:any[] = [];
   monedas:any[] =[];
   trm:number =1;
   impuestos:any[] =[];
@@ -211,7 +213,9 @@ export class FormSolpedComponent implements OnInit {
               private comprasService: ComprasService,
               private router:Router,
               private messageService: MessageService,
-              private rutaActiva: ActivatedRoute) {
+              private rutaActiva: ActivatedRoute,
+              private adminService:AdminService
+              ) {
 
                }
 
@@ -280,6 +284,7 @@ export class FormSolpedComponent implements OnInit {
 
   getInfoUsuario(){
     this.infoUsuario = this.authService.getInfoUsuario();
+   // console.log(this.infoUsuario.companyname );
   }
 
   getPerfilesUsuario(){
@@ -635,6 +640,16 @@ export class FormSolpedComponent implements OnInit {
           ////////console.log(error);      
     //  }
     //});
+        this.adminService.getAlmacenesEmpresa(this.authService.getToken())
+            .subscribe({
+                next:(bodegas)=>{
+                  console.log(bodegas);
+                  this.bodegas = bodegas;
+                },
+                error:(err)=>{
+                    console.error(err);
+                }
+            });
   }
 
   getMonedas(fecha:Date){
@@ -1467,9 +1482,14 @@ async validarCuentaContable(cuenta:any){
   let linetotal:any;
   let taxvalor:any;
 
+  console.log(this.almacenes);
+
   for(let linea = 1 ;linea < lienasArchivo.length; linea ++){
     
       arrayLinea = lienasArchivo[linea].split(separador);
+
+      
+
                 
       if(arrayLinea.length==13){
         if(this.clase =='I' && arrayLinea[0]==''){
@@ -1532,10 +1552,10 @@ async validarCuentaContable(cuenta:any){
         }else if(arrayLinea[10]!='' && !(await this.validarLocalidad(arrayLinea[8].trim(),arrayLinea[9].trim(),arrayLinea[10].trim()))){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la localidad de la linea ${linea}, no existe en el listado de localidades asociadas al usuario`});
           valido = false;
-        }/*else if(arrayLinea[11]!='' && this.almacenes.filter(item =>item.store==arrayLinea[11]).length==0){
-          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del almacen de la linea ${linea}, no existe en el listado de almacenes asociadas al usuario`});
+        }else if(arrayLinea[11]!='' && this.bodegas.filter(item =>item.WarehouseCode==arrayLinea[11].trim()).length==0){
+          this.messageService.add({severity:'error', summary: '!Error', detail: `El código del almacen de la linea ${linea}, no existe en el listado de almacenes`});
           valido = false;
-        }*/else if(arrayLinea[12]=='' && this.clase =='S'){
+        }else if(arrayLinea[12].trim()=='' && this.infoUsuario.companyname  =='NITROFERT'){
           this.messageService.add({severity:'error', summary: '!Error', detail: `El código de la cuenta contable de la linea ${linea} es obligatorio`});
           valido = false;
         }else if(arrayLinea[12]!='' && !( await this.validarCuentaContable(arrayLinea[12]))){
@@ -1545,33 +1565,33 @@ async validarCuentaContable(cuenta:any){
             // Linea Valida
             //////console.log('Linea Valida');
 
-            if(arrayLinea[5]=='COP'){
+            if(arrayLinea[5].trim()=='COP'){
               
               linetotal =arrayLinea[4]*arrayLinea[6];
-              taxvalor =(arrayLinea[4]*arrayLinea[6])*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
+              taxvalor =(arrayLinea[4]*arrayLinea[6])*((this.impuestos.filter(item=>item.Code == arrayLinea[7].trim())[0].tax)/100);
               //////console.log('Linea Valida COP',taxvalor,this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax);
             }else{
-              linetotal =arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM);
-              taxvalor =(arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5])[0].TRM))*((this.impuestos.filter(item=>item.Code == arrayLinea[7])[0].tax)/100);
+              linetotal =arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5].trim())[0].TRM);
+              taxvalor =(arrayLinea[4]*arrayLinea[6]*(this.monedas.filter(item=>item.Currency==arrayLinea[5].trim())[0].TRM))*((this.impuestos.filter(item=>item.Code == arrayLinea[7].trim())[0].tax)/100);
             }
 
             //////console.log(this.cuentas.filter(data => data.Code === arrayLinea[12])[0].Name);
             //////console.log(await arrayLinea[1].normalize('NFD').replace(/([^n\u0300-\u036f]|n(?!\u0303(?![\u0300-\u036f])))[\u0300-\u036f]+/gi,"$1").normalize());
             this.lineasSolpedCVS.push({
-              itemcode:arrayLinea[0],
+              itemcode:arrayLinea[0].trim(),
               dscription:arrayLinea[1],
               reqdatedet:arrayLinea[2],
-              linevendor:arrayLinea[3],
+              linevendor:arrayLinea[3].trim(),
               quantity:arrayLinea[4],
-              moneda:arrayLinea[5],
+              moneda:arrayLinea[5].trim(),
               price:arrayLinea[6],
-              tax:arrayLinea[7],
-              ocrcode3:arrayLinea[8],
-              ocrcode2:arrayLinea[9],
-              ocrcode:arrayLinea[10],
-              whscode:arrayLinea[11],
-              acctcode:arrayLinea[12],
-              acctcodename:arrayLinea[12]!=''?await this.cuentas.filter(data => data.Code === arrayLinea[12])[0].Name:'',
+              tax:arrayLinea[7].trim(),
+              ocrcode3:arrayLinea[8].trim(),
+              ocrcode2:arrayLinea[9].trim(),
+              ocrcode:arrayLinea[10].trim(),
+              whscode:arrayLinea[11].trim(),
+              acctcode:arrayLinea[12].trim(),
+              acctcodename:arrayLinea[12]!=''?await this.cuentas.filter(data => data.Code === arrayLinea[12].trim())[0].Name:'',
               id_user:this.infoUsuario.id,
               id_solped : 0,
               linenum:linea-1,
