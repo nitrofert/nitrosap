@@ -1464,7 +1464,7 @@ async validarCuentaContable(cuenta:any){
   let valido = false;
 
   
-  ////////console.log(valido);
+  //console.log(this.cuentas);
   if(this.cuentas.filter(data => data.Code === cuenta).length>0){
     valido = true;
   }
@@ -1482,7 +1482,8 @@ async validarCuentaContable(cuenta:any){
   let linetotal:any;
   let taxvalor:any;
 
-  console.log(this.almacenes);
+  //console.log(this.almacenes);
+  console.log(this.cuentas);
 
   for(let linea = 1 ;linea < lienasArchivo.length; linea ++){
     
