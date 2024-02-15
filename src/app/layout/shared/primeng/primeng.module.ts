@@ -24,6 +24,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PasswordModule } from 'primeng/password';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ProgressBarModule } from 'primeng/progressbar';
@@ -73,6 +74,7 @@ import {TabViewModule} from 'primeng/tabview';
     MessageModule,
     MessagesModule,
     MultiSelectModule,
+    OrganizationChartModule,
     PasswordModule,
     PanelMenuModule,
     ProgressBarModule,

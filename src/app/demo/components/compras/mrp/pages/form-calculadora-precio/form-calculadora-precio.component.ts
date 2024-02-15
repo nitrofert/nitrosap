@@ -1928,7 +1928,7 @@ async getItemsEP(itemsEP:any){
       //const preciosMPItemUltimasSemanas = await lastValueFrom(preciosMPItemUltimasSemanas$);
 
       const preciosMPItemUltimasSemanas = this.tabla_lista_precios_mp.filter(item =>item.ItemCode === ItemCode);
-      //////////////////////////////console.log(preciosMPItemUltimasSemanas);
+      console.log(preciosMPItemUltimasSemanas);
 
       return preciosMPItemUltimasSemanas;
       /*
@@ -3050,7 +3050,7 @@ parametrosGlobales(){
           let precioMPseman2 =0;
 
           let preciosMPItemUltimasSemanas = await this.getPreciosMPItemUltimasSemanas(itemSeleccionado.ItemCode);
-              //////////////////////////////////console.log('preciosMPItemUltimasSemanas',itemSeleccionado.ItemCode,preciosMPItemUltimasSemanas)
+            console.log('preciosMPItemUltimasSemanas',itemSeleccionado.ItemCode,preciosMPItemUltimasSemanas)
             if(preciosMPItemUltimasSemanas.length>0){
 
               if(preciosMPItemUltimasSemanas.length==1){
@@ -3241,11 +3241,15 @@ parametrosGlobales(){
   }
 
   async SeleccionarRecurso(){
+
+    console.log(this.opcionRecurso);
   
     this.detalle_receta.map((receta)=>{
       receta.itemMP.costoRecurso = this.opcionRecurso.costorecurso;
       receta.itemMP.recurso = this.opcionRecurso.label;
     });
+
+
     this.recursoPT = this.opcionRecurso.costorecurso;
     let arregloCostos = await this.calcularTotalesDetalleCalculo2(this.detalle_receta);
     await this.setTablaCostosTotalesItem(arregloCostos);

@@ -95,6 +95,11 @@ export class SolpedsAprobadasComponent implements OnInit {
   subtotal:number = 0;
   grantotal:number =0;
 
+  documentoSeleccionado!:any;
+  loadingMapa:boolean = false;
+  verDocumento:boolean = false;
+ 
+
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -956,6 +961,12 @@ onConfirmAp() {
           this.messageService.add({key: 'tl',severity:'error', summary: '!Error', detail: err});
         }
       });
+}
+
+verMapaDeRelaciones(solped:any){
+  this.documentoSeleccionado = solped.sapdocnum;
+  this.loadingMapa = true;
+  this.verDocumento = true;
 }
 
 clearToast() {

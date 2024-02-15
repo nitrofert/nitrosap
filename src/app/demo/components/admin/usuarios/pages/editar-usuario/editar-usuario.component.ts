@@ -644,6 +644,8 @@ export class EditarUsuarioComponent implements OnInit {
               userid: this.userSelected.user
           }
 
+          console.log(data);
+
           this.adminService.adicionarDependenciasUsuario(this.authService.getToken(),data)
               .subscribe({
                   next:(result)=>{

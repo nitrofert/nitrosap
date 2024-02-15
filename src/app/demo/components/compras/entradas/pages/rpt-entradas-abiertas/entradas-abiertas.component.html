@@ -1,0 +1,170 @@
+<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
+
+<div class="grid">
+
+	<div class="col-12">
+		<div class="card">
+			
+			<p-table #dt1 
+					 [value]="entradas" 
+					 dataKey="DocNum" 
+					 [rows]="10" 
+					 [loading]="loading" 
+					 [rowHover]="true" 
+					 styleClass="p-datatable-gridlines p-datatable-sm" 
+					 [paginator]="true" 
+					 [globalFilterFields]="['ENTRADA','EN_NOMBRE_SERIE','EN_FECHA','EN_CODIGOSN','EN_NOMBRESN','EN_COMENTARIOS','PEDIDO','EN_TOTAL_CON_IVA']" 
+					 selectionMode="multiple" 
+					 [(selection)]="pedidoSeleccionado" 
+					 responsiveLayout="scroll">
+				<ng-template pTemplate="caption">
+					<div class="flex justify-content-between flex-column sm:flex-row">
+						<div class="flex align-items-center">
+							
+							<button pButton 
+									pTooltip="Limpiar" tooltipPosition="bottom" placeholder="Bottom"  
+									class="p-button-outlined mb-2 mr-2 p-button-sm" 
+									icon="pi pi-filter-slash"
+									(click)="clear(dt1)">
+							</button>
+							<!--<button pButton
+									*ngIf="permisosUsuarioPagina[0].create_accion" 
+									pTooltip="Copiar pedido a entrada" tooltipPosition="bottom" placeholder="Bottom"  
+									class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
+									icon="pi pi-copy"
+									[disabled]="!permisosUsuarioPagina[0].create_accion || (!pedidoSeleccionado || pedidoSeleccionado.length!=1)"
+									(click)="nuevaEntrada()">
+							</button>-->
+
+							
+							
+						</div>
+						<p-dropdown [options]="areas_user" 
+										optionLabel="area"
+										optionValue="area" 
+										[(ngModel)]="areas_user_selected"
+										id="areas_user"
+										name="areas_user"
+										placeholder="Seleccione un area"
+										[required]="true"
+										class="w-full p-inputtext-sm"
+										(onChange)="SeleccionarArea()"></p-dropdown>
+						<span class="p-input-icon-left mb-2">
+							<i class="pi pi-search"></i>
+							<input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Buscar por palabra clave" class="w-full p-inputtext-sm"/>
+						</span>
+					</div>
+				</ng-template>
+				<ng-template pTemplate="header">
+					<tr>
+						<th style="width: 3rem">
+                            <!--<p-tableHeaderCheckbox></p-tableHeaderCheckbox>-->
+                        </th>
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Código SAP
+								<p-columnFilter type="text" field="ENTRADA" display="menu" placeholder="Buscar por código entrada"></p-columnFilter>
+							</div>
+						</th>
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Tipo
+								<p-columnFilter type="text" field="EN_NOMBRE_SERIE" display="menu" placeholder="Buscar por tipo entrada"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Fecha contabilización
+								<p-columnFilter type="date" field="EN_FECHA" display="menu"></p-columnFilter>
+							</div>
+						</th>
+
+                        
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Código Proveedor
+								<p-columnFilter type="text" field="EN_CODIGOSN" display="menu" placeholder="Buscar por código proveedor"></p-columnFilter>
+							</div>
+						</th>
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Nombre proveedor
+								<p-columnFilter type="text" field="EN_NOMBRESN" display="menu" placeholder="Buscar por nombre proveedor"></p-columnFilter>
+							</div>
+						</th>
+						
+						
+						<th>
+							<div class="flex justify-content-between align-items-center">
+								Comentario
+								<p-columnFilter type="text" field="EN_COMENTARIOS" display="menu" placeholder="Buscar por comentario"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								OC
+								<p-columnFilter type="text" field="PEDIDO" display="menu" placeholder="Buscar por orden de compra"></p-columnFilter>
+							</div>
+						</th>
+
+                        <th>
+							<div class="flex justify-content-between align-items-center">
+								Total entrada
+								<p-columnFilter type="text" field="EN_TOTAL_CON_IVA" display="menu" placeholder="Buscar por total entrada"></p-columnFilter>
+							</div>
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-pedido>
+					<tr>
+						<td>
+                            <p-tableCheckbox [value]="pedido"></p-tableCheckbox>
+                        </td>
+						<td style="min-width: 12rem;">
+							{{ pedido.ENTRADA }}
+						</td>
+						<td style="min-width: 12rem;">
+							{{ pedido.EN_NOMBRE_SERIE  }}
+						</td>
+						
+						<td style="min-width: 12rem;">
+							{{ pedido.EN_FECHA | date }}
+						</td>
+
+                        <td style="min-width: 12rem;">
+							{{ pedido.EN_CODIGOSN  }}
+						</td>
+						<td style="min-width: 12rem;">
+							{{ pedido.EN_NOMBRESN }}
+						</td>	
+                        <td style="min-width: 12rem;">
+							{{ pedido.EN_COMENTARIOS }}
+						</td>
+
+                        <td style="min-width: 12rem;">
+							{{ pedido.PEDIDO }}
+						</td>
+                        <td style="min-width: 12rem;">
+							{{ pedido.EN_TOTAL_CON_IVA | currency: 'COP' }}
+						</td>
+                        
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="8" class="text-center">No se econtraron entradas pendientes por facturar.</td>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="loadingbody">
+					<tr>
+						<td colspan="8" class="text-center">Cargando entradas por facturar. Por favor espere</td>
+					</tr>
+				</ng-template>
+    		</p-table>
+		</div>
+
+	</div>
+</div>
+<p-toast></p-toast>

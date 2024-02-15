@@ -286,7 +286,8 @@ export class FormPrecioItemComponent implements OnInit{
     
     if(precio!=0){
       interesMP = parseFloat(precio)*((this.interesDia/365)*this.prcInteres);
-      precioMPNT = parseFloat(precio) + (this.listaItemsMP.find(item => item.ItemCode == itemCode).NOPENTREGA=='Y'?this.precioEntregaMP:0) + interesMP;
+      //precioMPNT = parseFloat(precio) + (this.listaItemsMP.find(item => item.ItemCode == itemCode).NOPENTREGA=='Y'?this.precioEntregaMP:0) + interesMP;
+      precioMPNT = parseFloat(precio) + (this.listaItemsMP.find(item => item.ItemCode == itemCode).NOPENTREGA=='Y'?0:this.precioEntregaMP+interesMP);
     }
 
     let indexItemsMP = this.listaItemsMP.findIndex(item => item.ItemCode == itemCode);

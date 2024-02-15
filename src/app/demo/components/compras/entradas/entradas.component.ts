@@ -43,6 +43,10 @@ export class EntradasComponent implements OnInit {
   comentariosCancel:string = "";
 
   dialogRechazo:boolean = false;
+
+  documentoSeleccionado!:any;
+  loadingMapa:boolean = false;
+  verDocumento:boolean = false;
  
 
   constructor(private rutaActiva: ActivatedRoute,
@@ -319,6 +323,12 @@ export class EntradasComponent implements OnInit {
       }
     });
     
+  }
+
+  verMapaDeRelaciones(entrada:any){
+    this.documentoSeleccionado = entrada.sapdocnum;
+    this.loadingMapa = true;
+    this.verDocumento = true;
   }
 
   formatCurrency(value: number) {

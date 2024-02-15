@@ -579,7 +579,7 @@ export class FormEntradaComponent implements OnInit {
         for(let lineaPedido of pedido.DocumentLines){
 
           if(lineaPedido.LineStatus!="bost_Close"){
-            //////////console.log(lineaPedido);
+            console.log(lineaPedido);
             let totalEntradasLinea = 0;
             if(entradasPedido){
                 //let totalEntradasLinea = 0;
@@ -641,7 +641,8 @@ export class FormEntradaComponent implements OnInit {
                 ocrcode3:lineaPedido.CostingCode3,
                 whscode:lineaPedido.WarehouseCode,
                 total_entradas_linea:0,
-                total_pendiente:lineaPedido.LineTotal-totalEntradasLinea,
+                //total_pendiente:lineaPedido.LineTotal-totalEntradasLinea,
+                total_pendiente:lineaPedido.OpenAmount,
                 precio_linea:0,
                 valor_impuesto:0,
                 trm:lineaPedido.Rate,
@@ -1005,7 +1006,7 @@ export class FormEntradaComponent implements OnInit {
     NuevaEntrada(){}
 
     EditarLinea(){
-      ////////console.log(this.lineaSeleccionada[0]); 
+      console.log(this.lineaSeleccionada[0]); 
       this.lineaEntrada = this.lineaSeleccionada[0];
       //////////console.log(this.lineaEntrada);
       this.editarLinea = true;

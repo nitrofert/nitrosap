@@ -244,7 +244,7 @@
 </p-dialog>
 <!--Fin Dialog loading-->
 <!---Dilalog FORM  upload CSV presupuesto-->
-<p-dialog header="Cargar lista precios de mercado PT" 
+<p-dialog header="Cargar lista precios de mercado MP" 
           [(visible)]="formularioCSV" 
           [modal]="true"
           [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
@@ -301,13 +301,13 @@
 						Columna <strong>FECHAINICIOSEMANA</strong>: El formato de la fecha debe ser <strong>YYYY-MM-DD</strong>
 					   </p>
 					   <p>
-						Columna <strong>ZONAVENTA</strong>: El código del item es obligatorio 
+						Columna <strong>SEMANA</strong>: El número de la semana es obligatorio 
 					   </p>
 					   <p>
-						Columna <strong>LOCALIDAD</strong>: El código del item es obligatorio 
+						Columna <strong>PRECIOEXT</strong>: El precio externo del item es obligatorio 
 					   </p>
 					   <p>
-						Columna <strong>CODIGOAUTOR</strong>: El número de la semana debe ser un <strong>entero</strong>
+						Columna <strong>TENDENCIA</strong>:La tendencia es obligatoria (Baja / Neutro / Alta)
 					   </p>
 					   
 				</div>

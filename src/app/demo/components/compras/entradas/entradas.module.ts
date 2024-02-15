@@ -11,6 +11,8 @@ import { ConsultaEntradaComponent } from './pages/consulta-entrada/consulta-entr
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
 import { ImpresionComponent } from './pages/impresion/impresion.component';
 import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
+import { EntradasAbiertasComponent } from './pages/rpt-entradas-abiertas/entradas-abiertas.component';
+import { MapaRelacionesModule } from '../mapa-relaciones/mapa-relaciones.module';
 
 
 
@@ -24,7 +26,7 @@ import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
     ConsultaEntradaComponent,
     ImpresionComponent,
     PdfComponent,
-  
+    EntradasAbiertasComponent
     
   ],
   imports: [
@@ -34,7 +36,8 @@ import { PdfComponent } from 'src/app/layout/shared/pdf/pdf.component';
     FormsModule,
     ReactiveFormsModule,
     ApplicationPipesModule,
-    BreadCrumbModule
+    BreadCrumbModule,
+    MapaRelacionesModule
   ]
 })
 export class EntradasModule { }

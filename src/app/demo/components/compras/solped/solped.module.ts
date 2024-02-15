@@ -24,6 +24,7 @@ import { FormSolpedMPComponent } from './pages/form-solped-mp/form-solped-mp.com
 import { NewSolpedMpComponent } from './pages/new-solped-mp/new-solped-mp.component';
 import { EditSolpedMpComponent } from './pages/edit-solped-mp/edit-solped-mp.component';
 import { SolpedsAprobadasComponent } from './solpeds-aprobadas/solpeds-aprobadas.component';
+import { MapaRelacionesModule } from '../mapa-relaciones/mapa-relaciones.module';
 
 
 
@@ -57,7 +58,8 @@ import { SolpedsAprobadasComponent } from './solpeds-aprobadas/solpeds-aprobadas
     ReactiveFormsModule,
     PrimengModule,
     ApplicationPipesModule,
-    BreadCrumbModule
+    BreadCrumbModule,
+    MapaRelacionesModule
   ]
 })
 export class SolpedModule { }

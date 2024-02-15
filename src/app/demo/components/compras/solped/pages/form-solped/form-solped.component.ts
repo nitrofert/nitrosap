@@ -1675,58 +1675,58 @@ async validarCuentaContable(cuenta:any){
                     if(this.anexosSolped.length > 0){
                         /*if((this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0 && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0) ||
                            (this.authService.getInfoUsuario().companyname.toLowerCase()!='nitrofert'  && this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0)){*/
+                          if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert'   || (this.authService.getInfoUsuario().companyname.toLowerCase()!='nitrofert' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0)){
+                          //if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert' || this.authService.getInfoUsuario().companyname.toLowerCase()=='intefert'  || (this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrocaribe' && this.anexosSolped.filter(anexo => anexo.tipo == 'Revisión presupuestal').length>0)){
 
-                        if(this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0){
+                          if(this.anexosSolped.filter(anexo => anexo.tipo == 'Especificación técnica').length>0){
  
-                          //this.submittedBotton = true;
-                        ////////console.log(this.solped, this.solpedDetLines);
-                        let linenum=0;
-                        for(let line of this.lineasSolped){
-                          line.linenum=linenum;
-                          linenum++
-                        }
-                
-                        const data:any = {
-                          solped:  {
-                            id_user: this.infoUsuario.id,
-                            usersap: this.infoUsuario.codusersap,
-                            fullname: this.infoUsuario.fullname,
-                            serie:this.serie,
-                            //serieName:this.serieName,
-                            doctype: this.clase,
-                            docdate:this.fechaContable,
-                            docduedate: this.fechaCaducidad,
-                            taxdate:this.fechaDocumento,
-                            reqdate:this.fechaNecesidad,
-                            sapdocnum:"0",
-                            u_nf_depen_solped:this.area,
-                            comments:this.comentarios,
-                            trm:this.monedas.filter(moneda => moneda.Currency == 'USD')[0].TRM,
-                            currency:this.currency,
-                            U_NF_MES_REAL:this.U_NF_MES_REAL
-                          },
-                          solpedDet:this.lineasSolped,
-                          anexos:this.anexosSolped
-                        }
-
-                        if(this.solpedEditar) data.solped.id = this.solpedEditar;
-                
-                        //console.log(data);      
-                        this.onNewSolped.emit(data);              
-                
-                        
-                        this.envioFormulario = false;
-
-                        }else{
-                          /*if(this.authService.getInfoUsuario().companyname.toLowerCase()=='nitrofert'){
-                            this.messageService.add({severity:'error', summary: '!Error', detail: 'Los anexos de revisión presupuestal y revisión técnica son obligatorios'});
-                          }
-                          if(this.authService.getInfoUsuario().companyname.toLowerCase()=='intefert'){
+                            //this.submittedBotton = true;
+                            ////////console.log(this.solped, this.solpedDetLines);
+                            let linenum=0;
+                            for(let line of this.lineasSolped){
+                              line.linenum=linenum;
+                              linenum++
+                            }
+                  
+                            const data:any = {
+                                  solped:  {
+                                    id_user: this.infoUsuario.id,
+                                    usersap: this.infoUsuario.codusersap,
+                                    fullname: this.infoUsuario.fullname,
+                                    serie:this.serie,
+                                    //serieName:this.serieName,
+                                    doctype: this.clase,
+                                    docdate:this.fechaContable,
+                                    docduedate: this.fechaCaducidad,
+                                    taxdate:this.fechaDocumento,
+                                    reqdate:this.fechaNecesidad,
+                                    sapdocnum:"0",
+                                    u_nf_depen_solped:this.area,
+                                    comments:this.comentarios,
+                                    trm:this.monedas.filter(moneda => moneda.Currency == 'USD')[0].TRM,
+                                    currency:this.currency,
+                                    U_NF_MES_REAL:this.U_NF_MES_REAL
+                                  },
+                                  solpedDet:this.lineasSolped,
+                                  anexos:this.anexosSolped
+                            }
+  
+                            if(this.solpedEditar) data.solped.id = this.solpedEditar;
+                    
+                            //console.log(data);      
+                            this.onNewSolped.emit(data);              
+                            this.envioFormulario = false;
+  
+                          }else{
+                            
                             this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión técnica es obligatorio'});
-                          }*/
-                          this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión técnica es obligatorio'});
-                          this.registroSolped = false;
-                        }
+                            this.registroSolped = false;
+                          }
+                        }else{
+                          this.messageService.add({severity:'error', summary: '!Error', detail: 'El anexo de revisión presupuestal es obligatorio'});
+                        }  
+
+                        
 
                     }else{
                       this.messageService.add({severity:'error', summary: '!Error', detail: 'Debe adjuntar los anexos requeridos'});

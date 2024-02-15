@@ -1,28 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MapaRelacionesComponent } from './mapa-relaciones.component';
 import { PrimengModule } from 'src/app/layout/shared/primeng/primeng.module';
-import { PedidosComponent } from './pedidos.component';
-import { PedidosRoutingModule } from './pedidos-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApplicationPipesModule } from 'src/app/demo/pipes/pipes.module';
 import { BreadCrumbModule } from 'src/app/layout/shared/breadcrumb/breadcrumb.module';
-import { FormsModule } from '@angular/forms';
-import { MapaRelacionesModule } from '../mapa-relaciones/mapa-relaciones.module';
 
 
 
 @NgModule({
   declarations: [
-    PedidosComponent
+    MapaRelacionesComponent
   ],
   imports: [
     CommonModule,
     PrimengModule,
-    PedidosRoutingModule,
-    ApplicationPipesModule,
-    BreadCrumbModule,
     FormsModule,
-    MapaRelacionesModule
-
-  ]
+    ReactiveFormsModule,
+    ApplicationPipesModule,
+    BreadCrumbModule
+  ],
+  exports:[MapaRelacionesComponent]
 })
-export class PedidosModule { }
+export class MapaRelacionesModule { }

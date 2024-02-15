@@ -1,204 +1,40 @@
-<app-breadcrumb [urlBreadCrumb]="urlBreadCrumb"></app-breadcrumb>
-<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-<div class="grid">
+<p-skeleton *ngIf="loadingMapa" width="20rem" height="4rem"></p-skeleton>
 
-	<div class="col-12">
-		<div class="card">
-			
-			<p-table #dt1 
-					 [value]="pedidos" 
-					 dataKey="DocNum" 
-					 [rows]="10" 
-					 [loading]="loading" 
-					 [rowHover]="true" 
-					 styleClass="p-datatable-gridlines p-datatable-sm" 
-					 [paginator]="true" 
-					 [globalFilterFields]="['DocNum','Series','DocDate','DocDueDate','CardCode','CardName','Comments','DocTotal']" 
-					 selectionMode="multiple" 
-					 [(selection)]="pedidoSeleccionado" 
-					 responsiveLayout="scroll">
-				<ng-template pTemplate="caption">
-					<div class="flex justify-content-between flex-column sm:flex-row">
-						<div class="flex align-items-center">
-							
-							<button pButton 
-									pTooltip="Limpiar" tooltipPosition="bottom" placeholder="Bottom"  
-									class="p-button-outlined mb-2 mr-2 p-button-sm" 
-									icon="pi pi-filter-slash"
-									(click)="clear(dt1)">
-							</button>
-							<button pButton
-									*ngIf="permisosUsuarioPagina[0].create_accion" 
-									pTooltip="Copiar pedido a entrada" tooltipPosition="bottom" placeholder="Bottom"  
-									class="p-button-outlined mb-2 mr-2 p-button-success p-button-sm" 
-									icon="pi pi-copy"
-									[disabled]="!permisosUsuarioPagina[0].create_accion || (!pedidoSeleccionado || pedidoSeleccionado.length!=1)"
-									(click)="nuevaEntrada()">
-							</button>
-
-							
-							
-						</div>
-						<p-dropdown [options]="areas_user" 
-										optionLabel="area"
-										optionValue="area" 
-										[(ngModel)]="areas_user_selected"
-										id="areas_user"
-										name="areas_user"
-										placeholder="Seleccione un area"
-										[required]="true"
-										class="w-full p-inputtext-sm"
-										(onChange)="SeleccionarArea()"></p-dropdown>
-						<span class="p-input-icon-left mb-2">
-							<i class="pi pi-search"></i>
-							<input pInputText type="text" #filter (input)="onGlobalFilter(dt1, $event)" placeholder="Buscar por palabra clave" class="w-full p-inputtext-sm"/>
-						</span>
-					</div>
-				</ng-template>
-				<ng-template pTemplate="header">
-					<tr>
-						<th style="width: 3rem">
-                            <!--<p-tableHeaderCheckbox></p-tableHeaderCheckbox>-->
-                        </th>
-						<th>
-							<div class="flex justify-content-between align-items-center">
-								Código SAP
-								<p-columnFilter type="text" field="DocNum" display="menu" placeholder="Buscar por código pedido"></p-columnFilter>
-							</div>
-						</th>
-						<th>
-							<div class="flex justify-content-between align-items-center">
-								Tipo
-								<p-columnFilter type="text" field="Series" display="menu" placeholder="Buscar por tipo pedido"></p-columnFilter>
-							</div>
-						</th>
-
-                        <th>
-							<div class="flex justify-content-between align-items-center">
-								Fecha contabilización
-								<p-columnFilter type="date" field="DocDate" display="menu"></p-columnFilter>
-							</div>
-						</th>
-
-                        
-                        <th>
-							<div class="flex justify-content-between align-items-center">
-								Código Proveedor
-								<p-columnFilter type="text" field="CardCode" display="menu" placeholder="Buscar por código proveedor"></p-columnFilter>
-							</div>
-						</th>
-						<th>
-							<div class="flex justify-content-between align-items-center">
-								Nombre proveedor
-								<p-columnFilter type="text" field="CardName" display="menu" placeholder="Buscar por nombre proveedor"></p-columnFilter>
-							</div>
-						</th>
-						
-						
-						<th>
-							<div class="flex justify-content-between align-items-center">
-								Comentario
-								<p-columnFilter type="text" field="Comments" display="menu" placeholder="Buscar por comentario"></p-columnFilter>
-							</div>
-						</th>
-
-                        <th>
-							<div class="flex justify-content-between align-items-center">
-								Total pedido
-								<p-columnFilter type="text" field="DocTotal" display="menu" placeholder="Buscar por total pedido"></p-columnFilter>
-							</div>
-						</th>
-						<th>
-
-						</th>
-					</tr>
-				</ng-template>
-				<ng-template pTemplate="body" let-pedido>
-					<tr>
-						<td>
-                            <p-tableCheckbox [value]="pedido"></p-tableCheckbox>
-                        </td>
-						<td style="min-width: 12rem;">
-							{{ pedido.DocNum }}
-						</td>
-						<td style="min-width: 12rem;">
-							{{ pedido.SeriesName  }}
-						</td>
-						
-						<td style="min-width: 12rem;">
-							{{ pedido.DocDate | date }}
-						</td>
-
-                        <td style="min-width: 12rem;">
-							{{ pedido.CardCode  }}
-						</td>
-						<td style="min-width: 12rem;">
-							{{ pedido.CardName }}
-						</td>	
-                        <td style="min-width: 12rem;">
-							{{ pedido.Comments }}
-						</td>
-                        <td style="min-width: 12rem;">
-							{{ pedido.DocTotal | currency: 'COP' }}
-						</td>
-                        <td>
-							<i class="pi pi-sitemap" pTooltip="Ver mapa de relaciones" tooltipPosition="left" (click)="verMapaDeRelaciones(pedido)"></i>
-						</td>
-					</tr>
-				</ng-template>
-				<ng-template pTemplate="emptymessage">
-					<tr>
-						<td colspan="8" class="text-center">No se econtraron solicitudes de pedido.</td>
-					</tr>
-				</ng-template>
-				<ng-template pTemplate="loadingbody">
-					<tr>
-						<td colspan="8" class="text-center">Cargando solicitudes de pedido. Por favor espere</td>
-					</tr>
-				</ng-template>
-    		</p-table>
-		</div>
-
-	</div>
-</div>
-<p-toast></p-toast>
-
-<p-dialog header="Mapa de relaciones" 
-          [(visible)]="verOrdenCompra" 
-          [modal]="true"
-          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
-          [style]="{width: '50vw'}" 
-          [maximizable]="true"
-          [draggable]="false" 
-         
-          [resizable]="false">
-
-    <ng-template pTemplate="content">
+<p-organizationChart *ngIf="!loadingMapa" [value]="mapaRelaciones" selectionMode="single" [(selection)]="selectedNodes">
+    <ng-template class="w-auto" let-node pTemplate="default">
         
-		<div class="grid">
+        <div class="p-1 text-center w-auto ">
+            <div class="p-2 bg-bluegray-100 border-round">{{ node.label }}</div>
+            <div class="flex justify-content-between mt-2 px-2">
+                <div class="mr-1">{{ node.data.num}}</div>
+                <div *ngIf="node.data.ref" class="mr-1">Ref: {{ node.data.ref}}</div>
+                <div><span [class]="'pi pi-'+node.data.estado" [pTooltip]="node.data.estado=='ban'?'Cancelada':node.data.estado=='lock'?'Cerrada':'Abierta'" [style]="'font-size: 1rem; color:'+node.data.estadoColor"></span></div>
+            </div>
             
-			<div class="col-12">
-				<p-divider></p-divider>
-					<div class="flex justify-content-center">
+            <div class="flex justify-content-between mt-3 px-2">
+                <div class=" mb-2 text-left"><span [class]="'pi pi-search'" [pTooltip]="'Ver '+node.label" (click)="verDocumento(node)" ></span></div>
+                <div class=" mb-2 text-right">{{ node.data.fecha | date}}</div>
+            </div>
+            <div class="flex justify-content-between m1-1 text-right">
+                <div class="mr-1">Subtotal</div>
+                <div>{{ node.data.subtotal  | currency:node.data.currency:'code':'0.0' }}</div>
+            </div>
+            <div class="flex justify-content-between m1-1 text-right">
+                <div class="mr-1">IVA</div>
+                <div>{{ node.data.iva | currency:node.data.currency:'code':'0.0' }}</div>
+            </div>
+            <div *ngIf="node.data.retenciones<0" class="flex justify-content-between m1-1 text-right">
+                <div class="mr-1">Ret.</div>
+                <div>{{ node.data.retenciones | currency:node.data.currency:'code':'0.0' }}</div>
+            </div>
 
-					<app-mapa-relaciones [docNum]="documentoSeleccionado" [docType]="'OC'"></app-mapa-relaciones>
-					</div>
-				
-			</div>
-		</div>
-
-
-
+            <div class="flex justify-content-between m1-1 text-right">
+                <div class="mr-1">Total</div>
+                <div>{{ node.data.total | currency:node.data.currency:'code':'0.0' }}</div>
+            </div>
+        </div>
     </ng-template>
-    <ng-template pTemplate="footer">
-        <p-button   icon="pi pi-check" 
-                    (onClick)="verOrdenCompra=false"                     
-                    
-                    label="Cerrar"
-                    styleClass="p-button-text">
-        </p-button>
-    </ng-template>
-</p-dialog>
+</p-organizationChart>
 
 <p-dialog [header]="tituloDocumento" 
           [(visible)]="visualizarDocumento" 
@@ -467,9 +303,39 @@
                         <td style="min-width: 12rem;">
 							{{ linea.LineTotal | currency: infoDocumento.Currency }}
 						</td>
+
+                        <td style="min-width: 12rem;">
+							{{ linea.OcrCode  }}
+						</td>
                        
+                        <td style="min-width: 12rem;">
+							{{ linea.OcrCode2  }}
+						</td>
+
+                        <td style="min-width: 12rem;">
+							{{ linea.OcrCode3  }}
+						</td>
 					</tr>
 				</ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="10" class="text-right">Subtotal: </td>
+                        <td  class="text-right">{{infoDocumento.SUBTOTAL | currency: infoDocumento.Currency}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" class="text-right">Impuesto: </td>
+                        <td  class="text-right">{{infoDocumento.IMPUESTO | currency: infoDocumento.Currency}}</td>
+                    </tr>
+                    <tr *ngIf="infoDocumento.RETENCIONES<0">
+                        <td colspan="10" class="text-right">Rtenciones: </td>
+                        <td  class="text-right">{{infoDocumento.RETENCIONES | currency: infoDocumento.Currency}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="10" class="text-right">Total: </td>
+                        <td  class="text-right">{{infoDocumento.TOTAL | currency: infoDocumento.Currency}}</td>
+                    </tr>
+
+                </ng-template>
 				<ng-template pTemplate="emptymessage">
 					<tr>
 						<td colspan="11" class="text-center">No se econtraron lineas del documento.</td>

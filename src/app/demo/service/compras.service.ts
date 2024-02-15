@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { CompaniesUser } from '../api/companiesUser';
 import { CompanyInterface } from '../api/company';
 import { ListadoPedidos } from '../api/listadoPedidos';
@@ -228,6 +228,34 @@ export class ComprasService {
     const url:string = `${this.api_url}/api/wssap/Xengine/ordenes-open-usuario/${area}`;
     return this.http.get<any[]>(url,requestOptions);
   }
+
+  entradasAbiertasUsuarioXE(token:string, area:string):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers };
+    const url:string = `${this.api_url}/api/wssap/Xengine/entradas-open-usuario/${area}`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  trazabilidadDocumentoXE(token:string, params:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers, params };
+    const url:string = `${this.api_url}/api/wssap/Xengine/trazabilidad-documento`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  infoDocumentosMROBS(token:string, params:any):Observable<any[]>{
+    const headers = this.urlApiService.getHeadersAPI(token);
+    const requestOptions = { headers: headers, params };
+    const url:string = `${this.api_url}/api/wssap/Xengine/info-documentos-mr`;
+    return this.http.get<any[]>(url,requestOptions);
+  }
+
+  async infoDocumentosMR(token:string,params?:any):Promise<any> {
+    const infoDocsMR$ = this.infoDocumentosMROBS(token,params);
+    const infoDocsMR = await lastValueFrom(infoDocsMR$);
+    return infoDocsMR;
+}
+
 
   ordenesAbiertasUsuarioSL(token:string):Observable<any[]>{
     const headers = this.urlApiService.getHeadersAPI(token);
@@ -715,9 +743,7 @@ export class ComprasService {
     
     return this.http.get<any>(url,requestOptions);
   }
-
  
-  
 
   getProyectos(token:string):Observable<any[]>{
     /*const headers = new HttpHeaders({
@@ -739,5 +765,7 @@ export class ComprasService {
     return this.http.get<any[]>(url,requestOptions);
   }
  
+
+
   
 }
