@@ -1,9 +1,10 @@
-import { Component,OnInit } from '@angular/core';
+import { Component,ElementRef,OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { InfoUsuario } from 'src/app/demo/api/responseloginws';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { LayoutService } from '../../service/app.layout.service';
+import { AdminService } from 'src/app/demo/service/admin.service';
 
 
 
@@ -20,9 +21,19 @@ export class AppTopBarComponent implements OnInit {
     items!: MenuItem[];
     itemsPerfil!: MenuItem[];
 
+    itemsNoticias:MenuItem[] = [];
+
+    classNoticias:string = "";
+    vernoticia:boolean = false;
+
+    infoNoticia!:any;
+
+    @ViewChild('menu') menu!: ElementRef;
+
     constructor(public layoutService: LayoutService,
                 private router:Router,
-                public authService:AuthService) {
+                public authService:AuthService,
+                private adminService:AdminService,) {
         //obtener datos del usuario logueado
        
         
@@ -44,7 +55,7 @@ export class AppTopBarComponent implements OnInit {
 
      
 
-     ngOnInit() {
+     async ngOnInit() {
          this.itemsPerfil = [
              {label: 'Perfil', 
               icon: 'pi pi-fw pi-id-card',
@@ -59,6 +70,64 @@ export class AppTopBarComponent implements OnInit {
               }
             }
          ];
+         await this.getNoticias();
+         
+     }
+
+     async getNoticias():Promise<void>{
+
+          this.adminService.getNoticiasActivas(this.authService.getToken())
+              .subscribe({
+                  next: (noticias) => {
+                    console.log(noticias);
+                    if(noticias.length > 0){
+                      this.classNoticias = 'text-red-600';
+                      this.setMenuNoticias(noticias);
+                    }else{
+                      this.classNoticias= '';
+                    }
+                  },
+                  error:(err)=> {
+                    console.error(err);
+                  },
+              });
+
+     }
+
+     setMenuNoticias(noticias:any[]){
+        /*this.itemsNoticias = noticias.map((noticia=>{
+          return { 
+                    label:noticia.titulo,
+                    icon:'',
+                    command: ()=> {
+                      this.verNoticia(noticia);
+                    }
+                 }
+        }))*/
+
+        for(let noticia of noticias){
+          this.itemsNoticias.push({
+            label:noticia.titulo,
+            icon:'pi pi-bolt',
+            iconClass: 'text-xl text-yellow-400',
+            //iconStyle:'color:var(--yellow-400)',
+            //iconClass:'bg-yellow-40',
+
+            command:()=> {
+              this.verNoticia(noticia);
+            },
+          })
+        }
+     }
+
+     verNoticia(noticia:any){
+      console.log(noticia);
+      this.vernoticia = true;
+      this.infoNoticia = noticia;
+     }
+
+     none(){
+       
      }
 
      salir(){

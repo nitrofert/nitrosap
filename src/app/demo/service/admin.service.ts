@@ -424,8 +424,58 @@ getAreasByUserSAP(token:string):Observable<any[]>{
   return this.http.get<any[]>(url,requestOptions);
 }
 
+getNoticias(token:string):Observable<any[]>{
 
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/noticias`;
+  //console.log(url);
+  return this.http.get<any[]>(url,requestOptions);
+}
 
+getNoticiasActivas(token:string):Observable<any[]>{
+
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/noticias/activas`;
+  //console.log(url);
+  return this.http.get<any[]>(url,requestOptions);
+}
+
+getNoticia(token:string,noticiaid:number):Observable<any[]>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+
+  const url:string = `${this.api_url}/api/noticias/${noticiaid}`;
+  ////console.log(url);
+  return this.http.get<any[]>(url,requestOptions);
+}
+
+saveNoticia(token:string, noticia:any):Observable<any[]>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/noticias`;
+  return this.http.post<any[]>(url,noticia,requestOptions);
+}
+
+updateNoticia(token:string, noticia:any):Observable<any[]>{
+  /*const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });*/
+  const headers = this.urlApiService.getHeadersAPI(token);
+  const requestOptions = { headers: headers };
+  const url:string = `${this.api_url}/api/noticias`;
+  return this.http.put<any[]>(url,noticia,requestOptions);
+}
 
 
 }

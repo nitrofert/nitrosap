@@ -14,18 +14,20 @@
     </button>
 
     <div class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-calendar" ></i>
-            <span>Calendar</span>
-        </button>
-        
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-cog"></i>
-            <span>Settings</span>
+       
+        <p-menu #menu [model]="itemsNoticias" [popup]="true" styleClass="mt-4 w-25rem "></p-menu>
+        <button pButton class="p-link layout-topbar-button"  pTooltip="Noticias" tooltipPosition="bottom"  (click)="itemsNoticias.length>0? menu.toggle($event):none()">
+            <!--<i class="pi pi-bell"></i>-->
+            <i [class]="'pi pi-bell '+classNoticias "></i>
+            <span>Noticias</span>
         </button>
 
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-print"  (click)="print()"></i>
+        
+
+       
+
+        <button class="p-link layout-topbar-button" pTooltip="Imprimir" tooltipPosition="bottom" (click)="print()">
+            <i class="pi pi-print"></i>
             <span>Imprimir</span>
         </button>
 
@@ -41,3 +43,91 @@
         <!--<p-menu #menu [popup]="true" [model]="itemsPerfil"></p-menu>-->
     </div>
 </div>
+
+<p-dialog header="Detalle de noticia" 
+          [(visible)]="vernoticia" 
+          [modal]="true"
+          [breakpoints]="{'960px': '75vw', '640px': '100vw'}" 
+          [style]="{width: '50vw'}" 
+          [maximizable]="true"
+          [draggable]="false" 
+          
+          [resizable]="false">
+
+    <ng-template pTemplate="content">
+        <div class="grid">
+            <div class="col-12">
+                <div class="card">
+                    <div class="p-fluid p-formgrid grid">
+                        <div class="field col-12 ">
+                            <h1>{{infoNoticia.titulo}}</h1>
+                        </div>
+                        <div class="field col-12 ">
+                            <div>
+                                <strong>Descripción</strong>
+                            </div>
+                            <p>
+                                {{infoNoticia.descripcion}}
+                            </p>
+                        </div>
+
+                        <div class="field col-12 ">
+                            <div>
+                                <strong>Autor</strong>
+                            </div>
+                            <p>
+                                {{infoNoticia.autor}}
+                            </p>
+                            <p-divider></p-divider>
+                        </div>
+                        
+                        <div class="field col-12 ">
+                            <img [src]="infoNoticia.recurso" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="grid">
+            <div class="field" class="pt-3 text-center">
+                <h1>{{infoNoticia.titulo}}</h1>
+            </div>
+            <div class="field">
+                <label for="dependencia"><strong>Descripción</strong></label>
+                <article>
+                    {{infoNoticia.descripcion}}
+                </article>
+            </div>
+            
+            <div class="field">
+                <label for="dependencia"><strong>Autor</strong></label>
+                <article>
+                    {{infoNoticia.autor}}
+                </article>
+            </div>
+
+            <div class="field">
+                <p-divider></p-divider>
+            </div>
+
+            <div class="field">
+                <img [src]="infoNoticia.recurso" />
+            </div>  
+            
+            
+        </div>-->
+        
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button   icon="pi pi-check" 
+                    (onClick)="vernoticia=false"                     
+                    
+                    label="Cerrar"
+                    styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>

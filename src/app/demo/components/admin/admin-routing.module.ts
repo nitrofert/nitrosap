@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
         { path: 'perfiles', loadChildren: () => import('./perfiles/perfiles.module').then(m => m.PerfilesModule) },
         { path: 'permisos', loadChildren: () => import('./permisos/permisos.module').then(m => m.PermisosModule) },
         { path: 'empresas', loadChildren: () => import('./empresas/empresas.module').then(m => m.EmpresasModule) },
+        { path: 'noticias', loadChildren: () => import('./noticias/noticias.module').then(m => m.NoticiasModule) },
         { path: 'usuarios', loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule) },
         { path: 'dependencias', loadChildren: () => import('./dependencias/dependencias.module').then(m => m.DependenciasModule) },
         { path: 'cuentas', loadChildren: () => import('./cuentas/cuentas.module').then(m => m.CuentasModule) },
