@@ -824,7 +824,7 @@ export class MrpComponent implements OnInit {
             ////console.log('fechaInicioSemana',fechaInicioSemana.toDateString());
             ////console.log('anioInicio',anioInicio);
             //fechasemana = this.fechaInicioSemana(fechaInicioCalculadora);
-            ////////console.log(lineasCalculadora);
+            console.log('lineasCalculadora',lineasCalculadora);
             //////////////console.log(semanaFecha, lineasCalculadora.filter(item => item.semana == semanaFecha).length);
             //if(this.lineasCalculadora.filter(item => item.semana == semanaFecha).length==0 ){
             //if(lineasCalculadora.filter(item => item.semana == semanaFecha && item.fechasemana.getFullYear()===anioInicio).length==0  ){  

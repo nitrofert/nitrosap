@@ -117,7 +117,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       this.getItems();
 
       //this.fechaProyeccion.setMonth(this.fechaactual.getMonth()+4);       
-      ////////console.log(this.fechaactual, this.fechaProyeccion)
+      //////////console.log(this.fechaactual, this.fechaProyeccion)
        //Cargar informacion del usuario
     this.getInfoUsuario();
     //Cargar perfiles del usuario
@@ -135,7 +135,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
     getInfoUsuario(){
       this.infoUsuario = this.authService.getInfoUsuario();
-      //////////console.log('getInfoUsuario: ',this.infoUsuario);
+      ////////////console.log('getInfoUsuario: ',this.infoUsuario);
       
     }
   
@@ -149,21 +149,21 @@ export class SimulacionAutomaticaComponent implements OnInit  {
   
     getPermisosUsuarioPagina(){
       let url ="";
-      ////////////console.log("URL origen",this.router.url);
-      ////////////console.log("URL params",this.rutaActiva.snapshot.params['solped']);
+      //////////////console.log("URL origen",this.router.url);
+      //////////////console.log("URL params",this.rutaActiva.snapshot.params['solped']);
       if(this.rutaActiva.snapshot.params['entrada']){
         let entradaSeleccionada = this.rutaActiva.snapshot.params;
         if(this.router.url.indexOf("/"+entradaSeleccionada['entrada'])>=0){
           url = this.router.url.substring(0,this.router.url.indexOf("/"+entradaSeleccionada['entrada']));
         }
-        ////////////console.log("URL con parametros: ",url);
+        //////////////console.log("URL con parametros: ",url);
       }else{
         url= this.router.url;
-        ////////////console.log("URL sin parametros: ",url);
+        //////////////console.log("URL sin parametros: ",url);
       }
       //this.urlBreadCrumb = url;
       this.permisosUsuarioPagina = this.permisosUsuario.filter(item => item.url===url);
-      ////////////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
+      //////////////console.log(this.permisosUsuario,this.permisosUsuarioPagina);
     }
 
     getItems(){
@@ -176,11 +176,11 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 //}
               }
              this.getItemsMP();
-             ////////////console.log(this.items);
+             //////////////console.log(this.items);
              
             },
             error: (error) => {
-                ////////////console.log(error);      
+                //////////////console.log(error);      
             }
           });
     }
@@ -191,12 +191,12 @@ export class SimulacionAutomaticaComponent implements OnInit  {
             next: (items) => {
               let ItemName:string;
               for(let item of items){
-                ////////////console.log(item);
+                //////////////console.log(item);
                 //Obtener items de materia prima de presupuesto de venta
                 //Llenar el array de items de MP
-                ////////////console.log(this.itemsMP.filter(itemMP => itemMP.itemcode == item.itemcode).length);
+                //////////////console.log(this.itemsMP.filter(itemMP => itemMP.itemcode == item.itemcode).length);
                 if(this.itemsMP.filter(itemMP => itemMP.itemcode == item.itemcode).length===0){
-                  ////////////console.log(this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode ));
+                  //////////////console.log(this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode ));
                   if(this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode ).length>0){
                     ItemName = this.items.filter(itemSAP => itemSAP.ItemCode == item.itemcode )[0].ItemName
                     this.itemsMP.push({itemcode:item.itemcode, ItemName});
@@ -204,10 +204,10 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 }
              }
              this.getZonas();
-             ////////////console.log(this.itemsMP);
+             //////////////console.log(this.itemsMP);
             },
             error: (error) => {
-                ////////////console.log(error);      
+                //////////////console.log(error);      
             }
           });
     }
@@ -216,13 +216,13 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       this.comprasService.getZonas(this.authService.getToken())
           .subscribe({
               next: (zonas)=>{
-                  ////////////console.log(zonas);
+                  ////console.log(zonas);
                   this.zonas = zonas;
                   
                   this.correrSimulacion();
               },
               error: (err)=>{
-                //////////console.log(err);
+                ////////////console.log(err);
               }
           });
       
@@ -243,7 +243,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
             this.inventarioTramsitoMP = [];
             this.inventarioSolicitadoMP = [];
             this.totalInicialMPZF =0;*/    
-            //////////console.log(lineaItem.itemcode,zona.State)
+            ////////////console.log(lineaItem.itemcode,zona.State)
             
             this.getInventariosMP(lineaItem.itemcode,zona.State);
               
@@ -252,14 +252,14 @@ export class SimulacionAutomaticaComponent implements OnInit  {
           
       }
 
-      ////////console.log(this.arregloInvetariosMP);
+      //////////console.log(this.arregloInvetariosMP);
 
-      //////////console.log(this.arregloSimulacionesItemsZonas.length);
+      ////////////console.log(this.arregloSimulacionesItemsZonas.length);
       //this.debouncer.next(this.arregloSimulacionesItemsZonas.length);
   }
 
   grabarSimulacion(data:any){
-    ////////console.log(data);
+    console.log(data);
 
     this.comprasService.grabarSimulaciones(this.authService.getToken(),data)
         .subscribe({
@@ -270,7 +270,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
             
           },
           error: (err)=>{
-              ////////console.log(err);
+              //////////console.log(err);
               this.messageService.add({severity:'error', summary: '!Error', detail: err});
               
           }
@@ -280,7 +280,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
   getInventariosMP(item:string, zona:string){
 
-    ////////////console.log(this.zona);
+    //////////////console.log(this.zona);
 
     let data = {
       item,
@@ -290,27 +290,27 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     this.comprasService.getInventariosMpXE(this.authService.getToken(),data)
         .subscribe({
             next: (inventarios:any) => {
-              ////////console.log('getInventariosMpXE',inventarios);
+                //console.log('getInventariosMpXE',inventarios);
                 let inventariosMP = inventarios;
                 this.arregloInvetariosMP.push({item,zona, inventariosMP});
-                ////////console.log('arregloInvetariosMP',this.arregloInvetariosMP);
+                //////////console.log('arregloInvetariosMP',this.arregloInvetariosMP);
                 //this.ubicacionesInventarioMP = inventarios.ubicacionInvetarioMP;
                 //this.ubicacionesInventarioPT = inventarios.ubicacionInvetarioPT;
                 if(this.iteracion == 0){
-                  //////////console.log(item,zona,'CP',this.arregloInvetariosMP);
+                  ////////////console.log(item,zona,'CP',this.arregloInvetariosMP);
                 }
                 this.getInventariosTracking(item, zona);
                 
             },
             error: (err) =>{
-                //////////console.log(err);
+                ////////////console.log(err);
                 
             }
         });
   }
 
   getInventariosTracking(item:string, zona:string ){
-    ////////////console.log(this.item);
+    //////////////console.log(this.item);
 
     let data = {
       item,
@@ -321,24 +321,24 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       this.comprasService.getInventariosTracking(this.authService.getToken(),data)
           .subscribe({
               next: (inventarios:any) => {
-                  //////////console.log(inventarios);
+                  ////////////console.log(inventarios);
                   let inventarioTramsitoMP:any = inventarios.inventarioItemTransito;
-                  //////////console.log(inventarioTramsitoMP);
+                  ////////////console.log(inventarioTramsitoMP);
                   
                   let inventarioSolicitadoMP:any = inventarios.inventarioItenSolicitado;
-                  //////////console.log(inventarioSolicitadoMP);
+                  ////////////console.log(inventarioSolicitadoMP);
                   
                   let inventarioTramsitoMPPreFecha:any = inventarios.inventarioItemTransitoPreFecha;
-                  //////////console.log(inventarioTramsitoMPPreFecha);
+                  ////////////console.log(inventarioTramsitoMPPreFecha);
 
                   let inventarioSolicitadoMPPreFecha:any = inventarios.inventarioItenSolicitadoPreFecha;
-                  //////////console.log(inventarioSolicitadoMPPreFecha);
+                  ////////////console.log(inventarioSolicitadoMPPreFecha);
 
                   let inventarioProyectadoMP:any = inventarios.comprasProyectadasMP;
-                  //////////console.log(inventarioProyectadoMP);
+                  ////////////console.log(inventarioProyectadoMP);
 
                   let inventarioItemZF:any = inventarios.inventarioItemZF;
-                  //////////console.log(inventarioItemZF);
+                  ////////////console.log(inventarioItemZF);
 
                   let totalInicialMPZF = inventarios.totalInventarioItemZF;
 
@@ -352,7 +352,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                                                  inventarioItemZF, 
                                                  totalInicialMPZF});
                   if(this.iteracion == 0){
-                      //////////console.log(this.arregloInvetariosTracking);
+                      ////////////console.log(this.arregloInvetariosTracking);
                   }
 
                   this.gePresupuestoItemZona(item, zona);
@@ -360,7 +360,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 
               },
               error: (error) => {
-                  //////////console.log(error);
+                  ////////////console.log(error);
               }
           });
   }
@@ -368,7 +368,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
   async gePresupuestoItemZona(item:string, zona:string ){
     
     let fechaInicioSemana = await this.fechaInicioSemana(new Date(this.fechaactual));
-    //////////console.log('Presupuesto');
+    ////////////console.log('Presupuesto');
     let data = {
       item,
       zona,
@@ -380,19 +380,19 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     this. comprasService.getPresupuestosVenta(this.authService.getToken(), data)
         .subscribe({
             next: (result) =>{
-                //////////console.log('presupuesto',result);
+                ////////////console.log('presupuesto',result);
                 let presupuestoMPVenta = result;
                 this.arregloPresupuestoMPVenta.push({item, 
                                                      zona,
                                                      presupuestoMPVenta })
                 if(this.iteracion == 0){
-                    //////////console.log(item,zona,'CP',this.arregloPresupuestoMPVenta);
+                    ////////////console.log(item,zona,'CP',this.arregloPresupuestoMPVenta);
                 }
                 this.getMaxMinItemZona(item, zona);
                 
             },
             error: (err) =>{
-              //////////console.log(err);
+              ////////////console.log(err);
             }
         });
   }
@@ -407,7 +407,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     this.comprasService.getMaxMinItemZona(this.authService.getToken(), data)
         .subscribe({
             next: async (result) =>{
-                ////////////console.log(result);
+                //////////////console.log(result);
                 let maxMpZona = 0;
                 let minMpZona = 0;
                 if(result.length >0){
@@ -418,10 +418,10 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                                          zona,
                                          maxMpZona,
                                          minMpZona});
-                //////////console.log(item,zona,'CP');
+                ////////////console.log(item,zona,'CP');
 
                 if(this.iteracion == 0){
-                  //////////console.log(item,zona,'CP',this.arregloMaxMin);
+                  ////////////console.log(item,zona,'CP',this.arregloMaxMin);
                 }
 
                 this.iteracion++;
@@ -431,22 +431,27 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 let simulacionSinSolped =  await this.calcularLineas(item,zona,'SS');
 
 
-                ////console.log(simulacionConProyeciones.filter(item => item.itemcode=='MP1030000'  ));
+                //////console.log(simulacionConProyeciones.filter(item => item.itemcode=='MP1030000'  ));
         
-                
-                await this.grabarSimulacion({item,
+               
+                let data:any = {item,
                   zona,
                   simulacionConProyeciones,
                   simulacionSinProyeciones,
                   simulacionSinTransitoMP,
                   simulacionSinSolped
-                });
+                }
+
+                console.log(data);
+
+
+                await this.grabarSimulacion(data);
                 
                 
                 
             },
             error: (err) =>{
-              //////////console.log(err);
+              ////////////console.log(err);
             }
         });
   }
@@ -459,7 +464,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
     
 
-    ////////////console.log(fecha, diaDeLaSemana,fecha.getDate(),numeroDiasRestar,fechaTMP);
+    //////////////console.log(fecha, diaDeLaSemana,fecha.getDate(),numeroDiasRestar,fechaTMP);
     return fechaTMP;
   }
 
@@ -502,14 +507,14 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
 
           let inventarioTramsitoMPPreFecha:number = await this.calcularInventarioTRPreFecha(item,zona);
-          //////console.log('inventarioTramsitoMPPreFecha',item,zona,inventarioTramsitoMPPreFecha);
+          ////////console.log('inventarioTramsitoMPPreFecha',item,zona,inventarioTramsitoMPPreFecha);
           let costoInventarioTramsitoMPPreFecha:number = await this.calcularCostoInventarioTramsitoMPPreFecha(item,zona);
 
-          //////console.log('costoInventarioTramsitoMPPreFecha',item,zona,costoInventarioTramsitoMPPreFecha);
+          ////////console.log('costoInventarioTramsitoMPPreFecha',item,zona,costoInventarioTramsitoMPPreFecha);
 
           let costoUnitarioInventarioTRMPP:number = 0;
           let costoUnitarioInventarioComprasSol:number = 0;
-         //////////////console.log(inventarioSolicitadoMPPreFecha,inventarioTramsitoMPPreFecha,costoUnitarioInventarioMPPrefecha);
+         ////////////////console.log(inventarioSolicitadoMPPreFecha,inventarioTramsitoMPPreFecha,costoUnitarioInventarioMPPrefecha);
   
           let costoUnitarioInventarioMPSemana:number =0;
   
@@ -518,16 +523,17 @@ export class SimulacionAutomaticaComponent implements OnInit  {
           let infoLineaSimulacion:any;
           let anioInicio:number;
           for(;fechaInicioCalculadora<=fechaFinalCalculadora; fechaInicioCalculadora.setDate(fechaInicioCalculadora.getDate()+1)){
-              ////console.log(this.zonas.filter(zonamp =>zonamp.State == zona));
+              //////console.log(this.zonas.filter(zonamp =>zonamp.State == zona));
               semanaFecha = this.numeroDeSemana(fechaInicioCalculadora);
               fechasemana = fechaInicioCalculadora;
               anioInicio =  fechaInicioCalculadora.getFullYear();
               fechaInicioSemana = await this.fechaInicioSemana(new Date(fechaInicioCalculadora));
               //fechasemana = this.fechaInicioSemana(fechaInicioCalculadora);
-              //console.log(lineasCalculadora);
+              //console.log('lineasCalculadora',lineasCalculadora);
 
               //if(lineasCalculadora.filter(item => item.semana == semanaFecha && item.fecha.getFullYear()===anioInicio).length==0 ){
-                if(lineasCalculadora.filter(item => item.fechasemana.toDateString() == fechaInicioSemana.toDateString()).length==0  ){ 
+              //if(lineasCalculadora.filter(item => item.fechasemana.toDateString() == fechaInicioSemana.toDateString()).length==0  ){ 
+                if(lineasCalculadora.filter(item => item.fecha.toDateString() == fechaInicioSemana.toDateString()).length==0  ){     
                semanaMes = await this.semanaDelMes(new Date(fechaInicioCalculadora));
                //semanaMes =''; 
                 inventarioSemanaMPTR = tipo=='ST'?0:(await this.calcularInventarioSemanaTR(semanaFecha,item,zona,anioInicio))+inventarioTramsitoMPPreFecha;
@@ -558,8 +564,8 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 inventarioFinalSemanaSugerido = inventarioFinalSemanaMP+cantidadCompraSugerida;
 
                 costoUnitarioInventarioMPSemana = await this.calcularCostoUntarioMPSemana(inventarioSemanaMP,costoUnitarioInicialMP,inventarioSemanaMPTR,costoUnitarioInventarioTRMPP,compraSolicitadaMP,costoUnitarioInventarioComprasSol);
-                ////////////console.log(semanaFecha,presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
-                ////////////console.log(`Para ${fechaInicioCalculadora} el número de semana es ${semanaFecha} `);
+                //////////////console.log(semanaFecha,presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
+                //////////////console.log(`Para ${fechaInicioCalculadora} el número de semana es ${semanaFecha} `);
                 infoLinea = {
                   lineaid,
                   fechasemana:this.fechaInicioSemana(new Date(fechasemana)),
@@ -617,10 +623,10 @@ export class SimulacionAutomaticaComponent implements OnInit  {
   
                 }
   
-                console.log(infoLineaSimulacion);
+                //console.log(infoLineaSimulacion);
                 //this.simulacionConProyeciones.push(infoLineaSimulacion);
-                ////////////console.log(semanaFecha,fechaInicioCalculadora);
-                ////////////console.log(semanaFecha,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPZF,inventarioSemanaMPTR,compraSolicitadaMP,compraProyectadaMP,estadoCompra);
+                //////////////console.log(semanaFecha,fechaInicioCalculadora);
+                //////////////console.log(semanaFecha,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPZF,inventarioSemanaMPTR,compraSolicitadaMP,compraProyectadaMP,estadoCompra);
                 //Calcular inventario inicial siguiente semana
                 inventarioSemanaMP = inventarioFinalSemanaMP>0?inventarioFinalSemanaMP:0;
                 inventarioSemanaPT = 0;
@@ -635,13 +641,13 @@ export class SimulacionAutomaticaComponent implements OnInit  {
                 costoInventarioSolicitadoMPPreFecha=0;
   
                 lineasCalculadora.push(infoLineaSimulacion);
-                ////////////console.log(infoLinea);
+                //////////////console.log(infoLinea);
                 //this.lineasCalculadora = lineasCalculadora;
                 lineaid++;
   
               }
           }
-          ////////////console.log(this.lineasCalculadora);
+          //////////////console.log(this.lineasCalculadora);
           //this.simulacionConProyeciones=this.lineasCalculadora;
           return  lineasCalculadora;
           
@@ -677,11 +683,11 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       let cantidadCompraSugerida:number = 0;
       let inventarioFinalSemanaSugerido:number = 0;
     
-      ////////////console.log(this.lineasCalculadora.length);
+      //////////////console.log(this.lineasCalculadora.length);
      
       for (let linea of this.lineasCalculadora){
     
-        ////////////console.log(linea);
+        //////////////console.log(linea);
         fechasemana= new Date(linea.fechasemana);
         semana = linea.semana;
         semanaMes = linea.semanaMes;
@@ -695,7 +701,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
         inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)-eval(linea.presupuestoVentaMP);
         inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
-        ////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
+        //////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
     
         //proxima semana
         inventarioTransitoProxima =lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].inventarioSemanaMPTR:0;
@@ -706,7 +712,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         necesidadCompra = inventarioFinalProximaSemana<this.minMpZona?'Si':'No';
         cantidadCompraSugerida = necesidadCompra=='Si'?(eval(this.maxMpZona)-inventarioFinalSemanaMP):0;
         inventarioFinalSemanaSugerido = inventarioFinalSemanaMP+cantidadCompraSugerida;
-        ////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
+        //////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
     
         infoLineaSimulacion ={
           itemcode:item,
@@ -734,14 +740,14 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         }
     
     
-        ////////////console.log(semana,linea.fechasemana);
+        //////////////console.log(semana,linea.fechasemana);
         //lineasRecalculo.push(infoLinea);
         lineasRecalculoSimulacionSP.push(infoLineaSimulacion);
         //Calcular inventario inicial siguiente semana
         //inventarioSemanaMP = inventarioFinalSemanaMP;
         lineaid++;
       }
-      ////////////console.log(lineaid);
+      //////////////console.log(lineaid);
       //this.lineasCalculadora = lineasRecalculo;
       this.simulacionSinProyeciones = lineasRecalculoSimulacionSP;
     }
@@ -776,11 +782,11 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       let cantidadCompraSugerida:number = 0;
       let inventarioFinalSemanaSugerido:number = 0;
     
-      ////////////console.log(this.lineasCalculadora.length);
+      //////////////console.log(this.lineasCalculadora.length);
      
       for (let linea of this.lineasCalculadora){
     
-        ////////////console.log(linea);
+        //////////////console.log(linea);
         fechasemana= new Date(linea.fechasemana);
         semana = linea.semana;
         semanaMes = linea.semanaMes;
@@ -794,7 +800,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
         inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)+eval(linea.inventarioSemanaMPTR)+eval(linea.compraSolicitadaMP)-eval(linea.presupuestoVentaMP);
         inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
-        ////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
+        //////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
     
         //proxima semana
         inventarioTransitoProxima =lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].inventarioSemanaMPTR:0;
@@ -805,7 +811,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         necesidadCompra = inventarioFinalProximaSemana<this.minMpZona?'Si':'No';
         cantidadCompraSugerida = necesidadCompra=='Si'?(eval(this.maxMpZona)-inventarioFinalSemanaMP):0;
         inventarioFinalSemanaSugerido = inventarioFinalSemanaMP+cantidadCompraSugerida;
-        ////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
+        //////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
     
         infoLineaSimulacion ={
           itemcode:item,
@@ -833,14 +839,14 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         }
     
     
-        ////////////console.log(semana,linea.fechasemana);
+        //////////////console.log(semana,linea.fechasemana);
         //lineasRecalculo.push(infoLinea);
         lineasRecalculoSimulacionSS.push(infoLineaSimulacion);
         //Calcular inventario inicial siguiente semana
         //inventarioSemanaMP = inventarioFinalSemanaMP;
         lineaid++;
       }
-      ////////////console.log(lineaid);
+      //////////////console.log(lineaid);
       //this.lineasCalculadora = lineasRecalculo;
       this.simulacionesSinSolped = lineasRecalculoSimulacionSS;
     }
@@ -875,11 +881,11 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       let cantidadCompraSugerida:number = 0;
       let inventarioFinalSemanaSugerido:number = 0;
     
-      ////////////console.log(this.lineasCalculadora.length);
+      //////////////console.log(this.lineasCalculadora.length);
      
       for (let linea of this.lineasCalculadora){
     
-        ////////////console.log(linea);
+        //////////////console.log(linea);
         fechasemana= new Date(linea.fechasemana);
         semana = linea.semana;
         semanaMes = linea.semanaMes;
@@ -893,7 +899,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         presupuestoVentaMPOriginal = linea.presupuestoVentaMPOriginal;
         inventarioFinalSemanaMP = await eval(lineaid==0?linea.inventarioSemanaMP:inventarioFinalSemanaMP)+eval(linea.inventarioSemanaPT)+eval(linea.inventarioSemanaMPZF)-eval(linea.presupuestoVentaMP);
         inventarioFinalSemanaMP = inventarioFinalSemanaMP<0?0:inventarioFinalSemanaMP;
-        ////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
+        //////////////console.log(lineaid,semana,inventarioSemanaMP,inventarioSemanaPT,inventarioSemanaMPTR,compraProyectadaMP,presupuestoVentaMP,inventarioFinalSemanaMP);
     
         //proxima semana
         inventarioTransitoProxima =lineaid<this.lineasCalculadora.length-1?this.lineasCalculadora[lineaid+1].inventarioSemanaMPTR:0;
@@ -904,7 +910,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         necesidadCompra = inventarioFinalProximaSemana<this.minMpZona?'Si':'No';
         cantidadCompraSugerida = necesidadCompra=='Si'?(eval(this.maxMpZona)-inventarioFinalSemanaMP):0;
         inventarioFinalSemanaSugerido = inventarioFinalSemanaMP+cantidadCompraSugerida;
-        ////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
+        //////////////console.log(presupuestoProximaSemana,inventarioFinalProximaSemana,necesidadCompra)
     
         infoLineaSimulacion ={
           itemcode:item,
@@ -932,14 +938,14 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         }
     
     
-        ////////////console.log(semana,linea.fechasemana);
+        //////////////console.log(semana,linea.fechasemana);
         //lineasRecalculo.push(infoLinea);
         lineasRecalculoSinTransito.push(infoLineaSimulacion);
         //Calcular inventario inicial siguiente semana
         //inventarioSemanaMP = inventarioFinalSemanaMP;
         lineaid++;
       }
-      ////////////console.log(lineaid);
+      //////////////console.log(lineaid);
       //this.lineasCalculadora = lineasRecalculo;
       this.simulacionSinTransitoMP = lineasRecalculoSinTransito;
     }
@@ -966,9 +972,9 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     async calcularComprasSolicitadasPreFecha(item:any,zona:any):Promise<number>{
       let compraSolicitadaMP:number=0;
       //if(this.inventarioSolicitadoMPPreFecha.length >0 && this.inventarioSolicitadoMPPreFecha.filter(item => this.numeroDeSemana(new Date(item.FECHANECESIDAD)) ==  semanaFecha).length>0 ){
-        //////////console.log(this.arregloInvetariosTracking.filter(itemTR => itemTR.item == item && itemTR.zona == zona));
+        ////////////console.log(this.arregloInvetariosTracking.filter(itemTR => itemTR.item == item && itemTR.zona == zona));
         let filas =  this.arregloInvetariosTracking.filter(itemTR => itemTR.item == item && itemTR.zona == zona).length>0?this.arregloInvetariosTracking.filter(itemTR => itemTR.item == item && itemTR.zona == zona)[0].inventarioSolicitadoMPPreFecha:[];
-        ////////////console.log(semanaFecha,filas);
+        //////////////console.log(semanaFecha,filas);
         for(let fila of filas){
           
           //compraSolicitadaMP = compraSolicitadaMP+eval(fila.Quantity);
@@ -1008,7 +1014,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     }*/
 
      numeroDeSemana(fecha:any){
-      //////console.log('fecha',JSON.stringify(fecha));
+      ////////console.log('fecha',JSON.stringify(fecha));
       const DIA_EN_MILISEGUNDOS = 1000 * 60 * 60 * 24,
             DIAS_SEMANA = 7,
             JUEVES = 4;
@@ -1016,40 +1022,40 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       let fullYear = fecha.getFullYear();
       let month  = fecha.getMonth();
       let day = fecha.getDate();
-      //////console.log('fullYear',fullYear);
-      //////console.log('month',month);
-      //////console.log('day',day);
+      ////////console.log('fullYear',fullYear);
+      ////////console.log('month',month);
+      ////////console.log('day',day);
   
       let fechaUTC:any = Date.UTC(fullYear, month, day);
-      //////console.log('fechaUTC',fechaUTC);
+      ////////console.log('fechaUTC',fechaUTC);
       let nuevaFecha:any = new Date(fechaUTC);
-      //////console.log('nuevaFecha',nuevaFecha);
+      ////////console.log('nuevaFecha',nuevaFecha);
       //fecha = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()));
   
       let diaDeLaSemana = fecha.getUTCDay(); // Domingo es 0, sábado es 6
-      //////console.log('diaDeLaSemana',diaDeLaSemana);
+      ////////console.log('diaDeLaSemana',diaDeLaSemana);
       if (diaDeLaSemana === 0) {
           diaDeLaSemana = 7;
-          //////console.log('diaDeLaSemana',diaDeLaSemana);
+          ////////console.log('diaDeLaSemana',diaDeLaSemana);
       }
   
       let diaDelMes = nuevaFecha.getUTCDate();
-      //////console.log('diaDelMes',diaDelMes); 
+      ////////console.log('diaDelMes',diaDelMes); 
   
       let nuevoDiaDelMes = diaDelMes - diaDeLaSemana + JUEVES;
       
-      //////console.log('nuevoDiaDelMes',nuevoDiaDelMes); 
+      ////////console.log('nuevoDiaDelMes',nuevoDiaDelMes); 
   
       nuevaFecha.setUTCDate(nuevoDiaDelMes);
   
       //fecha.setUTCDate(fecha.getUTCDate() - diaDeLaSemana + JUEVES);
   
       const inicioDelAño:any = new Date(Date.UTC(fecha.getUTCFullYear(), 0, 1));
-      //////console.log('inicioDelAño',inicioDelAño)
+      ////////console.log('inicioDelAño',inicioDelAño)
       const diferenciaDeFechasEnMilisegundos = nuevaFecha - inicioDelAño;
-      //////console.log('diferenciaDeFechasEnMilisegundos',diferenciaDeFechasEnMilisegundos);
+      ////////console.log('diferenciaDeFechasEnMilisegundos',diferenciaDeFechasEnMilisegundos);
       let semana = Math.ceil(((diferenciaDeFechasEnMilisegundos / DIA_EN_MILISEGUNDOS) + 1) / DIAS_SEMANA);
-      //////console.log('semana',semana);
+      ////////console.log('semana',semana);
       return semana;
     }
 
@@ -1059,30 +1065,30 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       //let fechaInicioSemana = await this.fechaInicioSemana(new Date(fecha));
       let fechaInicioSemana = ((fecha));
       fechaInicioSemana.setHours(0,0,0);
-      console.log('fechaInicioSemana',fechaInicioSemana)
-      //////////////////console.log('Inicio semana',fechaInicioSemana);
+      //console.log('fechaInicioSemana',fechaInicioSemana)
+      ////////////////////console.log('Inicio semana',fechaInicioSemana);
       //let siguienteMes = await this.siguienteMes(new Date(fecha));
       let siguienteMes = await this.siguienteMes((fecha));
       siguienteMes.setHours(0,0,0);
-      //console.log('siguienteMes',siguienteMes)
-      //////////////////console.log('Siguiente mes',siguienteMes);
+      ////console.log('siguienteMes',siguienteMes)
+      ////////////////////console.log('Siguiente mes',siguienteMes);
   
       let fechaInicioSemanaSiguienteMes = await this.fechaInicioSemana((siguienteMes));
       fechaInicioSemanaSiguienteMes.setHours(0,0,0);
-      console.log('fechaInicioSemanaSiguienteMes',fechaInicioSemanaSiguienteMes)
-      //////////////////console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
-      //await ////////////////console.log(fechaInicioSemana.getFullYear(),fechaInicioSemanaSiguienteMes.getFullYear(),fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth(),fechaInicioSemana.getDate(),fechaInicioSemanaSiguienteMes.getDate());
+      //console.log('fechaInicioSemanaSiguienteMes',fechaInicioSemanaSiguienteMes)
+      ////////////////////console.log('fecha Inicio Semana Siguiente mes',fechaInicioSemanaSiguienteMes);
+      //await //////////////////console.log(fechaInicioSemana.getFullYear(),fechaInicioSemanaSiguienteMes.getFullYear(),fechaInicioSemana.getMonth(),fechaInicioSemanaSiguienteMes.getMonth(),fechaInicioSemana.getDate(),fechaInicioSemanaSiguienteMes.getDate());
   
       
       let diaDelMes = fechaInicioSemana.getDate();
-      console.log('diaDelMes',diaDelMes)
+      //console.log('diaDelMes',diaDelMes)
       let diaFecha = fechaInicioSemana.getDay();
-      console.log('diaFecha',diaFecha)
+      //console.log('diaFecha',diaFecha)
       
       //let weekOfMonth = Math.ceil((diaDelMes - 1 - diaFecha) / 7);
       let weekOfMonth = Math.ceil((diaDelMes  - diaFecha) / 7);
-      console.log('weekOfMonth',weekOfMonth)
-      ////////////////////console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
+      //console.log('weekOfMonth',weekOfMonth)
+      //////////////////////console.log(`${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}`,weekOfMonth+1);
       let mesStr = this.mesesAnio.filter(mes =>mes.mes === (fechaInicioSemana.getMonth()+1))[0].mesStr.substring(0,3).toUpperCase();
       
       if(fechaInicioSemana.getFullYear()===fechaInicioSemanaSiguienteMes.getFullYear() && fechaInicioSemana.getMonth() === fechaInicioSemanaSiguienteMes.getMonth() && fechaInicioSemana.getDate()===fechaInicioSemanaSiguienteMes.getDate()){
@@ -1096,19 +1102,19 @@ export class SimulacionAutomaticaComponent implements OnInit  {
     }
 
     siguienteMes(fecha:Date){
-      ////////////////////console.log(fecha,fecha.getFullYear(),fecha.getMonth());
-    //////console.log('fecha',fecha.toDateString());
+      //////////////////////console.log(fecha,fecha.getFullYear(),fecha.getMonth());
+    ////////console.log('fecha',fecha.toDateString());
     let nuevaFecha:Date = new Date(fecha.toDateString());
 
     nuevaFecha.setMonth(fecha.getMonth()+1);
-    //////console.log('nuevaFecha',nuevaFecha);
+    ////////console.log('nuevaFecha',nuevaFecha);
 
     let anioMesSiguiente:number = fecha.getMonth()==11?fecha.getFullYear()+1:fecha.getFullYear();
     let mesMesSiguiente:number = fecha.getMonth()==11?0:fecha.getMonth()+1;
-    ////////////////////console.log('año',anioMesSiguiente,'mes',mesMesSiguiente);
+    //////////////////////console.log('año',anioMesSiguiente,'mes',mesMesSiguiente);
     //let fechaInicioMesSiguiente = new Date(anioMesSiguiente, mesMesSiguiente,1);
     let fechaInicioMesSiguiente = new Date(nuevaFecha.getFullYear(), nuevaFecha.getMonth(),1);
-    //////console.log('fechaInicioMesSiguiente',fechaInicioMesSiguiente);
+    ////////console.log('fechaInicioMesSiguiente',fechaInicioMesSiguiente);
 
     return fechaInicioMesSiguiente;
     }
@@ -1146,7 +1152,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
       if(inventarioSolicitadoMP.length >0 && inventarioSolicitadoMP.filter((itemSMP:{FECHANECESIDAD:any}) => this.numeroDeSemana(new Date(itemSMP.FECHANECESIDAD)) ==  semanaFecha && (new Date(itemSMP.FECHANECESIDAD)).getFullYear() == anio).length>0 ){
         let filas = inventarioSolicitadoMP.filter((itemSMP:{FECHANECESIDAD:any}) => this.numeroDeSemana(new Date(itemSMP.FECHANECESIDAD)) ==  semanaFecha && (new Date(itemSMP.FECHANECESIDAD)).getFullYear() == anio);
-        //////////console.log(semanaFecha,filas);
+        ////////////console.log(semanaFecha,filas);
         for(let fila of filas){
           
           //compraSolicitadaMP = compraSolicitadaMP+eval(fila.Quantity);
@@ -1162,7 +1168,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
       if(inventarioProyectadoMP.length >0 && inventarioProyectadoMP.filter((itemPMP:{FECHANECESIDAD:any}) => this.numeroDeSemana(new Date(itemPMP.FECHANECESIDAD)) ==  semanaFecha && (new Date(itemPMP.FECHANECESIDAD)).getFullYear() == anio).length>0 ){
         let filas = inventarioProyectadoMP.filter((itemPMP:{FECHANECESIDAD:any}) => this.numeroDeSemana(new Date(itemPMP.FECHANECESIDAD)) ==  semanaFecha && (new Date(itemPMP.FECHANECESIDAD)).getFullYear() == anio);
-        ////////////console.log(semanaFecha,filas);
+        //////////////console.log(semanaFecha,filas);
         for(let fila of filas){
           
           compraProyectadaMP = compraProyectadaMP+eval(fila.Quantity);
@@ -1177,7 +1183,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
       if(presupuestoMPVenta.length >0 && presupuestoMPVenta.filter((itemPMPV: { semana: number; fechasemana: any;}) => itemPMPV.semana ==  semanaFecha && (new Date(itemPMPV.fechasemana)).getFullYear()==anio).length>0 ){
         let filas = presupuestoMPVenta.filter((itemPMPV: { semana: number; fechasemana: any; }) => itemPMPV.semana ==  semanaFecha && (new Date(itemPMPV.fechasemana)).getFullYear()==anio);
-        ////////////console.log(filas);
+        //////////////console.log(filas);
         for(let fila of filas){
           presupuestoVentaMP = presupuestoVentaMP+eval(fila.cantidad);
         }
@@ -1192,11 +1198,11 @@ export class SimulacionAutomaticaComponent implements OnInit  {
 
       if(this.arregloInvetariosTracking.find(inventario=>inventario.item === item && inventario.zona === zona).inventarioTramsitoMPPreFecha.length > 0){
         let filas = this.arregloInvetariosTracking.find(inventario=>inventario.item === item && inventario.zona === zona).inventarioTramsitoMPPreFecha.filter((itemTR: { Preciocalcu: number; }) => itemTR.Preciocalcu >0 )
-        //////console.log(filas);
+        ////////console.log(filas);
         let cantidadTotalInventarioMP = 0;
         let costoTotalUnitarioMP =0;
         let costoTotalInventarioMP = 0;
-        ////////////////console.log('InventarioTRPreFecha',filas);
+        //////////////////console.log('InventarioTRPreFecha',filas);
         for await (let fila of filas){
             cantidadTotalInventarioMP += eval(fila.OpenCreQty);
             costoTotalInventarioMP +=eval(fila.Preciocalcu)*eval(fila.OpenCreQty);
@@ -1227,7 +1233,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         let cantidadTotalInventarioMP = 0;
         let costoTotalUnitarioMP =0;
         let costoTotalInventarioMP =0;
-        //////////////console.log(filas);
+        ////////////////console.log(filas);
         for(let fila of filas){
           cantidadTotalInventarioMP += eval(fila.OpenCreQty);
           costoTotalInventarioMP +=eval(fila.Preciocalcu)*eval(fila.OpenCreQty);
@@ -1250,7 +1256,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
       let costoInventarioTRMPSemana:any = await this.calcularCostoInventarioSemanaTR(semana,item,zona,anio);
 
       if(item === 'MP1030000' && zona === '901'){
-        //////console.log("inventarioTRMPSemana",item,zona,inventarioTRMPSemana, costoInventarioTRMPSemana);
+        ////////console.log("inventarioTRMPSemana",item,zona,inventarioTRMPSemana, costoInventarioTRMPSemana);
        }
        
   
@@ -1259,12 +1265,12 @@ export class SimulacionAutomaticaComponent implements OnInit  {
   
       costoUnitarioInventarioTRMPPSemana = totalInventarioTRMPSemana==0?0:costoTotalInventarioTRMPSemana/totalInventarioTRMPSemana;
   
-      ////////////console.log("semana",semana);
-      ////////////console.log("inventarioTRMPPrefecha",inventarioTRMPPrefecha);
-      ////////////console.log("costoInventarioTRMPPrefecha",costoInventarioTRMPPrefecha);
-      ////////////console.log("inventarioTRMPSemana",inventarioTRMPSemana);
-      ////////////console.log("costoInventarioTRMPSemana",costoInventarioTRMPSemana);
-      ////////////console.log("costoUnitarioInventarioTRMPPSemana",costoUnitarioInventarioTRMPPSemana);
+      //////////////console.log("semana",semana);
+      //////////////console.log("inventarioTRMPPrefecha",inventarioTRMPPrefecha);
+      //////////////console.log("costoInventarioTRMPPrefecha",costoInventarioTRMPPrefecha);
+      //////////////console.log("inventarioTRMPSemana",inventarioTRMPSemana);
+      //////////////console.log("costoInventarioTRMPSemana",costoInventarioTRMPSemana);
+      //////////////console.log("costoUnitarioInventarioTRMPPSemana",costoUnitarioInventarioTRMPPSemana);
       
   
   
@@ -1355,7 +1361,7 @@ export class SimulacionAutomaticaComponent implements OnInit  {
         (costoUnitarioInventarioTRMPP==0?0:inventarioSemanaMPTR)+
         (costoUnitarioInventarioComprasSol==0?0:compraSolicitadaMP);
 
-      ////////////console.log('totalInventarioMPSemana',totalInventarioMPSemana);
+      //////////////console.log('totalInventarioMPSemana',totalInventarioMPSemana);
 
       let costoTotalInventarioMPSemana = (costoUnitarioInicialMP*inventarioSemanaMP)+
               (costoUnitarioInventarioTRMPP*inventarioSemanaMPTR)+

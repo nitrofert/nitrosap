@@ -1,1 +1,92 @@
-<p>editar-noticia works!</p>
+<p-toast></p-toast>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card p-fluid">
+            <div class="col">
+                <div class="field ">
+                    <label htmlFor="titulo">Título noticia</label>
+                    <input pInputText 
+                                [(ngModel)]="titulo" 
+                                id="titulo" 
+                                name="titulo" 
+                                class="p-inputtext-sm"
+                                type="text"
+                                required
+                                [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !titulo) }"/>
+
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="flex">
+                    <div class="field w-6 ">
+                        <label for="fechapub">Fecha publicación</label>
+                        <p-calendar [(ngModel)]="fechapub" 
+                                    
+                                    [showIcon]="true"
+                                    inputId="fechapub" 
+                                    [required]="true"
+                                    styleClass="p-calendar-sm p-inputtext-sm" 
+                                    dateFormat="dd/mm/yy"
+                                    [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !fechapub) }">
+                        </p-calendar>
+                    </div>
+
+                    <div class="field w-6 ">
+                        <label for="fechafinpub">Válido hasta</label>
+                        <p-calendar [(ngModel)]="fechafinpub" 
+                                    [showIcon]="true" 
+                                    inputId="fechafinpub"
+                                    [required]="true"
+                                    styleClass="p-calendar-sm p-inputtext-sm"
+                                    dateFormat="dd/mm/yy"
+                                    [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !fechafinpub) }">
+                        </p-calendar>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="field ">
+                    <label htmlFor="descripcion">Descripción</label>
+                    
+                    
+                    <textarea rows="7" class="w-full" pInputTextarea [(ngModel)]="descripcion" [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !descripcion) }"></textarea>
+
+
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="field ">
+                    <label htmlFor="recurso">URL recurso</label>
+                    <input pInputText 
+                                [(ngModel)]="recurso" 
+                                id="recurso" 
+                                name="recurso" 
+                                class="p-inputtext-sm"
+                                type="text"
+                                required
+                                [ngClass]="{'ng-invalid ng-dirty' : (envioFormulario && !recurso) }"/>
+
+                </div>
+            </div>
+
+
+            
+                <div class="col">
+                    <button pButton 
+                            label="Guardar" 
+                            (click)="guardarNoticia()" 
+                            
+                            class="p-button-outlined mb-2 p-button-success p-button-sm" 
+                            icon="pi pi-save">
+                    </button>
+                </div>
+            
+
+        </div>
+    </div>
+</div>
+
